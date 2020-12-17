@@ -1,0 +1,36 @@
+.nav-tabs-custom {
+    border-bottom: 0!important;
+    .validation-mark, .nav-count {
+        display: none;
+    }
+    .nav-link {
+        padding: 2.038rem 2rem;
+        color: $gray-600;
+        border: 0;
+        &.active {
+            position: relative;
+            background: none;
+            color: $primary;
+            &::after {
+                content: "";
+                height: 0.2857142857142857rem;
+                width: calc(100% - 4rem);
+                background-color: $primary;
+                position: absolute;
+                bottom: 0;
+                left: 2rem;
+                border-radius: 0.2857142857142857rem 0.2857142857142857rem 0 0;
+            }
+        }
+    }
+}
+.nav-tabs-bg {
+    background-color: $white;
+    display: flex;
+    justify-content: center;
+}
+.nav-tab-controls {
+    > :not(:last-child) {
+        margin-right: 0.25rem;
+    }
+}

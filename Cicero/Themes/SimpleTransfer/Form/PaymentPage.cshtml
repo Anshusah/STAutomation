@@ -1,0 +1,109 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+
+@model CaseViewModel
+@inject ICaseService caseService
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["body"] = "";
+    ViewData["Title"] = "Payment Page";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+<style>
+        .st-field {
+            max-height: 100px;
+        }
+    </style>
+
+<div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header.cshtml")
+        <div class="main-content">
+            <div class="container">
+                <div class="page-header pt-4">
+                    <h3 class="page-title">Payment</h3>
+                    <p>Please enter your Credit/Debit Card number along with expiry date and csv number. Click on 'Pay' to proceed with the payment.</p>
+                </div>
+                <div id="st-notification-frame" class="pt-3"></div>
+                @*<iframe src="https://payments.securetrading.net/process/payments/choice?sitereference=test_fasttrackmoney77760&mainamount=10.00&currencyiso3a=GBP&version=2&stprofile=default"   width="100%" height="600" scrolling="auto" style="border:0px;"></iframe>*@
+
+                        @*&customeraccountnumbertype=card&customeraccountnumber=4111111111111111&customerdob=1992-12-13&customerlastname=tamang&customerpostcode=ab10aa"*@
+            @*<form method="POST" action="https://payments.securetrading.net/process/payments/choice">
+
+                <input type="hidden" name="sitereference" value="test_fasttrackmoney77760">
+                <input type="hidden" name="stprofile" value="default">
+                <input type="hidden" name="currencyiso3a" value="GBP">
+                <input type="hidden" name="mainamount" value="100.00">
+                <input type="hidden" name="version" value="2">
+                <input type=hidden name="ruleidentifier" value="STR-6">
+                <input type="hidden" name="stdefaultprofile" value="st_paymentcardonly">
+                <input type="hidden" name="customeraccountnumbertype" value="card">
+
+                <input type="hidden" name="customeraccountnumber" value="4111111111111111">
+
+                <input type=hidden name="successfulurlredirect" value="http://localhost:20000/admin/form/simpletransfer/transfer/ADA=/edit.html">
+                <input type="submit" value="Pay">
+            </form>*@
+                <form id="stform" action="~/st/user/dashboard.html" method="POST" class="pt-3">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group mb-0 "><div id="st-card-number" class="st-field st-card-number"></div></div>
+                    <div class="form-group  mb-0"> <div id="st-expiration-date" class="st-field st-expiration-date"></div></div>
+                    <div class="form-group  mb-0"> <div id="st-security-code" class="st-field st-security-code"></div></div>
+                    <div class="form-group ">
+                        <button type="submit" id="st-form__submit" class="st-form__submit btn btn-primary"></button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-row align-items-center justify-content-lg-center ml-n4 ml-lg-0">
+                        <div class="form-group"><div id="st-animated-card" class="st-animated-card-wrapper"></div></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+            </div>
+        </div>
+
+        @await Html.PartialAsync("../Shared/_Footer.cshtml")
+
+    </div>
+
+<script src=https://webservices.securetrading.net/js/v2/st.js></script>
+<script>
+        (function () {      
+        $.ajax({
+            url: '/admin/securetrading/gettoken',
+            data: {
+            },
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                var st = SecureTrading({
+                    jwt: data,
+                    formId: "stform",
+                    animatedCard: true,
+                    submitOnSuccess: false,
+                    submitCallback: myCallback,
+                    //disableNotification: true,
+                });
+                st.Components();
+                $("#st-card-number-input").val("4111111111111111");
+            },
+            type: 'GET'
+        });
+    })();
+    function myCallback(data) {
+        toastr.success(data.errormessage);
+        window.location.href = "/st/user/dashboard.html";
+        // Custom code to perform actions after payment completion
+        // Data will contain the result of the last gateway request
+        // You should verify the response JWT is genuine before trusting the data
+    };
+</script>
+@section Scripts{
+}

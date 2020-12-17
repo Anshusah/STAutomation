@@ -1,0 +1,42 @@
+.footer {
+    padding-top: 3rem;
+    // border-top: 1px solid $gray-200;
+    background: #1E1E1E;
+    color: #8B8B8B;
+    .list-unstyled {
+        a {
+            color: #8B8B8B;
+        }
+        li {
+            margin-bottom: 0.4rem;
+        }
+    }
+    .h6 {
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+    }
+}
+.footer-alt {
+    padding: 1rem;
+    background: transparent;
+    border: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.social-media {
+    border-top-color: rgba(255,255,255,0.05)!important; 
+    li {
+        margin: 0 0.5rem;
+    }
+}
+.footer-brand {
+    display: inline-block;
+    background: url(../img/cicero-logo-white.png) no-repeat;
+    opacity: 0.46;
+    img {
+        opacity: 0;
+        visibility: hidden
+    }
+}

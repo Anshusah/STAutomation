@@ -1,0 +1,133 @@
+﻿@using Themes.Core.Widgets
+@{
+    CustomArticle ca = Model as CustomArticle;
+    if (ca.ArticleId != null)
+    {
+
+        string siz = "false";
+        if (!string.IsNullOrEmpty(ca.Size))
+        {
+            siz = ca.Size;
+        }
+
+
+
+
+        <div class="widget-wrap @ca.WidgetLocation widget-custom-article @ca.Size=@siz  @ca.Align">
+            @if (!string.IsNullOrEmpty(ca.Title) && ca.LayoutType == "with-title")
+            {
+                <h6 class="widget-title widget-extra-article-title">@ca.Title</h6>
+            }
+
+            <div class="widget-content widget-extra-article-content">
+                @if (ca.DisplayAs == "banner")
+                {
+                    <div class="widget-slider-wrap" id="slider-@ca.WidgetId">
+                        @foreach (string articleid in ca.ArticleId)
+                        {
+
+
+                            int index = ca.ArticleId.IndexOf(articleid);
+                            @if (ca.CustomStyleBanner == "title-subtitle")
+                            {<ul>
+                                    <li>
+                                        <div>
+                                            @*<img src="/uploads/@ca.ArticleImageUrl[index]" />*@
+                                            <h6>@ca.ArticleTitle[index]</h6>
+                                            <span>@ca.ShortDescription[index]</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {<ul>
+                                    <li>
+                                        <h6>@ca.ArticleTitle[index]</h6>
+                                    </li>
+                                </ul>
+                            }
+
+                        }
+                    </div>
+                    <script type="text/javascript">
+                        @{
+                            string inf = "false";
+                            if (!string.IsNullOrEmpty(ca.Infinite))
+                            {
+                                inf = ca.Infinite;
+                            }
+                        }
+                        jQuery(document).ready(function(){
+                            $('#slider-@ca.WidgetId').slick({
+                                dots: true,
+                                  infinite: @inf,
+                                  speed: @ca.Speed,
+                                  slidesToShow: @ca.SlideToShow,
+                                  slidesToScroll:@ca.SlideToScroll,
+/*
+responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }
+]
+*/
+                            });
+                        })
+                    </script>
+                }
+                else if (ca.DisplayAs == "article")
+                {
+                    <ul>
+                        @foreach (string articleid in ca.ArticleId)
+                        {
+                            int index = ca.ArticleId.IndexOf(articleid);
+                            <li>
+                                @if (ca.CustomStyleArticle == "image-title-subtitle")
+                                {
+                                    @*<a href="javascript:void(0);">*@
+                                    <img src="/uploads/@ca.ArticleImageUrl[index]" />
+                                    <h6>@ca.ArticleTitle[index]</h6>
+                                    <span>@ca.ShortDescription[index]</span>
+                                    @*</a>*@
+                                }
+                                else if (ca.CustomStyleArticle == "title-subtitle")
+                                {
+                                    <h6>@ca.ArticleTitle[index]</h6>
+                                    <span>@ca.ShortDescription[index]</span>
+                                }
+                                else
+                                {
+                                    <h6>@ca.ArticleTitle[index]</h6>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <text> Widget is null </text>
+    }
+}

@@ -1,0 +1,300 @@
+
+.dataTables_wrapper {
+    position: relative;
+
+    .dataTables_length {
+        label {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 0;
+
+            .custom-select {
+                margin: 0 0.5rem;
+            }
+        }
+    }
+
+    .dataTables_paginate {
+        display: inline-flex;
+        justify-content: flex-end;
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .page-item {
+            &.next, &.previous {
+                .page-link {
+                    border: 0;
+                }
+
+                &.disabled {
+                    .page-link {
+                        // background: #f4f4f4;
+                        background: none;
+                        color: rgba(85, 85, 85, 0.5);
+                    }
+                }
+            }
+
+            .page-link {
+                background-color: transparent;
+                border:none;
+                color: rgba(85, 85, 85, 1);
+            }
+
+            &.active {
+                .page-link {
+                    color: $dark-blue;
+                    &:after{
+                        content: '';
+                        position: absolute;
+                        left: 50%;
+                        bottom: 0;
+                        width: 14px;
+                        height: 2px;
+                        background-color: $dark-blue;
+                        transform: translateX(-50%);
+                    }
+                   
+                }
+            }
+        }
+    }
+    // &.no-footer{
+    //     .datatable__controls{
+    //         display: none;
+    //     }
+    // }
+}
+.datatable {
+    &__controls {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 1px solid #E6E6E6;
+        @media (min-width: 768px) {
+            flex-direction: row;
+        }
+    }
+    &__length {
+        flex: 1;
+        @media (min-width: 768px) {}
+    }
+    &__info {
+        flex: 1;
+        @media (min-width: 768px) {
+            text-align: center;
+        }
+        @media (max-width: 767px) {
+            margin: 0.7rem 0;
+        }
+    }
+    &__numbers {
+        flex: 1;
+        @media (min-width: 768px) {
+            text-align: right;
+        }
+    }
+    &__actions {
+        white-space: nowrap;
+        .btn-icon {
+            span {
+                display: none;
+            }
+        }
+    }
+    
+}
+.dataTables_processing {
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, .8);
+    border: 0;
+}
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+table.dataTable {
+    width: 100% !important;
+
+    thead th {
+        border-bottom: 1px solid rgba($gray-400,0.25) !important;
+        font-weight:500 !important;
+    }
+
+    thead th, tbody td {
+        padding: 0.75rem 2rem !important;
+        text-align: left;
+        font-weight: 300;
+    }
+
+    tbody tr {
+        cursor: pointer;
+        .datatable__actions {
+            opacity: 1;
+
+            i {
+                font-size: 1.5rem;
+            }
+        }
+
+        &:hover, &.selected {
+            .datatable__actions {
+                opacity: 1;
+                //simpletransfer for Transaction management
+                .selected-icon {
+                    color: $link-color;
+                }
+            }
+        }
+    }
+
+    .dt-checkboxes-cell {
+        padding-left: 1.5rem;
+    }
+
+    .sorting {
+        background-image: none !important;
+        cursor: pointer;
+
+        &:after {
+            content: "\ea72";
+            // content: "\ECE9";
+            font-family: remixicon !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            float: right;
+            opacity: .5;
+        }
+
+        &_asc {
+            background-image: none !important;
+            cursor: pointer;
+            /*color: var(--primary);*/
+
+            &:after {
+                content: "\ea4e";
+                // content: "\ECE9";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                float: right;
+                //new simple transfer
+                font-size: 1.5rem;
+                line-height: 1;
+            }
+        }
+
+        &_desc {
+            background-image: none !important;
+            cursor: pointer;
+            /*color: var(--primary);*/
+
+            &:after {
+                content: "\ea54";
+                // content: "\ECE9";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                float: right;
+                font-size: 1.5rem;
+                line-height: 1;
+            }
+        }
+    }
+
+    &.no-footer {
+        border-bottom: 1px solid rgba($gray-400,0.25) !important;
+        margin-bottom: 2rem;
+    }
+}
+
+.datatable__filter {
+    //old  padding: 1.5rem;
+    //new simple transfer
+    padding: 2.125rem 0;
+    border-radius: 0.25rem 0.25rem 0 0;
+    border-bottom: 1px solid#e6e6e6;
+
+    &-main {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-actions {
+        display: flex;
+
+        .input-group {
+            margin-right: .5rem;
+        }
+    }
+}
+.datatable__filter-search {
+    .form-inline {
+        position: relative;
+
+        &:before {
+            content: "\f033";
+            font-family: 'remixicon' !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: absolute;
+            left: .8rem;
+            pointer-events: none;
+            opacity: .8;
+            font-size: 1.25rem;
+            color: var(--primary);
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .form-control {
+            /*transition: all 3s cubic-bezier(0, 0.46, 0.89, 1.4) 0s;*/
+            border-radius: 0;
+            border: none;
+            padding-left: 2.4rem;
+            cursor: pointer;
+            width: 0;
+            transition: 0.3s;
+
+
+            &:active, &:focus {
+                /*transition: all 3s cubic-bezier(0, 0.46, 0.89, 1.4) 0s;*/
+                transition: 0.3s;
+                border-bottom: 2px solid var(--primary) !important;
+                width: 100%;
+                outline: none;
+                box-shadow: none;
+            }
+        }
+    }
+}
+.dataTables{
+    &_scrollHead{
+        // overflow: unset !important;
+    }
+    &_scrollBody{
+        // overflow: unset !important;
+        thead{
+            display: none;
+        }
+    }
+}
+
+

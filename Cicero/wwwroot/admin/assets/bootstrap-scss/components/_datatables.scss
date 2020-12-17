@@ -1,0 +1,262 @@
+
+.dataTables_wrapper {
+    position: relative;
+
+    .dataTables_length {
+        label {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 0;
+
+            .custom-select {
+                margin: 0 0.5rem;
+            }
+        }
+    }
+
+    .dataTables_paginate {
+        display: inline-flex;
+        justify-content: flex-end;
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .page-item {
+            &.next, &.previous {
+                .page-link {
+                    border: 0;
+                }
+
+                &.disabled {
+                    .page-link {
+                        // background: #f4f4f4;
+                        background: none;
+                        color: rgba(85, 85, 85, 0.5);
+                    }
+                }
+            }
+
+            .page-link {
+                background-color: transparent;
+                border:none;
+                color: rgba(85, 85, 85, 1);
+            }
+
+            &.active {
+                .page-link {
+                    color: $dark-blue;
+                    &:after{
+                        content: '';
+                        position: absolute;
+                        left: 50%;
+                        bottom: 0;
+                        width: 14px;
+                        height: 2px;
+                        background-color: $dark-blue;
+                        transform: translateX(-50%);
+                    }
+                   
+                }
+            }
+        }
+    }
+    // &.no-footer{
+    //     .datatable__controls{
+    //         display: none;
+    //     }
+    // }
+}
+.datatable {
+    &__controls {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 1px solid #E6E6E6;
+        @media (min-width: 768px) {
+            flex-direction: row;
+        }
+    }
+    &__length {
+        flex: 1;
+        @media (min-width: 768px) {}
+    }
+    &__info {
+        flex: 1;
+        @media (min-width: 768px) {
+            text-align: center;
+        }
+        @media (max-width: 767px) {
+            margin: 0.7rem 0;
+        }
+    }
+    &__numbers {
+        flex: 1;
+        @media (min-width: 768px) {
+            text-align: right;
+        }
+    }
+    &__actions {
+        white-space: nowrap;
+        .btn-icon {
+            span {
+                display: none;
+            }
+        }
+    }
+    
+}
+.dataTables_processing {
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, .8);
+    border: 0;
+}
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dataTable {
+    width: 100% !important;
+
+    &.thead-border-0 thead th{
+        border-top:0;
+    }
+    tbody tr {
+        .datatable__actions {
+            opacity: 0;
+            // //simple Transfer
+            // opacity: 1;
+        }
+
+        &:hover, &.selected {
+            .datatable__actions {
+                opacity: 1;
+                //simpletransfer for Transaction management
+                .selected-icon {
+                    color: $link-color;
+                }
+            }
+        }
+    }
+
+    .dt-checkboxes-cell {
+        padding-left: 1.5rem;
+    }
+
+    .sorting {
+        cursor: pointer;
+
+        &:after {
+            content: "\ea72";
+            // content: "\ECE9";
+            font-family: remixicon !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            float: right;
+            opacity: .5;
+        }
+
+        &_asc {
+            cursor: pointer;
+            color: var(--primary);
+
+            &:after {
+                content: "\ea4e";
+                // content: "\ECE9";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                float: right;
+                //new simple transfer
+                font-size: 1.5rem;
+                line-height: 1;
+            }
+        }
+
+        &_desc {
+            cursor: pointer;
+            color: var(--primary);
+
+            &:after {
+                content: "\ea54";
+                // content: "\ECE9";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                float: right;
+                font-size: 1.5rem;
+                line-height: 1;
+            }
+        }
+    }
+}
+
+.datatable__filter {
+    //old  padding: 1.5rem;
+    //new simple transfer
+    padding: 2.125rem 0;
+    border-radius: 0.25rem 0.25rem 0 0;
+    border-bottom: 1px solid#e6e6e6;
+
+    &-main {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-actions {
+        display: flex;
+
+        .input-group {
+            margin-right: .5rem;
+        }
+    }
+}
+.datatable__filter-search {
+    .form-inline {
+        position: relative;
+
+        &:before {
+            content: "\f033";
+            font-family: 'remixicon' !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: absolute;
+            left: .8rem;
+            pointer-events: none;
+            opacity: .8;
+        }
+
+        .form-control {
+            width: 100%;
+            padding-left: 2.4rem;
+        }
+    }
+}
+.dataTables{
+    &_scrollHead{
+        // overflow: unset !important;
+    }
+    &_scrollBody{
+        // overflow: unset !important;
+        thead{
+            display: none;
+        }
+    }
+}
+
+

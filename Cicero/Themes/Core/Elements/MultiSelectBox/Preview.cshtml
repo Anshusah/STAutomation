@@ -1,0 +1,40 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.MultiSelectBox
+@{
+    MultiSelectBox msb = Model as MultiSelectBox;
+
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @msb.BackendLabel
+        </label>
+        <select name="SelectedItem" class="form-control" multiple>
+            @{
+
+                if (msb.SelectOptions != null)
+                {
+                    foreach (var si in msb.SelectOptions)
+                    {
+
+                        if (si.Selected)
+                        {
+                            <option selected value="@si.Value">@si.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@si.Value">@si.Text</option>
+                        }
+
+
+                    }
+
+                }
+
+            }KD
+
+        </select>
+
+
+    </div>
+</div>

@@ -1,0 +1,342 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Services
+@using Cicero.Service.Models
+@inject Permission Permission
+@inject Utils  utils
+@inject IMediaService _mediaService
+@inject ICommonService commonService
+
+@{
+    ViewBag.Title = "Manage Customers";
+    var tenantId = commonService.GetTenantIdByIdentifier(utils.GetTenantFromSession());
+    var groupList = await _mediaService.GetMediaGroup(tenantId);
+}
+
+<div class="page-wrapper page-users">
+    <!-- page head starts -->
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/st/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Customers</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Customers</h3>
+            @if (Permission.Can(UserCan.Create_User))
+            {
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/st/admin" + utils.GetTenantForUrl(false) + "/customers/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-circle-line"></i>Add new record</a>
+                    <button type="button" data-toggle="modal" data-target="#assignGroupModal" class="btn btn-outline-secondary">Media Group</button>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-main-section">
+            <div class="page-content-area">
+                <div class="status"></div>
+                <form action="@Url.Content("~/st/admin" + utils.GetTenantForUrl(false) + "/customers/action.html")" id="users-form" method="post">
+
+                    <div class="datatable__filter">
+                        <div class="datatable__filter-main">
+                            <div class="datatable__filter-actions">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="action">Action</label>
+                                    </div>
+                                    <select class="custom-select" name="action" id="action">
+                                        <option value="">Select Action</option>
+                                        @if (Permission.Can(UserCan.Delete_User))
+                                        {
+                                            <option value="delete">Delete : Selected</option>
+                                        }
+                                        @if (Permission.Can(UserCan.Update_User))
+                                        {
+                                            <option value="active">Active : Selected</option>
+                                            <option value="inactive">Inactive : Selected</option>
+                                        }
+                                    </select>
+
+                                </div>
+                                <button name="apply" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#users-form").submit()},OnCancelled:function(){this.close();}}' type="button" class="btn btn-secondary">Apply</button>
+                            </div>
+                            <div class="datatable__filter-search">
+                                <div class="form-inline">
+                                    <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table id="users" class="table table-hover table-custom"></table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="assignGroupModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Media Group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group group-add__form">
+                    <label for="inputGroupName">Add new group</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="inputGroupName" id="inputGroupName" onkeydown="return (event.keyCode!=13);" placeholder="Type group name">
+                        <div class="input-group-append">
+                            <button type="button" id="addGroupBtn" class="btn btn-outline-secondary">Add</button>
+                        </div>
+                    </div>
+                    <span id="inputGroupNameSpan" class="invalid-feedback"></span>
+                </div>
+
+                @foreach (var item in groupList)
+                {
+                    <div class="form-group group-add__item">
+                        <div class="checkboxDiv group-add__checkbox">
+                            <span class="custom-span">@item.Title</span>
+                            <div class="custom-control custom-checkbox sr-only">
+                                <input type="checkbox" name="Ids" value="@item.Id" class="custom-control-input" id="gid_@item.Id" /><label class="custom-control-label" for="gid_@item.Id">@item.Title</label>
+                            </div>
+                        </div>
+                        <div class="group-add__form-edit">
+                            <div class="group-add__form-control">
+                                <input type="text" class="form-control groupName">
+                            </div>
+                            <div class="group-add__form-actions">
+                                <div class="group-add__form-action-save">
+                                    <button type="button" class="btn btn-link btn-sm saveEditGroupBtn" data-mediaid="@item.Id" title="Save">Save</button>
+                                    <button type="button" class="btn btn-link btn-sm cancelEditGroupBtn" title="Cancel">Cancel</button>
+                                </div>
+                                <div class="group-add__form-action-edit">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm editGroupBtn" data-mediaid="@item.Id" title="Edit"><i class="ri-pencil-line"></i><span class="sr-only">Edit</span></button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){deleteGroup(@item.Id);},OnCancelled:function(){this.close();}}' data-mediaid="@item.Id" title="Delete"><i class="ri-close-line"></i><span class="sr-only">Delete</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary">Save</button>*@
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+
+    <script>
+        $('#inputGroupName').on('keyup', function () {
+            var groupName = $('#inputGroupName').val();
+            $('#inputGroupNameSpan').text("");
+            if (groupName != "") {
+                $('#inputGroupNameSpan').removeClass('show');
+            }
+            if (groupName.length > 20) {
+                $('#inputGroupNameSpan').text("Please type group name less than 20 characters.").addClass('show');
+            }
+        });
+        $('#addGroupBtn').on('click', function () {
+            var groupName = $('#inputGroupName').val();
+
+            if (groupName == "") {
+                $('#inputGroupNameSpan').text("Please type group name.").addClass('show');
+                return false;
+            }
+
+            if (groupName.length > 20) {
+                $('#inputGroupNameSpan').text("Please type group name less than 20 characters.").addClass('show');
+                return false;
+            }
+
+            var url = '/admin/mediaGroup/creategroup.html?groupName=' + groupName;
+            $.post(url, function (result) {
+                if (result != 0) {
+                    $('#inputGroupName').val(null);
+                    var dataConfirm = '{OnInit:function(){this.size="";this.title="Confirm";this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){deleteGroup(' + result + ');},OnCancelled:function(){this.close();}}';
+
+                    var datas = '<div class="group-add__form-edit">' +
+                        '<div class="group-add__form-control"><input type="text" class="form-control groupName"></div>' +
+                        '<div class="group-add__form-actions">' +
+                        '<div class="group-add__form-action-save">' +
+                        '<button type="button" class="btn btn-link btn-sm saveEditGroupBtn" data-mediaid="' + result + '" title="Save">Save</button>' +
+                        '<button type="button" class="btn btn-link btn-sm cancelEditGroupBtn" title="Cancel">Cancel</button>' +
+                        '</div>' +
+                        '<div class="group-add__form-action-edit">' +
+                        '<button type="button" class="btn btn-outline-secondary btn-sm editGroupBtn" data-mediaid="' + result + '" title="Edit"><i class="ri-pencil-line"></i><span class="sr-only">Edit</span></button>' +
+                        '<button type="button" class="btn btn-outline-secondary btn-sm deleteGroupBtn" data-mediaid="' + result + '" title="Delete"><i class="ri-close-line"></i><span class="sr-only">Delete</span></button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    var divData = '<div class="form-group group-add__item"><div class="group-add__checkbox"><span class="custom-span">' + groupName + '</span><div class="custom-control custom-checkbox sr-only"><input type="checkbox" name="Ids" class="custom-control-input" value="' + result + '" id="gid_' + result + '"><label class="custom-control-label" for="gid_' + result + '">' + groupName + '</label></div></div>' + datas + '</div>';
+                    $('.modal-body').append(divData);
+                    $('button.deleteGroupBtn[data-mediaid=' + result + ']').attr("data-confirm", dataConfirm)
+                }
+            })
+        })
+
+        //$('#inputGroupName').on('keyup', function () {
+        //    var value = $(this).val();
+        //    $('#inputGroupNameSpan').text("");
+        //    if (value == "") {
+        //        $('#inputGroupNameSpan').text("Please type group name.");
+        //    }
+
+        //})
+
+        $(document).on('click', '.editGroupBtn', function () {
+            //debugger
+            var value = $(this).parents('.group-add__item').find('.custom-control-label').text();
+            $(this).parents(".group-add__item").addClass("group-add--edit");
+            $(this).parents('.group-add__item').find('.groupName').val(value);
+        })
+
+        $(document).on('click', '.saveEditGroupBtn', function () {
+            //debugger
+            var thisEvent = $(this);
+            var groupName = $(this).parents('.group-add__item').find('.groupName').val();
+
+            if (groupName == "") {
+                toastr.warning("Please type group name.");
+                return false;
+            }
+
+            if (groupName.length > 20) {
+                toastr.warning("Please type group name less than 20 characters.");
+                return false;
+            }
+
+            var mediaId = $(this).attr('data-mediaid');
+            var url = '/admin/mediaGroup/creategroup.html?groupName=' + groupName + "&mediaId=" + mediaId;
+            $.post(url, function (result) {
+                if (result != 0) {
+                    thisEvent.parents('.group-add__item').find('.custom-control-label').text(groupName);
+                    thisEvent.parents('.group-add__item').find('.custom-span').text(groupName);
+                    thisEvent.parents(".group-add__item").removeClass("group-add--edit");
+                }
+            })
+        })
+
+        function deleteGroup(id) {
+            //debugger
+            var url = '/admin/media/remove.html?mediaId=' + id;
+            $.post(url, function (result) {
+                if (result) {
+                    $('button[data-mediaid=' + id + ']').parents('.form-group').remove();
+                }
+            })
+        }
+
+        $(document).on('click', '.cancelEditGroupBtn', function (e) {
+            $(this).parents(".group-add__item").removeClass("group-add--edit");
+        })
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+            var selected = [];
+            var customCheckbox = '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input dt-checkboxes" id=""><label class="custom-control-label"></label></div>';
+            var table = jQuery("#users");
+            table.dataTable({
+                fixedHeader: true,
+                "processing": true,
+                "serverSide": true,
+                //"dom": 'r<"clear">t<"row"<"col-sm-3"l><"col-sm-3"i><"col-sm-6"p>><"clear">',
+                "dom": 'r<"clear">t<"datatable__controls"<"datatable__length"l><"datatable__info"i><"datatable__numbers"p>>',
+                'searching': true,
+                "ajax": { "url": "@Url.Content("~/st/admin" + utils.GetTenantForUrl(false) + "/customers.html")", "type": "POST" },
+                "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+                'stateSave': false,
+                'select': {
+                    info: false,
+                    style: 'multi'
+                },
+                'columnDefs': [
+                    {
+                        'targets': 0,
+                        'render': function(data, type, row, meta){
+                            if(type === 'display'){
+                                data = customCheckbox;
+                            }
+                            return data;
+                        },
+                        'checkboxes': {
+                            'selectRow': true,
+                            'selectAll': true,
+                            'selectAllRender': customCheckbox
+                        }
+                    }
+            ],
+            'select': {
+                style: 'multi'
+            },
+            "rowCallback": function(row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+            },
+            "columns": [
+                { "title":"","data": "id", "orderable": false },
+                {
+                    "title": "Name", "data": null, "orderable": true,
+                    "render": function (data) {
+                        return "<div><img class='rounded-circle' width='40' height='40' src='/uploads/thumbnail/" + data.image + "' />" + data.name + "</div>";
+                    }
+                },
+                { "title": "Email", "data": "email", "orderable": true },
+                { "title": "Role", "data": "role", "orderable": false },
+                { "title": "Status", "data": null, "orderable": false ,
+                'render': function (data) {
+                    if (data.status == null) {
+                        data.status = "";
+                    }
+                    //var content = data.content.length > 100 ? data.content.substr(0, data.content.lastIndexOf(' ', 100)) : data.content;
+                    var content= data.status;
+                    if(content == "Active") {
+                        return "<span class='badge badge-success badge-pill'>Active</span>";
+                    } else {
+                        return "<span class='badge badge-secondary badge-pill'>Inactive</span>"
+                    }
+                    //return "<div>" + content + "</div>";
+                }
+                },
+                { "title": "Updated At", "data": "updated_at", "orderable": true },
+                { "title":"","data": "action","orderable": false,"class":"datatable__actions", }
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function(oSettings, json) {
+                    jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+                },
+            });
+
+            jQuery(document).on("keyup","#gridsearch",function(){
+                console.log(this.value);
+                table.fnFilter(this.value);
+            });
+});</script>
+}

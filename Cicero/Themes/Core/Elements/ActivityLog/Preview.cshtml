@@ -1,0 +1,13 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.ActivityLog
+@{
+    ActivityLog ta = Model as ActivityLog;
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @ta.BackendLabel
+        </label>
+      <textarea class="form-control"></textarea>
+    </div>
+</div>

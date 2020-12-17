@@ -1,0 +1,618 @@
+﻿@using Cicero.Service.Helpers
+@using Microsoft.AspNetCore.Http;
+@using Cicero.Service.Models.Core;
+@inject Permission Permission
+@inject IHttpContextAccessor _httpContextAccessor;
+@{
+    ViewBag.Title = "Edit Theme";
+    Layout = null;
+    Theme _theme = ViewData["theme"] as Theme;
+
+
+}
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+    <title>VMS - Test</title>
+
+    <link href="/workspace/editor/core/css/core.css" rel="stylesheet" media="all" />
+
+    <link href="/workspace/editor/core/css/jquery-ui-1.10.4.custom.css" rel="stylesheet" />
+
+    <!--<link href="/themes/default/theme.css" rel="stylesheet" media="all" />-->
+
+    <link href="/workspace/editor/core/css/layout-complex.css" rel="stylesheet" media="all" />
+
+    <link href="/workspace/editor/core/css/jqueryFileTree.css" rel="stylesheet" media="all" />
+
+    <link href="/workspace/editor/core/css/perfect-scrollbar.css" rel="stylesheet" media="all" />
+
+    <link href="/workspace/editor/core/css/scpopup.css" rel="stylesheet" media="all" />
+
+    <script src="/workspace/editor/core/js/jquery-1.10.2.min.js"></script>
+
+    <script src="/workspace/editor/core/js/jquery-ui-1.10.4.custom.min.js"></script>
+
+    <script src="/workspace/editor/core/js/jquery.layout.min.js"></script>
+
+    <script src="/workspace/editor/core/js/jquery.layout.pseudoClose.min-1.1.js"></script>
+
+    <script src="/workspace/editor/core/js/jquery.layout.slideOffscreen.min-1.1.js"></script>
+
+    <script src="/workspace/editor/core/js/jqueryFileTree.js"></script>
+
+    <script src="/workspace/editor/core/js/complex.js"></script>
+
+    <script src="/workspace/editor/core/js/debug.js"></script>
+
+    <script src="/workspace/editor/core/js/scpopup.js"></script>
+
+    <script src="/workspace/editor/core/js/sceditor.js"></script>
+    <script type="text/javascript">jQuery(document).ready(function () {
+
+        });</script>
+    <style type="text/css">
+        .debug-log-row {
+            border-bottom: 1px solid #404040;
+            float: left;
+            width: 100%;
+            padding: 3px;
+        }
+
+            .debug-log-row .debug-title {
+                float: left;
+                height: auto;
+                padding: 0 12px 0 6px;
+                font-size: 13px;
+                text-transform: capitalize;
+            }
+
+                .debug-log-row .debug-title:after {
+                    content: ":";
+                    position: relative;
+                }
+
+            .debug-log-row .debug-subtitle {
+                width: calc(100% - 100px);
+                float: left;
+                height: auto;
+                color: hsla(0, 0%, 80%, 1);
+                font-size: 13px;
+            }
+
+            .debug-log-row .debug-title.error {
+                color: #ff0000;
+            }
+
+            .debug-log-row .debug-title.success {
+                color: green;
+            }
+    </style>
+</head>
+
+<body class="EDITORTHEME">
+
+    <div class="wrapper">
+
+        <div class="headertoolbar ui-layout-north">
+
+            <div class="headertoolbar_inside">
+
+                <ul class="sitenavigation">
+
+                    <li class="parent first">
+
+                        <a href="#" class="parent link">
+
+                            <span>File</span>
+
+                        </a>
+
+                        <ul class="sitenavdropdown primary dropdownfile">
+
+                            <li class="child first">
+
+                                <a href="#" data-action="fileNew">
+
+                                    <span class="label_w_key">New File</span>
+
+                                    <span class="label_key">Ctrl-N</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="newFromTemplate">
+
+                                    <span class="label_w_key">New From Template</span>
+
+                                    <span class="label_key">Alt-N</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="newFolder">
+
+                                    <span class="label_w_key">New Folder</span>
+
+                                    <span class="label_key">Ctrl-Shift-N</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="navsep"><span></span></li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="fileOpen">
+
+                                    <span class="label_w_key">Open</span>
+
+                                    <span class="label_key">Ctrl-E</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+
+
+                            <li class="child">
+
+                                <a href="#" data-action="saveFile">
+
+                                    <span class="label_w_key">Save</span>
+
+                                    <span class="label_key">Ctrl-S</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="saveAs">
+
+                                    <span class="label_w_key">Save As...</span>
+
+                                    <span class="label_key">Ctrl-Shift-S</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="saveAll">
+
+                                    <span class="label_wo_key">Save All</span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="navsep"><span></span></li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="closeFile">
+
+                                    <span class="label_w_key">Close File</span>
+
+                                    <span class="label_key">Alt-W</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="closeAllFiles">
+
+                                    <span class="label_w_key">Close All Files</span>
+
+                                    <span class="label_key">Alt-Shift-W</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="navsep"><span></span></li>
+
+                            <li class="child last">
+
+                                <a href="#">
+
+                                    <span class="label_wo_key">Quit</span>
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                    <li class="parent">
+
+                        <a href="#" class="parent link">
+
+                            <span>Edit</span>
+
+                        </a>
+
+                        <ul class="sitenavdropdown primary dropdownedit">
+
+                            <li class="child first">
+
+                                <a href="#" data-action="undoAction">
+
+                                    <span class="label_w_key">Undo</span>
+
+                                    <span class="label_key">Ctrl-Z</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="redoAction">
+
+                                    <span class="label_w_key">Redo</span>
+
+                                    <span class="label_key">Ctrl-Y</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="navsep"><span></span></li>
+
+                            <li class="child" data-action="cutAction">
+
+                                <a href="#">
+
+                                    <span class="label_w_key">Cut</span>
+
+                                    <span class="label_key">Ctrl-X</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="copyAction">
+
+                                    <span class="label_w_key">Copy</span>
+
+                                    <span class="label_key">Ctrl-C</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child">
+
+                                <a href="#" data-action="pasteAction">
+
+                                    <span class="label_w_key">Paste</span>
+
+                                    <span class="label_key">Ctrl-V</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+
+
+
+
+                            <li class="navsep"><span></span></li>
+
+                            <li class="child last">
+
+                                <a href="#" class="link" data-action="showAutocomplete">
+
+                                    <span class="label_w_key">Show Autocomplete</span>
+
+                                    <span class="label_key">Ctrl-Space</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+
+                    <li class="parent">
+
+                        <a href="#" class="parent link">
+
+                            <span>Tools</span>
+
+                        </a>
+
+                        <ul class="sitenavdropdown primary dropdowntools">
+
+                            <li class="child first">
+
+                                <a href="#" data-action="beautifulSelection">
+
+                                    <span class="label_w_key">Package Manager</span>
+
+                                    <span class="label_key">Shift-Ctrl-B</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+                            <li class="child last">
+
+                                <a href="#" data-action="stripWhitespace">
+
+                                    <span class="label_wo_key">Git Bash</span>
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+                    <li class="parent">
+
+                        <a href="#" class="parent link">
+
+                            <span>Debug</span>
+
+                        </a>
+
+                        <ul class="sitenavdropdown primary dropdowntools">
+
+                            <li class="child first">
+
+                                <a href="#" data-action="CleanAndRebuild">
+
+                                    <span class="label_w_key">Clean & Rebuild</span>
+
+                                    <span class="label_key">Shift-Ctrl-B</span>
+
+                                    <span class="clear"></span>
+
+                                </a>
+
+                            </li>
+
+
+                        </ul>
+
+                    </li>
+                    <li class="parent last">
+
+                        <a href="#" class="parent link" data-action="fileOutputPreview">
+
+                            <span>Preview</span>
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+                <div class="clear"></div>
+
+            </div>
+
+            <div class="clear"></div>
+
+        </div>
+
+        <div id="filemanager" class="filemanager_holder ui-layout-west">
+
+            <div class="filemanager_inside">
+
+                <div class="filemanager_toolbar">
+
+                    <div class="clear"></div>
+
+                </div>
+
+                <div class="filemanager_tooltitle">
+
+                    File Manager
+
+                    <div class="clear"></div>
+
+                </div>
+
+                <div class="filemanager_titlesep"><span></span></div>
+
+                <div id="filetree" class="filemanager_main">
+                    <div class="clear"></div>
+                </div>
+
+                <div class="clear"></div>
+
+            </div>
+
+            <div class="clear"></div>
+
+        </div>
+
+        <div id="mainContent" class="editor_holder ui-layout-center">
+
+            <div class="editor_inside">
+
+                <div class="editortabbar">
+
+                    <div class="newtabitem" data-action="fileNew"><span>+</span></div>
+
+                    <ul id="editorfilelist"></ul>
+
+                    <div class="clear"></div>
+
+                </div>
+
+                <div class="clear"></div>
+
+                <div class="editorsurround">
+
+                    <div class="welcomeinfo" style="width: 100%; height: 100%;">
+
+                        <div class="welcomeinfo_inside">
+
+                            <h3>Open a file to get started</h3>
+
+                            <div class="welcomesep">
+                                <div class="welcomesepinside"></div>
+                            </div>
+
+                            <div class="welcomeicon"></div>
+
+                            <div class="welcomesep">
+                                <div class="welcomesepinside"></div>
+                            </div>
+
+                            <div class="clear"></div>
+
+                        </div>
+
+                        <div class="clear"></div>
+
+                    </div>
+
+                    <div class="clear"></div>
+
+                </div>
+
+                <div class="clear"></div>
+
+            </div>
+
+            <div class="clear"></div>
+
+        </div>
+
+
+        <div class="footertoolbar ui-layout-south">
+
+            <div class="footertoolbar_inside">
+
+                <div class="clear"></div>
+
+            </div>
+
+            <div class="clear"></div>
+
+        </div>
+
+        <div class="clear"></div>
+
+    </div>
+
+    <input type="file" id="openner" style="height: 0; width: 0; opacity: 0; visibility: hidden;" />
+
+
+
+
+
+</body>
+
+</html>
+
+<script src="/lib/src/ace.js" data-ace-base="/lib/src/"></script>
+<script type="text/javascript">$(document).ready(function (e) {
+
+        $("body").sceditor({
+
+            configAce: {
+
+                setTheme: "twilight",
+
+                setMode: "javascript",
+
+                setTabSize: "4",
+
+                setUseWrapMode: "true",
+
+                fontSize: "13px",
+
+                setShowPrintMargin: "false",
+
+                setReadOnly: "false",
+
+                treeNavigation: '.sitenavdropdown',
+
+                autoSetMode: true,
+
+                tabListUl: "#editorfilelist"
+
+            },
+
+            configTree: {
+
+                treeRootElement: "#filetree",
+
+                root: "./wwwroot/workspace/themes/",
+
+                baseUrl: "/admin/seaport-cargo/themes.html",
+
+                script: '/admin/ajax/file-tree.html',
+
+                xpandSpeed: 300,
+
+                collapseSpeed: 300,
+
+                multiFolder: true
+
+            }
+
+        });
+
+
+    });</script>

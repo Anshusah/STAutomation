@@ -1,0 +1,88 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Cicero.Data.Entities
+@inject Utils _Utils
+@inject IUserService UserService
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    string userImage = await UserService.GetDefaultOrFirstImagesByUserId(UserService.getLoggedInUserId(), "");
+
+}
+
+<div class="navigation-container">
+    <aside class="viewport-nav">
+        <div class="viewport-user-profile">
+            <img class="rounded-circle" width="68" height="68" src="@("/uploads/" + userImage)" alt="">
+            <h6 class="m-0">@await UserService.GetUserFullName()</h6>
+            <small class="text-muted">@UserManager.GetUserName(User)</small>
+        </div>
+        <div class="viewport-menu">
+            <nav class="menu-nav">
+                <ul class="menu-list list-unstyled">
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/user/dashboard.html")" class="menu-link">
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/user@_Utils.GetTenantForUrl(false)/profile.html" class="menu-link">
+                            <span>My Account</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Policy</span>
+                            <span class="badge badge-primary badge-pill">1</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Document</span>
+                            <span class="badge badge-primary badge-pill">4</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Report</span>
+                            <span class="badge badge-primary badge-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Image</span>
+                            <span class="badge badge-primary badge-pill">10</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Calendar</span>
+                        </a>
+                    </li>
+                    <li class="nav-separator"></li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span>Need Help?</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="viewport-footer">
+            Copyright &copy; @DateTime.Now.Year Cicero.
+            All rights reserved.<a href="#">Privacy, Terms & more.</a>
+        </div>
+    </aside>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.viewport-footer a').click(function(e){
+            e.preventDefault();
+        });
+    });
+</script>

@@ -1,0 +1,13 @@
+html {
+    font-size: 14px;
+    min-height: 100%;
+    position: relative;
+}
+html, body {
+    height: 100%;
+    width: 100%;
+}
+body {
+    display: flex;
+    overflow: hidden;
+}

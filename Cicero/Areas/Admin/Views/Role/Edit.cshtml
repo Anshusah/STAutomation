@@ -1,0 +1,548 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model RoleViewModel
+@inject Permission Permission
+@inject Utils utils
+
+@{
+
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Role";
+    var cases = (List<string>
+    )ViewBag.cases;
+
+    }
+
+    <div class="page-wrapper">
+        <div class="page-header">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/roles.html")">Roles</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Role</li>
+                </ol>
+            </nav>
+            <div class="page-header__main">
+                <h3 class="page-title">Manage Roles</h3>
+                @if (Permission.Can(UserCan.Create_Role))
+                {
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/role/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-fill"></i><span class="btn__label">Create New</span></a>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="page-form-container">
+                <form action="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/role/"+Model.Id+"/edit.html")" method="post" class="page-container grid-horizontal-viewport">
+                    <div class="page-aside">
+                        <div class="aside-wrapper">
+                            <div class="aside-header">
+                                <h5>Role-Based Administration</h5>
+                                <p>
+                                    A person's role in your organization defines their level of access to your organization,
+                                    its settings, and your data. Roles allow the grouping of users into structured units,
+                                    such as managers, sales staff, anonymous users, and so on. This makes it easier to organize
+                                    security access because you can use a single role to assign security access rights to multiple users.
+                                    Roles give you the flexibility to change permissions and to add or remove users without having to make
+                                    changes to the whole configuration settings.
+                                </p>
+                            </div>
+                            <div class="aside-body">
+                                <div class="form-group">
+                                    <label>Status</label><br />
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        @Html.RadioButtonFor(model => model.Status, 1, new { @id = "enable", @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="enable">Active</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        @Html.RadioButtonFor(model => model.Status, 0, new { @id = "disable", @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="disable">Inactive</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Created</label>
+                                    <input type="text" value="@Model.CreatedAt" name="CreatedAt" id="CreatedAt" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Last updated</label>
+                                    <input type="text" value="@Model.UpdatedAt" name="UpdatedAt" id="UpdatedAt" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-body">
+                        <div class="form-wrapper">
+                            @Html.AntiForgeryToken()
+                            <div class="status"></div>
+                            <input type="hidden" name="Id" value="@Model.Id" />
+                            <div asp-validation-summary="All" role="alert"></div>
+                            <div class="form-body">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.DisplayName, htmlAttributes: new { @class = "required" })
+                                    @Html.EditorFor(model => model.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(m => m.DisplayName, "", new { @class = "text-danger" })
+                                    <small class="form-text text-muted color-help"></small>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="OrganizationName">Organization Name</label>
+                                            <input type="text" asp-for="OrganizationName" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label asp-for="WebSide"></label>
+                                            <select asp-for="WebSide" class="custom-select">
+                                                <option value="">Select Category</option>
+                                                <option value="frontend">Frontend</option>
+                                                <option value="backend">Backend</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="manage-permission">
+                                    <div class="manage-permission__header">
+                                        <div class="manage-permission__header-main">
+                                            <h4 class="manage-permission__title per-options">Manage Permissions</h4>
+                                            <div class="manage-permission__dropdown per-options">
+                                                <div class="dropdown">
+                                                    <a href="#" class="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButtonForm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Permission</a>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonForm" id="newCases">
+                                                        @if (cases.Count > 0)
+                                                        {
+                                                            @foreach (var item in cases)
+                                                            {
+                                                                string name = item.Split(",")[0];
+                                                                string isCreated = item.Split(",")[1];
+
+                                                                if (isCreated.ToLower() == "true")
+                                                                {
+                                                                    <span class="dropdown-item disabled">@name</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="dropdown-item" onclick="createPermissionGroup('@item')">@name</span>
+                                                                }
+
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="dropdown-item disabled">No Data</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="manage-permission__toolbar per-options">
+                                            <div class="dropdown">
+                                                <a href="#" class="btn btn-icon" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="ri-more-2-fill"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" id="dropdownMenuButtonOpt">
+                                                    <span class="dropdown-item" onclick="showOpt('true')">Edit Permissions</span>
+                                                    <span class="dropdown-item" onclick="clearPermission()">Clear all Permissions</span>
+                                                    <h6 class="dropdown-header mt-3">SHOW/HIDE</h6>
+                                                    <div class="dropdown-divider"></div>
+                                                    <div class="dropdown-item-text mt-3">
+                                                        <label for="customSwitchExpanAllPermission" class="text-truncate">Expand All Permissions</label>
+                                                        <div class="custom-control custom-switch" id="expandAllPermission">
+                                                            <input type="checkbox" class="custom-control-input" id="customSwitchExpanAllPermission" data-switch="false">
+                                                            <label class="custom-control-label" for="customSwitchExpanAllPermission"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="fet-opt" class="manage-permission__actions">
+                                        <div class="manage-permission__action-select">
+                                            <!-- <input type="checkbox" name="feature-all" class="group-select-feature" id="feature-all" /> Select All -->
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="feature-all" class="custom-control-input group-select-feature" id="feature-all">
+                                                <label class="custom-control-label" for="feature-all">Select All</label>
+                                            </div>
+                                        </div>
+                                        <div class="manage-permission__action-buttons">
+                                            <button class="btn btn-danger" type="button" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delPermissionGroups()},OnCancelled:function(){this.close();}}'><i class="fa fas-trash"></i> Delete Selected</button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="showOpt('false')">Cancel</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion group-per permission-role-card" id="accordion">
+                                        @foreach (var permissionGroup in Model.PermissionListGroup)
+                                        {
+
+                                            int count = 0;
+                                            foreach (var permission in permissionGroup.Permission)
+                                            {
+
+                                                string value = permission.Id + "," + permissionGroup.Id;
+
+                                                var SelectedId1 = Model.PermissionListSelected;
+
+                                                if (SelectedId1 != null && SelectedId1.Contains(value))
+                                                {
+                                                    count++;
+                                                }
+                                            }
+
+                                            <div class="card" id="panel1">
+                                                <div class="card-header">
+                                                    <div class="card-selector">
+                                                        <div class="group-select">
+                                                            @if (permissionGroup.TenantId != 0)
+                                                            {
+                                                                <!-- <input type="checkbox" name="delPermisisonGroup" class="group-selectall" value="@permissionGroup.Id" id="all_@permissionGroup.Id"> -->
+                                                                <div class="custom-control custom-checkbox custom-control-inline mr-0">
+                                                                    <input type="checkbox" name="delPermisisonGroup" class="group-selectall custom-control-input" value="@permissionGroup.Id" id="all_@permissionGroup.Id">
+                                                                    <label class="custom-control-label" for="all_@permissionGroup.Id"></label>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" name="" class="group-selectallhide" id="">
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-header-wrapper collapsed card-toggle" data-toggle="collapse" data-target="#collapse_@permissionGroup.Id"
+                                                         href="#collapse_@permissionGroup.Id" aria-expanded="false">
+                                                        <div class="card-title-wrapper perName">
+                                                            <h5 class="card-title">
+                                                                <a data-toggle="collapse" data-target="#collapse_@permissionGroup.Id"
+                                                                   href="#collapse_@permissionGroup.Id" class="per-title">
+                                                                    @permissionGroup.Name
+                                                                </a>
+                                                            </h5>
+                                                            @if (count == 0)
+                                                            {
+                                                                <small class="text-muted per-count" data-toggle="collapse" id="count_@permissionGroup.Id" data-target="#collapse_@permissionGroup.Id"
+                                                                       href="#collapse_@permissionGroup.Id">No Permission Selected</small>
+                                                            }
+                                                            else
+                                                            {
+                                                                <small class="text-muted per-count" data-toggle="collapse" id="count_@permissionGroup.Id" data-target="#collapse_@permissionGroup.Id"
+                                                                       href="#collapse_@permissionGroup.Id">@count Permission Selected</small>
+                                                                }
+                                                        </div>
+                                                        <div class="accordion-control">
+                                                            <div class="accordion-toggle">
+                                                                <i class="accordion-icon accordion-icon--arrow"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        @if (permissionGroup.TenantId != 0)
+                                                        {
+                                                            <button type="button" class="btn btn-icon del" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){deletePermissionGroup(@permissionGroup.Id)},OnCancelled:function(){this.close();}}' data-toggle="tooltip" data-placement="top" title="Remove">
+                                                                <i class="card-icon card-icon--remove"></i><span class="sr-only">Remove</span>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div id="collapse_@permissionGroup.Id" class="collapse in">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            @foreach (var permission in permissionGroup.Permission)
+                                                            {
+
+                                                                string value = permission.Id + "," + permissionGroup.Id;
+                                                                var IsChecked1 = "";
+                                                                var SelectedId1 = Model.PermissionListSelected;
+
+                                                                @if (SelectedId1 != null && SelectedId1.Contains(value))
+                                                                {
+                                                                    IsChecked1 = "checked='checked'";
+                                                                }
+                                                                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 permission">
+                                                                    <!-- <input type="checkbox" @IsChecked1 name="PermissionListSelected[]" value="@permission.Id,@permissionGroup.Id" class="per_@permissionGroup.Id" onclick="selectPer(@permissionGroup.Id,@permissionGroup.Permission.Count())" /> @permission.Name -->
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" @IsChecked1 name="PermissionListSelected[]" value="@permission.Id,@permissionGroup.Id" class="custom-control-input per_@permissionGroup.Id" onclick="selectPer(@permissionGroup.Id,@permissionGroup.Permission.Count())" id="@permission.Id-@permissionGroup.Id">
+                                                                        <label class="custom-control-label" for="@permission.Id-@permissionGroup.Id">@permission.Name</label>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        }
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-footer">
+                                @if ((Model.Id == "0" && Permission.Can(UserCan.Create_Role)) || (Model.Id != "0" && Permission.Can(UserCan.Update_Role)))
+                                {
+                                    <button type="submit" class="btn btn-primary">Update Changes</button>
+                                }
+                                <a class="btn btn-outline-secondary btn-back" href="@Url.Content("/admin" + utils.GetTenantForUrl(false) + "/roles.html")">Go back</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var fetoptionShow = "false";
+    $(document).ready(function () {
+
+        if($(this).attr("aria-expanded") == "true") {
+            $(".card-toggle").closest(".card-header").addClass("selected");
+        } else {
+            $(".card-toggle").closest(".card-header").removeClass("selected");
+        }
+    });
+    $(".card-toggle").click(function(){
+        if($(this).attr("aria-expanded") == "true") {
+            $(this).closest(".card-header").removeClass("selected");
+        } else {
+            $(this).closest(".card-header").addClass("selected");
+        }
+    });
+    $(".group-selectall").click(function (e) {
+        // Do something
+        e.stopPropagation();
+    });
+
+    $(document).on('click', '.per-options .dropdown-menu', function (e) {
+        e.stopPropagation();
+    });
+
+
+    var groupCheckAllSelect = function () {
+        $(".group-selectall").click(function (e) {
+            // Do something
+            e.stopPropagation();
+        });
+        $("#feature-all").on("click", function () {
+            if ($(this).is(':checked')) {
+                $('.group-selectall').prop("checked", this.checked);
+                $('.group-selectall').parent().closest(".card-header").addClass("highlighted");
+            }
+            else {
+                $('.group-selectall').prop("checked", this.checked);
+                $('.group-selectall').parent().closest(".card-header").removeClass("highlighted");
+            }
+        });
+
+        $(".group-selectall").on('click', function () {
+            var total = $(".group-selectall").length;
+            var count = $(".group-selectall:checked").length;
+            if (count != total) {
+                $("#feature-all").prop("checked", false);
+                 //$(this).closest(".panel-title").removeClass("highlighted");
+            }
+            else {
+                $("#feature-all").prop("checked", true);
+                //$(this).closest(".panel-title").addClass("highlighted");
+            }
+        });
+        $(".card-selector .custom-control-label").on('click', function () {
+            var total = $(".group-selectall").length;
+            var count = $(".group-selectall:checked").length;
+            if (count != total) {
+                $("#feature-all").prop("checked", false);
+                 $(this).parent().closest(".card-header").addClass("highlighted");
+            }
+            else {
+                $("#feature-all").prop("checked", true);
+                $(this).parent().closest(".card-header").removeClass("highlighted");
+            }
+        });
+    }
+
+
+    $(function () {
+        groupCheckAllSelect();
+        expandAll();
+    });
+
+    var expandAll = function () {
+        $("#expandAllPermission").on("click", function (e) {
+          //  e.stopPropagation();
+
+            if ($("#customSwitchExpanAllPermission").attr("data-switch") == "true")
+            {
+                $("#customSwitchExpanAllPermission").attr("data-switch","false");
+                $(".card-toggle[aria-expanded=true]").click();
+            }
+            else {
+                $("#customSwitchExpanAllPermission").attr("data-switch", "true");
+                $(".card-toggle[aria-expanded=false]").click();
+
+            }
+    });
+    }
+
+    function toggle(value) {
+
+        return (!value);
+    }
+    function getCases() {
+        $.ajax({
+            type: "GET",
+            url: "/admin/role/getcases",
+            dataType: "json",
+            success: function (response) {
+                $("#newCases").html("");
+                if (response.length > 0) {
+                    for (i = 0; i < response.length; i++) {
+                        var name = response[i].split(",")[0];
+                        var isCreated = response[i].split(",")[1];
+
+                        if (isCreated.toLowerCase() == "true") {
+                            $("#newCases").append("<span class='dropdown-item disabled'>" + name + "</span>");
+                        }
+                        else {
+                            var func = "createPermissionGroup('" + response[i] + "')";
+                            $("#newCases").append($('<span>').attr('class', 'dropdown-item').attr('onclick', func).text(name));
+                        }
+                    }
+                }
+                else {
+                    $("#newCases").append("<span class='dropdown-item disabled'>No Data</span>");
+                }
+
+            }
+        });
+    }
+
+
+    function showOpt(show) {
+
+        fetoptionShow = show;
+        if (show == "true") {
+  $(".dropdown-menu").removeClass('show');
+            $("#fet-opt").addClass("show");
+            //$(".group-selectall").attr("style", "display: block");
+            $(".group-selectall").parent().parent().parent().addClass("show");
+            //$(".group-selectallhide").attr("style", "display:block;visibility:hidden");
+            //$(".group-selectallhide").parent().parent().removeClass("d-none");
+        }
+        else {
+            $("#fet-opt").removeClass('show');
+            //$(".group-selectall").attr("style", "display:none;");
+            $(".group-selectall").parent().parent().parent().removeClass("show");
+            //$(".group-selectallhide").removeAttr("style");
+            //$(".group-selectallhide").parent().parent().addClass("d-none");
+        }
+
+    }
+    function selectPer(id, total) {
+
+        // console.log($(".per_" + id + ":checked").length);
+        var count = $(".per_" + id + ":checked").length;
+        if (count != 0) {
+            $("#count_" + id).html(count + " Permission Selected");
+        }
+        else {
+            $("#count_" + id).html("No Permission Selected");
+        }
+        //if (count == parseInt(total)) {
+        //    $("#all_" + id).prop("checked", "checked");
+        //} else {
+        //    $("#all_" + id).prop("checked", false);
+        //}
+
+    }
+    function createPermissionGroup(name1) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/role/createpermissiongroup",
+            dataType: "json",
+            data: { name: name1 },
+            success: function (response) {
+                if (response != "false") {
+                    var text = '{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){deletePermissionGroup(' + response.id + ')},OnCancelled:function(){this.close();}}'
+                    $("#accordion").append("<div class='card' id='panel_" + response.id + "'>"
+                        + "<div class='card-header'>"
+                        + "<div class='card-selector'>"
+                        + "<div class='group-select'>"
+                        + "<div class='custom-control custom-checkbox custom-control-inline mr-0'>"
+                        + "<input type='checkbox' name='delPermissionGroup' class='group-selectall custom-control-input' id='all_" + response.id + "' value='" + response.id + "'/><label class='custom-control-label' for='all_"+ response.id +"'></label></div>"
+                        + "</div>" //.group-selector
+                        + "</div>" //.card-selector
+                        + "<div class='card-header-wrapper card-toggle' id='panel_" + response.id+"' data-toggle='collapse' data-target='#collapse_" + response.id + "' href = '#collapse_" + response.id + "' aria-expanded='true' > "
+                        + "<div class='card-title-wrapper perName'><h5 class='card-title'>"
+                        + "<a data-toggle='collapse' data-target='#collapse_" + response.id + "' href='#collapse_" + response.id + "' class='per-title'>" + response.name + "</a></h5>"
+                        + "<small class='text-muted per-count' data-toggle='collapse' id='count_" + response.id + "' data-target='#collapse_" + response.id + "' href='#collapse_" + response.id + "'>No Permission Selected</small></div>"
+                        + "<div class='accordion-control'>"
+                        + "<div class='accordion-toggle'><i class='accordion-icon accordion-icon--arrow'></i></div>"
+                        + "</div>"
+                        + "</div>"
+                        + "<div class='card-action'>"
+                        + "<div class='btn btn-icon del' data-confirm='" + text + "' data-toggle='tooltip' data-placement='top' title='Remove'><i class='card-icon card-icon--remove'></i></div>"
+                        + "</div>" //.card-action
+                        + "</div>"
+                        + "<div id='collapse_" + response.id + "' class='collapse in show'>"
+                        + "<div class='card-body p-4 border-top'><div class='row' id='panelbody_" + response.id + "'></div></div></div></div>"
+                    );
+
+                    for (i = 0; i < response.permission.length; i++) {
+                        var value = response.permission[i].id + "," + response.id;
+                        var labelValue = response.permission[i].id + "-" + response.id; // For HTML label purpose
+                        $("#panelbody_" + response.id).append("<div class='col-lg-3 col-md-6 col-sm-6 col-xs-6 permission'>"
+                            + "<div class='custom-control custom-checkbox'><input type='checkbox' name='PermissionListSelected[]' value='" + value + "' class='custom-control-input per_" + response.id + "' onclick='selectPer(" + response.id + "," + response.permission.length + ")' id='"+ labelValue +"'><label class='custom-control-label' for='"+ labelValue +"'>"+ response.permission[i].name +"</label></div>"
+                            + "</div>"
+                        );
+                    }
+                    $("#panel_" + response.id).focus();
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#panel_" + response.id).offset().top
+                    }, 1000);
+                    groupCheckAllSelect();
+                    showOpt(fetoptionShow); //for select-box toggle if true
+                    getCases();
+                }
+            }
+        });
+
+    }
+    function delPermissionGroups() {
+        var all = [];
+        $.each($(".group-selectall:checked"), function () {
+            all.push($(this).val());
+        });
+        $.ajax({
+            type: "POST",
+            url: "/admin/role/deletepermissiongroup",
+            dataType: "json",
+            data: { permissionGroupIds: all },
+            success: function (response) {
+                location.reload();
+            }
+        });
+    }
+    function deletePermissionGroup(Id) {
+        var all = [];
+        all.push(Id);
+        $.ajax({
+            type: "POST",
+            url: "/admin/role/deletepermissiongroup",
+            dataType: "json",
+            data: { permissionGroupIds: all },
+            success: function (response) {
+                location.reload();
+            }
+        });
+    }
+
+    function clearPermission() {
+        $("input[class^='custom-control-input per_']").prop("checked", false);
+        $(".per-count").html("No Permission Selected");
+        $(".dropdown-menu").removeClass('show')
+    }
+    </script>

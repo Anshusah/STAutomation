@@ -1,0 +1,905 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model Cicero.Service.Models.JazzCash.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+
+<style>
+    .disable {
+        pointer-events: none;
+    }
+</style>
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+
+    <header class="header">
+
+        <div class="container">
+            <nav class="navbar navbar-expand-md py-3 px-4 justify-content-between">
+                <h2 class="sr-only">Main Navigation</h2>
+                <a class="st-logo" href="#"><img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" class="img img-responsive" alt="Simple Transfer - Login" /></a>
+                <ul class="navbar-nav nav justify-content-end">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Contact Us <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Faq's</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="main-content">
+        <div class="container">
+            <div class="form-layout__wrapper py-5">
+                <h2 class="title mx-auto">Sign Up</h2>
+                <div class="form-layout__content">
+                    <div class="form-layout__tabs form-layout__tabs-custom nav " id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link active" id="v-pills-getstarted-tab" data-toggle="pill" href="#form-getStarted" role="tab" aria-controls="v-pills-getStarted" aria-selected="true">Get Started</a>
+                        <a class="nav-link disable" id="v-pills-contact-tab" data-toggle="pill" href="#form-contactDetails" role="tab" aria-controls="v-pills-contactDetails" aria-selected="false">Contact Detail</a>
+                        <a class="nav-link disable" id="v-pills-security-tab" data-toggle="pill" href="#form-securityDetail" role="tab" aria-controls="v-pills-securityDetail" aria-selected="false">Security Detail</a>
+                        <a class="nav-link disable" id="v-pills-end-tab" data-toggle="pill" href="#form-almostDone" role="tab" aria-controls="v-pills-almostDone" aria-selected="false">Almost Done</a>
+                    </div>
+
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="form-getStarted" role="tabpanel" aria-labelledby="form-getStarted-tab">
+                            <p class="mb-3">Please  fill in the fields in English characters only</p>
+                            <div class="form-group">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input asp-for="PayeeType" type="radio" id="customRadioInline1" name="customRadioInline1" value="individual" class="custom-control-input" checked>
+                                    <label class="custom-control-label" for="customRadioInline1">Individual</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input asp-for="PayeeType" type="radio" id="customRadioInline2" name="customRadioInline1" value="company" class="custom-control-input">
+                                    <label class="custom-control-label" for="customRadioInline2">Company</label>
+                                </div>
+                            </div>
+                            <form action="/" method="post" id="form-getStarted-individual">
+                                <div class="form-group">
+                                    <input asp-for="FirstName" type="text" class="form-control" id="firstName-individual" value="" placeholder="First Name" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="LastName" type="text" class="form-control" id="lastName-individual" value="" placeholder="Last Name" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Email" type="email" id="email-individual" value="" class="form-control" placeholder="Email Address">
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="ReEmail" type="email" id="reEmail-individual" value="" class="form-control" placeholder="Re-enter Email Address">
+                                    <span asp-validation-for="ReEmail" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="DOB" type="date" id="dob-individual" value="" class="form-control" placeholder="Date of Birth">
+                                    <span asp-validation-for="DOB" class="text-danger"></span>
+                                </div>
+                                <p class="my-4">
+                                    By clicking "NEXT", you confirm that you have read and understood the
+                                    Simpletransfer <a href="#">Privacy & Cookies Policy</a>, and agree to its terms.
+                                </p>
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Next <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+                            </form>
+
+                            <form action="/" method="post" id="form-getStarted-company" class="companyForm" hidden>
+                                @*<p class="mb-3">Please  fill in the fields in English characters only</p>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="customRadioInline3" name="customRadioInline2" value="individual" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline3">Individual</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="customRadioInline4" name="customRadioInline2" value="company" class="custom-control-input" checked>
+                                            <label class="custom-control-label" for="customRadioInline4">Company</label>
+                                        </div>
+                                    </div>*@
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="legalCompanyName" id="legalCompanyName-company" value="" placeholder="Legal Company Name" />
+                                </div>
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Type of Business Enitity" id="type-company">
+                                        <option>Type of Business Enitity</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="companyWebsite" id="companyWebsite-company" value="" placeholder="Company Website URL (Optional)" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" name="firstNameRepresentative" id="firstName-company" value="" class="form-control" placeholder="First Name of Authorized Representative">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" name="lastNameRepresentative" id="lastName-company" value="" class="form-control" placeholder="Last Name of Authorized Representative">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="dateOfEstablishment" id="dateOfEstablishment-company" value="" class="form-control form-field date" placeholder="Date of Establishment">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="email" name="email" id="email-company" value="" class="form-control" placeholder="Email Address">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" name="Re-enter email" id="reEmail-company" value="" class="form-control" placeholder="Re-enter Email Address">
+                                </div>
+                                <p class="my-4">
+                                    By clicking "NEXT", you confirm that you have read and understood the
+                                    Simpletransfer <a href="#">Privacy & Cookies Policy</a>, and agree to its terms.
+                                </p>
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Next <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="form-contactDetails" role="tabpanel" aria-labelledby="form-contactDetails-tab">
+                            <form action="/" method="post" id="form-contactDetails-individual">
+                                <p class="mb-3">Please  fill in the fields in English characters only</p>
+                                <div class="form-group">
+                                    <select asp-for="CountryCode" class="custom-select" id="country-individual">
+                                        <option value="" selected>Select Country</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                    <span asp-validation-for="CountryCode" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Address" type="text" class="form-control" id="addressLine1-individual" value="" placeholder="Address Line-1" />
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Address2" type="text" class="form-control" name="addressLine2" id="addressLine2-individual" value="" placeholder="Address Line-2 (Optional)" />
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="City" type="text" id="cityTown-individual" value="" class="form-control" placeholder="City/Town">
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="PostCode" type="text" id="postalCode-individual" value="" class="form-control" placeholder="Postal Code">
+                                    <span asp-validation-for="PostCode" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="MobileNumber" type="text" id="number-individual" value="" class="form-control form-field " placeholder="+92 3158157497">
+                                    <span id="spnCodeStatus"></span>
+                                    <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                                </div>
+                                <p class="mb-3" id="sendOtpParagraph">
+                                    Click <a href="javascript::" id="btnSendOtp">Send Code</a> and enter the verification code we send to your
+                                    mobile number.
+                                </p>
+                                <div class="form-group" id="verifyOtp-div" style="display: none;">
+                                    <div class="form-control from-control-complex">
+                                        <input type="text" name="verificationCode" id="verificationCode-individual" value="" class="border-0" placeholder="Verification Code">
+                                        <span id="btnVerifyOtp" class="text-primary btn">Verify Code</span>
+                                        <span id="spnCodeValidate"></span>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Next <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+                            </form>
+
+                            <form action="/" method="post" id="form-contactDetails-company" class="companyForm" hidden>
+                                <p class="mb-3">Please  fill in the fields in English characters only</p>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="zamirTelecom" value="" placeholder="Zamir Telecom" />
+                                </div>
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Public Limited Company">
+                                        <option selected>Public Limited Company</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="simpletransfer" value="" placeholder="simpletransfer.com" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="" value="" placeholder="Naufal" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="" value="" placeholder="Zamir" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" name="" value="" placeholder="zamir@gmail.com" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="date of birth" value="" class="form-control form-field date" placeholder="Date of Birth">
+                                </div>
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Next <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="form-securityDetail" role="tabpanel" aria-labelledby="form-securityDetail-tab">
+                            <form action="/" method="post" id="form-securityDetail-individual">
+                                <p class="mb-3"> Please  fill in the fields in English characters only. </p>
+                                <div class="form-group">
+                                    <input asp-for="Username" type="email" class="form-control" id="username-individual" value="" placeholder="adilahmed@appiskey.com" />
+                                    <span asp-validation-for="Username" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Password" type="password" class="form-control" id="password-individual" value="" placeholder="Enter Password" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control" id="rePassword-individual" value="" placeholder="Re-Enter Password" />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <select asp-for="IssuingCountry" class="custom-select" id="issuingCountry-individual" placeholder="Issuing Country">
+                                        <option value="" selected>Issuing Country</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                    <span asp-validation-for="IssuingCountry" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <select asp-for="IdType" class="custom-select" id="idType-individual" placeholder="ID Type">
+                                        <option value="" selected>ID Type</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                    <span asp-validation-for="IdType" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="IdNumber" type="text" value="" class="form-control form-field " id="idNumber-individual" placeholder="ID Number">
+                                    <span asp-validation-for="IdNumber" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <select asp-for="SecurityQuestionId" class="custom-select" placeholder="Security Question" id="securityQuestion-individual">
+                                        <option value="" selected>Security Question</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                    <span asp-validation-for="SecurityQuestionId" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Answer" type="text" class="form-control" id="securityAnswer-individual" value="" placeholder="Answer" />
+                                    <span asp-validation-for="Answer" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="recaptchaCode" value="" placeholder="Please enter the below code" />
+                                </div>
+
+
+
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Next <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+
+                                <p>By clicking  you confirm that you have read and understood the Simpletransfer  and agree to its terms.</p>
+
+
+
+
+                            </form>
+
+                            <form action="/" method="post" id="form-securityDetail-company" class="companyForm" hidden>
+                                <p class="mb-3"> Please  fill in the fields in English characters only. </p>
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Select Country">
+                                        <option selected>Select Country</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="emailSecurity" value="" placeholder="Business Address" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="city-town" value="" placeholder="City/Town" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="zipcode" value="" placeholder="Zip Code" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" name="name" value="" id="checkboxDifferentAddress" />
+                                        <label class="custom-control-label" for="checkboxDifferentAddress">My company is incorporated in a different address</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Select Country">
+                                        <option selected>Select Country</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="emailSecurity" value="" placeholder="Business Address" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="city-town" value="" placeholder="City/Town" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="zipcode" value="" placeholder="Zip Code" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="number" value="" class="form-control form-field " placeholder="+92 3158157497">
+                                </div>
+
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Security Question">
+                                        <option selected>Security Question</option>
+                                        <option value="value">text</option>
+                                    </select>
+                                </div>
+                                <p>
+                                    Click <a href="">Send Code</a> and enter the verification code we send to your
+                                    mobile number.
+                                </p>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="recaptchaCode" value="" placeholder="Verification Code" />
+                                    <span>Send Code</span>
+                                </div>
+
+
+
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Next <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+
+                                <p>By clicking  you confirm that you have read and understood the Simpletransfer  and agree to its terms.</p>
+
+
+
+
+                            </form>
+
+
+                        </div>
+
+                        <div class="tab-pane fade" id="form-almostDone" role="tabpanel" aria-labelledby="form-almostDone-tab">
+                            <form action="/" method="post" id="form-almostDone-individual">
+                                <p class="mb-3">
+                                    Please provide your bank details. This will let you receive funds to your bank
+                                    account. You'll later have the option to order a Simpletransfer Prepaid Card,
+                                    if eligible.<a href=""> Learn more</a>
+                                </p>
+                                @*<div class="form-group">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="radioIndividual" name="radioIndividual" class="custom-control-input">
+                                            <label class="custom-control-label" for="radioIndividual">Individual</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="radioCompany" name="radioCompany" class="custom-control-input">
+                                            <label class="custom-control-label" for="radioCompany">Company</label>
+                                        </div>
+                                    </div>*@
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Bank Country" id="bankCountry-individual" disabled>
+                                        <option>Bank Country</option>
+                                        <option selected value="PK">Pakistan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="Currency" id="currency-individual" value="PKR" placeholder="Currency" disabled />
+                                </div>
+                                @*<div class="form-group">
+                                        <select class="custom-select" placeholder="Bank Name">
+                                            <option selected>Bank Name</option>
+                                            <option value="value">text</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="accountName" value="" placeholder="Account Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" name="IBANNumber" value="" class="form-control" placeholder="IBAN Number">
+                                    </div>*@
+                                <div class="form-group">
+                                    <input asp-for="JazzCashAccount" type="text" id="jazzCashAccount-individual" value="" class="form-control jazzCashAccount" placeholder="Jazz Cash Account">
+                                    <span asp-validation-for="JazzCashAccount" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="termsAndConditions">
+                                        <label class="custom-control-label" for="termsAndConditions">I agreed to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy & Cookie Policy</a></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="pricingAndFees">
+                                        <label class="custom-control-label" for="pricingAndFees">I agree to the <a href="#">Pricing and Fees</a></label>
+                                    </div>
+                                </div>
+
+
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Submit <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+
+                            </form>
+
+                            <form action="/" method="post" id="form-almostDone-company" class="companyForm" hidden>
+                                <p class="mb-3">
+                                    Please provide your bank details. This will let you receive funds to your bank
+                                    account. You'll later have the option to order a Simpletransfer Prepaid Card,
+                                    if eligible.<a href=""> Learn more</a>
+                                </p>
+                                @*<div class="form-group">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="radioIndividual" name="radioIndividual" class="custom-control-input">
+                                            <label class="custom-control-label" for="radioIndividual">Individual</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="radioCompany" name="radioCompany" class="custom-control-input">
+                                            <label class="custom-control-label" for="radioCompany">Company</label>
+                                        </div>
+                                    </div>*@
+                                <div class="form-group">
+                                    <select class="custom-select" placeholder="Bank Country" id="bankCountry-company" disabled>
+                                        <option selected>Bank Country</option>
+                                        <option value="PK">Pakistan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="Currency" id="currency-company" value="PKR" placeholder="Currency" disabled />
+                                </div>
+
+                                @*<div class="form-group">
+                                        <select class="custom-select" placeholder="Bank Name">
+                                            <option selected>Bank Name</option>
+                                            <option value="value">text</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="accountName" value="" placeholder="Account Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" name="IBANNumber" value="" class="form-control" placeholder="IBAN Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" name="Re-enter email" value="" class="form-control jazzCashAccount" placeholder="Jazz Cash Account">
+                                    </div>*@
+
+                                <div class="form-group">
+                                    <input type="text" name="jassCashAccount" id="jazzCashAccount-company" value="" class="form-control jazzCashAccount" placeholder="Jazz Cash Account">
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="termsAndConditions">
+                                        <label class="custom-control-label" for="termsAndConditions">I agreed to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy & Cookie Policy</a></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="pricingAndFees">
+                                        <label class="custom-control-label" for="pricingAndFees">I agree to the <a href="#">Pricing and Fees</a></label>
+                                    </div>
+                                </div>
+
+
+                                <button type="button" class="btn btn-primary btn-next">
+                                    Submit <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                        <g id="arrow" transform="translate(-4.57)">
+                                            <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                                <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                                <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <div class="st__modal-confirm">
+                            <div class="icon-success mb-3"><div class="label-icon"><i class="ri-check-line ri-2x"></i></div></div>
+                            <h5 class="mb-3 title font-weight-light">
+                                Thank you! Your account registration
+                                is now complete!
+                            </h5>
+                            <p class="small">
+                                You need to verify your email by clicking the link send by us to the email provided.
+                            </p>
+                            <p class="small  mb-4">
+                                Please feel free to reach out to one of our friendly support representative on 0203 570  8090
+                                or email us at <strong>customersupport@simpletransfer.co.uk</strong>
+                            </p>
+                            <button onclick="window.location.href = '@Url.Content("/")'" class="btn btn-block btn-primary w-75 mx-auto">
+                                Home
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                    <g id="arrow" transform="translate(-4.57)">
+                                        <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                            <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                            <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="row copyright-section">
+                <div class=" mx-auto ">
+                    <small>&copy;Copyright  Fast Track Money Transfer Limited 2020</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+@section Scripts{}
+<script>
+    var data = {};
+    var isMobileNumberVerifed = false;
+    $('.btn-next').on("click", function (e) {
+        var which = $(e.currentTarget).parents('form').attr('id');
+        switch (which) {
+            case "form-getStarted-individual":
+                if ($("#form-getStarted-individual").valid()) {
+                    $('#v-pills-getstarted-tab').addClass("complete");
+                    $('#v-pills-contact-tab').removeClass("disable");
+                    $('#v-pills-contact-tab').trigger("click");
+                }
+                break;
+
+            case "form-contactDetails-individual":
+                if ($("#form-contactDetails-individual").valid()) {
+
+                    if (!isMobileNumberVerifed) {
+                        toastr.warning("Please Verify Your Mobile Number.");
+                        return false;
+                    }
+                    else {
+                        $("#btnVerifyOtp").trigger('click');
+                    }
+                    $('#v-pills-contact-tab').addClass("complete");
+                    $('#v-pills-security-tab').removeClass("disable");
+                    $('#v-pills-security-tab').trigger("click");
+                }
+                break;
+
+            case "form-securityDetail-individual":
+                if ($("#form-securityDetail-individual").valid()) {
+                    $('#v-pills-security-tab').addClass("complete");
+                    $('#v-pills-end-tab').removeClass("disable");
+                    $('#v-pills-end-tab').trigger("click");
+                }
+                break;
+
+            case "form-getStarted-company":
+                var legalCompanyName = $('#legalCompanyName-company').val();
+                var type = $('#type-company').val();
+                var companyWebsite = $('#companyWebsite-company').val();
+                var firstName = $('#firstName-company').val();
+                var lastName = $('#lastName-company').val();
+                var email = $('#email-company').val();
+                var reEmail = $('#reEmail-company').val();
+                var dateOfEstablishment = $('#dateOfEstablishment-individual').val();
+
+                data.CompanyName = legalCompanyName;
+                data.TypeOfBusinessEntity = type;
+                data.CompanyWebsite = companyWebsite;
+                data.FirstName = firstName;
+                data.LastName = lastName;
+                data.Email = email;
+                data.DOB = dateOfEstablishment;
+
+                $('#v-pills-getstarted-tab').addClass("complete");
+                $('#v-pills-contact-tab').removeClass("disable");
+                $('#v-pills-contact-tab').trigger("click");
+                break;
+
+            case "form-contactDetails-company":
+                var country = $('#country-individual').val();
+                var addressLine1 = $('#addressLine1-individual').val();
+                var addressLine2 = $('#addressLine2-individual').val();
+                var city = $('#cityTown-individual').val();
+                var postalCode = $('#postalCode-individual').val();
+                var number = $('#number-individual').val();
+
+                data.CountryCode = country;
+                data.Address = addressLine1;
+                data.Address2 = addressLine2;
+                data.City = city;
+                data.PostCode = postalCode;
+                data.MobileNumber = number;
+
+                $('#v-pills-contact-tab').addClass("complete");
+                $('#v-pills-security-tab').removeClass("disable");
+                $('#v-pills-security-tab').trigger("click");
+                break;
+
+            case "form-securityDetail-company":
+                $('#v-pills-security-tab').addClass("complete");
+                $('#v-pills-end-tab').removeClass("disable");
+                $('#v-pills-end-tab').trigger("click");
+                break;
+
+
+            case "form-almostDone-individual":
+                getDataForIndividual();
+
+                if ($("#form-almostDone-individual").valid()) {
+                    var result = submitForm().then(function (r) {
+                        debugger
+                        if (r) {
+                            $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+                        }
+                    });
+                }
+                break;
+
+            case "form-almostDone-company":
+                var payeeType = $('input[type=radio][name=customRadioInline1]').val();
+
+                var jazzCashAccount = $('#jazzCashAccount-company').val();
+
+                data.JazzCashAccount = jazzCashAccount;
+                data.PayeeType = (payeeType == "individual") ? 1 : 2;
+                var result = submitForm().then(function (r) {
+                    if (r) {
+                        $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                });
+                break;
+        }
+    });
+
+    $('input[type=radio][name=customRadioInline1]').change(function () {
+        $('#v-pills-getstarted-tab').removeClass("complete");
+        $('#v-pills-contact-tab').addClass("disable");
+        $('#v-pills-contact-tab').removeClass("complete");
+        $('#v-pills-security-tab').addClass("disable");
+        $('#v-pills-security-tab').removeClass("complete");
+        $('#v-pills-end-tab').addClass("disable");
+
+        if (this.value == 'individual') {
+            $('.companyForm').attr("hidden", "hidden");
+            $('form').not('.companyForm').removeAttr("hidden");
+        }
+        else if (this.value == 'company') {
+            $('.companyForm').removeAttr("hidden");
+            $('form').not('.companyForm').attr("hidden", "hidden");
+        }
+    });
+
+    $("#btnSendOtp").click(function () {
+        isMobileNumberVerifed = false;
+        $(this).tooltip('hide')
+        if ($("#form-contactDetails-individual").valid()) {
+
+            var fewSeconds = 120;
+            // Ajax request
+            var btn = $(this);
+            btn.attr('disabled', true);
+            setTimeout(function () {
+                btn.attr('disabled', false);
+                $("#spnCodeStatus").html("");
+            }, fewSeconds * 1000);
+            $.ajax({
+                url: '/st/user/sendotp',
+                data: {
+                    mobileNumber: $("#number-individual").val()
+                },
+                error: function () {
+                    toastr.error('An error has occurred');
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data == true) {
+                        $("#spnCodeStatus").html("<span class='text-success small font-weight-light'>Code Sent! Resend after 2 minutes.</span>");
+                        $("#verifyOtp-div").show();
+                    }
+                    else {
+                        $("#spnCodeStatus").html("<span class='text-danger small font-weight-light'>An error has occurred!</span>");
+                    }
+                },
+                type: 'GET'
+            });
+        }
+    });
+
+    $("#btnVerifyOtp").click(function () {
+        if ($("#form-contactDetails-individual").valid()) {
+            if ($("#verificationCode-individual").val() == "" || $("#verificationCode-individual").val() == undefined) {
+                $("#spnCodeValidate").html("<span class='text-danger small font-weight-light'>Please enter code.</span>");
+            } else {
+                $.ajax({
+                    url: '/st/user/verifyotp',
+                    data: {
+                        mobileNumber: $("#number-individual").val(),
+                        otp: $("#verificationCode-individual").val()
+                    },
+                    error: function () {
+                        toastr.error('An error has occurred');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data == true) {
+                            $("#verifyOtp-div").hide();
+                            $("#sendOtpParagraph").hide();
+                            $("#spnCodeStatus").html("<span class='text-success small font-weight-light'>Verified!</span>");
+                            isMobileNumberVerifed = true;
+                        }
+                        else {
+                            $("#spnCodeValidate").html("<span class='text-danger small font-weight-light'>Code doesn't match. Please try again.</span>");
+                        }
+                    },
+                    type: 'GET'
+                });
+            }
+        }
+    });
+
+    async function submitForm() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/jazzcash/user/register.html",
+                type: "post",
+                data: { data: data },
+                success: function (response) {
+                    toastr.success("Registration Success");
+                    resolve(true);
+                    return;
+                },
+                error: function (error) {
+                    toastr.error("Registration Failed");
+                    resolve(false);
+                    return;
+                }
+            });
+        });
+    }
+
+    function getDataForIndividual() {
+        var firstName = $('#firstName-individual').val();
+        var lastName = $('#lastName-individual').val();
+        var email = $('#email-individual').val();
+        var reEmail = $('#reEmail-individual').val();
+        var dob = $('#dob-individual').val();
+
+        data.FirstName = firstName;
+        data.LastName = lastName;
+        data.Email = email;
+        data.DOB = dob;
+
+        var country = $('#country-individual').val();
+        var addressLine1 = $('#addressLine1-individual').val();
+        var addressLine2 = $('#addressLine2-individual').val();
+        var city = $('#cityTown-individual').val();
+        var postalCode = $('#postalCode-individual').val();
+        var number = $('#number-individual').val();
+
+        data.CountryCode = country;
+        data.Address = addressLine1;
+        data.City = city;
+        data.PostCode = postalCode;
+        data.MobileNumber = number;
+
+        var username = $('#username-individual').val();
+        var password = $('#password-individual').val();
+        var rePassword = $('#rePassword-individual').val();
+        var securityQuestion = $('#securityQuestion-individual').val();
+        var securityAnswer = $('#securityAnswer-individual').val();
+        var issuingCountry = $('#issuingCountry-individual').val();
+        var idType = $('#idType-individual').val();
+        var idNumber = $('#idNumber-individual').val();
+
+        data.Username = username;
+        data.Password = password;
+        data.SecurityQuestionId = securityQuestion;
+        data.Answer = securityAnswer;
+        data.IssuingCountry = issuingCountry;
+        data.IdType = idType;
+        data.IdNumber = idNumber;
+
+        var payeeType = $('input[type=radio][name=customRadioInline1]').val();
+
+        var jazzCashAccount = $('#jazzCashAccount-individual').val();
+
+        data.JazzCashAccount = jazzCashAccount;
+        data.PayeeType = (payeeType == "individual") ? 1 : 2;
+    }
+
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        target = target.slice(1);
+        switch (target) {
+            case "form-contactDetails":
+                if ($("#form-getStarted-individual").valid()) {
+                    return true;
+                }
+                e.preventDefault();
+                break;
+
+            case "form-securityDetail":
+                if ($("#form-contactDetails-individual").valid()) {
+                    alert();
+                    if ($("#form-getStarted-individual").valid()) {
+                        return true;
+                    }
+                }
+                e.preventDefault();
+                break;
+
+            case "form-almostDone":
+                if ($("#form-securityDetail-individual").valid()) {
+                    if ($("#form-contactDetails-individual").valid()) {
+                        if ($("#form-getStarted-individual").valid()) {
+                            return true;
+                        }
+                    }
+                }
+                e.preventDefault();
+                break;
+        }
+        debugger
+    });
+
+</script>
+

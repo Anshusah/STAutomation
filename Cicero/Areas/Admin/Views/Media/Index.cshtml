@@ -1,0 +1,192 @@
+﻿@using Cicero.Service.Models
+@model IEnumerable<MediaByParentId>
+@inject Permission Permission
+@{
+    ViewBag.Title = "Manage Media";
+}
+<div class="page-wrapper page-media-manager">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin.html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Media</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Media</h3>
+            <!--<div class="page-toolbar">
+                <a href="@Url.Content("~/admin/media/0/edit.html")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+            </div>-->
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div class="page-container grid-vertical-viewport">
+            <div class="page-body">
+                <div class="media-manager-form-container">
+                    @using (Html.BeginForm("Index", "Media", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="media-manager-wrapper">
+                            <h4 class="media-manager-title">All Media</h4>
+                            <div class="media-manager-body">
+
+                                @if (Model != null && Model.Count() > 0 && Model.Sum(x => x.Media.Count) > 0)
+                                {
+
+                                    @foreach (var item in Model)
+                                    {
+                                        if (item.Media.Count == 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        @*@item.ParentId*@
+                                        <div class="media-manager-list">
+                                            <div class="media-manager-list-header">
+                                                <h5 class="media-manager-list-title">@item.Parent</h5>
+                                            </div>
+                                            <div class="media-manager-list-body">
+                                                <ul class="media-file-list">
+                                                    @foreach (var id in item.Media)
+                                                    {
+
+                                                        @if (System.IO.Path.GetExtension(id.Url) == ".pdf")
+                                                        {
+                                                            <li class="media-file-item file-document file-type-pdf">
+                                                                <a href="javascript:void(0)" data-json='@id.Id' class="media-file-item__inner">
+                                                                    <div class="thumbnail-holder">
+                                                                        <div class="media-file-item__image">
+                                                                            <img src="@Url.Content("/images/pdf.png")" alt="@id.Id">
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (Permission.Can(UserCan.Delete_Media))
+                                                                    {
+                                                                        <div class="actions-holder">
+                                                                            @*<div class="media-file-item__download" onclick="location.href='@Url.Content("/admin/" + id.Url + "/media/download.html")';" title="Download pdf">
+                                        <i class="ri-download-2-line"></i>
+                                    </div>*@
+                                                                            <div class="media-file-item__remove" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'>
+                                                                                <i class="ri-close-circle-fill"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                        @*<i class="fas fa-trash-alt" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'></i>*@
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else if (System.IO.Path.GetExtension(id.Url) == ".doc" || System.IO.Path.GetExtension(id.Url) == ".docx" || System.IO.Path.GetExtension(id.Url) == ".txt")
+                                                        {
+                                                            <li class="media-file-item file-document file-type-doc">
+                                                                <a href="javascript:void(0)" data-json='@id.Id' class="media-file-item__inner">
+                                                                    <div class="thumbnail-holder">
+                                                                        <div class="media-file-item__image">
+                                                                            <img src="@Url.Content("/images/doc.png")" alt="@id.Id">
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (Permission.Can(UserCan.Delete_Media))
+                                                                    {
+                                                                        <div class="actions-holder">
+                                                                            @*<div class="media-file-item__download" onclick="location.href='@Url.Content("/admin/" + id.Url + "/media/download.html")';" title="Download pdf">
+                                        <i class="ri-download-2-line"></i>
+                                    </div>*@
+                                                                            <div class="media-file-item__remove" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'>
+                                                                                <i class="ri-close-circle-fill"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                        @*<i class="fas fa-trash-alt" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'></i>*@
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li class="media-file-item file-type-image">
+                                                                <a href="javascript:void(0)" data-json='@id.Id' class="media-file-item__inner">
+                                                                    <div class="thumbnail-holder">
+                                                                        <div class="media-file-item__image">
+                                                                            <img src="@Url.Content("/uploads/" + id.Url)" alt="@id.Id">
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (Permission.Can(UserCan.Delete_Media))
+                                                                    {
+                                                                        <div class="actions-holder">
+                                                                            @*<div class="media-file-item__download" onclick="location.href='@Url.Content("/admin/" + id.Url + "/media/download.html")';" title="Download pdf">
+                                        <i class="ri-download-2-line"></i>
+                                    </div>*@
+                                                                            <div class="media-file-item__remove" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'>
+                                                                                <i class="ri-close-circle-fill"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                        @*<i class="fas fa-trash-alt" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'></i>*@
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        }
+
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @*<ul class="media-list">
+                @foreach (var id in Model)
+                {
+                    <li>
+                        @if (System.IO.Path.GetExtension(id.Url) == ".pdf")
+                        {
+                            <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/images/pdf-icon.png"));">
+                                @if (Permission.Can(UserCan.Delete_Media))
+                                {
+                                    <i class="fas fa-trash-alt" onclick="Cicero.Media.Remove(this)"></i>
+                                }
+                            </a>
+                        }
+                        else if (System.IO.Path.GetExtension(id.Url) == ".doc" || System.IO.Path.GetExtension(id.Url) == ".docx" || System.IO.Path.GetExtension(id.Url) == ".txt")
+                        {
+                            <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/images/doc-icon.png"));">
+                                @if (Permission.Can(UserCan.Delete_Media))
+                                {
+                                    <i class="fas fa-trash-alt" onclick="Cicero.Media.Remove(this)"></i>
+                                }
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/uploads/" + id.Url));">
+                                @if (Permission.Can(UserCan.Delete_Media))
+                                {
+                                    <i class="fas fa-trash-alt" onclick="Cicero.Media.Remove(this)"></i>
+                                }
+                            </a>
+                        }
+                    </li>
+                }
+            </ul>*@
+                                }
+                                else
+                                {
+                                    <div class="no-media media-zero-data zero-data-item">
+                                        <figure class="zero-data-item__image">
+                                            <img src="/Themes/Blue/img/no-media.png" alt="No Media">
+                                        </figure>
+                                        <div class="zero-data-item__header">
+                                            <!--<h5 class="zero-data-item__title">No Images and Videos are uploaded in System</h5>-->
+                                            <p class="zero-data-item__text">No Images and Videos are uploaded in System</p>
+                                        </div>
+                                        <!--<div class="zero-data-item__buttons">
+                <a class="btn btn-primary border-light" href="#">Contact Admin</a>
+            </div>-->
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

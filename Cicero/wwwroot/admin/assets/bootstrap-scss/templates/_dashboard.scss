@@ -1,0 +1,85 @@
+.quickstats {
+    padding: 1.5rem;
+
+    &-icon {
+        display: none;
+    }
+
+    &-data {
+        @include rfs(2rem);
+        font-weight: bold;
+        margin: 0;
+    }
+
+    &-title {
+    }
+
+    &--primary {
+        .quickstats-title {
+            color: var(--primary);
+        }
+    }
+
+    &--success {
+        .quickstats-title {
+            color: var(--success);
+        }
+    }
+
+    &--warning {
+        .quickstats-title {
+            color: var(--warning);
+        }
+    }
+
+    &--info {
+        .quickstats-title {
+            color: var(--info);
+        }
+    }
+}
+
+.card--user-activity {
+    .media {
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--light);
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+.card--articles {
+    .media {
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--light);
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+.card--new-users {
+    .media {
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--light);
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+.card--notice {
+    .media {
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--light);
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+.chart-height-A {
+    overflow: hidden;
+    height: 230px;
+    max-width: 100%;
+}

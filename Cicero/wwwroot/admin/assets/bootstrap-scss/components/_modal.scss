@@ -1,0 +1,25 @@
+.modal-content {
+    box-shadow: $box-shadow-lg;
+}
+.modal-header, .modal-footer, .modal-body {
+    padding: 1.5rem;
+}
+.modal-header {
+    &.flex-column {
+        margin-bottom: .5rem;
+    }
+}
+.custom-modal {
+    iframe {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .row {
+        padding-bottom: calc(100% - 4rem);
+    }
+}

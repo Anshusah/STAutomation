@@ -1,0 +1,134 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Cicero.Data.Entities
+@using Cicero.Service.Models
+@inject Utils _Utils
+@inject IUserService UserService
+@inject IMediaService MediaService
+@inject ITenantService TenantService
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    string userImage = await UserService.GetDefaultOrFirstImagesByUserId(UserService.getLoggedInUserId(), "");
+    int tenantid = TenantService.GetTenantIdByIdentifier(_Utils.GetTenantFromSession());
+    string userId = UserService.getLoggedInUserId();
+    var groupList = await MediaService.GetMediaGroup(tenantid);
+    var mediaIds = MediaService.GetCaseMediaByUserId(userId).Select(x => x.MediaId).ToList();
+    List<MediaByParentId> mediaDatas = MediaService.GetImagesByTenantIdAndUser(tenantid, userId);
+    foreach (var item in mediaDatas)
+    {
+        item.Media = item.Media.Where(x => mediaIds.Contains(x.Id)).ToList();
+    }
+
+    //var imagesCount = 0;
+    //var documentCount = 0;
+
+    //foreach (var item in mediaDatas)
+    //{
+    //    foreach (var itm in item.Media)
+    //    {
+    //        if (System.IO.Path.GetExtension(itm.Url).ToLower() == ".jpg" || System.IO.Path.GetExtension(itm.Url).ToLower() == ".jpeg" || System.IO.Path.GetExtension(itm.Url).ToLower() == ".png" || System.IO.Path.GetExtension(itm.Url).ToLower() == ".gif")
+    //        {
+    //            imagesCount++;
+    //        }
+    //        else
+    //        {
+    //            documentCount++;
+    //        }
+    //    }
+    //}
+
+}
+
+<div class="navigation-container">
+    <aside class="viewport-nav">
+        <div class="viewport-user-profile">
+            <img class="rounded-circle" width="68" height="68" src="@("/uploads/" + userImage)" alt="">
+            <h6 class="m-0">@await UserService.GetUserFullName()</h6>
+            <small class="text-muted">@UserManager.GetUserName(User)</small>
+            <a class="btn btn-primary btn-block mt-3 d-block d-md-none" href="@Url.Content("~/admin/form/changecaseform.html")">File a Claim</a>
+        </div>
+        <div class="viewport-menu">
+            <nav class="menu-nav">
+                <ul class="menu-list list-unstyled">
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/user/userdashboard.html")" class="menu-link">
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/user@_Utils.GetTenantForUrl(false)/profile.html" class="menu-link">
+                            <span>My Account</span>
+                        </a>
+                    </li>
+                    @*@foreach (var item in mediaDatas.Where(x=>x.ParentId != 0).GroupBy(x => x.ParentId))
+        {*@
+                    @foreach (var item in groupList.OrderBy(x => x.Title))
+                    {
+                        var groupData = mediaDatas.Where(x => x.ParentId == item.Id).FirstOrDefault();
+                        var groupMediaCount = (groupData != null) ? groupData.Media.Count() : 0;
+                        var countValue = (groupMediaCount > 0) ? groupMediaCount.ToString() : "";
+                        <li class="menu-item">
+                            <a href="@("/user/medias.html?from=" + item.Title)" class="menu-link">
+                                <span>@item.Title</span>
+                                <span class="badge badge-primary badge-pill" id="documentTotal">@countValue</span>
+                            </a>
+                        </li>
+                    }
+
+                    @*  }*@
+
+                    @*<li class="menu-item">
+            <a href="#" class="menu-link">
+                <span>Policy</span>
+                <span class="badge badge-primary badge-pill">1</span>
+            </a>
+        </li>*@
+                    @*<li class="menu-item">
+            <a href="/user/medias.html?from=Documents" class="menu-link">
+                <span>Document</span>
+                <span class="badge badge-primary badge-pill" id="documentTotal">@documentCount</span>
+            </a>
+        </li>*@
+                    @*<li class="menu-item">
+            <a href="#" class="menu-link">
+                <span>Report</span>
+                <span class="badge badge-primary badge-pill">3</span>
+            </a>
+        </li>*@
+                    @*<li class="menu-item">
+            <a href="/user/medias.html?from=Images" class="menu-link">
+                <span>Image</span>
+                <span class="badge badge-primary badge-pill" id="imagesTotal">@imagesCount</span>
+            </a>
+        </li>*@
+                    @*<li class="menu-item">
+            <a href="#" class="menu-link">
+                <span>Calendar</span>
+            </a>
+        </li>
+        <li class="nav-separator"></li>
+        <li class="menu-item">
+            <a href="#" class="menu-link">
+                <span>Settings</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="#" class="menu-link">
+                <span>Need Help?</span>
+            </a>
+        </li>*@
+                    <li class="nav-separator"></li>
+                    <li class="menu-item">
+                        <a href="/user/signout.html" class="menu-link">
+                            <i class="ri-logout-box-line mr-2"></i><span>Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="viewport-footer">
+            Copyright &copy; @DateTime.Now.Year.ToString() Cicero.
+            All rights reserved.<a href="#">Privacy, Terms & more.</a>
+        </div>
+    </aside>
+</div>

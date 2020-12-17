@@ -1,0 +1,99 @@
+﻿
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model Cicero.Service.Models.SimpleTransfer.AutoSchedulerSetting.AutoSchedulerSettingViewModel
+@inject Utils utils
+
+@{
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " AutoScheduler Setting";
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<body>
+
+    <div class="page-wrapper">
+        <div class="page-header">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin" + "/autoschedulersetting.html")">AutoScheduler Setting</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) AutoScheduler Setting</li>
+                </ol>
+            </nav>
+            <div class="page-header__main">
+                <h3 class="page-title">Manage AutoScheduler Setting</h3>
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/admin" + "/autoschedulersetting/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-circle-line"></i><span class="btn__label">Add new record</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="page-main-section">
+                <div class="page-content-area">
+                    <div class="grid-content-section">
+                        <div class="grid-content-container">
+                            <form action="@Url.Content("~/admin" + "/autoschedulersetting/"+Model.Id+"/edit.html")" method="post" class="page-container grid-horizontal-viewport form-container">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="grid-column form-overview">
+                                    <div class="form-group">
+                                        <label asp-for="Name" class="control-label"></label>
+                                        <input asp-for="Name" class="form-control" />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Hour" class="control-label"></label>
+                                        <input asp-for="Hour" class="form-control" />
+                                        <span asp-validation-for="Hour" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Minutes" class="control-label"></label>
+                                        <input asp-for="Minutes" class="form-control" />
+                                        <span asp-validation-for="Minutes" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Interval" class="control-label"></label>
+                                        <input asp-for="Interval" class="form-control" />
+                                        <span asp-validation-for="Interval" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Created</label>
+                                        <input type="text" value="@Model.CreatedDate" name="CreatedDate" id="CreatedDate" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last updated</label>
+                                        <input type="text" value="@Model.UpdatedDate" name="UpdatedDate" id="UpdatedDate" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Status</label><br />
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            @Html.RadioButtonFor(model => model.Status, true, new { @id = "enable", @class = "custom-control-input" })
+                                            <label class="custom-control-label" for="enable">Active</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            @Html.RadioButtonFor(model => model.Status, false, new { @id = "disable", @class = "custom-control-input" })
+                                            <label class="custom-control-label" for="disable">Inactive</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-footer">
+                                        <button type="submit" class="btn btn-primary">Update Changes</button>
+                                        <a class="btn btn-outline-secondary btn-back" href="@Url.Content("/admin" +  "/autoschedulersetting.html")">Go back</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

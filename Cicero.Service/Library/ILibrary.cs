@@ -1,0 +1,20 @@
+﻿namespace Cicero.Service.Library
+{
+    public interface ILibrary
+    {
+        /// <summary>
+        /// Variable name available to window
+        /// </summary>
+        string VarName { get; }
+        /// <summary>
+        /// The src to the script file of the library. Defaults to the cdn link
+        /// </summary>
+        string ScriptSrc { get; set; }
+        /// <summary>
+        /// The href to the stylesheet file of the library. Defaults to the cdn link
+        /// </summary>
+        string StyleHref { get; set; }
+
+        ILibraryOptions Options { get; set; }
+    }
+}

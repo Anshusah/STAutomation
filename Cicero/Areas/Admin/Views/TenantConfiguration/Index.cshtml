@@ -1,0 +1,427 @@
+﻿@inject Utils utils
+@inject Permission permission
+@using Cicero.Service.Services
+@{
+    Layout = null;
+}
+
+@{
+    string tenant = "";
+    string tenant_identifier = utils.GetTenantFromSession();
+    if (!string.IsNullOrEmpty(tenant_identifier))
+    {
+        tenant = tenant_identifier + "/";
+    }
+    var count = (dashboardCounts)ViewBag.Count;
+
+}
+  
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Tenant Dashboard</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <!--<link rel="stylesheet" href="~/css/site.css" />-->
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+    </environment>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <link rel="stylesheet" href="~/admin/assets/css/main-backend.css" />
+    <link rel="stylesheet" href="~/css/Cicero.css" />
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.standalone.min.css"
+          rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" type="text/css" />
+    @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>*@
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <style>
+        .main {
+            min-width: 800px;
+            margin: auto;
+        }
+
+        .dashboard-icon {
+            font-size: 100px;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            border: 1px solid black;
+            margin: 5px;
+            background-color: rgb(255,255,255);
+            color: #232c3b;
+            text-decoration: none;
+            position: relative;
+        }
+
+            a:hover {
+                text-decoration: none;
+                color: rgba(35,44,59,0.8);
+            }
+
+        .isdisabled {
+            color: rgb(194, 191, 191);
+        }
+
+        a.isdisabled {
+            background-color: rgba(194, 191, 191,0.4);
+            border: 1px solid rgba(194, 191, 191,0.4);
+        }
+
+        .isdisabled:hover {
+            cursor: not-allowed;
+        }
+
+        a.isdisabled:hover {
+            color: rgb(194, 191, 191);
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .top-icon {
+            padding: 10px;
+            font-size: 20px;
+            text-align: right;
+        }
+
+        .top-bar {
+            text-align: right;
+        }
+
+        .iscompleted-icon {
+            color: rgb(86, 178, 29);
+            font-size: 40px;
+            position: absolute;
+            right: -8px;
+            bottom: -16px;
+        }
+
+        a.isfocus {
+            border: 1px solid black;
+            background-color: #232c3b;
+            color: rgba(255,255,255,1);
+        }
+        .link {
+            display: inline;
+            border: none;
+            margin: 0px;
+            color: blue;
+            text-decoration: none;
+            position:  inherit;
+        }
+            .link hover {
+                text-decoration:underline;
+            
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        @if (!permission.Can(UserCan.Create_Role) && !permission.Can(UserCan.Create_User))
+        {
+            <div class="box p-4">
+                <p>You don't have permission to view this page.</p>
+                <p>Visit <a class="link" href=@Url.Content("~/admin/"+tenant_identifier+".html")>Dashboard</a></p>
+            </div>
+        }
+        else
+        {
+
+        <div class="box p-4">
+            <div class="row">
+                <div class="offset-8 col-lg-4 top-bar">
+                    <span class="top-icon"><i class="far fa-comment"></i></span>
+                    <span class="top-icon"><i class="fas fa-cogs"></i></span>
+                    <span class="top-icon"><i class="fas fa-user"></i></span>
+                </div>
+            </div>
+            <div class="box p-4">
+                <div class="row">
+                    @* System Demo start *@
+                    <div class="offset-1 col-lg-2">
+                        <a href="#" class="isfocus">
+                            <div class="dashboard-icon">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+                            <p>System Demo</p>
+                        </a>
+                    </div>
+                    @* system demo end *@
+                    <div class="col-lg-2"></div>
+                    @* Build your form  start*@
+                    <div class="col-lg-2">
+                        @if (count.claimFormsCount >= 1)
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-prescription-bottle"></i>
+                                </div>
+                                <p>Build your form</p>
+                                <span class="iscompleted-icon"><i class="fas fa-check-circle"></i></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Content("~/admin/" + tenant + "caseforms.html")">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-prescription-bottle"></i>
+                                </div>
+                                <p>Build your form</p>
+
+                            </a>
+
+                        }
+
+
+                    </div>
+                    @* Build your form end *@
+
+                    <div class="col-lg-2">
+                        @if (count.claimFormsCount >= 1 && !(count.roleCount >= 1))
+                        {
+                            <div class="dashboard-icon">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                            </div>
+                        }
+                        else
+                        {
+                            @*<div class="dashboard-icon isdisabled">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                            </div>*@
+                        }
+                    </div>
+
+                    @*Roles Management start*@
+                    <div class="col-lg-2">
+
+                        @if (count.claimFormsCount >= 1 && count.roleCount > 1)
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-users-cog"></i>
+                                </div>
+                                <p>Role management</p>
+                                <span class="iscompleted-icon"><i class="fas fa-check-circle"></i></span>
+                            </a>
+                        }
+                        else if (count.claimFormsCount >= 1)
+                        {
+                            <a href="@Url.Content("~/admin/" + tenant + "/roles.html")">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-users-cog"></i>
+                                </div>
+                                <p>Role management</p>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-users-cog"></i>
+                                </div>
+                                <p>Role management</p>
+                            </a>
+                        }
+                    </div>
+                    @* Roles Management end *@
+
+
+
+                </div>
+                <div class="row">
+
+                    @* User management start *@
+                    <div class="offset-1 col-lg-2">
+                        @if (count.roleCount > 1 && count.userCount > 1)
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <p>User Management</p>
+                                <span class="iscompleted-icon"><i class="fas fa-check-circle"></i></span>
+                            </a>
+                        }
+                        else if (count.roleCount > 1)
+                        {
+                            <a href="@Url.Content("~/admin/" + tenant + "/users.html")">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <p>User Management</p>
+
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <p>User Management</p>
+                            </a>
+                        }
+
+                    </div>
+                    @* User management end *@
+
+                    <div class="col-lg-2">
+                        @if (count.userCount > 1 && !(count.workflowCount >= 1))
+                        {
+                            <div class="dashboard-icon">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                            </div>
+                        }
+                    </div>
+
+
+                    @* Build workflow start *@
+                    <div class="col-lg-2">
+                        @if (count.userCount > 1 && count.workflowCount >= 1)
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-code-branch"></i>
+                                </div>
+                                <p>Build workflow</p>
+                                <span class="iscompleted-icon"><i class="fas fa-check-circle"></i></span>
+                            </a>
+                        }
+                        else if (count.userCount > 1)
+                        {
+                            <a href="@Url.Content("~/admin/" + tenant + "/manage/queues.html")">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-code-branch"></i>
+                                </div>
+                                <p>Build workflow</p>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-code-branch"></i>
+                                </div>
+                                <p>Build workflow</p>
+                            </a>
+                        }
+                    </div>
+                    @* Build workflow end *@
+                    <div class="col-lg-2">
+                        @if (count.workflowCount >= 1 && !(count.mediaCount >= 1))
+                        {
+                            <div class="dashboard-icon">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                            </div>
+                        }
+                    </div>
+
+                    @* Media and communication *@
+                    <div class="col-lg-2">
+
+                        @if (count.workflowCount >= 1 && count.mediaCount >= 1)
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <p>Media and communications</p>
+                                <span class="iscompleted-icon"><i class="fas fa-check-circle"></i></span>
+                            </a>
+                        }
+                        else if (count.workflowCount >= 1)
+                        {
+                            <a href="@Url.Content("~/admin/" + tenant + "medias.html")" class="">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <p>Media and communications</p>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <p>Media and communications</p>
+                            </a>
+                        }
+                    </div>
+                    @* Media and communication end *@
+                </div>
+                <div class="row">
+                    <div class="offset-1 col-lg-2">
+                        @if (count.mediaCount >= 1 && count.reportCount >= 1)
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <p>Reports</p>
+                                <span class="iscompleted-icon"><i class="fas fa-check-circle"></i></span>
+                            </a>
+
+                        }
+                        else if (count.mediaCount >= 1)
+                        {
+                            <a href="#">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <p>Reports</p>
+
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="isdisabled">
+                                <div class="dashboard-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <p>Reports</p>
+
+                            </a>
+                        }
+                    </div>
+                    <div class="col-lg-2">
+                        @*<div class="dashboard-icon isdisabled">
+                            <i class="fas fa-long-arrow-alt-right"></i>
+                        </div>*@
+                    </div>
+                    <div class="col-lg-2">
+                        <a href="#" class="isdisabled">
+                            <div class="dashboard-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <p>Confirmation</p>
+                        </a>
+                    </div>
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-2"></div>
+                </div>
+
+            </div>
+        </div>
+        }
+</body>
+</html>

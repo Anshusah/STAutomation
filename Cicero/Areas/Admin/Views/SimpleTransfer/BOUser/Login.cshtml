@@ -1,0 +1,160 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Models.Core;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    //Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"]</title>
+
+
+        <script src="/Themes/Core/jquery/dist/jquery.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ"
+              crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css">
+
+        @* font heebo *@
+        <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+
+
+        @*<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.standalone.min.css"
+        rel="stylesheet" type="text/css" />*@
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+        <link rel="stylesheet" href="/Themes/Core/bootstrap-select/dist/css/bootstrap-select.css">
+        <link rel="stylesheet" href="/Themes/Core/chosenjs/chosen.css">
+        <link rel="stylesheet" href="/Themes/Core/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css">
+        <link rel="stylesheet" href="/Themes/Core/dist/css/bootstrap-slider.css">
+        <link rel="stylesheet" href="/Themes/Core/selectize/dist/css/selectize.bootstrap3.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/css/perfect-scrollbar.min.css">
+        <link rel="stylesheet" href="~/admin/assets/css/style.css">
+
+        <script src="/Themes/Core/bootstrap-select/dist/js/bootstrap-select.js"></script>
+        <script src="/Themes/Core/chosenjs/chosen.jquery.js"></script>
+        <script src="/Themes/Core/bootbox/bootbox.min.js"></script>
+        <script src="/Themes/Core/bootstrap-slider/dist/bootstrap-slider.js"></script>
+        <script src="/Themes/Core/selectize/dist/js/standalone/selectize.js"></script>
+        <script src="/Themes/Core/jquery-extendext/jQuery.extendext.js"></script>
+        <script src="/Themes/Core/sql-parser-mistic/browser/sql-parser.js"></script>
+        <script src="/Themes/Core/dot/doT.js"></script>
+        <script src="/Themes/Core/interactjs/dist/interact.js"></script>
+
+        <script src="/Themes/Core/dist/js/query-builder.js"></script>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=explicit"></script>
+        <script src="~/js/toastr.js"></script>
+
+        @*<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="outer">
+                <header class="header">
+                    <nav class="navbar navbar-expand-md header__topbar bg-white py-3 px-4">
+                        <a class="st-logo" href="#"><img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" class="img img-responsive" alt="Simple Transfer - Login" /></a>
+                        <ul class="navbar-nav nav justify-content-end">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">Contact Us <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Help</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </header>
+                <main class="main outer" role="main">
+
+                    <div class="wrapper">
+                        <div class="card login-admin-wrapper">
+                            <div class="card-body w-100 p-0">
+                                <form method="post" autocomplete="off">
+                                    <div class="form-header">
+                                        <h3 class="title pb-2">Admin Sign In </h3>
+                                    </div>
+
+                                    <div class="form-group ">
+                                        <label>Email</label>
+                                        <input type="text" class="form-fields form-control email" asp-for="Email" name="Email" id="Email" placeholder="someone@example.com" required>
+                                        <span asp-validation-for="Email"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="password" class=" form-control form-fields password" placeholder="Password" name="Password" id="Password" required>
+
+                                    </div>
+                                    <div class="form-group ">
+
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="" id="rememberme">
+                                            <label for="rememberme" class="custom-control-label"> Keep me signed in </label>
+                                            <i class="ri-information-line"></i>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <button type="submit" class="btn btn-block btn-primary">
+                                            Login
+                                        </button>
+                                    </div>
+                                    @* <div class="footer-option">Need to find <a href="#" class="text-primary">your username </a>or <a href="#" class="text-primary">your password</a>?</div>*@
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </main>
+                <footer class="footer bg-white">
+                    <div class="container">
+                        <div class="row">
+                            <div class="py-4 mx-auto text-black-50">
+                                <small>Copyright &copy; 2020 SimpleTransfer<sup>TM</sup>. All rights reserved.</small>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+        </div>
+
+        @*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+        @section Scripts{}
+        <script>
+            $(".toggle-password").click(function () {
+                //$(this).find('i').toggleClass("remixicon-eye-off-line");
+                var input = $($(this).attr("toggle"));
+                if (input.attr("type") == "password") {
+                    input.attr("type", "text");
+                    $(this).addClass('text-primary');
+                    $(this).find('i').removeClass("remixicon-eye-line").addClass("remixicon-eye-off-line");
+                } else {
+                    input.attr("type", "password");
+                    $(this).removeClass('text-primary');
+                    $(this).find('i').removeClass("remixicon-eye-off-line").addClass("remixicon-eye-line");
+
+                }
+            });
+        </script>
+        @await Component.InvokeAsync("NToastNotify")
+
+    </body>
+
+    </html>

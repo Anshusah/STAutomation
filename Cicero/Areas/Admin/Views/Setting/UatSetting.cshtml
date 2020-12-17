@@ -1,0 +1,68 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Newtonsoft.Json.Linq
+@model UatSettingViewModel
+@inject IRoleService roleService
+@inject IQueueService queueService
+@inject Permission Permission
+@inject ICommonService CommonService
+@inject Utils utils
+@{
+    ViewBag.Title = "UAT Settings";
+}
+<div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin"+utils.GetTenantForUrl(false)+".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active">
+                UAT Setting
+            </li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">UAT Setting</h3>
+    </div>
+    <!-- Main content -->
+    <section class="page-body">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-8 ">
+                <!-- general form elements -->
+                <div class="box p-5 mb-5">
+                    <div class="status"></div>
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form action="@Url.Content("~/admin/uatsetting.html")" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber" class="control-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Status" class="control-label"></label>
+                                <input asp-for="Status" class="form-control" />
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            @if (Permission.Can(UserCan.Update_Setting))
+                            {
+                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                            }
+                        </div>
+                    </form>
+                </div>
+                <!-- /.box -->
+            </div>
+            <!--/.col (left) -->
+        </div>
+        <!-- /.row -->
+    </section>
+</div>

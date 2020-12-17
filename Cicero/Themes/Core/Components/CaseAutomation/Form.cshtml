@@ -1,0 +1,255 @@
+﻿@using Themes.Core.Components
+@using Cicero.Service.Services
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+@inject IFormBuilderService formBuilderService
+@inject IQueueService queueService
+@inject ICommonService commonService
+@inject Utils utils
+@inject IAutomationService automationService
+@using Cicero.Service.Services;
+
+@{
+    //Layout = "_Layout.cshtml";
+    CaseAutomation CaseAutomation = Model as CaseAutomation;
+
+    var loggedUser = commonService.getLoggedInUserId();
+    string roleId = commonService.GetRoleIdByUserId(loggedUser);
+
+    // var length = formBuilderService.GetFormFields(1).Count;
+    //string myList = "";
+    // var list = formBuilderService.GetFormFields(1);
+
+    string myList = "";
+    //foreach (var item in list)
+    //{
+    //    myList += "~" + item.Value + ":" + item.Text;
+    //}
+    //myList = myList.Substring(1);
+
+
+}
+<input name="json" type="text" value="@CaseAutomation.json" style="display:none">
+<style>
+   
+
+    .add-clause {
+        color: var(--green);
+        padding: 2px;
+    }
+
+    .remove-clause {
+        color: var(--red);
+        padding: 2px;
+    }
+</style>
+<div class="sync-wrap">
+    <i class="close-sync"></i>
+    <div class="row mb-2">
+
+        <div class="form-group col-lg-6">
+            <label>Title</label>
+            <input type="text" name="Title" class="form-control" value="@CaseAutomation.Title">
+        </div>
+        <div class="form-group col-lg-6">
+            <label>Form</label>
+            <select class="form-control custom-select" name="FormId" value="@CaseAutomation.FormId">
+                <option value="">Choose Form</option>
+                        @foreach (var item in formBuilderService.FormList("" + utils.GetTenantFromSession() + ""))
+                        {
+                            if (CaseAutomation.FormId ==(item.Value))
+                            {
+                                <option selected="selected" value="@item.Value">@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+
+                        }
+            </select>
+        </div>
+        <div class="form-group col-lg-12">
+            <div id="rules-@CaseAutomation.ComponentId"></div>
+        </div>
+        <div class="col-lg-12">
+
+                    <div class="d-flex flex-wrap align-self-middle  align-items-center form-row px-0 mt-4 border-top pt-3 mx-1">
+                        <label>If the overall rule outcome is success, move the case from</label>
+                        <select class="custom-select custom  align-self-start mx-2 custom x-small radius w-auto case-pull" name="CurrentState">
+                            @foreach (var item in queueService.GetStateSelectListByFormId(Convert.ToInt32(CaseAutomation.FormId), roleId.ToString()))
+                            {
+                               
+                                    @if (item.Value == CaseAutomation.CurrentState.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+
+                                    }
+                               
+                            }
+                        </select>
+                        <label> to</label>
+                        <select class="custom-select custom  align-self-start custom x-small radius mx-2 w-auto case-pass" name="IfPassed">
+                            @foreach (var item in queueService.GetStateSelectListByFormId(Convert.ToInt32(CaseAutomation.FormId), roleId.ToString()))
+                            {
+                                @if (item.Value != CaseAutomation.CurrentState.ToString())
+                                {
+                                    @if (item.Value == CaseAutomation.IfPassed.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+
+                                    }
+                                }
+
+
+                            }
+                        </select>
+                        <label> Otherwise, move the case to</label>
+                        <select class="custom-select custom  align-self-start custom x-small radius mx-2 w-auto case-fail" name="IfFailed">
+                            @foreach (var item in queueService.GetStateSelectListByFormId(Convert.ToInt32(CaseAutomation.FormId), roleId.ToString()))
+                            {
+
+                                @if (item.Value == CaseAutomation.IfFailed.ToString())
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+
+                                }
+
+                            }
+                        </select>
+                         
+                    </div>
+                </div>
+     
+       
+
+    </div>
+</div>
+<style type="text/css">
+
+    .query-builder .rules-group-container {
+        width: 100%;
+    }
+
+    .query-builder .rules-group-container {
+        padding: 10px;
+        padding-bottom: 6px;
+        border: 1px solid #d8d8d8;
+        background: rgb(242, 242, 242);
+    }
+
+    .bootstrap-select .dropdown-menu.inner {
+        width: 300px;
+    }
+</style>
+
+<script>
+    
+    //Components.Core.LoadScript('script.js', document.body,function(){
+        //alert("loaded")
+    //});
+ $('[data-toggle="tooltip"]').tooltip();
+    var $b = $('#rules-@CaseAutomation.ComponentId');
+    var options = {
+        default_group_flags: {
+            condition_readonly: false,
+            no_add_group: false
+        },
+    allow_empty: true,
+    //default_filter: 'name',
+    sort_filters: true,
+
+    filters:[],
+    plugins: {
+      'bt-tooltip-errors': { delay: 100 },
+      'sortable': null,
+      'filter-description': { mode: 'bootbox' },
+      'bt-selectpicker': true,
+      //'chosen-selectpicker': null,
+      'unique-filter': null,
+      'bt-checkbox': { color: 'primary' },
+      'invert': null,
+      'not-group': null
+    }
+};
+                                
+  
+
+    $('#rules-@CaseAutomation.ComponentId').on('afterCreateRuleInput.queryBuilder', function (e, rule) {
+        if (rule.filter.plugin == 'selectize') {
+            rule.$el.find('.rule-value-container').css('min-width', '200px')
+                .find('.selectize-control').removeClass('form-control');
+        }
+    });
+
+    Components.CaseAutomation = {
+        Init: function () {
+        Components.Global.Init();
+            Components.Core.Hooks.addAction("before_component_save", function (e) {
+                return { submit: true };
+            })
+        }
+
+    };
+    Components.Core.Hooks.addAction('before_component_save', function (e, f) {
+        if (e.component_type == "Themes.Core.Components.CaseAutomation") {
+        let rules = encodeURIComponent(JSON.stringify($("#rules-" + e.component_id).queryBuilder('getRules')));
+        $("[data-component-id='" + e.component_id + "']").find('input[name=json]').val(rules);
+        if (rules == null) {
+            return { submit: false };
+            }
+         }
+        return { submit: true };
+    });
+    Components.Core.Hooks.addAction('after_component_save', function (e, f) {
+        if (e.component_type == "Themes.Core.Components.CaseAutomation") {
+            try {
+                let res = JSON.parse(decodeURIComponent(e.args.json));
+                $("#rules-" + e.args.component_id).queryBuilder('setRules', res);
+            } catch (e) { }
+            return true;
+        }
+    });
+    $(document).ready(function () {
+        options.filters = JSON.parse('@Html.Raw(CaseAutomation.GetFormFilters(CaseAutomation.FormId.ToString()))');
+        $b.queryBuilder(options);
+        try{
+        $("#rules-@CaseAutomation.ComponentId").queryBuilder('setFilters',true,options.filters);
+        } catch (e) { }
+        try{
+        var rulesData = JSON.parse(decodeURIComponent('@CaseAutomation.json'));
+        
+        $("#rules-@CaseAutomation.ComponentId").queryBuilder('setRules', rulesData);
+        }catch(e){}
+        @*$(document).on("change","[name='FormId']",function(){ 
+            var formId=$(this).val();
+            $.ajax({
+                dataType: "json",
+                method: "POST",
+                url: "/ajax.html",
+                data: {action:"on_automation_component_form_change",form_id:formId},
+                success: function(data){
+                    try{
+                    $("#rules-@CaseAutomation.ComponentId").queryBuilder('setFilters',true,data);
+                    }catch(e){
+
+                    }
+                }
+            });
+        });*@
+        
+    })
+
+</script>

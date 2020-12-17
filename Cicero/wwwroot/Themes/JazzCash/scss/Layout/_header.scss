@@ -1,0 +1,6 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: $zindex-dropdown;
+    background-color:var(--white);
+}

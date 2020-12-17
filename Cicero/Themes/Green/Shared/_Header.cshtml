@@ -1,0 +1,307 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Cicero.Data.Entities
+@using Cicero.Service.Helpers
+@using Cicero.Service.Services;
+@using Cicero.Service.Models.Core;
+@inject Utils _utils
+@inject Cicero.Service.Helpers.Permission Permission
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserService _UserService
+@inject IMessageService _messageService
+
+@{
+    string loggedUser = _UserService.getLoggedInUserId();
+    int unreadMsgCount = _messageService.GetUnreadMessagesCount(loggedUser);
+    var unreadMsg = await _messageService.GetMessagesByUserIdOrMarkMessageAsRead(loggedUser, new List<int>());
+    Theme theme = ViewData["theme"] as Theme;
+   
+}
+<header class="header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand header-brand" href="@Url.Content("~/user/dashboard.html")">
+            <img src="~/Themes/@theme.GetName(false)/img/cicero-logo-white.png" alt="Cicero" />
+            @*<img src="img/cicero-logo-white.png" alt="Cicero">*@
+        </a>
+
+        <div class="flex-grow-1 d-flex align-items-center justify-content-end">
+            <!-- SEARCH FORM FOR WIDE SCREEN -->
+            @*<div class="flex-grow-1 d-none d-lg-block">
+                <form class="header-topbar__search my-2 my-lg-0 mr-3">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search claim" aria-label="Search">
+                </form>
+            </div>*@
+            <div class="header__topbar d-flex align-items-center">
+                @if (string.IsNullOrWhiteSpace(_utils.GetParams("form")))
+                {
+                    <a class="btn btn-outline-light border-light" href="@Url.Content("~/admin/form/changecaseform.html")">File a Claim</a>
+
+                }
+                else
+                {
+                    <a class="btn btn-outline-light border-light" href="@Url.Content("~/admin/form/"+ _utils.GetTenantForUrl(true) +  _utils.GetParams("form") + "/" + _utils.EncryptId(0) +"/edit.html")">File a Claim</a>
+
+                }
+                
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <a href="/user/register.html" class="btn text-white ml-3">Register</a>
+                    //@Html.Raw("|")
+                    <a class="btn text-white ml-1" href="/user/login.html">Login</a>
+                }
+                else
+                {
+                    <ul class="nav mr-auto ml-3">
+                        @*message show muted unmute later*@
+                        @*<li class="nav-item dropdown">
+                            @if (Permission.Can(UserCan.View_Message))
+                            {
+
+                                <a class="nav-link" href="#" id="" role="button"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="sr-only">Message</span>
+                                    <span class="badge badge-danger badge-pill">@unreadMsgCount</span>
+                                    <div class="nav-item-topbar__icon" data-toggle="tooltip" data-placement="bottom" title="Message">
+                                        <i class="far fa-envelope"></i>
+                                    </div>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right border-0 shadow p-0" aria-labelledby="">
+
+                                    <div class="notification" id="message">
+                                        <div class="notification__header">
+                                            <h6 class="m-0 notifiction__header-title">Message</h6>
+                                            <button type="button" class="btn btn-icon btn-light" data-toggle="tooltip" data-placement="top" title="" data-original-title="Mark all as read">
+                                                <span class="sr-only">Clear all</span>
+                                                <i class="fas fa-check-double"></i>
+                                            </button>
+                                        </div>
+                                        <!--//.notification__header-->
+                                        @if (unreadMsg != null)
+                                        {
+                                            @foreach (var item in unreadMsg.Take(8))
+                                            {
+                                                if (item.IsRead == false)
+                                                {
+                                                    <a class="notification__item notification__item--unread" href="/user/@item.Id/messages.html">
+                                                        <div class="notification__item-details">
+                                                            <p class="mb-0 notification__item-title">
+                                                                @item.Subject
+                                                            </p>
+                                                            <small class="notification__item-sender sentby"><b><span class="sr-only">Sent by: </span>@item.NameSender</b></small>
+                                                            <span class="text-secondary mx-1">&bull;</span>
+                                                            <small class="sentdate text-muted notification__item-time">@Utils.GetDefaultDateFormatToDetail(item.CreatedAt)</small>
+                                                        </div>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="notification__item notification__item--read" href="/user/@_utils.EncryptId(item.Id)/messages.html">
+                                                        <div class="notification__item-details">
+                                                            <p class="mb-0 notification__item-title">@item.Subject</p>
+                                                            
+                                                            <small class="notification__item-sender sentby"><b><span class="sr-only">Sent by: </span>@item.NameSender</b></small>
+                                                            <span class="text-secondary mx-1">&bull;</span>
+                                                            <small class="sentdate text-muted notification__item-time">@Utils.GetDefaultDateFormatToDetail(item.CreatedAt)</small>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            
+                                            <div class="d-flex justify-content-center align-items-center p-4">No Messages</div>
+                                           
+                                        }
+                                        <div class="notification__footer">
+                                            <a class="btn btn-light btn-block" href="@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(0) + "/messages.html")">View all</a>
+                                        </div>
+                                        <!--//.notification__footer-->
+                                    </div>
+                                    <!--//.notification-->
+
+
+                                </div>
+
+                            } //.Message alert
+
+                            //<div class="dropdown-menu dropdown-menu-right border-0 shadow" aria-labelledby="">
+                                //<a class="dropdown-item" href="#">Action</a>
+                                //<a class="dropdown-item" href="#">Another action</a>
+                                //<div class="dropdown-divider"></div>
+                                //<a class="dropdown-item" href="#">Something else here</a>
+                            //</div>
+                        </li>*@
+                        <li class="nav-item nav-item-notification dropdown">
+                            <a class="nav-link" href="#" id="" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Notification</span>
+                                <span class="badge badge-danger badge-pill">3</span>
+                                <div class="nav-item-topbar__icon" data-toggle="tooltip" data-placement="bottom" title="Notification">
+                                    <i class="far fa-bell"></i>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right border-0 shadow p-0" aria-labelledby="">
+                                <div class="notification">
+                                    <div class="notification__header">
+                                        <h6 class="m-0 notifiction__header-title">Notification</h6>
+                                        <button type="button" class="btn btn-icon btn-light" data-toggle="tooltip" data-placement="top" title="Mark all as read">
+                                            <span class="sr-only">Clear all</span>
+                                            <i class="fas fa-check-double"></i>
+                                        </button>
+                                    </div> <!--//.notification__header-->
+                                    <div class="notification__body">
+                                        <div class="notification__item notification__item--unread">
+                                            <div class="notification__item-user">
+                                                <a href="#">
+                                                    <img src="https://pbs.twimg.com/profile_images/1084613803659182080/0o4OpXnx_400x400.jpg" width="32" height="32" class="rounded-circle" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="notification__item-details">
+                                                <p class="mb-0 notification__item-title">Form for claim updated <a href="#">Motor</a> by <a href="#">Tenant Administrator</a></p>
+                                                <small class="text-muted notification__item-time">5 days ago</small>
+                                            </div>
+                                            
+                                        </div> <!--//.notification__item-->
+                                        <div class="notification__item">
+                                                <div class="notification__item-user">
+                                                    <a href="#">
+                                                        <img src="https://pbs.twimg.com/profile_images/1084613803659182080/0o4OpXnx_400x400.jpg" width="32" height="32" class="rounded-circle" alt="">
+                                                    </a>
+                                                </div>
+                                                <div class="notification__item-details">
+                                                    <p class="mb-0 notification__item-title">Form for claim updated <a href="#">Motor</a> by <a href="#">Tenant Administrator</a></p>
+                                                    <small class="text-muted notification__item-time">5 days ago</small>
+                                                </div>
+                                                
+                                        </div> <!--//.notification__item-->
+                                        <div class="notification__item">
+                                                <div class="notification__item-user">
+                                                    <a href="#">
+                                                        <img src="https://pbs.twimg.com/profile_images/1084613803659182080/0o4OpXnx_400x400.jpg" width="32" height="32" class="rounded-circle" alt="">
+                                                    </a>
+                                                </div>
+                                                <div class="notification__item-details">
+                                                    <p class="mb-0 notification__item-title">Form for claim updated <a href="#">Motor</a> by <a href="#">Tenant Administrator</a></p>
+                                                    <small class="text-muted notification__item-time">5 days ago</small>
+                                                </div>
+                                                
+                                        </div> <!--//.notification__item-->
+                                    </div> <!--//.notification__body-->
+                                    <div class="notification__footer">
+                                        <button type="button" class="btn btn-light btn-block">Clear Notification</button>
+                                    </div> <!--//.notification__footer-->
+                                </div> <!--//.notification-->
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown d-flex align-items-center">
+                            <a class="nav-link" href="#" id="" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div class="nav-item-topbar__user">
+                                    <img class="rounded-circle" width="24" height="24" src="https://cdn.dribbble.com/users/30951/avatars/small/2c9b1e586726f41499c2d90fdef9b33a.png?1513185803" alt="">
+                                    <span class="ml-2">@UserManager.GetUserName(User)</span>
+                                </div>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right border-0 shadow pt-0" aria-labelledby="">
+                                <div class="dropdown-item-text d-flex align-items-center border-bottom py-3 bg-light mb-2 rounded-top">
+                                    <img class="rounded-circle" width="48" height="48" src="https://cdn.dribbble.com/users/30951/avatars/small/2c9b1e586726f41499c2d90fdef9b33a.png?1513185803" alt="">
+                                    <div class="ml-3">
+                                        <h6 class="m-0">@UserManager.GetUserName(User)</h6>
+                                        <small class="text-muted">Emily.blunt@gmail.com</small>
+                                    </div>
+                                </div>
+                                @if (Permission.Can(UserCan.Edit_Profile))
+                                {
+                                    <a class="dropdown-item" href="/user@_utils.GetTenantForUrl(false)/profile.html">Profile Settings</a>
+                                    <a class="dropdown-item" href="/user@_utils.GetTenantForUrl(false)/change-password.html">Change Password</a>
+                                }
+                                @if (Permission.Can(UserCan.View_Claim))
+                                {
+                                    <a class="dropdown-item" href="/user@_utils.GetTenantForUrl(false)/cases.html">Your Claims</a>
+                                }
+                                <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#exampleModalScrollable">Profile Settings</a> -->
+                                <a class="dropdown-item" href="/user/signout.html">Logout</a>
+                            </div>
+
+
+                        </li>
+                    </ul>
+                }
+            </div>
+        </div>
+        <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"></div> -->
+    </nav>
+    <!-- SEARCH FORM FOR SMALL SCREEN -->
+    @*<div class="bg-primary p-3 d-block d-lg-none">
+        <form class="header-topbar__search">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search claim" aria-label="Search">
+        </form>
+    </div>*@
+</header>
+<!-- //.header -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable shadow-lg" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="exampleModalScrollableTitle">Profile Settings</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column justify-content-center align-items-center pb-4">
+                    <div class="mb-3">
+                        <img class="rounded-circle" width="90" height="90"
+                             src="https://cdn.dribbble.com/users/30951/avatars/small/2c9b1e586726f41499c2d90fdef9b33a.png?1513185803"
+                             alt="">
+                    </div>
+                    <button type="button" class="btn btn-link">Change avatar</button>
+                </div>
+                <div class="form-group">
+                    <label for="firstName">First name</label>
+                    <input type="email" class="form-control" id="firstName" aria-describedby="firstName"
+                           placeholder="John">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last name</label>
+                    <input type="email" class="form-control" id="lastName" aria-describedby="lastName"
+                           placeholder="Done">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                           placeholder="xyz@abc.com">
+                </div>
+                <div class="form-group">
+                    <label for="contactNumber">Contact number</label>
+                    <input type="email" class="form-control" id="contactNumber" aria-describedby="contactNumber"
+                           placeholder="xxx-xxx-xxxx">
+                </div>
+                @*@if (Permission.Can(UserCan.Edit_Profile))
+                {*@
+            <div class="password-settings pt-3">
+                <h6>Password settings</h6>
+                <small class="text-muted d-block">Vel elit scelerisque mauris pellentesque.</small>
+                @*<button type="button" class="btn btn-link pr-0 pl-0">Change password</button>*@
+                <a class="btn btn-link pr-0 pl-0" href="/user@_utils.GetTenantForUrl(false)/change-password.html">Change Password</a>
+            </div>
+                     
+                @* } *@
+
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                @*@if (Permission.Can(UserCan.Edit_Profile))
+                {*@
+            <a class="btn btn-primary" href="/user@_utils.GetTenantForUrl(false)/profile.html">Update Settings</a>
+                    @*<button type="button" class="btn btn-primary">Update profile</button>*@
+               @* }*@
+            </div>
+        </div>
+    </div>
+</div>

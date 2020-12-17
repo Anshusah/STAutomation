@@ -1,0 +1,97 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model IEnumerable<CaseViewModel>
+@inject Permission Permission
+@inject ICaseService caseService
+@inject Utils _Utils
+
+@{
+    ViewData["body"] = "inner-pg";
+    ViewData["Title"] = "User Claim";
+}
+@await Html.PartialAsync("../Shared/_Header.cshtml")
+<!-- nav e -->
+<!-- container s -->
+<div class="jumbotron p-0 mt-0">
+    <div class="rounded-0 inner-promo py-5">
+        <div class="position-relative z-index-2 container">
+            <h3 class="display-4 main-promo-caption heading">&nbsp;</h3>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <h5 class='claim-detail-header'>  Damage Details     </h5><div class='case__list-wrapper'>
+        <ul class='list-unstyled case__list'>
+            <li class='case__item'>
+                <div class='case__item-wrapper'>
+                    <div class='case__label'>Date and Time of Incident</div>
+                    <div class='case__data'>19/11/2019 12:00 AM</div>
+                </div>
+            </li>
+            <li class='case__item case__item--description'>
+                <div class='case__item-wrapper'><div class='case__label'>How Did it Happen?</div><div class='case__data'></div></div>
+            </li>
+            <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Type of Damage</div><div class='case__data'>Content</div></div>
+            <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>What caused  the damage?</div><div class='case__data'>Accidental Damage</div></div>
+            <li class='case__item case__item--has-child case__item--has-accordian'>
+                <div class='case__item-wrapper'><div class='case__label'>How many Items were damaged?</div><div class='case__data'>1</div></div>
+                <ul>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Item Type</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Brand</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Make or Model</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Date of Purchase</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Original Price</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Amount Claimed</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>Where was the Item?</div><div class='case__data'></div></div></li>
+                    <li class='case__item'><div class='case__item-wrapper'><div class='case__label'>How did it happen? (Please, give us a brief explaination.)</div><div class='case__data'></div></div></li>
+                </ul>
+
+            </li>
+        </ul>
+
+    </div>
+
+    <!-- container e -->
+
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+    @section Scripts{
+        <script type="text/javascript">
+        function ReadHash() {
+            var hash = window.location.hash.replace("#", "");
+            if (hash == "") {
+                hash = "0";
+            }
+            jQuery("#filter").val(hash);
+            jQuery(".filters").hide();
+
+            jQuery(".filter-" + hash).show();
+            if (hash == "0") {
+                jQuery(".filters").show();
+                console.log(1);
+            }
+
+            if (jQuery(".filter-" + hash).length == 0 && hash != '0') {
+                jQuery(".no-claim").html("No " + jQuery("#filter option:selected").text() + " Claims").show();
+            } else {
+                jQuery(".no-claim").hide();
+            }
+        }
+        jQuery(document).ready(function () {
+
+            $('.sidelist').on('click', function (event) {
+                $target = $(event.target);
+                $('.sidelist').removeClass('active');
+                $target.parent().addClass('active');
+            });
+            jQuery(document).on('change', "#filter", function () {
+                window.location = "/user/@ViewContext.RouteData.Values["tenant_identifier"]/cases.html#" + jQuery(this).val();
+                ReadHash();
+            });
+            ReadHash();
+        });
+
+        </script>
+    }

@@ -1,0 +1,459 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin.html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">User Guide</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">User Guide</h3>
+    </div>
+    <!-- page head ends -->
+    <div class="row">
+
+        <div class="col-lg-3">
+
+
+
+            <div class="box border" id="left-guide">
+                <div class="box-header p-3" style="background-color: #f9f9f9;border-bottom: 1px solid #ebebeb;">
+                    Navigations
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body p-4">
+                    <ul class="guide-lists">
+                        <li><a class="item" href="#introduction">Introduction</a></li>
+                        <li><a class="item" href="#introduction">Used Technologies</a></li>
+
+                        <li><a class="item" href="#introduction">Server Requirements</a></li>
+                        <li><a class="item" href="#introduction">System Requirements</a></li>
+                        <li><a class="item" href="#introduction">Browser Compatibility</a></li>
+                        <li>
+                            <a class="item" href="#layout">Backend Modules</a>
+                            <ul>
+                                <li><a href="#dashboard">Dashboard</a></li>
+                                <li><a href="#manageuser">Manage Users</a></li>
+                                <li><a href="#manageclaim">Manage Claims</a></li>
+                                <li><a href="#managerole">Manage Roles</a></li>
+                                <li><a href="#managearticle">Manage Articles</a></li>
+                                <li><a href="#managemenu">Manage Menus</a></li>
+                                <li><a href="#managemedia">Manage Media</a></li>
+                                <li><a href="#generalsetting">General Settings</a></li>
+                                <li><a href="#userguide">User Guide</a></li>
+                            </ul>
+                        </li>
+                        @*<li></li>*@
+                        <li>
+                            <a class="item" href="#module">Frontend </a>
+                            <ul>
+                                <li><a href="#">Content Layouts</a></li>
+                                <li><a href="#">Content Blocks</a></li>
+                                <li><a href="#">Manage Claims</a></li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <div class="col-lg-9">
+            <div class="box box-primary border">
+                <style type="text/css">
+                    .guide-item {
+                        min-height: auto;
+                        margin-bottom: 100px
+                    }
+
+                    .ul-number {
+                        list-style: decimal;
+                    }
+                </style>
+                <!-- /.box-header -->
+                <div class="box-body p-5">
+                    <div class="guide-item" id="introduction">
+                        <h1>Introduction</h1>
+
+                        <p>Cicero website is custom designed and developed website which allow admin to edit/update or add new information in the website using custom made <strong>Software Modules</strong>. there are total 10 modules in admin section.</p>
+                        <h3>Used Technology</h3>
+                        <p>
+                        </p><ul>
+                            <li>.Net core 2.1</li>
+                            <li>C# 7</li>
+                            <li>HTML 5</li>
+                            <li>CSS 2 and CSS 3</li>
+                            <li>JavaScript(jQuery)</li>
+                        </ul>
+                        <p></p>
+
+                        <h3>Server Requirement</h3>
+                        <p>
+                        </p><ul>
+                            <li>C# 7 or Higher</li>
+                            <li>IIS 10 or Higher</li>
+                            <li>Latest SQlServer Database</li>
+                        </ul>
+
+                        <p></p>
+                        <h3>Browser Compatibility</h3>
+                        <p>
+                        </p><ul>
+                            <li>Google Chrome </li>
+                            <li>Firefox</li>
+                            <li>Internet Explorer 9+</li>
+                            <li>Safari</li>
+                            <li>Android Browser</li>
+                        </ul>
+
+                        <p></p>
+
+
+                    </div>
+                    <div class="guide-item" id="layout">
+                        <h1>Website Layouts</h1>
+
+                        <p>Cicero is Website has Four types of Layout.</p>
+                        <p>
+                        </p><ul class="ul-number">
+                            <li>Home Page Layout</li>
+                            <li>Product Page Layout</li>
+                            <li>Product Detail Page Layout</li>
+                            <li>Contact Page Layout</li>
+                        </ul>
+                        <p></p>
+                        <p><strong>Contact</strong>, <strong>Product Detail</strong> and <strong>Content</strong> pages are atill not provided by Designer</p>
+
+
+                    </div>
+                    <div class="guide-item" id="module">
+                        <h1>Admin Modules</h1>
+
+                        <p>Cicero is Website has Nine Admin Modules which helps us to edit/add contents in any section of the Cicero website.</p>
+                        <p>
+                        </p><ul class="ul-number">
+                            <li>Dashboard</li>
+                            <li>Manage Users</li>
+                            <li>Manage Claims</li>
+                            <li>Manage Roles</li>
+                            <li>Manage Articles</li>
+                            <li>Manage Menus</li>
+                            <li>Manage Media</li>
+                            <li>General Settings</li>
+                            <li>User Guide</li>
+                        </ul>
+                        <p></p>
+                        <p>
+                            <strong>Note:</strong> To find these admin modules you should enter inside admin section of Cicero website and see this
+                            <a href="~/userguide/adminview.PNG" class="lightbox" target="_blank">
+                                <img src="~/userguide/adminview.PNG" width="100%" />
+                            </a>
+
+                        </p><p>Cicero is Website has Nine Admin Modules which helps us to edit/add contents in the website.</p>
+                        <div id="dashboard">
+                            <h3>Dashboard</h3>
+                            <p>Dashboard content...........</p>
+                        </div>
+
+                        <div id="manageuser">
+                            <h3>Manage Users</h3>
+                            <p>This Module was developed to allow admin to Add/Edit/Delete their/User's information in Website. This section also allows admin to change roles of the other users.</p>
+                            <p>
+
+                                <a href="~/userguide/manageuser1.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageuser1.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                For changing status/delete multiple users
+                            </p>
+                            <a href="~/userguide/manageuser2.png" class="lightbox" target="_blank">
+                                <img src="~/userguide/manageuser2.PNG" width="100%" />
+                            </a>
+
+                            <i>Click on the above image to make it larger </i>
+                            <p>
+                                For confirmation of applying changes
+                            </p>
+                            <a href="~/userguide/manageuser3.png" class="lightbox" target="_blank">
+                                <img src="~/userguide/manageuser3.PNG" />
+                            </a>
+                            <p>   <i>Click on the above image to make it larger </i></p>
+                            <p>
+                                Notifies that changes have occured
+                                <a href="~/userguide/manageuser4.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageuser4.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                Click on one of the edit button to edit a particular user details
+                                <a href="~/userguide/manageuser5.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageuser5.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                Click on the create new button to create new user
+                                <a href="~/userguide/manageuser6.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageuser6.png" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                Click update to create/save user
+                                <a href="~/userguide/manageuser7.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageuser7.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                        </div>
+                        <div id="manageclaim">
+                            <h3>Manage Claims</h3>
+                            <p>This Module was developed to allow admin to Add/Edit/Delete user claims in Website.</p>
+                            <p>
+                                To view list of claims. The admin can also change the status or delete claims here.
+                                <a href="~/userguide/manageclaim1.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageclaim1.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To create new claims click update to save changes
+                                <a href="~/userguide/manageclaim2.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/manageclaim2.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                        </div>
+
+                        <div id="managerole">
+                            <h3>Manage Roles</h3>
+                            <p>This Module was developed to allow admin to Add/Edit/Delete roles and permissions for the user claims in Website.</p>
+                            <p>
+                                To view list of roles for users. The admin can also change the status or delete roles here.
+                                <a href="~/userguide/managerole1.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managerole1.PNG" width="100%" />
+                                </a>
+                                The admin can also change the status or delete roles here.
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To create new roles and add permissions to them click update to save changes
+                                <a href="~/userguide/managerole2.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managerole2.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                        </div>
+
+                        <div id="managearticle">
+                            <h3>Manage Articles</h3>
+                            <p>This module was developed to allow Admin to create any Article in the website like: About Us, About Company etc..</p>
+                            <p>
+                                To view list of articles and choose which to modify
+                                <a href="~/userguide/managearticle1.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managearticle1.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To create new articles, click update to save changes
+                                <a href="~/userguide/managearticle2.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managearticle2.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <ul class="ul-number user-guide-list">
+                                <li><strong>Status:</strong><p>Choose active/inactive to set whether the article can be used in the frontend.</p></li>
+                                <li><strong>Version Title:</strong><p>Version cannot be edited. It states how many changes the article has gone through.</p></li>
+                                <li><strong>Created At:</strong><p>Created date cannot be edited. It states the date the article was created at.</p></li>
+                                <li><strong>Updated At:</strong><p>Updated date cannot be edited. It states the date the article was last updated at.</p></li>
+                                <li><strong>Parent Article:</strong><p>It can be set to an article to decide which article the child article belongs to.</p></li>
+                                <li><strong>Title:</strong><p>The displayed title of the article can be changed here.</p></li>
+                                <li><strong>Template:</strong><p>The admin can set the template for any given article.</p></li>
+                                <li>
+                                    <strong>Identifier:</strong><p>This is a unique identifier though which the article can be searched by in the url.</p>
+                                    <a href="~/userguide/identifier.png" class="lightbox" target="_blank">
+                                        <img src="~/userguide/identifier.PNG" width="100%" />
+                                    </a>
+                                    <i>Click on the above image to make it larger </i>
+                                </li>
+                                <li><strong>Content:</strong><p>The information to be displayed in the article is set here.</p></li>
+                                <li><strong>Short Description:</strong><p>A brief description or any related information about the article can be set here.</p></li>
+                                <li><strong>Media:</strong><p>This field is used to add media in the database to the article. Refer to manage media section for details on how to add medias to database and inserting them in the article.</p></li>
+                            </ul>
+                        </div>
+
+                        <div id="managemenu">
+                            <h3>Manage Menus</h3>
+                            <p>This module was developed to allow Admin to use any Article in the header or footer in the website like: About Us, About Company etc..</p>
+                            <p>
+                                To view list of articles and choose which to modify
+                                <a href="~/userguide/managemenu.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemenu.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To use articles in menu. Select Primary for header and bottom for footer on location
+                                <a href="~/userguide/managemenu1.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemenu1.PNG" width="100%" />
+                                </a>
+
+                                <i>Click on the above image to make it larger </i>
+
+                            </p>
+                            <ul class="ul-number user-guide-list">
+                                <li><strong>Available Links:</strong><p>Click one article, hold and drag it to the right to insert it in the menu. Choose a preset article or use <b>Custom link</b> to add a custom link in the website.</p></li>
+                                <li>
+                                    <strong>Choose any location:</strong><p>The two options that can be chose are primarty and bottom, which represent header/menu and footer respectively.</p>
+                                    <p>
+                                        <b>For Menu</b>
+                                        <a href="~/userguide/managemenuprimary.PNG" class="lightbox" target="_blank">
+                                            <img src="~/userguide/managemenuprimary.PNG" width="100%" />
+                                        </a>
+
+                                        <i>Click on the above image to make it larger </i>
+
+                                    </p>
+                                    <p>
+                                        <b>For Footer</b>
+                                        <a href="~/userguide/managemenubottom.PNG" class="lightbox" target="_blank">
+                                            <img src="~/userguide/managemenubottom.PNG" width="100%" />
+                                        </a>
+
+                                        <i>Click on the above image to make it larger </i>
+
+                                    </p>
+                                </li>
+                            </ul>
+                            <p>
+                                Click save to save changes and delete to remove them
+
+                                <a href="~/userguide/managemenu2.PNG" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemenu2.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <ul class="ul-number user-guide-list">
+                                <li><strong>Menu:</strong><p>The displayed title of the article can be changed here.</p></li>
+                                <li><strong>Css Class:</strong><p>The admin can set the css class the article to use here.</p></li>
+                                <li><strong>Short Description:</strong><p>A brief description or any related information about the article can be set here.</p></li>
+                                <li><strong>Url:</strong><p>This is a unique identifier though which the article can be searched by in the url.</p></li>
+                                <li><strong>Open in new Window?:</strong><p>Check this check box to open to a new window when the article link is clicked on the frontend.</p></li>
+                                <li><strong>Delete:</strong><p>Click delete to delete a particular article from the menu. This will remove it from being displayed.</p></li>
+                                <li><strong>Save:</strong><p>Click Save to make save changes.</p></li>
+                            </ul>
+                        </div>
+
+                        <div id="managemedia">
+                            <h3>Manage Media</h3>
+                            <p>This Module was developed to allow admin to Add/Edit/Delete media information in Website. Media can be used in the claim and article create/edit page.</p>
+                            <p>
+                                To view all medias
+                                <a href="~/userguide/managemedia1.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemedia1.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To delete medias click the trash icon for changing status/delete multiple users
+                                <a href="~/userguide/managemedia2.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemedia2.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To add new media in database in the article page and see Block No
+                                <a href="~/userguide/managemedia3.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemedia3.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                To add new media in database in the claim page
+                                <a href="~/userguide/managemedia4.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemedia4.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                            <p>
+                                <a href="~/userguide/managemedia.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/managemedia.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                        </div>
+
+                        <div id="generalsetting">
+                            <h3>General Settings</h3>
+                            <p>
+                                This Module was developed to change website informtaion. The backend/frontend website name can be changed at the top.
+                            </p>
+
+                            <a href="~/userguide/generalsetting.PNG" class="lightbox" target="_blank">
+                                <img src="~/userguide/generalsetting.PNG" width="100%" />
+                            </a>
+                            <i>Click on the above image to make it larger </i>
+                            <ul class="ul-number user-guide-list">
+                                <li><strong>Name:</strong><p>The backend website name can be changed here.</p></li>
+                                <li><strong>Frontend Title:</strong><p>The frontend website name can be changed here.</p></li>
+                                <li><strong>Phone:</strong><p>Current Phone Number of Cicero to receive all queries about the site can be changed here.</p></li>
+                                <li><strong>Email:</strong><p>Current email address of Cicero to receive all queries about the site can be changed here.</p></li>
+                                <li><strong>Location:</strong><p>The Main physical location of Cicero to receive all queries about Cicero can be changed here.</p></li>
+                                <li><strong>Role for register User:</strong><p>The initial role to be assigned to users who register through frontend is set here.</p></li>
+                                <li><strong>Url:</strong><p>The Internet location of Cicero to use Cicero Website can be changed here.</p></li>
+                                <li><strong>Facebook Url:</strong><p>The Facebook url for Cicero dealing with all social activites can be changed here.</p></li>
+                                <li><strong>Twitter Url:</strong><p>The Twitter url for Cicero dealing with all social activites can be changed here.</p></li>
+                            </ul>
+                        </div>
+
+                        <div id="userguide">
+                            <h3>User Guide</h3>
+                            <p>This Module was developed to give basic giude to new users who comes in website's admin section.</p>
+                            <p>
+                                Open this
+                                <a href="~/userguide/userguide.png" class="lightbox" target="_blank">
+                                    <img src="~/userguide/userguide.PNG" width="100%" />
+                                </a>
+                                <i>Click on the above image to make it larger </i>
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+
+    </div>
+</div>
+@section scripts{
+
+    <script type="text/javascript">
+        jQuery(document).scroll(function () {
+            console.log(jQuery(document).scrollTop());
+            if (jQuery(document).scrollTop() > 100) {
+                jQuery("#left-guide").addClass("fixit");
+            } else {
+                jQuery("#left-guide").removeClass("fixit");
+            }
+        })
+    </script>
+}

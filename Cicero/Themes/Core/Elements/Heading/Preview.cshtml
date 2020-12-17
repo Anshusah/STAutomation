@@ -1,0 +1,15 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Heading
+@{
+    Heading hd = Model as Heading;
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @hd.BackendLabel
+        </label>
+        <header>
+            <@hd.HeaderType> @hd.HeaderText</@hd.HeaderType>
+        </header>
+    </div>
+</div>

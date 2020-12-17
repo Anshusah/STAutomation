@@ -1,0 +1,728 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model CaseViewModel
+@inject ICaseService caseService
+@inject Permission Permission
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Claim";
+    dynamic data = new object();
+    ViewData["body"] = "full-layout";
+    if (Model.Id != 0)
+    {
+        data = Json.Serialize((dynamic)ViewBag.formData);
+    }
+    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+
+    Cicero.Service.Models.Core.FormBuilder FB = new Cicero.Service.Models.Core.FormBuilder() { FormData = fbvm, Side = "frontend", HttpContext = HttpContextAccessor.HttpContext };
+
+}
+
+
+<!-- container s -->
+<style>
+    .case-view-page {
+        background-color: #fff;
+    }
+
+    .claim-detail-header {
+        font-weight: bold;
+    }
+
+    .list {
+        color: rgba(0, 0, 0,.6)
+    }
+
+    .detail-info-list li {
+        width: 60%;
+    }
+
+    .detail-info-list .detail-info-title {
+        color: rgba(0, 0, 0,.6)
+    }
+
+    .detail-info-list .detail-info-value {
+        float: right;
+        color: rgba(0, 0, 0,1)
+    }
+
+    .damage-detail-list {
+        margin: 15px 0;
+    }
+
+    li.damage-detail-list span {
+        display: block;
+    }
+
+        li.damage-detail-list span.damage-detail-value {
+            color: rgba(0, 0, 0,1);
+        }
+
+    li.claim-circumstances-list {
+        padding: 15px 0;
+    }
+
+        li.claim-circumstances-list:not(:last-child) {
+            border-bottom: 1px solid #E6E6E6;
+        }
+
+    .claim-circumstances-list span {
+        /* padding: 10px; */
+        display: block;
+    }
+
+        .claim-circumstances-list span.claim-circumstances-ques {
+            color: rgba(0, 0, 0,1);
+            padding-bottom: 12px;
+            font-weight: bold;
+        }
+
+    .image-wrapper {
+        position: relative;
+        margin: 0 -15px;
+        height: 560px;
+        background: url(/Themes/Purple/img/view-bg-img.png) center center no-repeat;
+        background-size: cover;
+    }
+
+    .img-slider {
+        display: flex;
+        top: 50%;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        z-index: 2;
+        background: rgba(255, 255, 255, .5);
+        border-radius: 500px;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .img-slider:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .img-slider.prev {
+            left: 40px;
+        }
+
+        .img-slider.next {
+            right: 40px;
+        }
+
+    .ad-img-wrapper .img-container {
+        border: 1px solid #CED4DA;
+        padding: 32px;
+        border-radius: 3px;
+    }
+
+    .case__title-text {
+        display: inline;
+        vertical-align: middle;
+    }
+
+    .case__meta {
+        margin-top: 0.5rem;
+    }
+
+    .case__type-name {
+        display: inline;
+    }
+
+    .case__created-time {
+    }
+
+    .dot-separator {
+        display: inline;
+        position: relative;
+        padding-left: 1rem;
+        margin-left: 0.5rem;
+    }
+
+        .dot-separator:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 3px;
+            height: 3px;
+            background: #ccc;
+            border-radius: 10em;
+        }
+
+    .case__content {
+    }
+
+    .case__list {
+        margin-bottom: 0;
+    }
+
+    .case__item {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid #E6E6E6;
+        padding: 1rem 0;
+    }
+
+    .case__item-wrapper {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .case__item:last-child {
+        border-bottom: 0;
+    }
+
+    .case__list--stacked .case__item {
+        flex-direction: column;
+    }
+
+    .case__list--stacked .case__item-wrapper {
+        justify-content: flex-start;
+        flex-direction: column;
+    }
+
+    .case__label {
+        color: #666;
+        margin-right: 1rem;
+    }
+
+    .case__data {
+        text-align: right;
+    }
+
+    .case__list--stacked .case__data {
+        text-align: left;
+    }
+
+    .card--case {
+        border: 0;
+        height: 100%;
+    }
+
+        .card--case .card-body {
+            padding: 2rem;
+        }
+
+    .case__item-child {
+        padding: 2rem;
+    }
+
+    .case__item--description .case__item-wrapper {
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .case__item--description .case__data {
+        text-align: left;
+    }
+
+    .case__accordion {
+        padding: 1rem 0;
+    }
+
+        .case__accordion .case__list {
+            padding: 0;
+        }
+
+        .case__accordion .card-header {
+            cursor: pointer;
+            background: #fff;
+        }
+
+            .case__accordion .card-header:hover, .case__accordion .card.active .card-header {
+                background: #f4f4f4;
+            }
+
+            .case__accordion .card-header h5 {
+                font-weight: bold;
+                font-size: 1rem;
+            }
+</style>
+
+<style>
+    .row > .column {
+        padding: 0 8px;
+    }
+
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    /* Create four equal columns that floats next to eachother */
+    .column {
+        float: left;
+        width: 25%;
+    }
+
+    /* The Modal (background) */
+    .modal {
+        /* display: none;
+        position: fixed;
+        z-index: 99999999999999;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: black; */
+    }
+
+    .modal-content {
+        /* position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        width: 90%;
+        max-width: 1200px; */
+    }
+
+    /* The Close Button */
+    .close {
+        /* color: white;
+        position: absolute;
+        top: 10px;
+        right: 25px;
+        font-size: 35px;
+        font-weight: bold; */
+    }
+
+        .close:hover,
+        .close:focus {
+            /* color: #999;
+            text-decoration: none;
+            cursor: pointer; */
+        }
+
+    /* Hide the slides by default */
+    .mySlides {
+        display: none;
+    }
+
+    /* Next & previous buttons */
+    .prev,
+    .next {
+        /* cursor: pointer; */
+        /*position: absolute;*/
+        /* top: 50%;
+        width: auto;
+        padding: 16px;
+        margin-top: -50px;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+        user-select: none;
+        -webkit-user-select: none; */
+    }
+
+    /* Position the "next button" to the right */
+    .next {
+        /* right: 0;
+        border-radius: 3px 0 0 3px; */
+    }
+
+        /* On hover, add a black background color with a little bit see-through */
+        .prev:hover,
+        .next:hover {
+            /* background-color: rgba(0, 0, 0, 0.8); */
+        }
+
+    /* Number text (1/3 etc) */
+    .numbertext {
+        /* color: #f2f2f2;
+        font-size: 12px;
+        padding: 8px 12px;
+        position: absolute;
+        top: 0; */
+    }
+
+    /* Caption text */
+    .caption-container {
+        /* text-align: center;
+        background-color: black;
+        padding: 2px 16px;
+        color: white; */
+    }
+
+    img.demo {
+        opacity: 0.6;
+    }
+
+    .active,
+    .demo:hover {
+        opacity: 1;
+    }
+
+    img.hover-shadow {
+        transition: 0.3s;
+    }
+
+    .hover-shadow:hover {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+</style>
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <main role="main" class="main-content">
+                <div class="absolute-fill">
+                    <div class="main-content-area">
+                        <div class="content__wrapper section__claim-overview">
+                            <div class="content__header">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                        <li class="breadcrumb-item"><a href="#">Claims</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Overview</li>
+                                    </ol>
+                                </nav>
+                                <div class="content__header-wrapper">
+                                    <div class="case__header">
+                                        <div class="case__title">
+                                            <h1 class="content__header-title case__title-text">
+                                                <span class="title">Claim ID:</span>
+                                                <span class="value">@Model.CaseGeneratedId</span>
+                                            </h1>
+                                            <span class="badge badge-success badge-pill py-2 px-3 ml-2" style="background-color: @Model.QueueColor;">@Model.QueueName</span>
+                                        </div>
+                                        <div class="case__meta">
+                                            <div class="case__type-name">@Model.CaseFormName</div>
+                                            <div class="case__created-time text-muted small dot-separator">Created on @Model.CreatedAt.ToLongDateString()</div>
+                                        </div>
+                                    </div>
+                                    <div class="content__toolbar">
+                                        <div class="mb-1">
+                                            <a href="@Url.Content("~/admin/form"+ _utils.GetTenantForUrl(false) +"/" + Model.CaseFormUrl + "/" + _utils.EncryptId(Model.Id) + "/edit.html")" class="btn btn-outline-secondary">Edit</a>
+                                            <a href="javascript::" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){location.href="@Url.Content("~/admin/form"+ _utils.GetTenantForUrl(false) +"/" + Model.CaseFormUrl + "/" + _utils.EncryptId(Model.Id) + "/delete.html")";},OnCancelled:function(){this.close();}}' class="btn btn-danger">Delete</a>
+                                        </div>
+                                        <div class="text-muted small">Last updated on @Model.UpdatedAt.ToLongDateString()</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content__body">
+                                <div class="case__content">
+                                    @Html.Raw(await FB.RenderView2(data))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<!-- container e -->
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+
+@*@if (Model.Id != 0)
+    {
+
+        <script>
+                $(function () {
+            var allValues = JSON.parse('@data');
+             $.each(allValues, function (k, v) {
+                if ($('[name="' + k + '"]').attr('multiple') == 'multiple') {
+                    $.each(v.split(","), function (i, e) {
+                        $("[name='" + k + "'] option[value='" + e + "']").prop("selected", true);
+                    });
+                }
+                else if ($('[name="' + k + '"]').attr('type') == 'radio')
+                {
+                    $("[name='" + k + "']").removeAttr("checked");
+                    $("[name='" + k + "'][value='" + v + "']").prop("checked",true);
+                }
+                else {
+                    $('[name="' + k + '"]').val(v);
+                }
+
+            });
+
+            });
+        </script>
+    }*@
+@section Scripts{
+    <script src="~/js/inputmask.js"></script>
+    <script src="~/js/jquery.inputmask.bundle.js"></script>
+    <script src="~/js/form_builder_render_frontendtab.js"></script>
+    <script src="~/js/form_builder_form_validation.js"></script>
+    <script type="text/javascript">
+
+        jQuery(document).ready(function () {
+
+            getcountrylist("");
+            function getcountrylist(thisdata) {
+                let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin"+_utils.GetTenantForUrl(false) + "/country-list")",
+                    //data: ,
+                    success: function (d) {
+                        if (d != null) {
+                            $.each(d, function (k, l) {
+                                //console.log($(thisdata).attr("id"));
+                                //  if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                $("#" + $(".country").attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                //  }
+                            })
+                        }
+                    }
+                });
+            }
+
+        });
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+    </script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.pop').addClass("img__pop");
+            $.each($('.pop'), function (i, v) {
+                $(this).attr("data-slide", (i+1));
+            })
+              $('.pop').removeClass("pop");
+            createLightBox();
+               $.each($('.which'), function (index, data) {
+            var targetId = [];
+            var targetOptions = [];
+            var targetActions = [];
+            $.each($(data).parent().parent().find('ul[data-rowId]'), function (i, d) {
+                targetId.push($(d).attr('data-rowid'));
+            })
+
+            $.each($(data).find('select option'), function (idx, option) {
+                targetOptions = $(option).attr('data-target').split(',');
+                targetActions = $(option).attr('data-action').split(',');
+                var check = 0;
+                $.each(targetId, function (indx, id) {
+                    var valueIndex = jQuery.inArray("#" + id, targetOptions);
+                    if ((targetActions[valueIndex] == "False")) {
+                        check = 1;
+                    }
+                })
+
+                if (check == 0) {
+                    $(data).html($(option).val());
+                    return false;
+                }
+            })
+        })
+
+            $('.number').number(true, 2);
+            $(document).on("keypress", ".datepicker", function (e) {
+                e.preventDefault();
+            });
+
+            $(document).on("keypress", ".datetimepicker", function (e) {
+                e.preventDefault();
+            });
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+
+        });
+
+        //country list populate
+        function getcountrylist(thisdata) {
+            let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/country-list")",
+                        //data: ,
+                        success: function (d) {
+                            if (d != null) {
+
+                                $.each(d, function (k, l) {
+                                    console.log($(thisdata).attr("id"));
+                                    if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                        $("#" + $(thisdata).attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                    }
+                                })
+                            }
+                        }
+                });
+        };
+        //save to draft
+        $(document).on("click", "#save-btn", function (e) {
+            var url = "@Url.Content("/admin/form/" + @_utils.GetTenantForUrl(true) + @_utils.GetParams("form") + "/" + @_utils.EncryptId(Model.Id) + "/edit.html")";
+
+            window.location = url;
+        });
+        //send claim
+
+        function createLightBox() {
+            var slides = '';
+           // var thumbnail = '';
+            var length = 0;
+            var i = 1;
+            $.each($('.fileuploader__item-image img'), function (index, value) {
+                  var imgsrc = $(this).attr("src");
+                if (imgsrc.toLowerCase().indexOf("uploads") >= 0) {
+                    length++;
+                }
+            })
+            $.each($('.fileuploader__item-image img'), function (index, value) {
+                var imgsrc = $(this).attr("src");
+                var imgTitle = $(this).attr('data-imgtitle');
+                if (imgsrc.toLowerCase().indexOf("uploads") >= 0) {
+                    var currentIndex = i++;
+                    //imgsrc = 'https://www.w3schools.com/howto/img_nature_wide.jpg';
+                    slides += '<div class="lightbox__item mySlides"> <div class="numbertext">' + (currentIndex) + '/ ' + length + '</div> <img src="' + imgsrc + '" class="lightbox__img"> </div>';
+                  //  thumbnail += '<div class="column"> <img class="demo" src="' + imgsrc + '" onclick="currentSlide(' + (currentIndex) + ')" alt="' + imgTitle + '"> </div>';
+                }
+            });
+
+            var buttons = '<a href="#" class="prev lightbox__prev lightbox__icon" onclick="plusSlides(-1)"><span class="sr-only">Previous</span></a> <a href="#" class="next lightbox__next lightbox__icon" onclick="plusSlides(1)"><span class="sr-only">Next</span></a> <!-- Caption text -->';
+            var caption = '<div class="slide-caption"><div id="caption"></div></div>';
+            var count = '<div class="slide-counter"><span id="currentNumber"></span>/' + length + '</div>';
+            var modal = '<div id="lightBoxModal" class="lightbox"><div class="lightbox__dialog"><div class="lightbox__toolbar">'+ count + caption +'<a href="#" class="lightbox__close lightbox__icon" onclick="closeModal()"><i class="sr-only">Close</i></a></div><div class="lightbox__content">' + slides + buttons + '' + '</div></div></div>';
+
+            $('body').append(modal);
+           //  showSlides(slideIndex);
+        }
+
+    </script>
+
+    <script>
+        // Open the Modal
+        function openModal() {
+            $("#lightBoxModal").css("display", "block");
+        }
+
+        // Close the Modal
+        function closeModal() {
+            $("#lightBoxModal").css("display", "none");
+            $('.lightbox__backdrop').remove();
+        }
+
+    $(document).on('keyup', function (e) {
+        if (e.keyCode === 27) {
+            e.preventDefault();
+            closeModal()
+        }
+        if (e.keyCode == 37) {
+            if ($('#lightBoxModal').css('display') == "block") {
+                plusSlides(-1)
+            }
+        }
+         if (e.keyCode == 39) {
+              if ($('#lightBoxModal').css('display') == "block") {
+                  plusSlides(1);
+            }
+        }
+    });
+
+        var slideIndex = 1;
+
+        // Next/previous controls
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        // Thumbnail image controls
+        function currentSlide(n) {
+            slideIndex = n;
+            showSlides(slideIndex);
+        }
+        function showSlides(n) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+          //  var dots = document.getElementsByClassName("demo");
+            var captionText = document.getElementById("caption");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            $('#currentNumber').text(slideIndex);
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            //for (i = 0; i < dots.length; i++) {
+            //    dots[i].className = dots[i].className.replace(" active", "");
+            //}
+            slides[slideIndex - 1].style.display = "block";
+            var windowInnerHeight = window.innerHeight;
+            var imgHeight = $(slides[slideIndex - 1]).find('img').height();
+            if(imgHeight > windowInnerHeight){
+                $('.lightbox__img').css('max-height', (windowInnerHeight*0.9 )+'px');
+            }
+
+           // dots[slideIndex - 1].className += " active";
+           // captionText.innerHTML = dots[slideIndex - 1].alt;
+        }
+        $(document).on("click", '.img__pop', function (e) {
+            var slide = $(e.currentTarget).attr("data-slide");
+            currentSlide(parseInt(slide));
+            openModal();
+            var slidess = document.getElementsByClassName("mySlides");
+            var _windowInnerHeight = window.innerHeight;
+            var _imgHeight = $(slidess[parseInt(slide) - 1]).find('img').height();
+            if(_imgHeight > _windowInnerHeight){
+                $('.lightbox__img').css('max-height', (_windowInnerHeight*0.9 )+'px');
+            }
+            $('body').append('<div class="lightbox__backdrop show"></div>');
+        })
+
+    </script>
+}

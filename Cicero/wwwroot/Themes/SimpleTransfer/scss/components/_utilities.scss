@@ -1,0 +1,56 @@
+
+html{
+    font-size: 16px;
+
+}
+body{
+    font-weight:300;
+}
+.img{
+    &-responsive
+    {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+}
+a:hover{
+    text-decoration:none;
+}
+.text-light{
+    color:$gray-200 !important;
+}
+//or -divider
+//or divider
+.divider {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 70px;
+        height: 1px;
+        background-color: $border-color;
+        left: -76px;
+        top: 50%;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 70px;
+        height: 1px;
+        background-color: $border-color;
+        right: -76px;
+        top: 50%;
+    }
+}
+.disabled{
+    pointer-events:none;
+}
+
+//on-fido portal
+.onfido-sdk-ui-Modal-portal{
+    position:absolute;
+    z-index:1024;
+}

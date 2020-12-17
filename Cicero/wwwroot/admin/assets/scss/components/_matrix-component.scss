@@ -1,0 +1,42 @@
+.border {
+    &-dashed {
+        border-style: dashed!important;
+    }
+    &-bottom-dashed {
+        border-bottom-style: dashed!important;
+    }
+}
+.card-header h5 {
+    i {
+        transition: all 150ms linear;
+    }
+    &[aria-expanded='true'] {
+        i {
+            transform: rotate(90deg);
+            }
+        }
+}
+.header-line-through {
+    position: relative;
+    &:before {
+        content: "";
+        background: theme(text, support);
+        height: 1px;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        opacity: 0.3;
+        top: 50%;
+        transform: translateY(50%);
+        z-index: 1;
+    }
+    .h6 {
+        font-size: 1.4rem;
+        background: theme(neutral-color, superlight);
+        z-index: 2;
+        position: relative;
+        margin-left: -1.25rem;
+        padding-right: 1rem;
+        padding-left: 1.4rem;
+    }
+}

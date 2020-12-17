@@ -1,0 +1,33 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Media
+@using Cicero.Service.Services
+@inject IUserService _userService
+@{
+    Media tb = Model as Media;
+}
+<div class="fb-element">
+    <div class="form-group">
+        @*<ul class="media-list">
+            @foreach (var item in _userService.GetImagesByUserId(Model.Id).Take(1))
+            {
+                @if (System.IO.Path.GetExtension(item.Url) == ".pdf")
+                {
+                    <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/pdf-icon.png"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                }
+                else if (System.IO.Path.GetExtension(item.Url) == ".doc" || System.IO.Path.GetExtension(item.Url) == ".docx" || System.IO.Path.GetExtension(item.Url) == ".txt")
+                {
+                    <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/doc-icon.png"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                }
+                else
+                {
+                    <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/@item.Url"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                }
+            }
+            <li class="thumbs add"><button type="button" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.User.InsertImages(e)},OnCancelled:function(){this.close();}}'></button></li>
+        </ul>*@
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+    </div>
+</div>

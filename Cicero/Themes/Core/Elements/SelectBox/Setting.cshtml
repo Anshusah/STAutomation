@@ -1,0 +1,1926 @@
+﻿<!-- Hidden Fields : Start -->
+@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.SelectBox
+@using Cicero.Service.Services
+@using Cicero.Service.Models
+@inject ICommonService commonService
+@inject ISynchronizeService SynchronizeService
+@inject IQueueService QueueService
+@inject IFormBuilderService FormBuilderService
+@{
+    SelectBox sb = Model as SelectBox;
+    var xx = sb;
+    int formId = Convert.ToInt32(sb.Data);
+    List<SelectListItem> dbTables = SynchronizeService.getSyncSourceTable();
+    string loggeduser = commonService.getLoggedInUserId();
+    string roleId = commonService.GetRoleIdByUserId(loggeduser);
+    List<SelectListItem> stateList = QueueService.GetStateSelectListByFormId(formId, roleId);
+    List<SelectListItem> formElements = FormBuilderService.GetFormFields(formId, true);
+    List<SelectListItem> formAllElements = FormBuilderService.GetFormFields(formId, true, true);
+}
+<div class="modal-header flex-column">
+    <h5 class="modal-title">SelectBox Setting</h5>
+    <p class="mb-0">This settings helps you to customize SelectBox.</p>
+</div>
+
+<div class="modal-body">
+    <div class="status"></div>
+    <ul class="fb-card">
+        <li class="active">
+            <header>Name</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="rgName">Element Name</label>
+                        <input type="text" class="form-control" id="ElementName" @sb.GetName("Name") value="@sb.Name" data-name="elmName" />
+                        <small class="form-text text-muted">Input a Unique Name for this Element.</small>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="ElementName_@sb.ElementId" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </section>
+        </li>
+
+        <li>
+            <header>Frontend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-4">
+                        <label for="sbFrontendId">Id</label>
+                        <input type="text" class="form-control" id="sbFrontendId" @sb.GetName("FrontendId") value="@sb.FrontendId">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="sbFrontendClass">Class</label>
+                        <input type="text" class="form-control" id="sbFrontendClass" @sb.GetName("FrontendClass") value="@sb.FrontendClass">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="sbFrontendLabel">Label</label>
+                        <input type="text" class="form-control" id="sbFrontendLabel" @sb.GetName("FrontendLabel") value="@sb.FrontendLabel">
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="sbFrontendVisible" class="switch">
+                        <input class="switch__input" id="sbFrontendVisible" @sb.GetName("FrontendVisible") type="checkbox" value="true" @sb.GetChecked(sb.FrontendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+
+                </div>
+                <div class="switch-control">
+                    <label for="sbVisibleinFooter" class="switch">
+                        <input class="switch__input" id="sbVisibleinFooter" @sb.GetName("VisibleinFooter") type="checkbox" value="true" @sb.GetChecked(sb.VisibleinFooter)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Visible In Footer</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Backend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-4">
+                        <label for="sbBackendId">Id</label>
+                        <input type="text" class="form-control" id="sbBackendId" @sb.GetName("BackendId") value="@sb.BackendId">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="sbBackendClass">Class</label>
+                        <input type="text" class="form-control" id="sbBackendClass" @sb.GetName("BackendClass") value="@sb.BackendClass">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="sbBackendLabel">Label</label>
+                        <input type="text" class="form-control" id="sbBackendLabel" @sb.GetName("BackendLabel") value="@sb.BackendLabel">
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="sbBackendVisible" class="switch">
+                        <input class="switch__input" id="sbBackendVisible" @sb.GetName("BackendVisible") type="checkbox" value="true" @sb.GetChecked(sb.BackendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+
+        <li>
+            <header>
+                <span>Select Option </span>
+            </header>
+            <section>
+                <div class="form-row">
+                    <div class="col-lg-12">
+                        <div class="switch-control">
+                            <label for="UseFromDatabase" class="switch">
+                                <input class="switch__input" id="UseFromDatabase" @sb.GetName("UseFromDatabase") type="checkbox" value="true" @sb.GetChecked(sb.UseFromDatabase)>
+                                <span class="switch__state"></span>
+                                <span class="switch__label">Take Options From DB</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div id="exTab2" class="container p-0">
+                    <ul class="nav nav-tabs">
+                        <li class="@(sb.UseFromDatabase == true ? "" : "active")">
+                            <a href="#manualOptions" data-toggle="tab" class="nav-link @(sb.UseFromDatabase == true ? "" : "active")">Manual Option Input</a>
+                        </li>
+                        <li class="@(sb.UseFromDatabase == true ? "active" : "")">
+                            <a href="#dbOptions" data-toggle="tab" class="nav-link @(sb.UseFromDatabase == true ? "active" : "")">Link With Database</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane pt-4 pb-3 @(sb.UseFromDatabase == true ? "" : "active")" id="manualOptions">
+                            <div class="select-option-head">
+                                <div class="px-4">
+                                    <div class="form-row">
+                                        <div class="col-lg-3">
+                                            <label for="">Value Field</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="">Text Field</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="">Icon URL</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="">Default</label>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label for="">Toggle</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="validation_rule_wrapper">
+                                @{
+                                    int index1 = 0;
+                                    if (sb.SelectOptions != null && sb.SelectOptions.Count > 0)
+                                    {
+
+                                        foreach (var so in sb.SelectOptions)
+                                        {
+                                            <div class="field-validation-wrapper">
+                                                <div class="field-controller">
+                                                    <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                    <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                    <a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-lg-3">
+                                                        <input type="text" name="SelectOptions[@index1][Value]" data-name="SelectOptions[{0}][Value]" class="form-control" id="" placeholder="Value Field" value="@so.Value">
+
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <input type="text" name="SelectOptions[@index1][Text]" data-name="SelectOptions[{0}][Text]" class="form-control" id="" placeholder="Text Field" value="@so.Text">
+
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <input type="text" name="SelectOptions[@index1][IconUrl]" data-name="SelectOptions[{0}][IconUrl]" class="form-control" id="" placeholder="Icon Url" value="@so.IconUrl">
+
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <label class="switch">
+                                                            <input type="checkbox" name="SelectOptions[@index1][Selected]" class="switch__input" data-name="SelectOptions[{0}][Selected]" value="True" id="" checked="@so.Selected">
+                                                            <span class="switch__state"></span>
+                                                            <span class="switch__label"></span>
+                                                        </label>
+
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <label class="switch">
+                                                            <input type="checkbox" name="SelectOptions[@index1][ToggleOptions]" class="switch__input" data-name="SelectOptions[{0}][ToggleOptions]" value="True" id="" checked="@so.ToggleOptions">
+                                                            <span class="switch__state"></span>
+                                                            <span class="switch__label"></span>
+                                                        </label>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            {
+                                                index1++;
+                                            }
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <div class="field-validation-wrapper">
+                                            <div class="field-controller">
+                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                <a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>
+                                            </div>
+                                            <div class="form-row">
+
+                                                <div class="col-lg-3">
+                                                    <input type="text" name="SelectOptions[0][Value]" data-name="SelectOptions[{0}][Value]" class="form-control" id="" placeholder="Value Filed">
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <input type="text" name="SelectOptions[0][Text]" data-name="SelectOptions[{0}][Text]" class="form-control" id="" placeholder="Text Field">
+
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <input type="text" name="SelectOptions[0][IconUrl]" data-name="SelectOptions[{0}][IconUrl]" class="form-control" id="" placeholder="Icon Url">
+
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <label class="switch">
+                                                        <input type="checkbox" name="SelectOptions[@index1][Selected]" class="switch__input" data-name="SelectOptions[{0}][Selected]" value="True" id="">
+                                                        <span class="switch__state"></span>
+                                                        <span class="switch__label"></span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <label class="switch">
+                                                        <input type="checkbox" name="SelectOptions[@index1][ToggleOptions]" class="switch__input" data-name="SelectOptions[{0}][ToggleOptions]" value="True" id="">
+                                                        <span class="switch__state"></span>
+                                                        <span class="switch__label"></span>
+                                                    </label>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="tab-pane pt-4 pb-3 @(sb.UseFromDatabase == true ? "active" : "")" id="dbOptions">
+                            @{
+                                string selectedTable = string.Empty;
+                            }
+                            <div class="form-row">
+                                <div class="form-group col-lg-3">
+                                    <label for="sbSelectFromDbTable">Select Available Table</label>
+                                    <select class="form-control dbTable" id="sbSelectFromDbTable" @sb.GetName("SelectFromDbTable") value="@sb.SelectFromDbTable">
+                                        <option value="">Please Select</option>
+                                        @foreach (var item in dbTables)
+                                        {
+                                            if (item.Value == sb.SelectFromDbTable)
+                                            {
+                                                <option value="@item.Value" selected>@item.Text</option>
+                                                selectedTable = item.Value;
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                    <label for="sbSelectFromDbFieldText">Select Available (Text)</label>
+                                    <select class="form-control dbField" id="sbSelectFromDbFieldText" @sb.GetName("SelectFromDbFieldText") value="@sb.SelectFromDbFieldText">
+                                        @if (selectedTable != string.Empty)
+                                        {
+                                            List<SelectListItem> tableFields = SynchronizeService.getSyncSourceTableColumns(selectedTable);
+                                            @foreach (var item in tableFields)
+                                            {
+                                                if (item.Value == sb.SelectFromDbFieldText)
+                                                {
+                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">Please Select Table First</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                    <label for="sbSelectFromDbFieldValue">Select Field (Value)</label>
+                                    <select class="form-control dbField" id="sbSelectFromDbFieldValue" @sb.GetName("SelectFromDbFieldValue") value="@sb.SelectFromDbFieldValue">
+                                        @if (selectedTable != string.Empty)
+                                        {
+                                            List<SelectListItem> tableFields = SynchronizeService.getSyncSourceTableColumns(selectedTable);
+                                            @foreach (var item in tableFields)
+                                            {
+                                                if (item.Value == sb.SelectFromDbFieldValue)
+                                                {
+                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">Please Select Table First</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                    <label for="sbSelectFromDbIconUrl">Select For (Icon)</label>
+                                    <select class="form-control dbField" id="sbSelectFromDbIconUrl" @sb.GetName("SelectFromDbIconUrl") value="@sb.SelectFromDbIconUrl">
+                                        @if (selectedTable != string.Empty)
+                                        {
+                                            List<SelectListItem> tableFields = SynchronizeService.getSyncSourceTableColumns(selectedTable);
+                                            @foreach (var item in tableFields)
+                                            {
+                                                if (item.Value == sb.SelectFromDbIconUrl)
+                                                {
+                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">Please Select Table First</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+
+
+                                <div class="col-lg-3 form-group">
+                                    <label for="sbSelectFromDbFieldSelectedOnRow">Input Default Selected</label>
+                                    <input type="number" min="0" class="form-control" placeholder="Eg: 1 for 1st option" id="sbSelectFromDbFieldSelectedOnRow" @sb.GetName("SelectFromDbFieldSelectedOnRow") value="@sb.SelectFromDbFieldSelectedOnRow" />
+
+                                </div>
+                                <div class="col-lg-3 form-group">
+                                    <label for="sbSelectFromDbToggleOptionsOnRow">Input Default Toggle</label>
+                                    <input type="number" min="0" class="form-control" placeholder="Eg: 1 for 1st option" id="sbSelectFromDbToggleOptionsOnRow" @sb.GetName("SelectFromDbToggleOptionsOnRow") value="@sb.SelectFromDbToggleOptionsOnRow" />
+
+                                </div>
+
+                                <div class="form-group col-lg-3">
+                                    <div class="switch-control">
+                                        <label for="sbSelectFromDbIsToggleOption" class="switch">
+                                            <input class="switch__input" id="sbSelectFromDbIsToggleOption" @sb.GetName("SelectFromDbIsToggleOption") type="checkbox" value="true" @sb.GetChecked(sb.SelectFromDbIsToggleOption)>
+                                            <span class="switch__state"></span>
+                                            <span class="switch__label">Enable Toggle</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </li>
+
+        <li>
+            <header>Events Setting</header>
+            <section>
+                <div id="Events" class="container p-0">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#onLoad" data-toggle="tab" class="nav-link active">OnLoad Event</a>
+                        </li>
+                        <li>
+                            <a href="#onChange" data-toggle="tab" class="nav-link">OnChange Event</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane pt-4 pb-3 active" id="onLoad">
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 mb-12">
+                                    <div class="target_option_wrapper">
+                                        <div class="field-validation-wrapper">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <div class="switch-control">
+                                                        <label for="IsOnLoadEvent" class="switch">
+                                                            <input class="switch__input" id="IsOnLoadEvent" @sb.GetName("IsOnLoadEvent") type="checkbox" value="true" @sb.GetChecked(sb.IsOnLoadEvent)>
+                                                            <span class="switch__state"></span>
+                                                            <span class="switch__label">Enable Workflow Event</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <button onclick="openElementEventSetting(@formId,@sb.ElementId,@Convert.ToInt16(Cicero.Service.Enums.ElementEventType.OnLoad))" type="button" class="btn btn-outline-primary form-control element-workflow">
+                                                            <i class="ri-shape-line"></i> <span>Manage On Load Workflow Event</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                            @*<div class="form-row">
+                                    <div class="col-lg-12">
+                                        <p>Choose states from the options available options to run workflow.</p>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-lg-6 form-group">
+                                        <label for="sbStartState">Select Start State</label>
+                                        <select class="form-control startState" id="sbStartState" name="OnLoadEvent[StartState]">
+                                            <option value="" selected>Please Select</option>
+                                            @foreach (var state in stateList)
+                                            {
+                                                if (sb.OnLoadEvent != null)
+                                                {
+                                                    if (sb.OnLoadEvent.StartState == state.Value)
+                                                    {
+                                                        <option value="@state.Value" selected>@state.Text</option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@state.Value">@state.Text</option>
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <option value="@state.Value">@state.Text</option>
+                                                }
+
+                                            }
+
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <label for="sbEndState">Select End State</label>
+                                        <select class="form-control endState" id="sbEndState" name="OnLoadEvent[EndState]">
+                                            <option value="" selected>Please Select</option>
+                                            @foreach (var state in stateList)
+                                            {
+                                                if (sb.OnLoadEvent != null)
+                                                {
+                                                    if (sb.OnLoadEvent.EndState == state.Value)
+                                                    {
+                                                        <option value="@state.Value" selected>@state.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@state.Value">@state.Text</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <option value="@state.Value">@state.Text</option>
+                                                }
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>*@
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <p>Choose the Elements from which you want to take value from </p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <div class="select-option-head">
+                                        <div class="px-4">
+                                            <div class="form-row">
+                                                <div class="col-lg-4">
+                                                    <label for="">Value Field</label>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <label for="">Select Element</label>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <label for="">Enable Validation</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="validation_rule_wrapper">
+                                        @{
+                                            if (sb.OnLoadEvent != null)
+                                            {
+                                                if (sb.OnLoadEvent.TakeValueFromName != null && sb.OnLoadEvent.TakeValueFromName.Count > 0)
+                                                {
+
+                                                    index1 = 0;
+                                                    foreach (var so in sb.OnLoadEvent.TakeValueFromName)
+                                                    {
+                                                        <div class="field-validation-wrapper">
+                                                            <div class="field-controller">
+                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="OnLoadEvent[TakeValueFromName][@index1]" data-name="OnLoadEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Field" value="@sb.OnLoadEvent.TakeValueFromName[index1]">
+
+                                                                </div>
+                                                                <div class="col-lg-4">
+                                                                    <select type="text" name="OnLoadEvent[TakeValueFromElement][@index1]" data-name="OnLoadEvent[TakeValueFromElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                        <option value="">Please Select</option>
+                                                                        @foreach (var item in formElements)
+                                                                        {
+                                                                            if (sb.OnLoadEvent.TakeValueFromElement[index1] != null)
+                                                                            {
+                                                                                if (item.Value == sb.OnLoadEvent.TakeValueFromElement[index1].ToString())
+                                                                                {
+                                                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="@item.Value">@item.Text</option>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+
+
+                                                                        }
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="col-lg-3">
+                                                                    <select type="text" name="OnLoadEvent[TakeValueFromElementValidation][@index1]" data-name="OnLoadEvent[TakeValueFromElementValidation][{0}]" class="form-control" id="">
+
+                                                                        @if (sb.OnLoadEvent.TakeValueFromElementValidation != null && sb.OnLoadEvent.TakeValueFromElementValidation[index1] != null)
+                                                                        {
+                                                                            if ("False" == sb.OnLoadEvent.TakeValueFromElementValidation[index1].ToString())
+                                                                            {
+                                                                                <option value="False" selected>False</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="False">False</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="False">False</option>
+                                                                        }
+
+                                                                        @if (sb.OnLoadEvent.TakeValueFromElementValidation != null && sb.OnLoadEvent.TakeValueFromElementValidation[index1] != null)
+                                                                        {
+                                                                            if ("True" == sb.OnLoadEvent.TakeValueFromElementValidation[index1].ToString())
+                                                                            {
+                                                                                <option value="True" selected>True</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="True">True</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="True">True</option>
+                                                                        }
+
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        {
+                                                            index1++;
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="field-validation-wrapper">
+                                                        <div class="field-controller">
+                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                        </div>
+                                                        <div class="form-row">
+
+                                                            <div class="col-lg-4">
+                                                                <input type="text" name="OnLoadEvent[TakeValueFromName][0]" data-name="OnLoadEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <select type="text" name="OnLoadEvent[TakeValueFromElement][0]" data-name="OnLoadEvent[TakeValueFromElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                    <option value="">Please Select</option>
+                                                                    @foreach (var item in formElements)
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-lg-3">
+                                                                <select type="text" name="OnLoadEvent[TakeValueFromElementValidation][0]" data-name="OnLoadEvent[TakeValueFromElementValidation][{0}]" class="form-control" id="">
+                                                                    <option value="False">False</option>
+                                                                    <option value="True">True</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="field-validation-wrapper">
+                                                    <div class="field-controller">
+                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                    </div>
+                                                    <div class="form-row">
+
+                                                        <div class="col-lg-4">
+                                                            <input type="text" name="OnLoadEvent[TakeValueFromName][0]" data-name="OnLoadEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <select type="text" name="OnLoadEvent[TakeValueFromElement][0]" data-name="OnLoadEvent[TakeValueFromElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                <option value="">Please Select</option>
+                                                                @foreach (var item in formElements)
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <select type="text" name="OnLoadEvent[TakeValueFromElementValidation][0]" data-name="OnLoadEvent[TakeValueFromElementValidation][{0}]" class="form-control" id="">
+                                                                <option value="False">False</option>
+                                                                <option value="True">True</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <p>Choose the Elements from which you want to set value To </p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <div class="select-option-head">
+                                        <div class="px-4">
+                                            <div class="form-row">
+                                                <div class="col-lg-4">
+                                                    <label for="">Returned Field</label>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <label for="">Select Element</label>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <label>Trigger Value Change Event</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="validation_rule_wrapper">
+                                        @{
+                                            if (sb.OnLoadEvent != null)
+                                            {
+                                                if (sb.OnLoadEvent.SetValueToName != null && sb.OnLoadEvent.SetValueToName.Count > 0)
+                                                {
+                                                    index1 = 0;
+                                                    foreach (var so in sb.OnLoadEvent.SetValueToName)
+                                                    {
+                                                        <div class="field-validation-wrapper">
+                                                            <div class="field-controller">
+                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="OnLoadEvent[SetValueToName][@index1]" data-name="OnLoadEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Field" value="@sb.OnLoadEvent.SetValueToName[index1]">
+
+                                                                </div>
+                                                                <div class="col-lg-4">
+                                                                    <select type="text" name="OnLoadEvent[SetValueToElement][@index1]" data-name="OnLoadEvent[SetValueToElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                        <option>Please Select</option>
+                                                                        @foreach (var item in formElements)
+                                                                        {
+                                                                            if (sb.OnLoadEvent.SetValueToElement[index1] != null)
+                                                                            {
+                                                                                if (item.Value == sb.OnLoadEvent.SetValueToElement[index1].ToString())
+                                                                                {
+                                                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="@item.Value">@item.Text</option>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+
+
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <select type="text" name="OnLoadEvent[SetValueToEventTrigger][@index1]" data-name="OnLoadEvent[SetValueToEventTrigger][{0}]" class="custom-select" id="">
+
+                                                                        @if (sb.OnLoadEvent.SetValueToEventTrigger != null && sb.OnLoadEvent.SetValueToEventTrigger[index1] != null)
+                                                                        {
+                                                                            if ("True" == sb.OnLoadEvent.SetValueToEventTrigger[index1].ToString())
+                                                                            {
+                                                                                <option value="True" selected>True</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="True">True</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="True">True</option>
+                                                                        }
+
+                                                                        @if (sb.OnLoadEvent.SetValueToEventTrigger != null && sb.OnLoadEvent.SetValueToEventTrigger[index1] != null)
+                                                                        {
+                                                                            if ("False" == sb.OnLoadEvent.SetValueToEventTrigger[index1].ToString())
+                                                                            {
+                                                                                <option value="False" selected>False</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="False">False</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="False">False</option>
+                                                                        }
+
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        {
+                                                            index1++;
+                                                        }
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="field-validation-wrapper">
+                                                        <div class="field-controller">
+                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                        </div>
+                                                        <div class="form-row">
+
+                                                            <div class="col-lg-4">
+                                                                <input type="text" name="OnLoadEvent[SetValueToName][0]" data-name="OnLoadEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <select type="text" name="OnLoadEvent[SetValueToElement][0]" data-name="OnLoadEvent[SetValueToElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                    <option>Please Select</option>
+                                                                    @foreach (var item in formElements)
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                <select type="text" name="OnLoadEvent[SetValueToEventTrigger][0]" data-name="OnLoadEvent[SetValueToEventTrigger][{0}]" class="custom-select" id="">
+                                                                    <option value="True">True</option>
+                                                                    <option value="False">False</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="field-validation-wrapper">
+                                                    <div class="field-controller">
+                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                    </div>
+                                                    <div class="form-row">
+
+                                                        <div class="col-lg-4">
+                                                            <input type="text" name="OnLoadEvent[SetValueToName][0]" data-name="OnLoadEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <select type="text" name="OnLoadEvent[SetValueToElement][0]" data-name="OnLoadEvent[SetValueToElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                <option>Please Select</option>
+                                                                @foreach (var item in formElements)
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <select type="text" name="OnLoadEvent[SetValueToEventTrigger][0]" data-name="OnLoadEvent[SetValueToEventTrigger][{0}]" class="custom-select" id="">
+                                                                <option value="True">True</option>
+                                                                <option value="False">False</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane pt-4 pb-3" id="onChange">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 mb-12">
+                                    <div class="target_option_wrapper">
+                                        <div class="field-validation-wrapper">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <div class="switch-control">
+                                                        <label for="IsOnChangeEvent" class="switch">
+                                                            <input class="switch__input" id="IsOnChangeEvent" @sb.GetName("IsOnChangeEvent") type="checkbox" value="true" @sb.GetChecked(sb.IsOnChangeEvent)>
+                                                            <span class="switch__state"></span>
+                                                            <span class="switch__label">Enable Workflow Event</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <button onclick="openElementEventSetting(@formId,@sb.ElementId,@Convert.ToInt16(Cicero.Service.Enums.ElementEventType.OnChange))" type="button" class="btn btn-outline-primary form-control element-workflow">
+                                                            <i class="ri-shape-line"></i> <span>Manage On Change Workflow Event</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            @*<div class="form-row">
+                                    <div class="col-lg-12">
+                                        <p>Choose states from the options available options to run workflow.</p>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-lg-6 form-group">
+                                        <label for="sbStartState">Select Start State</label>
+                                        <select class="form-control startState" id="sbStartState" name="OnChangeEvent[StartState]">
+                                            <option value="" selected>Please Select</option>
+                                            @foreach (var state in stateList)
+                                            {
+                                                if (sb.OnChangeEvent != null)
+                                                {
+                                                    if (sb.OnChangeEvent.StartState == state.Value)
+                                                    {
+                                                        <option value="@state.Value" selected>@state.Text</option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@state.Value">@state.Text</option>
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <option value="@state.Value">@state.Text</option>
+                                                }
+
+                                            }
+
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <label for="sbEndState">Select End State</label>
+                                        <select class="form-control endState" id="sbEndState" name="OnChangeEvent[EndState]">
+                                            <option value="" selected>Please Select</option>
+                                            @foreach (var state in stateList)
+                                            {
+                                                if (sb.OnChangeEvent != null)
+                                                {
+                                                    if (sb.OnChangeEvent.EndState == state.Value)
+                                                    {
+                                                        <option value="@state.Value" selected>@state.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@state.Value">@state.Text</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <option value="@state.Value">@state.Text</option>
+                                                }
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>*@
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <p>Choose the Elements from which you want to take value from </p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <div class="select-option-head">
+                                        <div class="px-4">
+                                            <div class="form-row">
+                                                <div class="col-lg-4">
+                                                    <label for="">Value Field</label>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <label for="">Select Element</label>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <label for="">Enable Validation</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="validation_rule_wrapper">
+                                        @{
+                                            if (sb.OnChangeEvent != null)
+                                            {
+                                                if (sb.OnChangeEvent.TakeValueFromName != null && sb.OnChangeEvent.TakeValueFromName.Count > 0)
+                                                {
+
+                                                    index1 = 0;
+                                                    foreach (var so in sb.OnChangeEvent.TakeValueFromName)
+                                                    {
+                                                        <div class="field-validation-wrapper">
+                                                            <div class="field-controller">
+                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="OnChangeEvent[TakeValueFromName][@index1]" data-name="OnChangeEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Field" value="@sb.OnChangeEvent.TakeValueFromName[index1]">
+
+                                                                </div>
+                                                                <div class="col-lg-4">
+                                                                    <select type="text" name="OnChangeEvent[TakeValueFromElement][@index1]" data-name="OnChangeEvent[TakeValueFromElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                        <option value="">Please Select</option>
+                                                                        @foreach (var item in formElements)
+                                                                        {
+                                                                            if (sb.OnChangeEvent.TakeValueFromElement[index1] != null)
+                                                                            {
+                                                                                if (item.Value == sb.OnChangeEvent.TakeValueFromElement[index1].ToString())
+                                                                                {
+                                                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="@item.Value">@item.Text</option>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+
+
+                                                                        }
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="col-lg-3">
+                                                                    <select type="text" name="OnChangeEvent[TakeValueFromElementValidation][@index1]" data-name="OnChangeEvent[TakeValueFromElementValidation][{0}]" class="form-control" id="">
+
+                                                                        @if (sb.OnChangeEvent.TakeValueFromElementValidation != null && sb.OnChangeEvent.TakeValueFromElementValidation[index1] != null)
+                                                                        {
+                                                                            if ("False" == sb.OnChangeEvent.TakeValueFromElementValidation[index1].ToString())
+                                                                            {
+                                                                                <option value="False" selected>False</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="False">False</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="False">False</option>
+                                                                        }
+
+                                                                        @if (sb.OnChangeEvent.TakeValueFromElementValidation != null && sb.OnChangeEvent.TakeValueFromElementValidation[index1] != null)
+                                                                        {
+                                                                            if ("True" == sb.OnChangeEvent.TakeValueFromElementValidation[index1].ToString())
+                                                                            {
+                                                                                <option value="True" selected>True</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="True">True</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="True">True</option>
+                                                                        }
+
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        {
+                                                            index1++;
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="field-validation-wrapper">
+                                                        <div class="field-controller">
+                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                        </div>
+                                                        <div class="form-row">
+
+                                                            <div class="col-lg-4">
+                                                                <input type="text" name="OnChangeEvent[TakeValueFromName][0]" data-name="OnChangeEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <select type="text" name="OnChangeEvent[TakeValueFromElement][0]" data-name="OnChangeEvent[TakeValueFromElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                    <option value="">Please Select</option>
+                                                                    @foreach (var item in formElements)
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                <select type="text" name="OnChangeEvent[TakeValueFromElementValidation][0]" data-name="OnChangeEvent[TakeValueFromElementValidation][{0}]" class="form-control" id="">
+                                                                    <option value="False">False</option>
+                                                                    <option value="True">True</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="field-validation-wrapper">
+                                                    <div class="field-controller">
+                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                    </div>
+                                                    <div class="form-row">
+
+                                                        <div class="col-lg-4">
+                                                            <input type="text" name="OnChangeEvent[TakeValueFromName][0]" data-name="OnChangeEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <select type="text" name="OnChangeEvent[TakeValueFromElement][0]" data-name="OnChangeEvent[TakeValueFromElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                <option value="">Please Select</option>
+                                                                @foreach (var item in formElements)
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <select type="text" name="OnChangeEvent[TakeValueFromElementValidation][0]" data-name="OnChangeEvent[TakeValueFromElementValidation][{0}]" class="form-control" id="">
+                                                                <option value="False">False</option>
+                                                                <option value="True">True</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <p>Choose the Elements from which you want to set value To </p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <div class="select-option-head">
+                                        <div class="px-4">
+                                            <div class="form-row">
+                                                <div class="col-lg-4">
+                                                    <label for="">Returned Field</label>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <label for="">Select Element</label>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <label>Trigger Value Change Event</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="validation_rule_wrapper">
+                                        @{
+                                            if (sb.OnChangeEvent != null)
+                                            {
+                                                if (sb.OnChangeEvent.SetValueToName != null && sb.OnChangeEvent.SetValueToName.Count > 0)
+                                                {
+                                                    index1 = 0;
+                                                    foreach (var so in sb.OnChangeEvent.SetValueToName)
+                                                    {
+                                                        <div class="field-validation-wrapper">
+                                                            <div class="field-controller">
+                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="OnChangeEvent[SetValueToName][@index1]" data-name="OnChangeEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Field" value="@sb.OnChangeEvent.SetValueToName[index1]">
+
+                                                                </div>
+                                                                <div class="col-lg-4">
+                                                                    <select type="text" name="OnChangeEvent[SetValueToElement][@index1]" data-name="OnChangeEvent[SetValueToElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                        <option>Please Select</option>
+                                                                        @foreach (var item in formElements)
+                                                                        {
+                                                                            if (sb.OnChangeEvent.SetValueToElement[index1] != null)
+                                                                            {
+                                                                                if (item.Value == sb.OnChangeEvent.SetValueToElement[index1].ToString())
+                                                                                {
+                                                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="@item.Value">@item.Text</option>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+
+
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <select type="text" name="OnChangeEvent[SetValueToEventTrigger][@index1]" data-name="OnChangeEvent[SetValueToEventTrigger][{0}]" class="custom-select" id="">
+
+                                                                        @if (sb.OnChangeEvent.SetValueToEventTrigger != null && sb.OnChangeEvent.SetValueToEventTrigger[index1] != null)
+                                                                        {
+                                                                            if ("True" == sb.OnChangeEvent.SetValueToEventTrigger[index1].ToString())
+                                                                            {
+                                                                                <option value="True" selected>True</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="True">True</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="True">True</option>
+                                                                        }
+
+                                                                        @if (sb.OnChangeEvent.SetValueToEventTrigger != null && sb.OnChangeEvent.SetValueToEventTrigger[index1] != null)
+                                                                        {
+                                                                            if ("False" == sb.OnChangeEvent.SetValueToEventTrigger[index1].ToString())
+                                                                            {
+                                                                                <option value="False" selected>False</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="False">False</option>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="False">False</option>
+                                                                        }
+
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        {
+                                                            index1++;
+                                                        }
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="field-validation-wrapper">
+                                                        <div class="field-controller">
+                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                        </div>
+                                                        <div class="form-row">
+
+                                                            <div class="col-lg-4">
+                                                                <input type="text" name="OnChangeEvent[SetValueToName][0]" data-name="OnChangeEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <select type="text" name="OnChangeEvent[SetValueToElement][0]" data-name="OnChangeEvent[SetValueToElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                    <option>Please Select</option>
+                                                                    @foreach (var item in formElements)
+                                                                    {
+                                                                        <option value="@item.Value">@item.Text</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                <select type="text" name="OnChangeEvent[SetValueToEventTrigger][0]" data-name="OnChangeEvent[SetValueToEventTrigger][{0}]" class="custom-select" id="">
+                                                                    <option value="True">True</option>
+                                                                    <option value="False">False</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="field-validation-wrapper">
+                                                    <div class="field-controller">
+                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                    </div>
+                                                    <div class="form-row">
+
+                                                        <div class="col-lg-4">
+                                                            <input type="text" name="OnChangeEvent[SetValueToName][0]" data-name="OnChangeEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <select type="text" name="OnChangeEvent[SetValueToElement][0]" data-name="OnChangeEvent[SetValueToElement][{0}]" class="form-control" id="" placeholder="Text Field">
+                                                                <option>Please Select</option>
+                                                                @foreach (var item in formElements)
+                                                                {
+                                                                    <option value="@item.Value">@item.Text</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <select type="text" name="OnChangeEvent[SetValueToEventTrigger][0]" data-name="OnChangeEvent[SetValueToEventTrigger][{0}]" class="custom-select" id="">
+                                                                <option value="True">True</option>
+                                                                <option value="False">False</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Permission</header>
+            <section>
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+
+                                <th>Write</th>
+                                <th>Read</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int index = 0;
+                                foreach (var role in commonService.GetRoleList())
+                                {
+                                    var Roledata = sb?.Permissions?.Where(p => p.RoleId == role.Value).FirstOrDefault();
+                                    if (Roledata != null)
+                                    {
+
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input class="form-control" type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Write]" type="checkbox" value="true" checked="@Roledata.Write" id="Permissions[@index][Write]">
+                                                    <label class="custom-control-label" for="Permissions[@index][Write]"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Read]" type="checkbox" value="true" checked="@Roledata.Read" id="Permissions[@index][Read]">
+                                                    <label class="custom-control-label" for="Permissions[@index][Read]"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input class="form-control" type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Write]" type="checkbox" value="true" checked="checked" id="Permissions[@index][Write]">
+                                                    <label class="custom-control-label" for="Permissions[@index][Write]"></label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Read]" type="checkbox" value="true" checked="checked" id="Permissions[@index][Read]">
+                                                    <label class="custom-control-label" for="Permissions[@index][Read]"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    index++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Target Options</header>
+            <section>
+                <div class="validation-rule-head select-option-head">
+                    <div class="form-row">
+                        <div class="col-lg-3">
+                            <label>Select Option Value</label>
+                        </div>
+                        <div class="col-lg-3">
+                            <label>Select Element</label>
+                        </div>
+                        <div class="col-lg-3">
+                            <label>Select Option</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="target_option_wrapper">
+                    @{
+
+                        if (sb.TargetOptions != null && sb.TargetOptions.Count > 0)
+                        {
+                            int tgoIndex = 0;
+                            foreach (var to in sb.TargetOptions)
+                            {
+                                <div class="field-validation-wrapper">
+                                    <div class="field-controller">
+                                        <a class="icon text-center" data-action='clone-TargetingOption' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                        <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-lg-3">
+                                            <select name="TargetOptions[@tgoIndex][SelectId]" class="custom-select" data-name="TargetOptions[{0}][SelectId]">
+                                                <option value="0">Please Select</option>
+                                                @{
+                                                    if (sb.SelectOptions != null)
+                                                    {
+                                                        foreach (var si in sb.SelectOptions)
+                                                        {
+                                                            <option selected="@(to.SelectId==si.Value)" value="@si.Value">@si.Text</option>
+                                                        }
+                                                    }
+
+                                                }
+
+                                            </select>
+                                        </div>
+
+                                        <div class="col-lg-3">
+                                            <select name="TargetOptions[@tgoIndex][TargetId]" class="custom-select" data-name="TargetOptions[{0}][TargetId]">
+                                                @{
+                                                    <option value="0">Please Select</option>
+
+                                                    if (formAllElements != null)
+                                                    {
+                                                        foreach (SelectListItem si in formAllElements)
+                                                        {
+                                                            <option selected="@(to.TargetId==si.Value)" value="@si.Value">@si.Text</option>
+                                                        }
+                                                    }
+
+                                                }
+
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <select name="TargetOptions[@tgoIndex][ShowHide]" class="custom-select" data-name="TargetOptions[{0}][ShowHide]">
+                                                <option value="0">Please Select</option>
+                                                @foreach (SelectListItem op in sb.TargetSelectOptions())
+                                                {
+                                                    <option selected="@(to.ShowHide==op.Value)" value="@op.Value">@op.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                { tgoIndex++; }
+                            }
+
+                        }
+                        else
+                        {
+                            <div class="field-validation-wrapper">
+                                <div class="field-controller">
+                                    <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                    <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-lg-3">
+                                        <select name="TargetOptions[0][SelectId]" class="custom-select" data-name="TargetOptions[{0}][SelectId]">
+                                            <option value="0">Please Select</option>
+                                            @{
+
+                                                if (sb.SelectOptions != null)
+                                                {
+                                                    foreach (var si in sb.SelectOptions)
+                                                    {
+                                                        <option selected="@(si.Selected)" value="@si.Value">@si.Text</option>
+                                                    }
+                                                }
+
+                                            }
+
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3">
+                                        <select name="TargetOptions[0][TargetId]" class="custom-select" data-name="TargetOptions[{0}][TargetId]">
+                                            @{
+
+                                                <option value="0">Please Select</option>
+
+                                                if (formAllElements != null)
+                                                {
+                                                    foreach (SelectListItem si in formAllElements)
+                                                    {
+                                                        <option value="@si.Value">@si.Text</option>
+                                                    }
+                                                }
+
+                                            }
+
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <select name="TargetOptions[0][ShowHide]" class="custom-select" data-name="TargetOptions[{0}][ShowHide]">
+                                            <option value="0">Please Select</option>
+                                            @foreach (SelectListItem op in sb.TargetSelectOptions())
+                                            {
+                                                <option value="@op.Value">@op.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+            </section>
+        </li>
+
+        <li>
+            <header>PopUp Target</header>
+            <section>
+                <span class="text">Select Element to show on popup</span>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <div class="switch-control switch-control--inline">
+                            <label for="hyperLinkPopUp-@sb.FrontendId" class="switch">
+                                <input class="switch__input" id="hyperLinkPopUp-@sb.FrontendId" @sb.GetName("EnablePopup") type="checkbox" value="true" @sb.GetChecked(sb.EnablePopup)>
+                                <span class="switch__state"></span>
+                                <span class="switch__label">Enable Pop Up</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="switch-control">
+                        <label for="hyperLinkDisablePopUp_@sb.FrontendId" class="switch">
+                            <input class="switch__input" id="hyperLinkDisablePopUp_@sb.FrontendId" @sb.GetName("DisablePopupClose") type="checkbox" value="true" @sb.GetChecked(sb.DisablePopupClose)>
+                            <span class="switch__state"></span>
+                            <span class="switch__label">Disable Popup Close</span>
+                        </label>
+                    </div>
+
+                </div><div class="form-row">
+                          <div class="col-lg-6 form-group">
+                              <label for="PopUpTitle_@sb.FrontendId">Popup Title</label>
+                              <input type="text" value="@sb.PopUpTitle" class="form-control" name="PopUpTitle" id="PopUpTitle_@sb.FrontendId" />
+                          </div>
+                    <div class="col-lg-6 form-group">
+                        <label for="PopUpClass_@sb.FrontendId">Popup Class</label>
+                        <input type="text" value="@sb.PopUpClass" class="form-control" name="PopUpClass" id="PopUpClass_@sb.FrontendId">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-12">
+                        <div class="target_option_wrapper">
+                            @{
+                                if (sb.PopUpTarget != null && sb.PopUpTarget.Count > 0)
+                                {
+                                    int tgoIndex = 0;
+                                    foreach (var to in sb.PopUpTarget)
+                                    {
+                                        <div class="field-validation-wrapper">
+                                            <div class="field-controller">
+                                                <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy">
+                                                    <i class="ri-file-copy-line"></i>
+                                                    <span class="sr-only">Copy</span>
+                                                </a>
+                                                <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete">
+                                                    <i class="ri-close-line"></i>
+                                                    <span class="sr-only">Delete</span>
+                                                </a>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-lg-3">
+                                                    <input name="PopUpTarget[@tgoIndex][PopUpTitle]" value="@to.PopUpTitle" class="form-control" data-name="PopUpTarget[{0}][PopUpTitle]" />
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <select name="PopUpTarget[@tgoIndex][SelectId]" class="custom-select" data-name="PopUpTarget[{0}][SelectId]">
+                                                        <option value="0">Please Select</option>
+                                                        @{
+                                                            if (sb.SelectOptions != null)
+                                                            {
+                                                                foreach (var si in sb.SelectOptions)
+                                                                {
+                                                                    <option selected="@(to.SelectId==si.Value)" value="@si.Value">@si.Text</option>
+                                                                }
+                                                            }
+
+                                                        }
+
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <select name="PopUpTarget[@tgoIndex][TargetId]" class="custom-select" data-name="PopUpTarget[{0}][TargetId]">
+                                                        @{
+                                                            <option value="">Please Select</option>
+
+                                                            if (formElements != null)
+                                                            {
+                                                                foreach (SelectListItem si in formAllElements)
+                                                                {
+                                                                    <option selected="@(to.TargetId==si.Value)" value="@si.Value">@si.Text</option>
+                                                                }
+                                                            }
+
+                                                        }
+
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-lg-3">
+                                                    <label class="switch">
+                                                        <input type="checkbox" name="PopUpTarget[@tgoIndex][EnablePopup]" class="switch__input" data-name="PopUpTarget[{0}][EnablePopup]" value="True" id="" checked="@to.EnablePopup">
+                                                        <span class="switch__state"></span>
+                                                        <span class="switch__label"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        { tgoIndex++; }
+                                    }
+
+                                }
+                                else
+                                {
+
+
+                                    <div class="field-validation-wrapper">
+                                        <div class="field-controller">
+                                            <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy">
+                                                <i class="ri-file-copy-line"></i>
+                                                <span class="sr-only">Copy</span>
+                                            </a>
+                                            <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete">
+                                                <i class="ri-close-line"></i>
+                                                <span class="sr-only">Delete</span>
+                                            </a>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-lg-3">
+                                                <input name="PopUpTarget[0][PopUpTitle]" class="form-control" placeholder="Popup Title" data-name="PopUpTarget[{0}][PopUpTitle]" />
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <select name="PopUpTarget[0][SelectId]" class="custom-select" data-name="PopUpTarget[{0}][SelectId]">
+                                                    <option value="0">Please Select</option>
+                                                    @{
+
+                                                        if (sb.SelectOptions != null)
+                                                        {
+                                                            foreach (var si in sb.SelectOptions)
+                                                            {
+                                                                <option value="@si.Value">@si.Text</option>
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <select name="PopUpTarget[0][TargetId]" class="custom-select" data-name="PopUpTarget[{0}][TargetId]">
+                                                    @{
+
+                                                        <option value="">Please Select</option>
+
+                                                        if (formElements != null)
+                                                        {
+                                                            foreach (SelectListItem si in formAllElements)
+                                                            {
+                                                                <option value="@si.Value">@si.Text</option>
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label class="switch">
+                                                    <input type="checkbox" name="PopUpTarget[0][EnablePopup]" class="switch__input" data-name="PopUpTarget[{0}][EnablePopup]" value="True" id="" checked="">
+                                                    <span class="switch__state"></span>
+                                                    <span class="switch__label"></span>
+                                                </label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </li>
+
+
+        <li>
+            <header>Validation Rule</header>
+            <section>
+                <div class="validation_rule_wrapper">
+                    @{
+                        index1 = 0;
+                        if (sb.Validations != null && sb.Validations.Count > 0)
+                        {
+
+                            foreach (var val in sb.Validations)
+                            {
+                                <div class="field-validation-wrapper">
+                                    <div class="field-controller">
+                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-auto">
+                                            <!-- <label class="btn btn-sm btn-invalid">Invalid</label> -->
+                                            <span class="badge badge-danger p-2">Invalid</span>
+                                        </div>
+                                        <div class="col-auto ">
+                                            <label for="">if</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <!-- <label class="muted-field"> @sb.BackendLabel</label> -->
+                                            <input type="text" class="form-control" disabled value="@sb.BackendLabel">
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <select id="selectGroup" data-action="operator" name="Validations[@index1][FieldOperator]" data-name="Validations[{0}][FieldOperator]" class="custom-select">
+                                                <option selected="@(val.FieldOperator=="required")" value="required">Required</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="col-lg-3" data-option="@val.ValidationValues?.FirstOrDefault()">
+                                            @{
+                                                if (val.FieldOperator == "required")
+                                                {
+                                                    <select class="custom-select" name="Validations[@index1][ValidationValues]">
+                                                        @if (val.ValidationValues?.FirstOrDefault() == "true")
+                                                        {
+                                                            <option value="true" selected>True</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="true">True</option>
+                                                        }
+                                                        @if (val.ValidationValues?.FirstOrDefault() == "false")
+                                                        {
+                                                            <option value="false" selected>False</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="false">False</option>
+                                                        }
+
+
+                                                    </select>
+                                                }
+                                                else if (val.FieldOperator == "between")
+                                                {
+                                                    <input type="number" class="form-control" size="20" value="@val.ValidationValues?.FirstOrDefault()" name="Validations[@index1][ValidationValues][0]"><input type="number" size="20" class="form-control" value="@val.ValidationValues?.LastOrDefault()" name="Validations[@index1][ValidationValues][1]">
+                                                }
+                                                else
+                                                {
+                                                    <input type="number" class="form-control" size="20" value="@val.ValidationValues?.FirstOrDefault()" name="Validations[@index1][ValidationValues]">
+                                                }
+                                            }
+                                        </div>
+
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-lg-12">
+                                            <textarea class="form-control " name="Validations[@index1][ErrorMessage]" data-name="Validations[{0}][ErrorMessage]" rows="2" id="" placeholder="Please provide valid @sb.FrontendLabel, @sb.FrontendLabel must be greater than 15 Number.">@val.ErrorMessage</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                {
+                                    index1++;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            <div class="field-validation-wrapper">
+                                <div class="field-controller">
+                                    <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                    <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-auto">
+                                        <!-- <label class="btn btn-sm btn-invalid">Invalid</label> -->
+                                        <span class="badge badge-danger p-2">Invalid</span>
+                                    </div>
+                                    <div class="col-auto ">
+                                        <label for="">if</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <!-- <label class="muted-field"> @sb.BackendLabel</label> -->
+                                        <input type="text" class="form-control" disabled value="@sb.BackendLabel">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <select id="selectGroup" data-action="operator" name="Validations[@index1][FieldOperator]" data-name="Validations[{0}][FieldOperator]" class="custom-select">
+                                            <option value="required">Required</option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-lg-3" data-option="">
+                                        <select class="custom-select" name="Validations[@index1][ValidationValues]">
+                                            <option value="true">True</option>
+                                            <option value="false" selected="selected">False</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-lg-12">
+                                        <textarea class="form-control" name="Validations[0][ErrorMessage]" data-name="Validations[{0}][ErrorMessage]" rows="2" id="" placeholder="Please provide valid @sb.FrontendLabel, @sb.FrontendLabel must be greater than 15 Number.">                                                                            </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <p class="text-muted small">This feature will let you add validation rule for this specific field.</p>
+
+            </section>
+        </li>
+
+        <li>
+            <header>Developer Options</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="sbTemplate">Template</label>
+                        <input type="text" class="form-control" id="sbTemplate" @sb.GetName("Template") value="@sb.Template">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="sbWrapperTemplate">Wrapper Template</label>
+                        <input type="text" class="form-control" id="sbWrapperTemplate" @sb.GetName("WrapperTemplate") value="@sb.WrapperTemplate">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="sbAlternateTemplate">Alternate Template</label>
+                        <input type="text" id="sbAlternateTemplate" class="form-control" @sb.GetName("AltTemplate") value="@sb.AltTemplate">
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-4">
+                        <div class="switch-control">
+                            <label for="sbVisibleinGrid" class="switch">
+                                <input type="checkbox" id="sbVisibleinGrid" @sb.GetName("VisibleinGrid") class="switch__input" @sb.GetChecked(sb.VisibleinGrid) value="True">
+                                <span class="switch__state"></span>
+                                <span class="switch__label">Visible in Grid</span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="sbTableName">Table Name</label>
+                        <select value="@sb.TableName" id="sbTableName" class="tableMap custom-select"></select>
+                        <input type="text" value="@sb.TableName" @sb.GetName("TableName") hidden>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="sbFieldName">Field Name</label>
+                        <select value="@sb.FieldName" id="sbFieldName" class="fieldMap custom-select"></select>
+                        <input type="text" class="form-control" value="@sb.FieldName" @sb.GetName("FieldName") hidden>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-group col-lg-6">
+                        <label for="SetValueFrom_@sb.ElementId">Set Value From</label>
+                        <select value="@sb.SetValueFrom" id="SetValueFrom_@sb.ElementId" @sb.GetName("SetValueFrom") class="custom-select">
+                            <option value="">Please Select</option>
+                            @foreach (var item in formElements.Where(x => x.Value != sb.ElementId.ToString()))
+                            {
+                                <option selected="@(sb.SetValueFrom == item.Value)" value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </section>
+        </li>
+        <li>
+            <header>Automation Settings</header>
+            <section>
+                <p>Visible in automation?</p>
+                <div class="switch-control">
+                    <label for="sbAutomationEnable" class="switch">
+                        <input class="switch__input" id="sbAutomationEnable" @sb.GetName("automationEnable") type="checkbox" value="true" @sb.GetChecked(sb.automationEnable)>
+                        <span class="switch__state"></span>
+                    </label>
+                </div>
+            </section>
+        </li>
+    </ul>
+</div>

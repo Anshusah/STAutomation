@@ -1,0 +1,20 @@
+﻿@using Cicero.Service.Models
+@model ArticleViewModel
+@{
+    ViewData["body"] = "inner-pg";
+    ViewData["Title"] = Model.Title;
+}
+<!-- nav e -->
+@{
+    string template = Model.Template + ".tmpl.cshtml";
+}
+@await Html.PartialAsync(template, Model)
+
+@await Html.PartialAsync("/Views/Shared/_Footer.cshtml")
+@section Scripts{
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            Cicero.Contact.OnInit();
+        });
+    </script>
+}

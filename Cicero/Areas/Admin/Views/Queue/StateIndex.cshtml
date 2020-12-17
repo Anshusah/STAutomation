@@ -1,0 +1,90 @@
+﻿@using Cicero.Service.Helpers
+@inject Permission Permission
+@inject Utils  _utils
+
+@{
+    ViewBag.Title = "Manage States";
+}
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + ".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">States</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage States</h3>
+        @if (Permission.Can(UserCan.Create_Queue))
+        {
+            <div class="page-actionbtns">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/"+ _utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+            </div>
+        }
+    </div>
+    <!-- page head ends -->
+    <div class="row">
+        <div class="col">
+
+            <div class="box">
+
+                <div class="box-body p-4">
+                    <div class="status"></div>
+                    <form action="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/action.html")" id="states-form" method="post">
+
+                        <div class="filter mb-3">
+
+                            <div class="form-row align-items-center">
+                                <div class="col-sm-2 my-1">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="action">Action</label>
+                                        </div>
+                                        <select class="custom-select" name="action" id="action">
+                                            <option value="">Select Action</option>
+                                            @if (Permission.Can(UserCan.Delete_Article))
+                                            {
+                                                <option value="delete">Delete : Selected</option>
+                                            }
+                                            @if (Permission.Can(UserCan.Update_Article))
+                                            {
+                                                <option value="active">Active : Selected</option>
+                                                <option value="inactive">Inactive : Selected</option>
+                                            }
+                                        </select>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-2 my-1">
+                                    <button name="apply" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#states-form").submit()},OnCancelled:function(){this.close();}}' type="button" class="btn btn-secondary">Apply</button>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="d-flex form-inline justify-content-end">
+                                        <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <table id="states" class="table table-hover table-responsive-sm table-custom"></table>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            Cicero.State.InitDataTable({ "FilterUrl": "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/states.html")" });
+        });
+    </script>
+}

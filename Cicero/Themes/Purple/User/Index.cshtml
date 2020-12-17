@@ -1,0 +1,437 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model IEnumerable<CaseViewModel>
+@inject IUserService UserService
+@inject ICaseService _ICaseService
+@inject Permission Permission
+@inject Utils _Utils
+
+@{
+    ViewData["Title"] = "Dashboard";
+    //ViewData["body"] = "inner-pg";
+    ViewData["body"] = "full-layout";
+    Theme theme = ViewData["theme"] as Theme;
+    var queueNameList = _ICaseService.GetQueueNameList().GroupBy(x => x).ToList();//Model.Where(x => x.DisplayPermission).GroupBy(x => x.QueueName);
+}
+<head>
+    <link href="~/scrollable-tab plugin/jquery.scrolling-tabs.css" rel="stylesheet" />
+    <style>
+        .scrtabs-tab-container {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            height: auto;
+            margin-right: 2rem;
+        }
+        .scrtabs-tab-container .nav-tabs {
+            border: 0;
+        }
+        .scrtabs-tabs-fixed-container {
+            height: auto;
+        }
+        .scrtabs-tabs-fixed-container .nav-tabs .nav-link {
+            border-top-width: 0;
+            border-left-width: 0;
+            border-right-width: 0;
+        }
+        .scrtabs-tabs-fixed-container ul.nav-tabs > li {
+            margin-bottom: 0;
+        }
+        .scrtabs-tab-scroll-arrow {
+            border: 0;
+            padding-top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--gray);
+            font-size: 1rem;
+            border-radius: 50%;
+        }
+        .scrtabs-tab-scroll-arrow:hover {
+            background: #fff;;
+        }
+        .scrtabs-tab-scroll-arrow span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
+</head>
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        @* <!--Include header--> *@
+        <div class="main-container">
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <main class="main-content" role="main">
+                <div class="absolute-fill">
+                    <div class="main-content-area">
+                        @if (Model.Count() > 0)
+                        {
+                            <div class="section tabs-container">
+                                <div class="container">
+                                    <div class="d-flex align-content-center border-bottom">
+                                        <ul class="nav nav-border nav-tabs draggable" id="pills-tab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="pills-all-tab" data-toggle="pill" href="#pills-all" role="tab" aria-controls="pills-all" aria-selected="true">All</a>
+                                            </li>
+
+                                            @foreach (var item in queueNameList)
+                                            {
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="@("pills-" + item.Key.Value.Replace(" ", String.Empty) +"-tab")" data-toggle="pill" href="#@("pills-" + item.Key.Value.Replace(" ", String.Empty))" role="tab" aria-controls="pills-to_do" aria-selected="false">@item.Key.Value <span>(@item.Count())</span></a>
+                                                </li>
+                                            }
+
+                                            @*<li class="nav-item">
+                                <a class="nav-link" id="pills-pending_desicion-tab" data-toggle="pill" href="#pills-pending_desicion" role="tab" aria-controls="pills-pending_desicion" aria-selected="false">Pending Desicion <span>(2)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-pending_payment-tab" data-toggle="pill" href="#pills-pending_payment" role="tab" aria-controls="pills-pending_payment" aria-selected="false">Pending Payment <span>(1)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pills-settlement_offer-tab" data-toggle="pill" href="#pills-settlement_offer" role="tab" aria-controls="pills-settlement_offer" aria-selected="false">Settlement Offer <span>(1)</span></a>
+                            </li>*@
+                                        </ul>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary dropdown-toggle border-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="mr-2">Preview</span> 2019
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="#">2019</a>
+                                                <a class="dropdown-item" href="#">2018</a>
+                                                <a class="dropdown-item" href="#">2017</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content" id="pills-tabContent">
+                                        <div class="tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
+                                            <div class="section claim-overview">
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                                        <div class="card card-claim card-claim--total">
+                                                            <div class="card-body">
+                                                                <h2>@queueNameList.Sum(x => x.Count())</h2>
+                                                                <p class="mb-0">Total Claim</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    @foreach (var item in queueNameList)
+                                                    {
+                                                        var icon = _ICaseService.GetQueueIconByQueueId(item.Key.Key);
+                                                        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                                            <div class="card card-claim card-claim--unsubmitted">
+                                                                <div class="card-body">
+                                                                    <div class="data">
+                                                                        <p class="mb-0">@item.Key.Value</p>
+                                                                        <h2>@item.Count()</h2>
+                                                                    </div>
+                                                                    <div class="icon">
+                                                                        <figure class="my-4">
+                                                                            <img src="@icon" alt="">
+                                                                        </figure>
+                                                                        @*<i class="ri-file-reduce-line"></i>*@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    @*<div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                    @*<div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                            <div class="card card-claim card-claim--unsubmitted">
+                                                <div class="card-body">
+                                                    <div class="data">
+                                                        <p class="mb-0">Unsubmitted</p>
+                                                        <h2>7</h2>
+                                                    </div>
+                                                    <div class="icon">
+                                                        <i class="ri-file-reduce-line"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                            <div class="card card-claim card-claim--paid">
+                                                <div class="card-body">
+                                                    <div class="data">
+                                                        <p class="mb-0">Paid</p>
+                                                        <h2>20</h2>
+                                                    </div>
+                                                    <div class="icon">
+                                                        <i class="ri-money-pound-circle-line"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                            <div class="card card-claim card-claim--rejected">
+                                                <div class="card-body">
+                                                    <div class="data">
+                                                        <p class="mb-0">Rejected</p>
+                                                        <h2>10</h2>
+                                                    </div>
+                                                    <div class="icon">
+                                                        <i class="ri-file-forbid-line"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                                </div>
+                                            </div>
+
+                                            <div class="section claim-overview" style="display: none;">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        @if (_ICaseService.GetCaseByUserId(true) != null && _ICaseService.GetCaseByUserId(true).Count() > 0)
+                                                        {
+                                                            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                                                                <div class="claim-total bg-primary rounded p-4 text-white text-center">
+                                                                    <h2>@_ICaseService.GetCaseByUserId(true).Count()</h2>
+                                                                    <p class="mb-0">Total Claim</p>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="section claim-list">
+                                                <div class="section-header d-flex justify-content-between align-items-center py-4">
+                                                    <h3>Your claims</h3>
+                                                    @if (_ICaseService.GetCaseByUserId(true).Count() > 4)
+                                                    {
+                                                        <a href="~/user@_Utils.GetTenantForUrl(false)/dashboard.html?all=true" class="btn btn-link" data-toggle="tooltip" data-placement="top" title="View all claims">View all</a>
+                                                    }
+                                                </div>
+
+                                                <div class="row">
+
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <div class="col-lg-4 col-md-6 mb-4">
+                                                            <div class="claim-item">
+                                                                <a href="@Url.Content("~/admin/formview" +"/"   +_Utils.EncryptId(item.Id) + "/view.html")" class="claim-item__content">
+                                                                    <div class="claim-item__body">
+                                                                        <span class="badge badge-info badge-notification">
+                                                                            <i class="ri-notification-3-line"></i>
+                                                                            2 updates
+                                                                        </span>
+                                                                        <figure class="my-4">
+                                                                            <img src="@item.QueueIcon" alt="">
+                                                                        </figure>
+                                                                        <h4 class="h5"><span class="text-secondary">ID#</span>@item.CaseGeneratedId</h4>
+                                                                        <p class="text-muted">@item.CreatedAt</p>
+                                                                        <span class="badge badge-success badge-pill py-2 px-3">
+                                                                            @item.QueueName
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="claim-item__footer">
+                                                                        <div class="claim-item__type">
+                                                                            <figure>
+                                                                                <img src="/images/building.png" alt="" width="24" height="24">
+                                                                            </figure>
+                                                                            <h6>Building</h6>
+                                                                        </div>
+                                                                        <div class="claim-item__address">
+                                                                            <p class="text-muted">116  Guild Street, London, United Kingdom</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                                <div class="dropdown">
+                                                                    <button type="button" class="btn btn-icon btn-light text-secondary"
+                                                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                                            aria-expanded="false">
+                                                                        <i class="fas fa-ellipsis-h"></i>
+                                                                    </button>
+                                                                    <div class="dropdown-menu dropdown-menu-right border-0 shadow"
+                                                                            aria-labelledby="dropdownMenuButton">
+                                                                        <a class="dropdown-item" href="@Url.Content("~/admin/form"+ _Utils.GetTenantForUrl(false) +"/" + item.CaseFormUrl + "/" + _Utils.EncryptId(item.Id) + "/edit.html")">Edit</a>
+                                                                        <a class="dropdown-item" href="#">Delete</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @foreach (var itm in queueNameList)
+                                        {
+                                            var queueName = itm.Key.Value;
+                                            var modelData = _ICaseService.GetListOfCasesByQueueId(itm.Key.Key, itm.Key.Value, false);//Model.Where(x => x.QueueId == itm.Select(y => y.QueueId).FirstOrDefault()).ToList();
+                                            <div class="tab-pane fade" id="@("pills-" + itm.Key.Value.Replace(" ", String.Empty))" role="tabpanel" aria-labelledby="pills-to_do-tab">
+                                                <div class="section claim-list">
+                                                    <div class="section-header d-flex justify-content-between align-items-center py-4">
+                                                        <h3>Your claims</h3>
+                                                        @if (itm.Count() > 4)
+                                                        {
+                                                            <button class="btn btn-link" data-toggle="tooltip" data-placement="top" title="View all claims" onclick="getDatas(@itm.Key.Key, '@queueName', '@queueName.Replace(" ", String.Empty)')">View all</button>
+                                                        }
+                                                    </div>
+                                                    <div id="@itm.Key.Value.Replace(" ", String.Empty)">
+                                                        @await Html.PartialAsync("~/Themes/Blue/User/GetListOfCasesByQueueId.cshtml", modelData);
+                                                    </div>
+                                                </div>
+                                                @*<div class="section claim-list">
+                                    <div class="container">
+                                        @if (modelData.Count() > 0)
+                                        {
+                                            <div class="row">
+
+                                                @foreach (var itm in modelData)
+                                                {
+                                                    <div class="col-lg-4 col-md-6 mb-4">
+                                                        <div class="claim-itm">
+                                                            <a href="@Url.Content("~/admin/formview" +"/"   +_Utils.EncryptId(itm.Id) + "/view.html")" class="claim-itm__content">
+                                                                <div class="claim-itm__body">
+                                                                    <span class="badge badge-info badge-notification">
+                                                                        <i class="ri-notification-3-line"></i>
+                                                                        2 updates
+                                                                    </span>
+                                                                    <figure class="my-4">
+                                                                        <img src="/Themes/@theme.GetName(false)/img/ic-settled.png" alt="">
+                                                                    </figure>
+                                                                    <h4 class="h5"><span class="text-secondary">ID#</span>@itm.CaseGeneratedId</h4>
+                                                                    <p class="text-muted">@itm.CreatedAt</p>
+                                                                    <span class="badge badge-success badge-pill py-2 px-3">
+                                                                        @itm.QueueName
+                                                                    </span>
+                                                                </div>
+                                                                <div class="claim-itm__footer">
+                                                                    <div class="claim-itm__type">
+                                                                        <figure>
+                                                                            <img src="/images/building.png" alt="" width="24" height="24">
+                                                                        </figure>
+                                                                        <h6>Building</h6>
+                                                                    </div>
+                                                                    <div class="claim-itm__address">
+                                                                        <p class="text-muted">116  Guild Street, London, United Kingdom</p>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                            <div class="dropdown">
+                                                                <button type="button" class="btn btn-icon btn-light text-secondary"
+                                                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                                        aria-expanded="false">
+                                                                    <i class="fas fa-ellipsis-h"></i>
+                                                                </button>
+                                                                <div class="dropdown-menu dropdown-menu-right border-0 shadow"
+                                                                     aria-labelledby="dropdownMenuButton">
+                                                                    <a class="dropdown-itm" href="@Url.Content("~/admin/form"+ _Utils.GetTenantForUrl(false) +"/" + itm.CaseFormUrl + "/" + _Utils.EncryptId(itm.Id) + "/edit.html")">Edit</a>
+                                                                    <a class="dropdown-itm" href="#">Delete</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-warning">
+                                                No claims
+                                            </div>
+                                        }
+                                    </div>
+                                </div>*@
+                                            </div>
+                                        }
+
+
+                                        @*<div class="tab-pane fade" id="pills-to_do" role="tabpanel" aria-labelledby="pills-to_do-tab">To do</div>
+                        <div class="tab-pane fade" id="pills-pending_desicion" role="tabpanel" aria-labelledby="pills-pending_desicion-tab">Pending Desicion</div>
+                        <div class="tab-pane fade" id="pills-pending_payment" role="tabpanel" aria-labelledby="pills-pending_payment-tab">Pending Payment (1)</div>
+                        <div class="tab-pane fade" id="pills-settlement_offer" role="tabpanel" aria-labelledby="pills-settlement_offer-tab">Settlement Offer (1)</div>*@
+                                    </div>
+                                    <!-- <div class="section user-overview">
+                    <div class="container">
+                        <h1 class="h2">Welcome @await UserService.GetUserFullName(),</h1>
+                        <p class="text-muted">
+                            From here you can claim, edit profile, learn a more efficient way to claim and many more.
+                        </p>
+                    </div>
+                </div> -->
+                                </div>
+
+                                @*@if (Permission.Can(UserCan.View_Claim))
+
+                {*@
+
+                                @*}*@
+
+                            </div>
+                        }
+                        else
+                        {
+                    <div class="container" style="margin:auto;">
+                        <div class="text-center">
+                            <h5>It seems you haven't done any claim yet.</h5>
+                        </div>
+                        <div class="text-center">
+
+                            <a class="btn btn-primary border-light" href="@Url.Content("~/admin/form/changecaseform.html")">Claim Now</a>
+                        </div>
+                    </div>
+                           
+                        }
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<script src="~/scrollable-tab plugin/jquery.scrolling-tabs.js"></script>
+<script src="https://unpkg.com/draggabilly@2/dist/draggabilly.pkgd.min.js"></script>
+<script>
+    function getDatas(queueId, queueName, id) {
+        $("#" + id).load("/User/GetListOfCasesByQueueId?queueId=" + queueId + "&queueName=" + queueName + "&all=true");
+    }
+
+    $('.nav-tabs').scrollingTabs({
+        bootstrapVersion: 4,
+        cssClassLeftArrow: 'ri-arrow-left-s-fill',
+        cssClassRightArrow: 'ri-arrow-right-s-fill'
+    });
+
+//    var draggable = document.querySelector('.draggable');
+//var draggie = new Draggabilly( draggable, {
+//  axis: 'x',
+//});
+
+//navWidth = 0;
+//$('.draggable li').each(function(index) {
+//    navWidth += parseInt($(this).width(), 10);
+//});
+
+//    draggie.on('dragMove', function (event, pointer, moveVector) {
+//        console.log("dragMove");
+//  if(this.position.x > 10) {
+//   draggie.setPosition( 0, 0 )
+//  }
+//  // console.log(
+//  //   "x: "+ this.position.x,
+//  //   " navWidth: " + navWidth,
+//  //   " scrollWidth: " + draggable.scrollWidth
+//  // );
+
+//  if(moveVector.x < 0) {
+//     console.log(draggable.scrollWidth - moveVector.x - navWidth);
+//     }
+//  if(this.position.x < navWidth - draggable.scrollWidth) {
+//    draggie.setPosition( navWidth - draggable.scrollWidth, 0 )
+//  }
+//});
+
+
+</script>
+<!-- // Main Content -->
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+@* <!--Include footer--> *@
+@section Scripts{}

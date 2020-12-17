@@ -1,0 +1,117 @@
+﻿@using Cicero.Service.Helpers
+@inject Permission Permission
+@inject Utils utils
+
+@{
+    ViewBag.Title = "Exchange Rates";
+}
+<div class="page-wrapper page-roles">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Exchange Rates</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Exchange Rates</h3>                
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-main-section">
+            <div class="page-content-area">
+                <div class="status"></div>
+                <form action="@Url.Content("~/admin" + "/exchangeratesetting/action.html")" id="exchangeratesetting-form" method="post">
+                    <div class="datatable__filter">
+                        <div class="datatable__filter-main">
+                            <div class="datatable__filter-search">
+                                <div class="form-inline">
+                                    <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="exchangeratesetting-sort">
+                        <table id="exchangeratesetting" class=" table table-hover table-responsive-sm table-custom sorted_table">
+
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var table = jQuery("#exchangeratesetting");
+        table.dataTable({
+        "processing": true,
+        "serverSide": true,
+        "dom": 'r<"clear">t<"datatable__controls"<"datatable__length"l><"datatable__info"i><"datatable__numbers"p>>',
+        'searching': true,
+        "ajax": { "url": "@Url.Content("~/admin" + "/exchangeratesetting.html")", "type": "POST" },
+        "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+        'stateSave': false,
+        'columnDefs': [            
+            {
+                'targets': 2,
+                'createdCell': function (td, data, rowData, row, col)
+                {               
+                    $(td).attr('class', 'index');
+                }
+            }
+        ],
+        'createdRow': function (row, data, dataIndex) {
+            $(row).attr('id', data.id);
+            $(row).attr('class', 'rowId');
+
+        },
+        "rowCallback": function(row, data, index) {
+            jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+        },
+        "columns": [
+            { "title": "From Country Code", "data": "fromcountrycode", "orderable": true },
+            { "title": "To Country Code", "data": "tocountrycode", "orderable": true },
+            { "title": "From Currency Code", "data": "fromcurrencycode", "orderable": true },
+            { "title": "To Currency Code", "data": "tocurrencycode", "orderable": true },
+            { "title": "Bank Code", "data": "bankcode", "orderable": true },
+       //     { "title": "Bank Name", "data": "bankName", "orderable": true },
+            { "title": "Supplier", "data": "source", "orderable": false },
+            { "title": "Payment Method", "data": "paymentmode", "orderable": true },
+            { "title": "Exchange Rate", "data": "exchangerate", "orderable": true },
+            {
+                "title": "Updated At", "data": "updated_at", "orderable": true,
+                "render": function (data) {
+                    var dateTime = new Date(data);
+                    var formattedDate = moment(dateTime).format("DD-MM-YYYY HH:mm:ss");
+                    return "<span>" + formattedDate + "</span>";
+                }
+            }
+        ],
+        order: [
+            [8, "desc"]
+        ],
+        "paging": true,
+        "pageLength": 10,
+        lengthMenu: [
+            [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+        ],
+        "fnInitComplete": function(oSettings, json) {
+            jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+            }
+        });
+        jQuery(document).on("keyup", "#gridsearch", function() {
+                table.fnFilter(this.value);
+        });
+    });
+    </script>
+}

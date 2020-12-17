@@ -1,0 +1,29 @@
+.form-builder {
+    max-width: 730px;
+    margin-left: auto;
+    margin-right: auto;
+    > .card {
+        border: 0;
+        .card-body {
+            @include media-breakpoint-up(md){
+                padding: 3rem;
+            }
+        }
+        .card-footer {
+            @include media-breakpoint-up(md) {
+                padding: 2rem 3rem;
+            }
+            display: flex;
+            justify-content: space-between;
+            background-color: $white;
+            border-top-color: $body-bg !important;
+        }
+    }
+}
+.form-builder-header {
+    max-width: 520px;
+    margin: auto;
+    padding-top: 5rem;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}

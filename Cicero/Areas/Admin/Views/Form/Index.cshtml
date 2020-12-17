@@ -1,0 +1,230 @@
+﻿@using Cicero.Service.Helpers
+@using Microsoft.AspNetCore.Http
+@inject Permission Permission
+@inject Utils _Utils
+@inject IHttpContextAccessor _IHttpContextAccessor
+
+@{
+    ViewBag.Title = "Manage Forms";
+}
+
+<div class="page-wrapper page-claim-forms">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin"+_Utils.GetTenantForUrl(false)+".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Forms</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Forms</h3>
+            @if (Permission.Can(UserCan.Create_Form))
+            {
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/admin/form/"+_Utils.GetTenantForUrl(true) + _Utils.GetParams("form") + "/" + _Utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="ri-add-fill"></i>Create New</a>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-main-section">
+            <div class="page-content-area">
+                <div class="status"></div>
+                <form action="@Url.Content("~/admin/form"+_Utils.GetTenantForUrl(false)+"/"+_Utils.GetParams("form")+"/action.html")" id="case-form-action" method="post">
+                    <div class="datatable__filter">
+                        <div class="datatable__filter-main">
+                            <div class="datatable__filter-actions">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="action">Action</label>
+                                    </div>
+                                    <input type="text" name="page" value="@Url.Content("~/admin/form"+_Utils.GetTenantForUrl(false)+"/"+_Utils.GetParams("form")+"/"+_Utils.GetParams("queue")+".html")" hidden>
+                                    <select class="custom-select" name="action" id="action">
+                                        <option value="">Select Action</option>
+                                        @*@if (Permission.Can(UserCan.Update_Form))
+                                            {
+                                                <option value="active">Active : Selected</option>
+                                                <option value="inactive">Inactive : Selected</option>
+                                            }*@
+                                        @if (Permission.Can(UserCan.Delete_Claim))
+                                        {
+                                            <option value="delete">Delete : Selected</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button name="apply" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#case-form-action").submit()},OnCancelled:function(){this.close();}}' type="button" class="btn btn-outline-secondary">Apply</button>
+                            </div>
+                            <div class="datatable__filter-search">
+                                <div class="form-inline">
+                                    <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <table id="case-forms" class="table table-hover table-responsive-sm table-custom"></table>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+    <script src="https://cdn.rawgit.com/meetselva/attrchange/master/js/attrchange.js"></script>
+    <script src="https://cdn.rawgit.com/meetselva/attrchange/master/js/attrchange_ext.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            //debugger
+            var tempcolumn = [];
+            var tempdata = jQuery.parseJSON('@Html.Raw(ViewBag.JsonData)');
+
+            let temp = { title: '', data: 'id', orderable: false, bSortable: false };
+            let temp1 = { title: 'Form Id', data: 'caseId', orderable: false, bSortable: false };
+            let temp2 = { title: 'Created At', data: 'createdAt', orderable: false, bSortable: false };
+            let temp3 = { title: 'Updated At', data: 'updatedAt', orderable: false, bSortable: false, format: 'dd/mm/yyy' };
+            let temp4 = { title: '', data: 'edit', orderable: false, bSortable: false, class: 'datatable__actions'};
+            //let temp5 = { title: 'Status', data: 'status', orderable: false, bSortable: false };
+            //console.log(JSON.parse({data: 'states'}));
+            //data: 'states' = JSON.parse({data: 'states'});
+                tempcolumn.push(temp);
+                tempcolumn.push(temp1);
+
+
+                if (tempdata.length > 0) {
+                    $.each(tempdata, function (i, v) {
+                        temp = { title: "" + v.Key + "", data: "" + v.Value + "", orderable: false, bSortable: false };
+                        //console.log(temp);
+                        tempcolumn.push(temp);
+                    });
+
+
+                    //let TableSetting = Cicero.DataTableSetting();
+                    //let pathname = window.location.pathname;
+
+                    ////changed case order by date instead of claim id
+                    //TableSetting.order = [0, "asc"];
+                    //TableSetting.ajax.url = pathname;
+                    //TableSetting.columns = tempcolumn;
+
+                    //Cicero.Form.InitDataTable({ "FilterUrl": TableSetting.ajax.url, "TableSetting" :TableSetting });
+                }
+                    tempcolumn.push(temp2);
+                    tempcolumn.push(temp3);
+                    //tempcolumn.push(temp5);
+                    tempcolumn.push(temp4);
+                    let TableSetting = Cicero.DataTableSetting();
+                    let pathname = window.location.pathname;
+
+                    //changed case order by date instead of claim id
+                    TableSetting.order = [0, "asc"];
+                    TableSetting.ajax.url = pathname;
+                    TableSetting.columns = tempcolumn;
+
+            Cicero.Form.InitDataTable({ "FilterUrl": TableSetting.ajax.url, "TableSetting": TableSetting });
+
+        });
+
+        $(function () {
+            //setTimeout(function () {
+            //    checkAndSet();
+            //}, 500);
+
+            $("#case-forms_processing").attrchange({
+                trackValues: true,
+                /* enables tracking old and new values */
+                callback: function (e) { //callback handler on DOM changes
+                    checkAndSet();
+                }
+
+            });
+        })
+
+        function checkAndSet() {
+            //debugger;
+            check = $("#case-forms_processing").attr("style");
+            if (check == "display: none;") {
+                jQuery("#case-forms tbody .dt-checkboxes").on('change', function (e) {
+                    console.log("hello");
+                    setTimeout(function (e) {
+                        jQuery("select[name='action'] option").removeAttr("disabled");
+                        var moving_states = [];
+                        jQuery.each(jQuery('input[name = "Ids"]:checked'), function () {
+                            var isJson = "[]";
+                            try {
+                                isJson = JSON.parse(jQuery(this).attr("data-switch"));
+                            } catch (e) {
+                                isJson = "[]";
+                            }
+                            moving_states.push(isJson);
+                            console.log(isJson);
+                        });
+
+                        //console.log(moving_states)
+                        var counts = {};
+                        for (var i = 0; i < moving_states.length; i++) {
+                            for (var j = 0; j < moving_states[i].length; j++) {
+                                counts[moving_states[i][j].id] = 1 + (counts[moving_states[i][j].id] || 0);
+                            }
+                        }
+                        //console.log(counts);
+                        //console.log("Moving State Length=" + moving_states.length);
+                        var state_ids = new Array();
+                        for (var key in counts) {
+                            //console.log(counts);
+                            //console.log(moving_states.length);
+                            if (counts.hasOwnProperty(key) && (moving_states.length == counts[key])) {
+                                state_ids.push(key);
+                                //console.log(key + " -> " + counts[key]);
+                            }
+                        }
+                        //console.log(state_ids);
+                        var state_to_show = new Array();
+                        for (var _i = 0; _i < moving_states.length; _i++) {
+                            for (var _j = 0; _j < moving_states[_i].length; _j++) {
+                                for (var x = 0; x < state_ids.length; x++) {
+                                    if (state_ids[x] == moving_states[_i][_j].id) {
+                                        //console.log(state_ids[x]);
+                                        state_to_show[state_ids[x]] = moving_states[_i][_j];
+                                        //console.log(state_to_show[state_ids[x]]);
+                                    }
+                                }
+                            }
+                        }
+                        state_to_show = state_to_show.filter(Boolean)
+                        //console.log(state_to_show);
+                        //$('#theOptions2 option[value='+ SC +']')
+                        jQuery("select[name='action'] option[data-orginal='false']").remove()
+                        //jQuery("select[name='action']").append("<option value='' data-delete='' data-reason=''>Select Action</option>");
+                        for (var i = 0; i < state_to_show.length; i++) {
+                            var option = $('<option>', this).attr({ "value": state_to_show[i].id, "text": state_to_show[i].name });
+
+                            jQuery("select[name='action']").append("<option value='" + state_to_show[i].id + "' data-delete='" + state_to_show[i].can_delete + "' data-orginal='false'  data-reason='" + state_to_show[i].need_reason + "'>" + state_to_show[i].name + " </option>");
+                        }
+
+                    }, 100);
+
+                }); //define checkbox on change
+                $("#case-forms tr").attrchange({
+                    trackValues: true,
+                    /* enables tracking old and new values */
+                    callback: function (e) { //callback handler on DOM changes
+                        console.log("change");
+                        $(this).find("input[type='checkbox']").trigger('change'); 
+                    }
+                });
+               // $(".custom-control-label").on('click', function () { $(this).parents(".custom-checkbox").find("input[type='checkbox']").trigger('change'); }); //trigger checkbox change event when clicked.
+            }
+            else {
+                //setTimeout(function () { checkAndSet(); }, 1000);
+            }
+        }
+    </script>
+}

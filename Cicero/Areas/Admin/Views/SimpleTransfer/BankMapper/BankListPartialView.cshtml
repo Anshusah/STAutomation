@@ -1,0 +1,289 @@
+﻿@model Cicero.Service.Models.SimpleTransfer.BankMapper.BankListViewModel
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+@{
+    var id = 0;
+    var TransfastBankList = Model.TransfastBankList;
+    var NecMoneyBankList = Model.NecMoneyBankList;
+}
+@*<style>
+    #sortable1, #sortable2, #sortable3 {
+        }
+
+            #sortable1 li, #sortable2 li {
+                position: relative;
+                list-style: none;
+                margin-bottom: 5px;
+                padding: 0.4em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                /*transition:all 3s;*/
+            }
+
+                #sortable1 li:hover, #sortable2 li:hover {
+                    overflow: visible;
+
+                }
+
+
+
+             #sortable1 li:hover .tooltip, #sortable2 li:hover .tooltip{
+                 box-shadow: 0 0 50px 0 rgba(0,0,0,0.3);
+                   top:0;
+                   transform:translate(10px,-10px);
+
+                   opacity: 1;
+                   background: #fff;
+                   padding: 0.5rem;
+                   transition:all 250ms;
+
+             }
+            #sortable3 li {
+                position: relative;
+                list-style: none;
+                margin-bottom: 5px;
+                padding: 5.5px;
+            }
+            .ui-sortable-bankmapper .ui-sortable-placeholder {
+                background: rgba(33, 150, 243, 0.25) !important;
+                visibility: visible !important;
+                border: 1px solid rgba(33, 150, 243, 0.5);
+            }
+    </style>*@
+
+@*<div class="">
+        <table class="table table-custom">
+            <colgroup>
+                <col span="1" >
+                <col span="1" style="width: 90px;">
+                <col span="1" ">
+                <col span="1" style="width: 90px;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="border-top-0">Transfast</th>
+                    <th class="border-top-0">  &nbsp;  </th>
+                    <th class="border-top-0">NecMoney Bank</th>
+
+                    <th class="border-top-0">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AB BANK</td>
+                    <td  class="border text-center"><i class="ri-arrow-left-right-line"></i></td>
+                    <td>AB BANK LIMITED</td>
+                    <td>
+                        <div class="form-group form-inline mb-0">
+
+                            <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitchStatus"><label class="custom-control-label" for="customSwitchStatus"></label></div>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>AB BANK</td>
+                    <td class="border text-center"><i class="ri-arrow-left-right-line"></i></td>
+                    <td>AB BANK LIMITED</td>
+                    <td>
+                        <div class="form-group form-inline  mb-0">
+
+                            <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitchStatus"><label class="custom-control-label" for="customSwitchStatus"></label></div>
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AB BANK</td>
+                    <td class="border text-center"><i class="ri-arrow-left-right-line"></i></td>
+                    <td>AB BANK LIMITED</td>
+                    <td>
+                        <div class="form-group form-inline  mb-0">
+
+                            <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitchStatus"><label class="custom-control-label" for="customSwitchStatus"></label></div>
+
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+    </div>*@
+
+<style>
+    .custom-menu {
+        display: none;
+        z-index: 1000;
+        position: absolute;
+        overflow: hidden;
+        border: 1px solid #CCC;
+        white-space: nowrap;
+        font-family: sans-serif;
+        background: #FFF;
+        color: #333;
+        border-radius: 5px;
+        padding: 0;
+    }
+
+        /* Each of the items in the list */
+        .custom-menu li {
+            padding: 8px 12px;
+            cursor: pointer;
+            list-style-type: none;
+            transition: all .3s ease;
+            user-select: none;
+        }
+
+            .custom-menu li:hover {
+                background-color: #DEF;
+            }
+</style>
+
+<div class="sortable-wrapper">
+    <div class="row">
+        <div class="col">
+            <p class=" detail">This section helps you to Map Supplier Banks. Please map the banks, check on active and Click on "Save" button to save your changes.</p>
+        </div>
+
+    </div>
+
+    <div class="row sortable-element  ">
+
+        <ul id="sortable1" class="connectedSortable sortable-content col-4 col-md-5">
+            <li class="title"><h6>Transfast Bank</h6></li>
+            @foreach (var item in Model.TransfastBankList)
+            {
+                <li class="ui-state-default sortable-item" data-value="@item.Value" data-toggle="tooltip" data-placement="top" title="@item.Text">
+                    <span class="text">@item.Text</span>
+                </li>
+            }
+            @if (Model.TransfastBankList.Count == 0)
+            {
+                <li>N/A</li>
+            }
+        </ul>
+        <ul class=" sortable-content sortable-content__icon col-2 col-md-1">
+            <li class="title">
+                <h6>&nbsp;</h6>
+            </li>
+            @foreach (var item in Model.TransfastBankList)
+            {
+
+                <li class="text-center "> <i class="ri-arrow-left-right-line"></i> </li>
+            }
+            @if (Model.TransfastBankList.Count == 0)
+            {
+                <li></li>
+                @*<li class="text-center "> <i class="ri-arrow-left-right-line"></i> </li>*@
+            }
+
+        </ul>
+
+        <ul id="sortable2" class="connectedSortable col-4 col-md-5 sortable-content sortable-content--draggable">
+            <li class="li-disabled title pl-0"><h6>NecMoney Bank</h6></li>
+            @foreach (var item in Model.NecMoneyBankList)
+            {
+                var value = item.Text;
+                var blankClass = string.Empty;
+                if (value == null || value == "")
+                {
+                    blankClass = "blank--li";
+                }
+                <li class="ui-state-default sortable-item sortable-item--draggable @blankClass" data-value="@item.Value" data-toggle="tooltip" data-placement="top" title="@item.Text">
+                    <span class="drag-icon"></span>
+                    <span class="text">@item.Text</span>
+                    @*<span class="tooltip">@item.Text</span>*@
+                </li>
+            }
+            @if (Model.NecMoneyBankList.Count == 0)
+            {
+                <li class="px-0">N/A</li>
+            }
+        </ul>
+
+        <ul id="sortable3" class="sortable-content col-2 col-md-1">
+            <li class="title"><h6>Status</h6></li>
+            @foreach (var item in Model.Status)
+            {
+                id++;
+                <li class="li-checkbox ui-state-default ">
+                    <div class="custom-control custom-switch" data-toggle="tooltip" data-placement="top" title="Make mapping active or inactive">
+                        <input type="checkbox" class="custom-control-input" name="@("activeinactive" + id)" id="@("enable" + id)" @((item) ? "checked" : "")><label class="custom-control-label" for="@("enable" + id)"></label>
+                    </div>
+
+
+                </li>
+            }
+
+            @if (Model.Status.Count == 0)
+            {
+                <li>N/A</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<ul class='custom-menu'>
+    <li class="insert--empty" data-action="first">Insert Empty</li>
+    <li class="remove--empty" data-action="second" style="display: none;">Remove Empty</li>
+</ul>
+
+<script>
+    var elem;
+    $(function () {
+        $("#sortable2").sortable({
+            items: 'li:not(.li-disabled)',
+            connectWith: ".connectedSortable"
+        }).disableSelection();
+    });
+
+    $(document).on("contextmenu", '#sortable2 li:not(.li-disabled)', function (event) {
+        event.preventDefault();
+
+        elem = event.currentTarget;
+        if ($(elem).hasClass('blank--li')) {
+            $('.remove--empty').show();
+        }
+
+        $(".custom-menu").finish().toggle(100).
+
+            css({
+                top: (event.pageY - 40) + "px",
+                left: (event.pageX - 300) + "px"
+            });
+
+       //    $(elem).append($(".custom-menu"));
+
+    });
+
+    $(document).bind("mousedown", function (e) {
+
+        if (!$(e.target).parents(".custom-menu").length > 0) {
+            $(".custom-menu").hide(100);
+            $('.remove--empty').hide();
+        }
+    });
+
+    $(".custom-menu li").click(function () {
+        switch ($(this).attr("data-action")) {
+            case "first":
+                var li = '<li class="ui-state-default sortable-item sortable-item--draggable blank--li" data-value="" data-toggle="tooltip" data-placement="top" title="blank">'
+                    + '<span class="drag-icon"></span>'
+                    + '<span class="text"></span></li>';
+                $(elem).after(li);
+                $('#sortable2').append(elem);
+                elem = "";
+                break;
+
+            case "second":
+                $(elem).remove();
+                break;
+        }
+
+        $(".custom-menu").hide(100);
+    });
+
+</script>

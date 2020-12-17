@@ -1,0 +1,2220 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@using Microsoft.AspNetCore.Http;
+@using static Cicero.Service.Enums;
+@using Cicero.Service.Models.General
+@using static Cicero.Service.Extensions.Extensions
+@model WorkFlowViewModel
+@inject IUserService _userService
+@inject Permission Permission
+@inject Utils  _utils
+@inject ITenantService  _it
+@inject Permission Permission
+@inject IHttpContextAccessor _httpContextAccessor;
+@{
+
+    ViewBag.Title = "Element Workflow";
+
+    string AeroJson = "";
+
+    string formId = ViewContext.HttpContext.Request.Query["formId"];
+    string elementId = ViewContext.HttpContext.Request.Query["elementId"];
+    string eventType = ViewContext.HttpContext.Request.Query["eventType"];
+    string eventName = ViewContext.HttpContext.Request.Query["eventName"];
+
+    Theme _theme = ViewData["theme"] as Theme;
+
+    if (eventType != "")
+    {
+        List<EnumViewModel> type = (List<EnumViewModel>)EnumModel<ElementEventType>.List();
+        foreach (EnumViewModel ls in type)
+        {
+
+            if (ls.Id == Convert.ToInt32(eventType))
+            {
+                eventName = ls.Text;
+            }
+
+        }
+    }
+
+
+
+
+}
+<link href="~/Themes/Core/dist/css/query-builder.default.min.css" rel="stylesheet" />
+<script>
+    var editObject = false;
+    var created = false;
+    var createdId;
+    var createdType;
+    var WF_Vars = { "id": "@_it.GetTenantIdByIdentifier(_utils.GetTenantFromSession())", "elementId":"@elementId", "eventType": "@eventType", "elementFormId": "@formId" }
+</script>
+<div class="absolute-fill">
+    <div class="workflow-container">
+        <div class="workflow-header">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="#">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Element Workflow builder</li>
+                </ol>
+            </nav>
+            <div class="workflow-header__bottom">
+                <div class="workflow-title-group">
+                    <h3 class="workflow-title">Element Workflow Builder for &nbsp;<i>@eventName</i></h3>
+
+                    <div class="workflow-form-title dropdown" style="display:none;">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Select a Form
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" data-form-id="@formId" data-id="@formId">Form</a>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="workflow-controls">
+                    @*<a role="button" class="btn btn-outline-primary manage-queue" data-toggle="tooltip" data-placement="bottom" data-tool="Queue" title="Manage Queues" href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false)+ "/manage/stateworkflow.html?formId="+formId)">
+                            <i class="ri-share-forward-2-line mr-2"></i>
+                            <span>Manage Queues</span>
+                        </a>*@
+                    <button class="btn btn-light btn-icon" type="button" data-toggle="tooltip" data-placement="bottom" data-tool="edit" title="Edit Workflow Elements">
+                        <i class="ri-edit-line"></i>
+                        <span class="sr-only">Edit Selected</span>
+                    </button>
+                    <button class="btn btn-light btn-icon" type="button" data-toggle="tooltip" data-placement="bottom" data-tool="delete" title="Delete Element">
+                        <i class="ri-eraser-line"></i>
+                        <span class="sr-only">Delete Selected</span>
+                    </button>
+                    <button class="btn btn-light btn-icon" type="button" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Drag Workflow">
+                        <!--<i class="far fa-hand-rock active" data-icon="move"></i>-->
+                        <i class="ri-drag-move-2-line active" data-icon="move" title="Drag and Move"></i>
+                        <i class="ri-cursor-line text-primary" data-icon="pointer" title="Draw"></i>
+                        <span class="sr-only">Drag Workflow</span>
+                    </button>
+                    <button class="btn btn-light btn-icon" type="button" data-toggle="tooltip" data-placement="bottom" title="Reset Workflow" data-tool="reset">
+                        <i class="ri-restart-line"></i>
+                        <span class="sr-only">Reset Workflow</span>
+                    </button>
+                    <button class="btn btn-light btn-icon max-min-btn" type="button" data-toggle="tooltip" data-placement="bottom" title="Fullscreen mode">
+                        <i class="ri-fullscreen-fill"></i>
+                        <span class="sr-only">Fullscreen mode</span>
+                    </button>
+                    <div class="wc-separator"></div>
+                    <button class="btn btn-primary btn-save" data-tool="save" type="button" disabled>
+                        <i class="ri-save-line"></i>
+                        <span>Save</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="workflow-viewport-container">
+            <div class="workflow-viewport-container-inner">
+                <div class="workflow-navigation-container">
+                    <div class="workflow-viewport-navigation">
+                        <div class="viewport-nav">
+                            <ul class="viewport-nav__list list-unstyled" id="wfs-ui-dragable">
+                                @*<li class="viewport-nav__item" data-json='{"type":"state","icon":"\uef83","size":20,"shape":"circle","id":0}'>
+                                        <a>
+                                            <i class="ri-edit-line"></i>
+                                            <span>State</span>
+                                            <span class="drag-icon"></span>
+                                        </a>
+                                    </li>*@
+                                <li class="viewport-nav__item" data-json='{"type":"start-state","icon":"\uef83","size":20,"shape":"circle","id":0}'>
+                                    <a>
+                                        <i class="ri-play-circle-line"></i>
+                                        <span>Start</span>
+                                        <span class="drag-icon"></span>
+                                    </a>
+                                </li>
+                                <li class="viewport-nav__item" data-json='{"type":"end-state","icon":"\uf0eb","size":20,"shape":"circle","id":0}'>
+                                    <a>
+                                        <i class="ri-stop-circle-line"></i>
+                                        <span>End</span>
+                                        <span class="drag-icon"></span>
+                                    </a>
+                                </li>
+
+                                <li class="viewport-nav__item" data-json='{"type":"email","icon":"\uee91","size":40,"shape":"rect","id":0}'>
+                                    <a>
+                                        <i class="ri-mail-send-line"></i>
+                                        <span>Email</span>
+                                        <span class="drag-icon"></span>
+                                    </a>
+                                </li>
+                                <li class="viewport-nav__item" data-json='{"type":"api","icon":"\uf10b","size":40,"shape":"rect","id":0}'>
+                                    <a>
+                                        <i class="ri-swap-box-line"></i>
+                                        <span>API Integration</span>
+                                        <span class="drag-icon"></span>
+                                    </a>
+                                </li>
+                                <li class="viewport-nav__item" data-json='{"type":"automation","icon":"\uf050","size":40,"shape":"rect","id":0}'>
+                                    <a>
+                                        <i class="ri-settings-line"></i>
+                                        <span>Automation</span>
+                                        <span class="drag-icon"></span>
+                                    </a>
+                                </li>
+                                <li class="viewport-nav__item" data-json='{"type":"assign","icon":"\uef87","size":40,"shape":"rect","id":0}'>
+                                    <a>
+                                        <i class="ri-play-list-add-line"></i>
+                                        <span>Assign</span>
+                                        <span class="drag-icon"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="workflow-instruction-info text-muted">
+                            <p class="text-muted small mb-0 mr-3">Follow state Configurator's cursor guide which may helps you to configure arrow path.</p>
+                            <div class="instruction-info-icon">
+                                <i class="ri-information-line" data-toggle="tooltip" data-placement="top" title="Vivamus sagittis lacus vel augue laoreet <b>rutrum</b> faucibus."></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="workflow-viewport-area">
+                    <div class="absolute-fill">
+                        <div class="workflow-viewport-canvas">
+                            <canvas id="workflow-vp" style="position:relative;"></canvas>
+                            @*<div class="workflow-info">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="265" height="127.367" viewBox="0 0 265 127.367">
+                                        <g id="Group_999" data-name="Group 999" transform="translate(-798 -324.633)">
+                                            <g id="Rectangle_597" data-name="Rectangle 597" transform="translate(959 370)" fill="none" stroke="#dbdbdb" stroke-width="2" stroke-dasharray="4">
+                                                <rect width="104" height="82" rx="8" stroke="none" />
+                                                <rect x="1" y="1" width="102" height="80" rx="7" fill="none" />
+                                            </g>
+                                            <g id="Group_998" data-name="Group 998">
+                                                <path id="Path_589" data-name="Path 589" d="M-7275,5078.252s54.805-45.418,110.62,13.064" transform="translate(8168.746 -4736.252)" fill="none" stroke="#dbdbdb" stroke-width="1" stroke-dasharray="2" />
+                                                <g id="Group_994" data-name="Group 994" transform="translate(1994.685 -58.527) rotate(138)">
+                                                    <line id="Line_64" data-name="Line 64" x1="4.499" y2="5" transform="translate(1008.5 354.5)" fill="none" stroke="#dbdbdb" stroke-width="1" />
+                                                    <line id="Line_65" data-name="Line 65" x2="5" y2="5" transform="translate(1012.5 354.5)" fill="none" stroke="#dbdbdb" stroke-width="1" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_997" data-name="Group 997">
+                                                <g id="Group_993" data-name="Group 993" transform="translate(73 -16)">
+                                                    <rect id="Rectangle_596" data-name="Rectangle 596" width="126" height="27" rx="8" transform="translate(725 375)" fill="#efefef" />
+                                                    <rect id="Rectangle_598" data-name="Rectangle 598" width="126" height="27" rx="8" transform="translate(731 370)" fill="#dbdbdb" />
+                                                </g>
+                                                <g id="Group_996" data-name="Group 996" transform="translate(2 -1)">
+                                                    <rect id="Rectangle_599" data-name="Rectangle 599" width="18" height="13" rx="5" transform="translate(813 362)" fill="#f1f1f1" />
+                                                    <rect id="Rectangle_600" data-name="Rectangle 600" width="81" height="4" rx="2" transform="translate(835 362)" fill="#f1f1f1" />
+                                                    <rect id="Rectangle_601" data-name="Rectangle 601" width="47" height="4" rx="2" transform="translate(835 369)" fill="#f1f1f1" />
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <p>Drag and Drop components from left side to right side and apply required state configuration flow as system requirement.</p>
+                                </div>
+                            *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/js/3d.js"></script>
+<script type="text/javascript" src="/js/ElementWF.js"></script>
+<script></script>
+<style>
+    .tooltip {
+        opacity: 1 !important;
+    }
+</style>
+<div class="modal fade" tabindex="-1" role="dialog" id="empty-stage" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Choose Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Please choose form first and try to configure/setup state flow.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="reset-warning" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Reset?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Are you sure? Do you want to delete all objects from workflow stage?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="delete-warning" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Are you sure? Do you want to delete Active object from workflow stage?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="wf-state" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Insert State</h5>
+            </div>
+            <div class="modal-body" id="wf-state-mbody">
+                <ul class="list-unstyled">
+                    <li>Loading ... </li>
+
+
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" type="button" id="state-modal">
+                    <i class="ri-stack-line mr-2"></i>New State
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-insert>Insert</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="wf-email" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Insert Email</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+
+
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-insert>Insert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="wf-email-new" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Email Configuration</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="wf-email-save" class="btn btn-primary" data-save data-dismiss="modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="wf-api" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Insert API</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" type="button" id="new-api-modal">
+                    <i class="ri-swap-box-line mr-2"></i>New Api
+                </button>
+                <button type="button" class="btn btn-danger" disabled id="wf-api-delete">Delete</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="wf-api-insert" class="btn btn-primary" data-insert>Insert</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="wf-api-new" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New API Configuration</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="wf-api-save" class="btn btn-primary" data-save data-dismiss="modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="wf-automation-new" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New If Block Configuration</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="wf-automation-save" class="btn btn-primary" data-save data-dismiss="modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="wf-automation" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Insert If Block</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+
+                <button class="btn btn-outline-secondary" type="button" id="new-automation-modal">
+                    <i class="ri-settings-line mr-2"></i>New Automation
+                </button>
+                <button type="button" class="btn btn-danger" id="wf-auto-delete" disabled>Delete</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="wf-automation-insert" data-insert>Insert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--New state Modal-->
+<div class="modal fade" id="newStateModal" tabindex="-1" role="dialog" aria-labelledby="newStateModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newStateModalTitle">Create New State</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div> <!--//.modal-header-->
+            <div class="modal-body">
+                <!--//.modal-form-load-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+                <button type="button" id="state-save" class="btn btn-primary">Save</button>
+            </div> <!--//.modal-footer-->
+        </div> <!--//.modal-content-->
+    </div> <!--//.modal-dialog-->
+</div>
+<!--//End of New State Modal-->
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" id="wf-delete-comp" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Are you sure you want to delete the selected item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="wf-delete-comp-btn" class="btn btn-primary" data-dismiss="modal" data-id="" data-type="">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Assign Component *@
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="wf-assign" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <div>
+                    <button class="btn btn-outline-secondary" type="button" id="new-assign-modal">
+                        <i class="ri-play-list-add-line btn-icon__icon"></i>New Assign
+                    </button>
+                    <button type="button" class="btn btn-danger" disabled id="wf-assign-delete">Delete</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="wf-assign-insert" class="btn btn-primary" data-insert>Insert</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="wf-assign-new" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Assign Configuration</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Loading ...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="wf-assign-save" class="btn btn-primary" data-save data-dismiss="modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* end Assign Component *@
+
+<script type="text/javascript">
+    String.prototype.format = String.prototype.format || function () {
+        "use strict";
+        var str = this.toString();
+        if (arguments.length) {
+            var t = typeof arguments[0];
+            var key;
+            var args = ("string" === t || "number" === t) ?
+                Array.prototype.slice.call(arguments)
+                : arguments[0];
+
+            for (key in args) {
+                str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
+            }
+        }
+
+        return str;
+    };
+    //"Hello, {name}, are you feeling {adjective}?".format({name:"Kishan", adjective: "oK"});
+
+    // Or
+
+    //"a{0}bcd{1}ef".format("foo", "bar");
+
+
+
+</script>
+@if (formId != "" && formId != null)
+{
+    <script>
+        $(function () {
+            var isInIframe = (window.location != window.parent.location) ? true : false;
+            if (isInIframe) {
+                $("#form_id").attr("disabled", "disabled");
+            }
+            $("#form_id").val('@formId');
+
+            setTimeout(function () {
+                $(".workflow-form-title").find("a[data-id='@formId']").click();
+                $(".workflow-form-title").find("button").removeAttr('data-toggle');}, 1500);
+        });
+
+
+    </script>
+}
+
+@* Core component Script *@
+<script>
+
+    var Components = {};
+    Components.Global = {
+        Init: function () {
+            /* Globally Used : Start */
+            $(document).on("change", "[data-slide-show]", function (e) {
+                $(this).off("change")
+                var el = $(this).closest("li[data-component-id]");
+                var SelectedVal = jQuery(this).val();
+                if (e.target.type == "radio") {
+                    var elm = el.find('input[name="' + e.target.name + '"]:checked');
+                    if (elm.val() == "article") {
+                        var StrToHide = elm.data('slide-hide');
+                        var StrToShow = elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+
+                    } else {
+                        var StrToHide = elm.data('slide-hide');
+                        var StrToShow = elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+
+                    }
+                }
+            });
+            $(document).on("change", "[type='checkbox'][data-target]", function (e) {
+                $(this).off("change");
+                var el = $(this).closest("li[data-component-id]");
+                var SelectedVal = jQuery(this).val();
+                if ($(this).is(":checked")) {
+                    $($(this).data("target")).slideDown();
+                } else {
+                    $($(this).data("target")).slideUp();
+                }
+            });
+            /* Globally Used : End */
+        }
+
+    };
+    Components.Core = {
+        LoadScript: function (e, where, call) {
+            var scriptTag = document.createElement('script');
+            scriptTag.src = e;
+
+            scriptTag.onload = call;
+            scriptTag.onreadystatechange = call;
+            scriptTag.onerror = function () { toastr.error("Couldn't load sctipt: " + e) }
+            where.appendChild(scriptTag);
+        },
+        Hooks: {
+            actions: [],
+            addAction: function (type, method) {
+                Components.Core.Hooks.actions.push({ type: type, method });
+            },
+            doAction: function (type, arg) {
+                var strlen = [];
+                Components.Core.Hooks.actions = Components.Core.Hooks.actions.filter(function (item, index) {
+                    return Components.Core.Hooks.actions.indexOf(item) === index;
+                });
+                jQuery.each(Components.Core.Hooks.actions, function (i, v) {
+                    if (v.type == type) {
+                        var str_data = v.method.call(this, arg);
+                        if (typeof (str_data) == 'undefined') {
+                            console.log("This method is returning empty : \n" + v.method);
+                            str_data = "";
+                        }
+                        strlen.push(str_data);
+                    }
+                });
+                return strlen;
+            },
+
+        },
+        GenerateComponentId: function () {
+            function Generator() {
+                this.length = 8;
+                this.timestamp = +new Date;
+                var _getRandomInt = function (min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                this.generate = function () {
+                    var ts = this.timestamp.toString();
+                    var parts = ts.split("").reverse();
+                    var id = "";
+
+                    for (var i = 0; i < this.length; ++i) {
+                        var index = _getRandomInt(0, parts.length - 1);
+                        id += parts[index];
+                    }
+                    return parseFloat(id);
+                }
+            };
+
+            return new Generator().generate();
+
+        },
+        Init: function () {
+            $('.space,.first-space').sortable({
+
+                connectWith: '.space,.first-space',
+                placeholder: "ui-state-highlight",
+                tolerance: 'pointer',
+                dropOnEmpty: true,
+                forceHelperSize: true,
+                refreshPositions: true,
+                forcePlaceholderSize: true,
+                //containment: 'window',
+                distance: 5,
+                opacity: 1,
+                /* uu */
+                // tolerance: "pointer",
+                zIndex: 999999999999,
+                over: function (event, ui) {
+                    console.log("Overed");
+                },
+                change: function (event, ui) {
+
+                },
+                start: function (event, ui) {
+                    jQuery(".first-space").addClass("start");
+                },
+                stop: function (event, ui) {
+                    jQuery(".first-space").removeClass("start");
+                },
+                receive: function (event, ui) {
+
+                    var json = $(ui.sender).find("a.item").data('json');
+                    console.log(json)
+                    if (typeof (json) == 'undefined') {
+
+                        return;
+                    }
+                    var component_id = Components.Core.GenerateComponentId();
+
+                    var dom = '<li class="widget-location dashed-border" data-component-id="' + component_id + '" data-type="' + json.type + '">' +
+                        '<div class="widget-wrap "><div class="widget-title"><span class="title"><i class="fa ' + json.icon + '"></i></span><div class="widget-actions"><close></close><button type="button" class="btn btn-sm rounded-pill btn-remove" title="Remove from list"><i class="ri-close-line"></i><span class="sr-only">Delete</span></button><button type="button" class="btn btn-sm rounded-pill btn-toggle" title="Expand"><i class="ri-add-line show"></i><i class="ri-subtract-line hide"></i></button></div></div><form class="widget-body"></form></div>' +
+                        '</li>';
+                    jQuery(this).find('a.item').closest("li").replaceWith(dom);
+                    $.ajax({
+                        url: '/admin/ajax/update-component.html',
+                        data: {
+                            component_id: component_id,
+                            component_type: json.type,
+                            action: "create"
+                        },
+                        error: function () {
+                            toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            $("[data-component-id='" + data.component_id + "']").find(".widget-body").empty().append(data.content);
+                            $("[data-component-id='" + data.component_id + "']").find(".widget-body").slideDown();
+
+                        },
+                        type: 'POST'
+                    });
+
+                },
+            }).disableSelection();
+
+            $('.ul-lists li').draggable({
+                connectToSortable: '.space,.base',
+                helper: 'clone',
+            });
+
+
+            jQuery(document).on("click", ".ul-lists>li", function (e) {
+                jQuery(this).find(">ul").slideToggle();
+                jQuery(this).toggleClass('active');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".ul-lists>li li", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".widget-wrap .widget-title", function () {
+                jQuery(this).closest(".widget-wrap").find(">.widget-body").slideToggle();
+                jQuery(this).closest("li").toggleClass('active on');
+                $('.btn-toggle').prop('title') == 'Expand' ? $('.btn-toggle').prop('title', 'Close') : $('.btn-toggle').prop('title', 'Expand');
+            })
+
+            jQuery(document).on("click", ".btn-danger", function () {
+                jQuery(this).closest("li").remove();
+            })
+            jQuery(document).on("click", ".btn-remove", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var component_id = $(this).closest("li").data("component-id");
+                var component_type = $(this).closest("li").data("type");
+                var post = {
+                    component_id: component_id,
+                    component_type: component_type,
+                    action: "delete"
+                }
+                var arr = $(this).serializeArray();
+                arr.forEach(function (item, index) {
+                    if (post[item.name] === undefined) {
+                        post[item.name] = item.value || '';
+                    } else {
+                        if (!post[item.name].push) {
+                            post[item.name] = [post[item.name]];
+                        }
+                        post[item.name].push(item.value || '');
+                    }
+                });
+                $("[data-component-id='" + component_id + "']").closest("li").fadeTo("slow", 0.5);
+                $.ajax({
+                    url: '/admin/ajax/delete-component.html',
+                    data: post,
+                    error: function () {
+                        toastr.error('An error has occurred');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $("[data-component-id='" + data.component_id + "']").closest("li").remove();
+
+                    },
+                    type: 'POST'
+                });
+
+            })
+
+            jQuery(document).on("submit", "form.widget-body", function (e) {
+
+                e.preventDefault();
+                if ($.active > 0) {
+                    return false;
+                }
+
+                var component_id = $(this).closest("li").data("component-id");
+                var component_type = $(this).closest("li").data("type");
+                var post = {
+                    component_id: component_id,
+                    component_type: component_type,
+                    action: "update"
+                }
+
+                var actionResult = Components.Core.Hooks.doAction('before_component_save', post);
+
+                var arr = $(this).serializeArray();
+                arr.forEach(function (item, index) {
+                    if (post[item.name] === undefined) {
+                        post[item.name] = item.value || '';
+                    } else {
+                        if (!post[item.name].push) {
+                            post[item.name] = [post[item.name]];
+                        }
+                        post[item.name].push(item.value || '');
+                    }
+                });
+
+                var t = null;
+                var _t = null;
+
+                var go = true;
+                //if (component_type == "Themes.Core.Components.CaseAutomation") {
+                if (actionResult.length > 0) {
+                    for (var i = 0; i < actionResult.length; i++) {
+                        if (go == true && actionResult[i].submit == false) {
+                            go = false;
+                            break;
+                        }
+                    }
+                }
+                //}
+                if (go) {
+
+                    $("[data-component-id='" + component_id + "']").closest("li").addClass("busy");
+                    $.ajax({
+                        url: '/admin/ajax/update-component.html',
+                        data: post,
+                        error: function () {
+                            toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            $("[data-component-id='" + data.component_id + "']").closest("li").removeClass("busy").addClass("saved").find("form.widget-body").empty().append(data.content);
+                            $("[data-component-id='" + data.component_id + "']").find(".widget-foot").prepend("<span class='widget-status success d-flex float-left'>Successfully Saved.</span>");
+                            var subtitle = $("[data-component-id='" + data.component_id + "']").closest("li");
+
+                            if (subtitle.find(".sub-title").length) {
+                                subtitle.find(".sub-title").empty().html(data.subtitle)
+                            } else {
+                                subtitle.find(".title").after("<span class='sub-title'>" + data.subtitle + "</span>"); //.adter(subtitle.find(".title"));
+                            }
+                            subtitle.on("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+                                function (event) {
+                                    try {
+                                        clearTimeout(t);
+                                    } catch (e) { }
+
+                                    t = setTimeout(function () {
+                                        subtitle.removeClass("saved");
+
+                                        try {
+                                            clearTimeout(_t);
+                                        } catch (e) {
+
+                                        }
+
+                                        _t = setTimeout(function () {
+                                            $(".widget-status").fadeTo("slow", 0.0, function () {
+                                                $(".widget-status").hide();
+                                            })
+                                        }, 1500)
+
+                                    }, 500)
+                                });
+                            //-------------------
+                            Components.Core.Hooks.doAction('after_component_save', { args: post, result: data });
+                        },
+                        type: 'POST'
+                    });
+                }
+
+            });
+        },
+        Save: function (e) {
+            $("[data-component-id='" + e + "'] form").submit();
+        }
+    }
+    $(function () {
+
+        Object.keys(Components).forEach(function (key) {
+            try {
+                eval("Components." + key + ".Init()");
+                //eval("Components." + key + ".init()");
+
+            } catch (ev) { }
+        })
+
+    })</script>
+@* end Core component Script *@
+
+
+<script>
+
+         //open state modal to set caseform id
+    $(document).on("click", "#state-modal", function (e) {
+        e.preventDefault();
+        $("#wf-state").modal("hide");
+        $.ajax({
+            type: "GET",
+            dataType: "html",
+            url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadstatebyid")",
+            data: { id: "@_utils.EncryptId(0)" },
+            success: function (data) {
+                if (data != "" && data != " ") {
+                    //document.getElementById("queue-form").reset();
+                    $('#newStateModal').find(".modal-body").html(data);
+                    //$('#newStateModal').modal('show');
+                    setTimeout(function () { $("#newStateModal").modal('show'); }, 300);
+                    //$("#form_id").trigger();
+
+                }
+            }
+        });
+
+
+        setTimeout(function () {
+            if (wf.vars.formId != " " && wf.vars.formId != "") {
+                $("#caseFormId").val(wf.vars.formId);
+                // $("#caseFormId").siblings("label").text($("#form_id option:selected").text());
+
+                //defaults color and icon
+                $(".color").first().click();
+                $(".state-icon-item").first().children().click();
+
+                //$("#EF3A53").parent().addClass("active");
+                //$("#EF3A53").append("<i class='fas fa-check-circle'></i>");
+                //$("#input-color-picker").val('' + $("#EF3A53").attr("id") + '');
+                //$("#icon-state").closest("div").siblings("input").val('' + $("#default-img").attr("src") + '');
+
+            }
+        }, 2000);
+    });
+
+
+</script>
+
+
+
+<script>
+      //save state
+        $(document).on("click", "#state-save", function (e) {
+            //e.preventDefault();
+            let checker = $("#state-form").valid();
+
+            if (checker == true) {
+                let temp = $("#state-form").serialize();
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/savestate")",
+                    data: temp,
+                    success: function (html) {
+
+                        let message = html.message;
+                        if (html.status == "error") {
+                            toastr.error("Save Unsuccessful");
+                        }
+                        else {
+                            toastr.success(message);
+                        }
+                        document.getElementById("state-form").reset();
+                        $("#newStateModal").modal('toggle');
+
+                        //$("#form_id").trigger();
+
+                    }
+                });
+            }
+
+        });
+
+        //save queue
+        $(document).on("click", "#queue-save", function (e) {
+            //e.preventDefault();
+
+            let checker = $( "#queue-form" ).valid();
+
+            if (checker == true) {
+                let temp = $("#queue-form").serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/savequeue")",
+                    data: temp,
+                    success: function (html) {
+                        let message = html.message;
+                        if (html.status == "error") {
+                            toastr.error("Save Unsuccessful");
+                        }
+                        else {
+                            toastr.success(message);
+                        }
+                        document.getElementById("queue-form").reset();
+                        $("#newQueueModal").modal('toggle');
+
+                        //$("#form_id").trigger();
+
+                    }
+                });
+            }
+
+
+        });
+        //Action queue
+        $(document).on("click", "#action-save", function (e) {
+            //e.preventDefault();
+
+            let checker = $( "#action-form" ).valid();
+
+            if (checker == true) {
+                let temp = $("#action-form").serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/saveaction")",
+                    data: temp,
+                    success: function (html) {
+                        let message = html.message;
+                        if (html.status == "error") {
+                            toastr.error("Save Unsuccessful");
+                        }
+                        else {
+                            toastr.success(message);
+                        }
+                        document.getElementById("action-form").reset();
+                        $("#newActionModal").modal('toggle');
+
+                    }
+                });
+            }
+
+
+        });
+
+
+        //for color change
+        $(document).on("click", ".color", function (e) {
+            $.each($(e.target).parent().siblings(), function (i, v) {
+                $(v).removeClass("active");
+                $(v).find("i").remove();
+            });
+
+            $(e.target).parent().addClass("active");
+            $(e.target).append("<i class='ri-checkbox-circle-fill'></i>");
+            $("#input-color-picker").val('' + $(e.target).attr("id") + '');
+        });
+
+        //for icon change
+        $(document).on("click", ".state-icon-item", function (e) {
+            $.each($(e.target).parent().siblings(), function (i, v) {
+                $(v).removeClass("border-primary");
+                $(v).removeClass("selected");
+            });
+
+            $(e.target).parent().addClass("border-primary");
+            $(e.target).parent().addClass("selected");
+            $(e.target).closest("div").siblings("input").val('' + $(e.target).attr("src") + '');
+
+        });
+
+        //for checkbox hide/show state permissions on click
+        $(document).on("click", "input[permission-target]", function (e) {
+            showHidestatePermission(e.target);
+        });
+
+        //for show/hide state permissions
+        function showHidestatePermission(e) {
+            let temp = $(e).attr("id");
+            if (temp != undefined) {
+                let matches = temp.match(/\_(.*?)\_/);
+                if (matches == null) {
+                    matches = temp.match(/\[(.*?)\]/);
+                }
+                if (matches) {
+
+                    if (e.checked) {
+                        $("#state-permissions-" + matches[1]).hide();
+                        $("#state-permissions-" + matches[1]).prev().removeClass("border-bottom");
+                        let bb = $("div.state-permission");
+                        $.each(bb, function (a, b) {
+
+                            if ($(b).attr("id") == "" || $(b).attr("id") == " " || $(b).attr("id") == undefined) {
+                                $(b).remove();
+                            }
+                        });
+
+                    } else {
+                        $("#state-permissions-" + matches[1]).show();
+                        $("#state-permissions-" + matches[1]).prev().addClass("border-bottom");
+                    }
+                }
+
+            }
+            if (e.checked) {
+                $.each($(".state-permission"), function (a, b) {
+
+                    if ($(this).data('index') == "0") {
+
+                         $(this).find(".dname").attr("name", "StateForForm[0].StatePermissions[0][DisplayName]").val("");
+             $(this).find(".role").attr("name", "StateForForm[0].StatePermissions[0][RoleId]").val("");
+             $(this).find(".edit").attr("name", "StateForForm[0].StatePermissions[0][CanEdit]").prop("checked", false);
+                        $(this).find(".view").attr("name", "StateForForm[0].StatePermissions[0][ViewMode]").prop("checked", false);
+                         $(this).hide();
+                    } else {
+
+                        $(this).remove();
+                    }
+                });
+                $('#clone-state-btn').hide();
+            }
+            else {
+                $('#clone-state-btn').show();
+            }
+        }
+
+        //clone statePermissions
+        $(document).on("click", '#clone-state-btn', function () {
+            if ($("#state-permissions-0").is(":hidden")) {
+                $("#state-permissions-0").show();
+            }
+            else {
+            let cloned = $("#state-permissions-0").clone().removeAttr('id');
+            var index = $(".state-permission").length;
+            //cloned.attr("data-index", index);
+
+            cloned.find(".dname").attr("name", "StateForForm[0].StatePermissions[" + index + "][DisplayName]").val("");
+            cloned.find(".role").attr("name", "StateForForm[0].StatePermissions[" + index + "][RoleId]").val("");
+            cloned.find(".edit").attr("name", "StateForForm[0].StatePermissions[" + index + "][CanEdit]").prop("checked", false);
+            cloned.find(".view").attr("name", "StateForForm[0].StatePermissions[" + index + "][ViewMode]").prop("checked", false);
+
+            cloned.find(".dname").attr("id", "StateForForm[0].StatePermissions[" + index + "][DisplayName]");
+            cloned.find(".role").attr("id", "StateForForm[0].StatePermissions[" + index + "][RoleId]");
+            cloned.find(".edit").attr("id", "StateForForm[0].StatePermissions[" + index + "][CanEdit]");
+            cloned.find(".view").attr("id", "StateForForm[0].StatePermissions[" + index + "][ViewMode]");
+
+            cloned.find(".edit").siblings("label").attr("for", "StateForForm[0].StatePermissions[" + index + "][CanEdit]");
+            cloned.find(".view").siblings("label").attr("for", "StateForForm[0].StatePermissions[" + index + "][ViewMode]");
+
+
+            cloned.insertAfter(".state-permission:last");
+            }
+        });
+
+        //for remove button state permission
+        $(document).on("click", "button[remove-state-permission]", function (e) {
+            e.preventDefault();
+                if ($(this).parents(".state-permission").attr("id") == "state-permissions-0") {
+
+                $(this).parents(".state-permission").find(".dname").val("");
+                $(this).parents(".state-permission").find(".role").val("");
+                $(this).parents(".state-permission").find(".edit").prop("checked", false);
+                $(this).parents(".state-permission").find(".view").prop("checked", false);
+                $(this).parents(".state-permission").hide();
+            }
+                else {
+                    //var delval = $(this).attr('delval');
+                    //debugger;
+                    //console.log($(delval + ".CanEdit"));
+                    //console.log($(delval + ".ViewMode"));
+                    //$(delval + ".CanEdit").remove();
+                    //$(delval + ".ViewMode").remove();
+                $(this).parents(".state-permission").remove();
+            }
+
+        });
+
+
+        //for show/hide queue permissions
+        function showHidequeuePermission(e) {
+            let temp = $(e).attr("id");
+            if (temp != undefined) {
+                let matches = temp.match(/\_(.*?)\_/);
+                if (matches == null) {
+                    matches = temp.match(/\[(.*?)\]/);
+                }
+                if (matches) {
+                    //console.log(matches)
+                    if (e.checked) {
+                        $("#queue-permissions-" + matches[1]).hide();
+                        $("#queue-permissions-" + matches[1]).prev().removeClass("border-bottom");
+
+                        let cc = $("div.queue-permission");
+                        $.each(cc, function (c, d) {
+                            if ($(d).attr("id") == "" || $(d).attr("id") == " " || $(d).attr("id") == undefined) {
+                                $(d).remove();
+                            }
+                        });
+                    } else {
+                        $("#queue-permissions-" + matches[1]).show();
+                        $("#queue-permissions-" + matches[1]).prev().addClass("border-bottom");
+                    }
+                }
+            }
+   if (e.checked) {
+                $.each($(".queue-permission"), function (a, b) {
+
+                    if ($(this).data('index') == "0") {
+
+                         $(this).find(".dname-queue").attr("name", "QueueForForm[0].QueuePermissions[0][DisplayName]").val("");
+                            $(this).find(".role-queue").attr("name", "QueueForForm[0].QueuePermissions[0][RoleId]").val("");
+
+                         $(this).hide();
+                    } else {
+
+                        $(this).remove();
+                    }
+                });
+                $('#clone-queue-btn').hide();
+            }
+            else {
+                $('#clone-queue-btn').show();
+            }
+        }
+
+        //for checkbox hide/show queue permissions on click
+        $(document).on("click", "input[permission-queue-target]", function (e) {
+            showHidequeuePermission(e.target);
+
+        });
+
+        //clone queuePermissions
+        $(document).on("click", '#clone-queue-btn', function () {
+            //let count = $("#state-permissions-0").siblings(".state-permission").length;
+            if ($("#queue-permissions-0").is(":hidden")) {
+                $("#queue-permissions-0").show();
+            }
+            else {
+                let cloned = $("#queue-permissions-0").clone().removeAttr('id');
+
+                var index = $(".queue-permission").length;
+
+                //cloned.attr("data-index", index);
+
+                cloned.find(".dname-queue").attr("name", "QueueForForm[0].QueuePermissions[" + index + "][DisplayName]").val("");
+                cloned.find(".role-queue").attr("name", "QueueForForm[0].QueuePermissions[" + index + "][RoleId]").val("");
+
+                cloned.find(".dname-queue").attr("id", "QueueForForm[0].QueuePermissions[" + index + "][DisplayName]");
+                cloned.find(".role-queue").attr("id", "QueueForForm[0].QueuePermissions[" + index + "][RoleId]");
+
+                //cloned.find(".card-body").append("<button class='btn btn-outline-danger btn-block' remove-queue-permission>Remove</button>");
+
+                cloned.insertAfter(".queue-permission:last");
+            }
+
+        });
+
+        //for remove button queue permission
+        $(document).on("click", "button[remove-queue-permission]", function (e) {
+            e.preventDefault();
+
+            if ($(this).parents(".queue-permission").attr("id") == "queue-permissions-0") {
+
+                $(this).parents(".queue-permission").find(".dname-queue").val("");
+                $(this).parents(".queue-permission").find(".role-queue").val("");
+
+                $(this).parents(".queue-permission").hide();
+            }
+            else {
+                $(this).parents(".queue-permission").remove();
+            }
+
+        });
+
+
+
+        //h5 remove for accordion
+        $(document).on("click", ".state-list-group-item", function (e) {
+
+            if (!$("#listOne").children().first().hasClass("collapsed")) {
+                $("#listOne").children().first().addClass("font-weight-bold");
+
+            } else {
+                $("#listOne").children().first().removeClass("font-weight-bold");
+            }
+
+            if (!$("#listTwo").children().first().hasClass("collapsed")) {
+                $("#listTwo").children().first().addClass("font-weight-bold");
+            } else {
+                $("#listTwo").children().first().removeClass("font-weight-bold");
+            }
+
+        });
+</script>
+@if (formId != "" && formId != null)
+{
+    <script>
+        $(function () {
+            var isInIframe = (window.location != window.parent.location) ? true : false;
+            if (isInIframe) {
+                $("#form_id").attr("disabled", "disabled");
+            }
+            $("#form_id").val('@formId');
+
+            setTimeout(function () { $("#form_id").trigger('change'); }, 2000);
+        });
+
+
+    </script>
+}
+
+
+<script>
+
+    function delQueueState(id, isQueue) {
+        $("#isQueue").val(isQueue);
+        $("#qsId").val(id);
+        $("#formId").val($("#form_id").val());
+        $("#delStateQueue").submit();
+    }
+
+
+
+
+
+    function updateStatesSelectList() {
+        allStates = [];
+        var tenantid = '@_it.GetTenantIdByIdentifier(_utils.GetTenantFromSession())';
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/getStateList.html")",
+            data: { "tenantId": tenantid },
+            success: function (data) {
+                console.log(data);
+                for (i = 0; i < data.length; i++) {
+                    check = 0;
+                    for (j = 0; j < wf.objects.length; j++) {
+                        if (wf.objects[j].type == "state") {
+                            if (wf.objects[j].id == data[i].id) {
+                                check = 1;
+                                break;
+                            }
+                        }
+                    }
+                    if (check == 0) {
+                        allStates.push(data[i]);
+                    }
+                }
+                setLatestStates(allStates);
+            }
+        });
+
+    }
+
+    function setLatestStates(allStates) {
+        $("#wf-state-mbody").html("<ul class='list-unstyled'></ul>");
+        if (allStates.length > 0) {
+            for (i = 0; i < allStates.length; i++) {
+                $("#wf-state-mbody").find(".list-unstyled").append("<li class='mb-2'>"
+                    + "<div class='custom-control custom-radio'>"
+                    + "<input type='radio' id='rad-" + allStates[i].id + "' name='insert' class='custom-control-input' data-json='" + JSON.stringify(allStates[i]) + "'>"
+                    + "<label class='custom-control-label' for='rad-" + allStates[i].id + "'>" + allStates[i].title + "</label>"
+                    + "</li>");
+            }
+        }
+        else {
+            $("#wf-state-mbody").html("<div class='alert alert-warning'>"
+                + "There are no options available to select. Please create new state by clicking on New State button."
+                + "</div>");
+        }
+    }
+
+
+    function updateWorkflowObjectList(type,insertInto,id) {
+       // debugger;
+        var obj = "";
+        var typeSend = "";
+
+        switch (type) {
+            case "api":
+                typeSend = "Themes.Core.Components.PolicySystem";
+                break;
+            case "automation":
+                typeSend = "Themes.Core.Components.CaseAutomation";
+                break;
+            case "assign":
+                typeSend = "Themes.Core.Components.AssignValue";
+        }
+        if (wf.objects.length > 0) {
+            for (j = 0; j < wf.objects.length; j++) {
+                if (wf.objects[j].type == type) {
+                    obj = obj + "," + wf.objects[j].id;
+                    }
+                }
+            }
+
+
+        $.ajax({
+            type: "GET",
+            dataType: "html",
+            url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/workflow/element/loadcomponentsbytype")",
+            data: { type: typeSend, removeObj: obj, condition: id, formId: wf.vars.formId, elementId: WF_Vars.elementId, eventType: WF_Vars.eventType },
+            success: function (data) {
+                if (data != "" && data != " ") {
+                    $(insertInto).find(".modal-body").html(data);
+                    if (id != "" && id != undefined) {
+                        setTimeout(function () {
+                            $(insertInto).find(".modal-body input[value='" + id + "']").trigger("click");
+                        }, 500);
+
+                    }
+                }
+            }
+        });
+    }
+
+    function getComponentByIdType(Id,typeId,isNew) {
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: '/admin/manage/workflow/element/loadcomponentbyid',
+            data: { id: Id, type: typeId, formId: wf.vars.formId, elementId: WF_Vars.elementId, eventType: WF_Vars.eventType },
+            dataType: "html",
+            success: function (data) {
+                if (data != "" && data != " ") {
+                    switch (typeId) {
+                        case "api":
+                            if (isNew == false) {
+                                $('#wf-api-new').find(".modal-title").html("<h5>Edit Api Configuration</h5>");
+                            }
+                            else {
+                                $('#wf-api-new').find(".modal-title").html("<h5>New Api Configuration</h5>");
+                            }
+                                $('#wf-api-new').find(".modal-body").html(data);
+                            break;
+                        case "automation":
+                            if (isNew == false) {
+                                $('#wf-automation-new').find(".modal-title").html("<h5>Edit If Block Configuration</h5>");
+                            }
+                            else {
+                                $('#wf-automation-new').find(".modal-title").html("<h5>New If Block Configuration</h5>");
+                            }
+                            $('#wf-automation-new').find(".modal-body").html(data);
+                            break;
+                        case "assign":
+                            if (isNew == false) {
+                                $('#wf-assign-new').find(".modal-title").html("<h5>Edit Assign Configuration</h5>");
+                            }
+                            else {
+                                $('#wf-assign-new').find(".modal-title").html("<h5>New Assign Configuration</h5>");
+                            }
+                            $('#wf-assign-new').find(".modal-body").html(data);
+                            break;
+                    }
+
+                }
+
+            },
+            error: function (response) {
+            }
+        });
+    }
+    function editSelectedState(type, path, stateId, formId) {
+
+            $.ajax({
+                type: "GET",
+                 dataType: "html",
+                 url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadstatebyid")",
+                 data: { id: stateId, case_id: formId },
+                 success: function (data) {
+                     if (data != "" && data != " ") {
+                         $('#newStateModal').find(".modal-body").html(data);
+                         $('#newStateModal').modal('show');
+
+                         setTimeout(function () {
+                             if (wf.vars.formId != " " && wf.vars.formId != "") {
+                                 $("#caseFormId").val(wf.vars.formId);
+                                 // $("#caseFormId").siblings("label").text($("#form_id option:selected").text());
+
+                                 //defaults color and icon
+                                 //$(".color").first().click();
+                                 //$(".state-icon-item").first().children().click();
+
+                                 //$("#EF3A53").parent().addClass("active");
+                                 //$("#EF3A53").append("<i class='fas fa-check-circle'></i>");
+                                 //$("#input-color-picker").val('' + $("#EF3A53").attr("id") + '');
+                                 //$("#icon-state").closest("div").siblings("input").val('' + $("#default-img").attr("src") + '');
+
+                             }
+                         }, 1000);
+                         //$("#form_id").trigger();
+                     }
+                }
+            });
+        }
+
+    $(function () {
+        $("#wf-state").on("shown.bs.modal", function () {
+            if (!editObject) {
+                updateStatesSelectList();
+            }
+
+        });
+
+        $("#wf-state").on("hide.bs.modal", function () {
+            updateStatesSelectList();
+        });
+        //$("#newStateModal").on("show.bs.modal", function () {
+        //    $("#wf-state").modal('hide');
+        //});
+        $("#newStateModal").on("hide.bs.modal", function () {
+            if (!editObject) {
+
+                setTimeout(function () {
+                    $("#wf-state").modal('show');
+                }, 300);
+            }
+
+            });
+
+
+        $("#wf-api").on("shown.bs.modal", function () {
+            if (!editObject) {
+                updateWorkflowObjectList("api", this);
+            }
+        });
+        $("#wf-api").on("hide.bs.modal", function () {
+            setTimeout(function () {
+                $('#wf-api').find(".modal-body").html("<p class='text-center'>Loading ...</p>");
+                $("#wf-api-insert").removeClass("data-save-api");
+                $("#wf-api-save").removeClass("data-save-api1");
+                $("#wf-api").find(".modal-dialog").removeClass("modal-huge");
+                created = false;
+            }, 500);
+
+        });
+        $("#wf-api-new").on("hide.bs.modal", function () {
+            if (!editObject) {
+                if (created == false) {
+                    deleteComp(createdType, createdId);
+                }
+                setTimeout(function () {
+                    $("#wf-api").modal('show');
+                }, 300);
+            }
+            setTimeout(function () {
+                $("#wf-api-new").find(".modal-body").html("<p class='text-center'>Loading ... </p>");
+            }, 300);
+
+        });
+
+
+
+        $("#wf-automation").on("shown.bs.modal", function () {
+            if (!editObject) {
+                updateWorkflowObjectList("automation", this);
+            }
+        });
+        $("#wf-automation").on("hide.bs.modal", function () {
+            setTimeout(function () {
+                $('#wf-automation').find(".modal-body").html("<p class='text-center'>Loading ...</p>");
+                $("#wf-automation-insert").removeClass("data-save-automation");
+                $("#wf-automation-save").removeClass("data-save-auto");
+                $("#wf-automation").find(".modal-dialog").removeClass("modal-huge");
+            }, 500);
+
+        });
+        $("#wf-automation-new").on("hide.bs.modal", function () {
+            if (!editObject) {
+                if (created == false) {
+                    deleteComp(createdType, createdId);
+                }
+                setTimeout(function () {
+                    $("#wf-automation").modal('show');
+                }, 300);
+            }
+            setTimeout(function () {
+                $("#wf-automation-new").find(".modal-body").html("<p class='text-center'>Loading ... </p>");
+            }, 300);
+        });
+
+        //assign
+        $("#wf-assign").on("shown.bs.modal", function () {
+            if (!editObject) {
+                updateWorkflowObjectList("assign", this);
+            }
+        });
+        $("#wf-assign").on("hide.bs.modal", function () {
+            setTimeout(function () {
+                $('#wf-assign').find(".modal-body").html("<p class='text-center'>Loading ...</p>");
+                $("#wf-assign-insert").removeClass("data-save-assign-auto");
+                $("#wf-assign-save").removeClass("data-save-assign");
+                $("#wf-assign").find(".modal-dialog").removeClass("modal-huge");
+            }, 500);
+
+        });
+        $("#wf-assign-new").on("hide.bs.modal", function () {
+            if (!editObject) {
+                if (created == false) {
+                    deleteComp(createdType, createdId);
+                }
+                setTimeout(function () {
+                    $("#wf-assign").modal('show');
+                }, 300);
+            }
+            setTimeout(function () {
+                $("#wf-assign-new").find(".modal-body").html("<p class='text-center'>Loading ... </p>");
+            }, 300);
+        });
+
+        //email
+        $("#wf-email").on("shown.bs.modal", function () {
+            if (!editObject) {
+                updateEmailTemplate(this);
+            }
+        });
+        $("#wf-email").on("hide.bs.modal", function () {
+            setTimeout(function () {
+                $('#wf-email').find(".modal-body").html("<p class='text-center'>Loading ...</p>");
+                $("#wf-email-insert").removeClass("data-save-assign-auto");
+
+
+            }, 500);
+
+        });
+
+            $("#wf-email-new").on('hide.bs.modal', function () {
+                $(this).find(".modal-body").html("<p class='text-center'>Loading...</p>");
+            });
+
+        $("#wf-email-save").on("click", function () {
+
+            updateMailMergeObject();
+        });
+        $(".modal").on("hide.bs.modal", function () {
+            editObject = false;
+            setTimeout(function () {
+                resetDelete();
+                $("[data-insert]").removeAttr("style");
+            }, 300);
+        });
+
+
+    })
+
+
+    function saveApiSetting() {
+        $(".data-save-api").unbind("mouseup");
+        $(".data-save-api1").unbind("click");
+
+        $(".data-save-api").on("mouseup", function () {
+            saveApiComp();
+        });
+        $(".data-save-api1").on("click", function () {
+            saveApiComp();
+        });
+
+    }
+
+   var GenerateComponentId= function () {
+        function Generator() {
+            this.length = 8;
+            this.timestamp = +new Date;
+            var _getRandomInt = function (min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            this.generate = function () {
+                var ts = this.timestamp.toString();
+                var parts = ts.split("").reverse();
+                var id = "";
+
+                for (var i = 0; i < this.length; ++i) {
+                    var index = _getRandomInt(0, parts.length - 1);
+                    id += parts[index];
+                }
+                return parseFloat(id);
+            }
+        };
+
+        return new Generator().generate();
+
+    }
+
+    var deleteComp = function (type, id) {
+        var post = {
+            component_id: id,
+            component_type: type,
+            form_id: wf.vars.formId,
+            element_id: wf.vars.elementId,
+            event_type: wf.vars.eventType,
+            action: "delete"
+
+        }
+        $.ajax({
+            url: '/admin/ajax/delete-component.html',
+            data: post,
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log("api deleted");
+            },
+            type: 'POST'
+        });
+    }
+
+    var createNewComp = function (type,id,callback) {
+        var component_id = id;
+        var component_type = type;
+        var form_id = wf.vars.formId;
+        var post = {
+            component_id: component_id,
+            component_type: component_type,
+            form_id: wf.vars.formId,
+            element_id: wf.vars.elementId,
+            event_type: wf.vars.eventType,
+            action: "update"
+        }
+        $.ajax({
+            url: '/admin/ajax/update-component.html',
+            data: post,
+            async: false,
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log("api setting save");
+            },
+            type: 'POST'
+        });
+        return callback();
+    }
+
+    function saveApiComp() {
+        created = true;
+        var component_id = $(".widgets-body").find('li').data("component-id");
+        var component_type = $(".widgets-body").find('li').data("type");
+        var form_id = wf.vars.formId;
+        var action = "update";
+        if (component_id == "0") {
+            component_id = GenerateComponentId;
+          //  action = "create";
+        }
+        var post = {
+            component_id: component_id,
+            component_type: component_type,
+            form_id: wf.vars.formId,
+            element_id: wf.vars.elementId,
+            event_type: wf.vars.eventType,
+            action: action
+        }
+
+        $(".widgets-body").find(":disabled").removeAttr("disabled");
+        debugger;
+        $.each($(".widgets-body").find("div[style^='display:none'],td[style^='display:none'],div[class*='hidePart']").find("input,select,textarea"), function () {
+            var itm = $(this);
+            itm.attr("disabled", "disabled");
+        })
+        if ($("#policyConCheck").val() == "tableElm") {
+            $.each($("#ConRes2").find("input,select,textarea"), function () {
+                var itm = $(this);
+                itm.attr("disabled", "disabled");
+            });
+        }
+        else {
+            $.each($("#ConRes1").find("input,select,textarea"), function () {
+                var itm = $(this);
+                itm.attr("disabled", "disabled");
+            });
+        }
+
+        var arr = $(".widgets-body :visible").serializeArray();
+
+        arr.forEach(function (item, index) {
+            if (post[item.name] === undefined) {
+                post[item.name] = item.value || '';
+            } else {
+                if (!post[item.name].push) {
+                    post[item.name] = [post[item.name]];
+                }
+                post[item.name].push(item.value || '');
+            }
+        });
+        $.ajax({
+            url: '/admin/ajax/update-component.html',
+            data: post,
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log("api setting save");
+            },
+            type: 'POST'
+        });
+    }
+</script>
+
+@* api script *@
+<script>
+    destVal = "";
+
+
+
+    $("#new-api-modal").on('click', function () {
+        $("#wf-api").modal("hide");
+        $("#wf-api-save").attr("style", "display:block;");
+        componentId = GenerateComponentId();
+        createdId = componentId;
+        createdType = "Themes.Core.Components.PolicySystem";
+        createNewComp("Themes.Core.Components.PolicySystem", componentId, function () {
+            $("#wf-api-new").modal("show");
+            setTimeout(function () {
+                getComponentByIdType(0, "api", "new");
+                $("#wf-api-save").addClass("data-save-api1");
+                $(".widgets-body").find('li').attr("data-component-id", componentId);
+                saveApiSetting();
+            }, 300);
+        });
+
+    });
+
+
+
+    $("#wf-api-delete").on('click', function () {
+        $("#wf-api").modal("hide");
+        $("#wf-delete-comp").modal('show');
+    });
+
+
+
+    $(".case-pull").on("change", function () {
+        autoGetStates(destVal, $(this).val(), ".case-pass");
+    })
+
+
+    function autoGetStates(caseFormId, removeOption, field) {
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: '/admin/getStateByFormId',
+            data: { caseformid: caseFormId },
+            dataType: "json",
+            success: function (response) {
+                $(field).html("");
+                $(field).append("<option value=''>Please select</option>");
+                console.log(response);
+                if (response.length > 0) {
+                    for (i = 0; i < response.length; i++) {
+                        if (response[i].value != removeOption) {
+                            $(field).append("<option value='" + response[i].value + "'>" + response[i].text + "</option>");
+                        }
+
+                    }
+                }
+            },
+            error: function (response) {
+            }
+        });
+    }
+
+
+
+
+
+</script>
+
+@* end api script *@
+
+@* automation script *@
+<script>
+    destVal = "";
+
+
+
+    $("#new-automation-modal").on('click', function () {
+        $("#wf-automation").modal("hide");
+        $("#wf-automation-save").attr("style", "display:block;");
+        componentId = GenerateComponentId();
+        createdId = componentId;
+        createdType = "Themes.Core.Components.CaseAutomation";
+        createNewComp("Themes.Core.Components.CaseAutomation", componentId, function () {
+            $("#wf-automation-new").modal("show");
+            setTimeout(function () {
+                getComponentByIdType(componentId, "automation", "new");
+                debugger;
+                $("#wf-automation-save").addClass("data-save-auto");
+                $(".widgets-body").find('li').attr("data-component-id", componentId);
+                saveAutoSetting();
+            }, 300)
+        });
+
+    });
+
+
+
+
+    $("#wf-auto-delete").on('click', function () {
+        $("#wf-automation").modal("hide");
+        $("#wf-delete-comp").modal('show');
+    })
+
+    $(".case-pull").on("change", function () {
+        autoGetStates(destVal, $(this).val(), ".case-pass");
+    });
+
+
+
+
+    $("#wf-delete-comp").on('hide.bs.modal', function () {
+        type = $("#wf-delete-comp-btn").attr("data-type");
+        if (type == "Themes.Core.Components.CaseAutomation") {
+            $("#wf-automation").modal('show');
+        }
+        else if (type == "Themes.Core.Components.PolicySystem") {
+            $("#wf-api").modal('show');
+        }
+        else if (type == "Themes.Core.Components.AssignValue") {
+            $("#wf-assign").modal('show');
+        }
+    });
+    $("#wf-delete-comp-btn").on('click', function () {
+        deleteComp($(this).attr('data-type'), $(this).attr("data-id"));
+
+    })
+    //reset action for delete components
+    function resetDelete() {
+        $("#wf-api-delete").attr("disabled", "disabled");
+        $("#wf-auto-delete").attr("disabled", "disabled");
+        //$("#wf-delete-comp").find("#wf-delete-comp-btn").attr("data-id", "");
+        //$("#wf-delete-comp").find("#wf-delete-comp-btn").attr("data-type", "");
+    }
+    function saveAutoSetting() {
+
+        $(".data-save-automation").unbind("mouseup");
+        $(".data-save-auto").unbind("click");
+        $(".data-save-automation").on("mouseup", function () {
+            saveAutoComp();
+        });
+        $(".data-save-auto").on("click", function () {
+
+            saveAutoComp();
+
+        });
+
+    }
+
+    function saveAutoComp() {
+        var component_id = $(".widgets-body").find('li').data("component-id");
+        var component_type = $(".widgets-body").find('li').data("type");
+        var post = {
+            component_id: component_id,
+            component_type: component_type,
+            form_id: wf.vars.formId,
+            element_id: wf.vars.elementId,
+            event_type: wf.vars.eventType,
+            action: "update"
+        }
+        $(".widgets-body").find(":disabled").removeAttr("disabled");
+
+        var actionResult = Components.Core.Hooks.doAction('before_component_save', post);
+
+        var arr = $(".widgets-body :visible").serializeArray();
+        arr.forEach(function (item, index) {
+            if (post[item.name] === undefined) {
+                post[item.name] = item.value || '';
+            } else {
+                if (!post[item.name].push) {
+                    post[item.name] = [post[item.name]];
+                }
+                post[item.name].push(item.value || '');
+            }
+        });
+
+
+        var go = true;
+        //if (component_type == "Themes.Core.Components.CaseAutomation") {
+        if (actionResult.length > 0) {
+            for (var i = 0; i < actionResult.length; i++) {
+                if (go == true && actionResult[i].submit == false) {
+                    go = false;
+                    break;
+                }
+            }
+        }
+
+        $.ajax({
+            url: '/admin/ajax/update-component.html',
+            data: post,
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log("api setting save");
+            },
+            type: 'POST'
+        });
+    }
+</script>
+@* end automation script *@
+
+
+@*assign script *@
+<script>
+
+
+    $("#new-assign-modal").on('click', function () {
+        $("#wf-assign").modal("hide");
+        $("#wf-assign-save").attr("style", "display:block;");
+        componentId = GenerateComponentId();
+        createdId = componentId;
+        createdType = "Themes.Core.Components.AssignValue";
+        createNewComp("Themes.Core.Components.AssignValue", componentId, function () {
+            $("#wf-assign-new").modal("show");
+            setTimeout(function () {
+                getComponentByIdType(componentId, "assign", "new");
+                debugger;
+                $("#wf-assign-save").addClass("data-save-assign");
+                $(".widgets-body").find('li').attr("data-component-id", componentId);
+                saveAssignSetting();
+            }, 300)
+        });
+
+    });
+
+
+
+
+    $("#wf-assign-delete").on('click', function () {
+        $("#wf-assign").modal("hide");
+        $("#wf-delete-comp").modal('show');
+    })
+
+
+
+    function saveAssignSetting() {
+
+
+        $(".data-save-assign").unbind("click");
+        $(".data-save-assign").on("click", function () {
+
+            saveAssignComp();
+
+        });
+
+    }
+
+    function saveAssignComp() {
+        var component_id = $(".widgets-body").find('li').data("component-id");
+        var component_type = $(".widgets-body").find('li').data("type");
+        var form_id = wf.vars.formId;
+        var post = {
+            component_id: component_id,
+            component_type: component_type,
+            form_id: wf.vars.formId,
+            element_id: wf.vars.elementId,
+            event_type: wf.vars.eventType,
+            action: "update"
+        }
+        $(".widgets-body").find(":disabled").removeAttr("disabled");
+
+
+
+        var arr = $(".widgets-body :visible").serializeArray();
+        arr.forEach(function (item, index) {
+            if (post[item.name] === undefined) {
+                post[item.name] = item.value || '';
+            } else {
+                if (!post[item.name].push) {
+                    post[item.name] = [post[item.name]];
+                }
+                post[item.name].push(item.value || '');
+            }
+        });
+
+        $.ajax({
+            url: '/admin/ajax/update-component.html',
+            data: post,
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log("api setting save");
+            },
+            type: 'POST'
+        });
+    }
+</script>
+@* end assign script *@
+
+@* Email script *@
+<script>
+    function updateEmailTemplate(insertInto) {
+        var objs = [];
+        var obj = "null";
+        //$.each(wf.objects, function (k, v) {
+        //    if (v.type == "email") {
+        //        objs.push(v.id);
+        //        obj = obj + "," + v.id;
+        //    }
+        //});
+        console.log(objs);
+        $.ajax({
+            type: "GET",
+            dataType: "html",
+            url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/template/loademailtemplates")",
+            data: { removeObj: obj, formId: wf.vars.formId},
+            success: function (data) {
+                if (data != "" && data != " ") {
+                    $(insertInto).find(".modal-body").html(data);
+                    //if (id != "" && id != undefined) {
+                    //    setTimeout(function () {
+                    //        $(insertInto).find(".modal-body input[value='" + id + "']").trigger("click");
+                    //    }, 500);
+
+                    //}
+                }
+            }
+        });
+    }
+
+    function createMailMergeObject(data,callback) {
+        if (data != null && data != "") {
+            title = data.title;
+            id = data.id;
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+
+                url: "/admin/template/createmailobject",
+                data: { eTitle:title,eId:id, formId: wf.vars.formId },
+                success: function (result) {
+                    console.log(result);
+                    return callback(result);
+                },
+                error: function (result) {
+                    return callback(result);
+                }
+            });
+        }
+    }
+
+    function createElementState(type, callback) {
+        if (type != null && type != "") {
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+
+                url: "/admin/workflow/manage/element/createelementstate",
+                data: { formId: wf.vars.formId, elementId: wf.vars.elementId, eventType: wf.vars.eventType, stateType: type },
+                success: function (result) {
+                   // console.log(result);
+                    return callback(result);
+                },
+                error: function (result) {
+                    return callback(result);
+                }
+            });
+        }
+    }
+
+
+    function getMailMergeObject(objectId) {
+         $.ajax({
+            type: "GET",
+            dataType: "html",
+             url: "/admin/template/getMailObjectById",
+             data: { id: objectId },
+            success: function (data) {
+                if (data != "" && data != " ") {
+                    //document.getElementById("queue-form").reset();
+                    $('#wf-email-new').find(".modal-body").html(data);
+                    //$('#newStateModal').modal('show');
+                    //setTimeout(function () { $("#newStateModal").modal('show'); }, 300);
+                    //$("#form_id").trigger();
+
+                }
+            }
+        });
+    }
+
+    function updateMailMergeObject() {
+
+        var checked = $("#wf-email-new").find("#IsActive").prop("checked");
+        isActive = false;
+        var stat = "disabled";
+        if (checked) {
+            isActive = true;
+            stat = "enabled";
+        }
+        var id = $("#wf-email-new").find("input[name='Id']").val();
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/admin/template/setmailobjectstatus",
+            data: { objectId: id, status: isActive },
+            success: function (data) {
+                if (data == true) {
+                    toastr.success("Mail Object is " + stat, "Workflow");
+
+                }
+                else {
+                    toastr.error("Some error occured, please try again", "Workflow");
+                }
+
+                }
+
+        });
+    }
+
+</script>
+@* End Email script *@

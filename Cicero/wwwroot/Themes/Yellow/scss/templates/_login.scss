@@ -1,0 +1,29 @@
+.account-access {
+    padding: 5rem 0;
+    &__wrapper {
+            max-width: 450px;
+            margin: auto;
+    }
+}
+.signin--mod {
+    margin-bottom: 4rem;
+}
+.toggle-password {
+    cursor: pointer;
+    position: absolute;
+    right: 2px;
+    top: 2.142857142857143rem;
+    width: calc(1.35em + 0.75rem);
+    height: calc(1.35em + 0.75rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: $zindex-dropdown;
+    &-group {
+        position: relative;
+
+        .form-control {
+            padding-right: calc(1.35em + 0.75rem);
+        }
+    }
+}

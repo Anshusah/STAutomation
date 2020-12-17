@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Article] (
+    [Id]                     INT            IDENTITY (1, 1) NOT NULL,
+    [Title]                  VARCHAR (500)  NULL,
+    [Content]                NVARCHAR (MAX) NULL,
+    [Slug]                   VARCHAR (500)  NULL,
+    [Template]               VARCHAR (500)  NULL,
+    [Status]                 SMALLINT       NOT NULL,
+    [Excerpt]                VARCHAR (5000) NULL,
+    [UpdatedAt]              DATETIME2 (3)  NOT NULL,
+    [CreatedAt]              DATETIME2 (3)  NOT NULL,
+    [Version]                INT            NOT NULL,
+    [ParentId]               INT            NOT NULL,
+    [UserId]                 NVARCHAR (MAX) NULL,
+    [TenantId]               INT            NULL,
+    [Type]                   NVARCHAR (MAX) NULL,
+    [FormId]                 INT            NULL,
+    [EmailGroupId]           VARCHAR (100)  NULL,
+    [RecipientDatabaseTable] VARCHAR (50)   NULL,
+    [RecipientField]         VARCHAR (500)  NULL,
+    [RecipientType]          VARCHAR (50)   DEFAULT (N'') NOT NULL,
+    [RoleId]                 VARCHAR (100)  NULL,
+    [Subject]                VARCHAR (500)  NULL,
+    CONSTRAINT [PK_Article] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Article_Tenant_TenantId] FOREIGN KEY ([TenantId]) REFERENCES [dbo].[Tenant] ([Id])
+);
+

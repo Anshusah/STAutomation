@@ -1,0 +1,1262 @@
+﻿@using Themes.Core.Components
+@using Cicero.Service.Services
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+@inject IRoleService roleService
+@inject IQueueService queueService
+@inject Permission Permission
+@inject IFormBuilderService formBuilderService
+@inject ICommonService commonService
+@inject ISynchronizeService synchronizeService
+@inject Utils utils
+@{
+    PolicySystem PolicySystem = Model as PolicySystem;
+    List<SelectListItem> sourceTables = synchronizeService.getSyncSourceTable();
+    var loggedUser = commonService.getLoggedInUserId();
+    string roleId = commonService.GetRoleIdByUserId(loggedUser);
+}
+<style>
+    .hidePart {
+        display: none;
+    }
+</style>
+<div class="sync-wrap expand">
+    <i class="close-sync"></i>
+    <div class="form-row">
+        <div class="form-group col-lg-12">
+            <label>Title:</label>
+            <input type="text" name="Title" class="form-control" value="@PolicySystem.Title">
+        </div>
+    </div>
+
+    @if (PolicySystem.configs.Count > 0)
+    {
+        @foreach (var _setting in PolicySystem.configs)
+        {
+            <div class="form-row">
+                <div class="form-group col-lg-3">
+                    <label>Source:</label>
+                    <select class="custom-select custom source case-type-source-main" name="configs[0][typesource]">
+                        <option value="">Please select</option>
+                        @if (_setting.typesource == "tenant-database")
+                        {
+                            <option selected="selected" value="@_setting.typesource">Tenant's Database</option>
+                            <!--<option value="rest-api">Rest API</option>-->
+                        }
+                        else if (_setting.typesource == "rest-api")
+                        {
+                            @*<option selected="selected" value="@_setting.typesource">Tenant's Database</option>*@
+                            <option selected="selected" value="rest-api">Rest API</option>
+                        }
+                        else
+                        {
+                            <!--<option value="rest-api">Rest API</option>-->
+                            <option value="tenant-database">Tenant's Database</option>
+                        }
+                    </select>
+                </div>
+
+                @if (_setting.typesource == "tenant-database")
+                {<!-- Start : Tenant Database -->
+                    <div class="form-group col-lg-9 tenant-database" data-elm-group=".source">
+                        <div class="form-row">
+                            @*<div class="form-group col-lg-4">
+                                    <label>Tenant:</label>
+                                    <select class="custom-select custom case-tenant" id="case-tenant" name="configs[0][tenant]">
+                                        <option value="">Select Tenant</option>
+                                        @foreach (var item in await commonService.GetTenantList())
+                                        {
+                                            if (item.Text != string.Empty && item.Text != null && item.Text != "")
+                                            {
+                                                if (_setting.tenant == item.Value)
+                                                {
+                                                    <option selected="selected" value="@item.Value">@item.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+
+
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-4">
+                                    <label>Pull data from:</label>
+                                    <select class="custom-select custom case-source" id="case-source" name="configs[0][source]">
+                                        <option value="">Select Case Form</option>
+                                        @foreach (var item in formBuilderService.FormList("" + _setting.tenant + ""))
+                                        {
+                                            if (_setting.source == item.Value)
+                                            {
+                                                <option selected="selected" value="@item.Value">@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                                @_setting.source
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+
+                                        }
+
+                                    </select>
+                                </div>*@
+                            <div class="form-group col-lg-4">
+                                <label>Fill data to:</label>
+                                <select class="custom-select custom case-destination" id="case-destination" name="configs[0][destination]">
+                                    <option value="">Please select Case Form</option>
+                                    @foreach (var item in formBuilderService.FormList("" + utils.GetTenantFromSession() + ""))
+                                    {
+                                        if (_setting.destination == item.Value)
+                                        {
+                                            <option selected="selected" value="@item.Value">@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- End : Tenant Database -->
+                }
+                else
+                {
+                    <!-- Start : API URL -->
+                    <div class="form-group col-lg-9 rest-api" data-elm-group=".source">
+
+                        <label>API Url:</label>
+                        <input type="text" name="configs[0][url]" class="form-control d-block" />
+                    </div>
+                    <!-- End : API URL -->
+                }
+
+
+            </div>
+            <div class="form-row rest-api" data-elm-group=".source" style="display:none;">
+                <div class="col-lg-12 ">
+                    <div class="form-check form-check-inline mb-3">
+                        <input type="checkbox" id="@PolicySystem.ComponentId-auth-section" class="form-check-inline" data-target=".auth-section" name="configs[0][rauth]" />
+                        <label class="mb-0" for="@PolicySystem.ComponentId-auth-section"> Require Authentication?</label>
+                    </div>
+                    <div class="form-row auth-section">
+                        <div class="form-group col-lg-3">
+                            <label>Username</label>
+                            <input type="text" name="configs[0][username]" class="form-control" id="case-require-uname" autocomplete="nope" />
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label>Password</label>
+                            <input type="password" name="configs[0][password]" class="form-control" id="case-require-pass" autocomplete="new-password" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tenant-database">
+                <div class="source-map">
+                    <p class="text-muted small">
+                        Please map local case form fields to source fields properly.
+                    </p>
+                    <div class="table-responsive">
+                        <table id="case-map-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase font-weight-light">Source</th>
+                                    <th class="text-uppercase font-weight-light">Destination</th>
+                                    <th class="text-uppercase font-weight-light">Sync Condition</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int dnumber;
+
+
+
+
+                                    if (Int32.TryParse(_setting.destination, out dnumber))
+                                    {
+                                        //  List<FormBuilderViewModel.Form.Table> sourcetables = formBuilderService.GetFormTable(snumber);
+                                        List<FormBuilderViewModel.Form.Table> destinationtables = formBuilderService.GetFormTable(dnumber);
+                                        sourceTables = synchronizeService.GetSyncAllTables(dnumber);
+                                        string sourceTableSelected = string.Empty;
+                                        FormBuilderViewModel.Form.Table destTableSelected = new FormBuilderViewModel.Form.Table();
+                                        // List<FormBuilderViewModel.Form.Table> policytable = formBuilderService.GetFormTable(dnumber);
+                                        //destinationfields.AddRange(formBuilderService.GetFormFields(dnumber));
+                                        if (_setting.sourcetable != null)
+                                        {
+                                            for (int i = 0; i < _setting.sourcetable.Count; i++)
+                                            {
+                                                <tr>
+
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <label>Source Table</label>
+                                                                <select class="custom-select custom case-type-source-table" name="configs[0][sourcetable]">
+                                                                    <option value="">Please select Table</option>
+                                                                    @foreach (var item in sourceTables)
+                                                                    {
+                                                                        if (_setting.sourcetable[i] == item.Value)
+                                                                        {
+                                                                            sourceTableSelected = item.Value;
+                                                                            <option selected="selected" value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <label>Source Field</label>
+                                                                <select class="custom-select custom case-type-source" name="configs[0][sourcefield]">
+                                                                    <option value="">Please select Field</option>
+                                                                    @if (sourceTableSelected != string.Empty)
+                                                                    {
+                                                                        List<SelectListItem> sourceColumns = synchronizeService.getSyncSourceTableColumns(sourceTableSelected);
+
+                                                                        foreach (var item in sourceColumns)
+                                                                        {
+                                                                            if (_setting.sourcefield[i] == item.Value)
+                                                                            {
+
+                                                                                <option selected="selected" value="@item.Value">@item.Text</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </td>
+
+
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <label>Destination Table</label>
+                                                                <select class="custom-select custom case-type-destination-table" name="configs[0][destinationtable]">
+                                                                    <option value="">Please select Table</option>
+                                                                    @foreach (FormBuilderViewModel.Form.Table ditem in destinationtables)
+                                                                    {
+                                                                        if (_setting.destinationtable[i] == ditem.Name)
+                                                                        {
+                                                                            destTableSelected = ditem;
+                                                                            <option selected="selected" value="@ditem.Name">@ditem.Name</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@ditem.Name">@ditem.Name</option>
+                                                                        }
+
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <label>Destination Field</label>
+                                                                <select class="custom-select custom case-type-destination" name="configs[0][destinationfield]">
+                                                                    <option value="">Please select Field</option>
+                                                                    @if (destTableSelected.Fields != null)
+                                                                    {
+                                                                        foreach (FormBuilderViewModel.Form.Field dField in destTableSelected.Fields)
+                                                                        {
+                                                                            if (_setting.destinationfield[i] == dField.Name)
+                                                                            {
+
+                                                                                <option selected="selected" value="@dField.Name">@dField.Name</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@dField.Name">@dField.Name</option>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <label>Condition</label>
+                                                                <select class="custom-select custom" name="configs[0][synccondition]">
+                                                                    @if (_setting.synccondition != null)
+                                                                    {
+                                                                        @if (_setting.synccondition[i] != null)
+                                                                        {
+                                                                            <option value="always" selected="@(_setting.synccondition[i]=="always")">Always</option>
+                                                                            <option value="if empty" selected="@(_setting.synccondition[i]=="if empty")">If Empty</option>
+                                                                            <option value="if exist" selected="@(_setting.synccondition[i]=="if exist")">If Exist</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="always" selected>Always</option>
+                                                                            <option value="if empty">If Empty</option>
+                                                                            <option value="if exist">If Exist</option>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="always" selected>Always</option>
+                                                                        <option value="if empty">If Empty</option>
+                                                                        <option value="if exist">If Exist</option>
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </td>
+                                                    <td class="delete-row"><i class="ri-delete-bin-line" title="Remove" onclick="deleteRow(this)"></i></td>
+
+                                                </tr>
+                                            }
+                                        }
+
+
+                                    }
+
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="add-row-btn">
+                        <button type="button" class="btn btn-link btn-sm addItem" id="addItem" onclick="cloneRow(this)"> <i class="ri-add-fill mr-1"></i> Add new row</button>
+                    </div>
+                </div>
+                <div class="source-component">
+                    <div class="alert alert-warning form-inline">
+                        <label>Pull policy data when case moves from</label>
+                        <select class="custom-select custom-select-sm align-self-start custom x-small radius mx-2 w-auto case-pull" id="case-pull" name="configs[0][pull]">
+
+                            @{
+                                // Int32.TryParse(_setting.source, out snumber);
+                                Int32.TryParse(_setting.destination, out dnumber);
+                                // List<FormBuilderViewModel.Form.Table> policytable = formBuilderService.GetFormTable(snumber);
+                                List<FormBuilderViewModel.Form.Table> policytabledest = formBuilderService.GetFormTable(dnumber);
+
+                            }
+                            @foreach (var item in queueService.GetStateSelectListByFormId(Convert.ToInt32(_setting.destination), roleId.ToString()))
+                            {
+                                @if (item.Value == PolicySystem?.configs?.FirstOrDefault()?.pull?.ToString())
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+
+                                }
+
+                            }
+                        </select>
+                        <label> to</label>
+                        <select class="custom-select custom-select-sm align-self-start custom x-small radius mx-2 w-auto case-pass" id="case-pass" name="configs[0][pass]">
+                            <option value="">Please select</option>
+                            @foreach (var item in queueService.GetStateSelectListByFormId(Convert.ToInt32(_setting.destination), roleId.ToString()))
+                            {
+                                @if (item.Value != PolicySystem?.configs?.FirstOrDefault()?.pull?.ToString())
+                                {
+                                    @if (item.Value == PolicySystem?.configs?.FirstOrDefault()?.pass?.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+
+                                    }
+                                }
+
+
+                            }
+                        </select>
+                        <label> and moves to</label>
+                        <select class="custom-select custom-select-sm align-self-start custom x-small radius mx-2 w-auto case-fail" id="case-fail" name="configs[0][fail]">
+                            <option value="">Please select</option>
+                            @foreach (var item in queueService.GetStateSelectListByFormId(Convert.ToInt32(_setting.destination), roleId.ToString()))
+                            {
+
+                                @if (item.Value == PolicySystem?.configs?.FirstOrDefault()?.fail?.ToString())
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+
+                                }
+
+                            }
+                        </select>
+                        <label>if policy number is not matched.</label>
+                    </div>
+                    <div class="flex-layout-container" id="mainPolicy">
+                        <p class="text-muted small">Please select which one is the policy number in the policy management system form field.</p>
+                        <div class="row policy flex-layout-header">
+                            <div class="flex-cell">
+                                <label>Source Field Table</label>
+                            </div>
+                            <div class="flex-cell">
+                                <label>Source Field</label>
+                            </div>
+                            <div class="flex-cell">
+                                <label>Destination Field Table</label>
+                            </div>
+                            <div class="flex-cell">
+                                <label>Destination Field</label>
+                            </div>
+                            <div class="flex-cell flex-grow-0 w-40">
+                                <!-- <button type="button" class="btn btn-secondary btn-sm" id="addItemPolicy" onclick="clonePolicy(this)"> <i class="ri-add-fill mr-1"></i> Add</button> -->
+                            </div>
+                        </div>
+
+                        @if (_setting.sourcepolicyfieldtable != null)
+                        {
+                            sourceTables = synchronizeService.GetSyncAllTables(dnumber);
+                            @for (int i = 0; i < _setting.sourcepolicyfieldtable.Count; i++)
+                            {
+                                string policytableselected = string.Empty;
+                                FormBuilderViewModel.Form.Table policytableselected1 = new FormBuilderViewModel.Form.Table();
+                                <div class="row policy flex-layout-body">
+                                    <div class="flex-cell">
+                                        <div class="form-group">
+
+
+
+                                            <select class="custom-select custom x-small radius case-policy-table" name="configs[0][sourcepolicyfieldtable]">
+
+                                                <option value="">Please select Table</option>
+                                                @foreach (var item in sourceTables)
+                                                {
+                                                    if (_setting.sourcepolicyfieldtable[i] == item.Value)
+                                                    {
+                                                        policytableselected = item.Value;
+                                                        <option selected="selected" value="@item.Value">@item.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex-cell">
+                                        <div class="form-group">
+                                            <select class="custom-select custom x-small radius case-policy-field" name="configs[0][sourcepolicyfield]">
+                                                <option value="">Please select Field</option>
+                                                @if (policytableselected != string.Empty)
+                                                {
+                                                    List<SelectListItem> columns = synchronizeService.getSyncSourceTableColumns(policytableselected);
+                                                    foreach (var item in columns)
+                                                    {
+                                                        if (_setting.sourcepolicyfield[i] == item.Value)
+                                                        {
+
+                                                            <option selected="selected" value="@item.Value">@item.Text</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex-cell">
+                                        <div class="form-group">
+
+
+
+                                            <select class="custom-select custom x-small radius case-policy-dest-table" name="configs[0][destpolicyfieldtable]">
+
+                                                <option value="">Please select Table</option>
+                                                @foreach (FormBuilderViewModel.Form.Table pitem in policytabledest)
+                                                {
+                                                    if (_setting.destpolicyfieldtable[i] == pitem.Name)
+                                                    {
+                                                        policytableselected1 = pitem;
+                                                        <option selected="selected" value="@pitem.Name">@pitem.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@pitem.Name">@pitem.Name</option>
+                                                    }
+
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex-cell">
+                                        <div class="form-group">
+                                            <select class="custom-select custom x-small radius case-policy-dest-field" name="configs[0][destpolicyfield]">
+                                                <option value="">Please select Field</option>
+                                                @if (policytableselected1.Fields != null)
+                                                {
+                                                    foreach (FormBuilderViewModel.Form.Field pField in policytableselected1.Fields)
+                                                    {
+                                                        if (_setting.destpolicyfield[i] == pField.Name)
+                                                        {
+
+                                                            <option selected="selected" value="@pField.Name">@pField.Name</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@pField.Name">@pField.Name</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex-cell flex-grow-0 w-40 delete-row">
+                                        <i class="ri-delete-bin-line" title="Remove" onclick="deletePolicyRow(this)"></i>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+
+
+                        @*<select class="custom-select custom x-small radius" id="case-policy-field" name="configs[0][policyfield]">
+                                <option value="">Please Select</option>
+                            </select>*@
+
+                        <div class="add-row-btn">
+                            <button type="button" class="btn btn-link btn-sm" id="addItemPolicy" onclick="clonePolicy(this)"> <i class="ri-add-fill mr-1"></i> Add new row</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+    }
+    else
+    {
+
+
+        <div class="form-row">
+            <div class="form-group col-lg-3">
+                <label>Source:</label>
+                <select class="custom-select custom source sourceType" name="configs[0][typesource]">
+                    <option value="" selected="selected">Please select</option>
+                    <option value="rest-api">Rest API</option>
+                    <option value="tenant-database">Tenant's Database</option>
+
+                </select>
+            </div>
+            <!-- Start : API URL -->
+            <div class="form-group col-lg-9 rest-api hidePart" data-elm-group=".source">
+
+                <label>API Url:</label>
+                <input type="text" name="configs[0][url]" class="form-control d-block" />
+            </div>
+            <!-- End : API URL -->
+            <!-- Start : Tenant Database -->
+            <div class="form-group col-lg-9 tenant-database" data-elm-group=".source" style="display:none;">
+                <div class="form-row">
+                    @*<div class="form-group col-lg-4">
+                            <label>Tenant:</label>
+                            <select class="custom-select custom case-tenant" id="case-tenant" name="configs[0][tenant]">
+                                <option value="">Select Tenant</option>
+                                @foreach (var item in await commonService.GetTenantList())
+                                {
+                                    if (item.Text != string.Empty && item.Text != null && item.Text != "")
+                                    {
+                                    <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label>Pull data from:</label>
+                            <select class="custom-select custom case-source" id="case-source" name="configs[0][source]">
+                                <option value="">Select Case Form</option>
+                                @foreach (var item in formBuilderService.FormList("" + utils.GetTenantFromSession() + ""))
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+
+                            </select>
+                        </div>*@
+                    <div class="form-group col-lg-4">
+                        <label>Fill data to:</label>
+                        <select class="custom-select custom case-destination" id="case-destination" name="configs[0][destination]">
+                            <option value="">Please select Case Form</option>
+                            @foreach (var item in formBuilderService.FormList("" + utils.GetTenantFromSession() + ""))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End : Tenant Database -->
+        </div>
+        <div class="form-row rest-api hidePart" data-elm-group=".source">
+            <div class="col-lg-12 ">
+                <div class="form-check form-check-inline mb-3">
+                    <input type="checkbox" id="@PolicySystem.ComponentId-auth-section" class="form-check-inline" data-target=".auth-section" name="configs[0][rauth]" />
+                    <label class="mb-0" for="@PolicySystem.ComponentId-auth-section"> Require Authentication?</label>
+                </div>
+                <div class="form-row auth-section" style="display:none;">
+                    <div class="form-group col-lg-3">
+                        <label>Username</label>
+                        <input type="text" name="configs[0][username]" class="form-control" id="case-require-uname" autocomplete="nope" />
+                    </div>
+                    <div class="form-group col-lg-3">
+                        <label>Password</label>
+                        <input type="password" name="configs[0][password]" class="form-control" id="case-require-pass" autocomplete="new-password" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tenant-database hidePart">
+            <div class="source-map">
+                <p class="text-muted small">
+                    Please map local case form fields to source fields properly.
+                </p>
+                <div class="table-responsive">
+                    <table id="case-map-table" class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase font-weight-light">Source Fields</th>
+                                <th class="text-uppercase font-weight-light">Our Case Fields</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hide" style="display:none">
+                                <td>
+                                    <div class="row form-row">
+                                        <div class="col-lg-6">
+                                            <label>Source Table</label>
+                                            <select class="custom-select custom case-type-source-table" name="configs[0][sourcetable]">
+                                                <option value="">Please select Table</option>
+                                                @*@foreach(var item in sourceTables)
+                                                    {
+                                                        <option value="@item">@item</option>
+                                                    }*@
+
+                                            </select>
+
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label>Source Field</label>
+                                            <select class="custom-select custom case-type-source" name="configs[0][sourcefield]">
+                                                <option value="">Please select Field</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <label>Destination Table</label>
+                                            <select class="custom-select custom case-type-destination-table" name="configs[0][destinationtable]">
+                                                <option value="">Please select Table</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label>Destination Field</label>
+                                            <select class="custom-select custom case-type-destination" name="configs[0][destinationfield]">
+                                                <option value="">Please select Field</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <label>Condition</label>
+                                            <select class="custom-select custom" name="configs[0][synccondition]">
+                                                <option value="always">Always</option>
+                                                <option value="if empty">If Empty</option>
+                                                <option value="if exist">If Exist</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><i class="ri-delete-bin-line" title="Remove" onclick="deleteRow(this)"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="add-row-btn">
+                        <button type="button" class="btn btn-link btn-sm" id="addItem" disabled> <i class="ri-add-fill mr-1"></i> Add new row</button>
+                    </div>
+                </div>
+            </div>
+            <div class="source-component">
+                <div class="alert alert-warning form-inline">
+                    <label>Pull policy date when case moves from</label>
+                    <select class="custom-select custom-select-sm align-self-start custom x-small radius mx-2 w-auto case-pull" id="case-pull" name="configs[0][pull]">
+                        <option value="">Please select</option>
+
+                    </select>
+                    <label> to</label>
+                    <select class="custom-select custom-select-sm align-self-start custom x-small radius mx-2 w-auto case-pass" id="case-pass" name="configs[0][pass]">
+                        <option value="">Please select</option>
+
+                    </select>
+                    <label> and moves to</label>
+                    <select class="custom-select custom-select-sm align-self-start custom x-small radius mx-2 w-auto case-pass" id="case-fail" name="configs[0][fail]">
+                        <option value="">Please select</option>
+
+                    </select>
+                    <label>if policy number is not matched.</label>
+                </div>
+                <div class="flex-layout-container" id="mainPolicy">
+                    <p class="text-muted small">Please select which one is the policy number in the policy management system form field.</p>
+
+                    <div class="row policy flex-layout-header">
+                        <div class="flex-cell">
+                            <label>Source Field Table</label>
+                        </div>
+                        <div class="flex-cell">
+                            <label>Source Field</label>
+                        </div>
+                        <div class="flex-cell">
+                            <label>Destination Field Table</label>
+                        </div>
+                        <div class="flex-cell">
+                            <label>Destination Field</label>
+                        </div>
+                        <div class="flex-cell flex-grow-0 w-40">
+                        </div>
+                    </div>
+                    <div class="row policy flex-layout-body">
+                        <div class="flex-cell">
+                            <div class="form-group">
+                                <select class="custom-select custom x-small radius case-policy-table" name="configs[0][sourcepolicyfieldtable]">
+                                    <option value="">Please select Table</option>
+                                    @*@foreach(var item in  sourceTables)
+                                        {
+                                            <option value="@item">@item</option>
+                                        }*@
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex-cell">
+                            <div class="form-group">
+                                <select class="custom-select custom x-small radius case-policy-field" name="configs[0][sourcepolicyfield]">
+                                    <option value="">Please select Field</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex-cell">
+                            <div class="form-group">
+                                <select class="custom-select custom x-small radius case-policy-dest-table" name="configs[0][destpolicyfieldtable]">
+                                    <option value="">Please select Table</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex-cell">
+                            <div class="form-group">
+                                <select class="custom-select custom x-small radius case-policy-dest-field" name="configs[0][destpolicyfield]">
+                                    <option value="">Please select Field</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex-cell flex-grow-0 w-40 delete-row">
+                            <i class="ri-delete-bin-line" title="Remove" onclick="deletePolicyRow(this)"></i>
+                        </div>
+
+                    </div>
+                    @*<select class="custom-select custom x-small radius" id="case-policy-field" name="configs[0][policyfield]">
+                            <option value="">Please Select</option>
+                        </select>*@
+                    <div class="add-row-btn">
+                        <button type="button" class="btn btn-link btn-sm" id="addItemPolicy" onclick="clonePolicy(this)"><i class="ri-add-fill mr-1"></i> Add new row</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @*<button type="button" onclick="testSync()">Test</button>*@
+
+
+
+</div>
+<script type="text/javascript">
+    Components.PolicySystem = {
+        Init: function () {
+            Components.Global.Init()
+            $(document).on("change", ".source", function (e) {
+                $(this).off("change");
+                $("[data-elm-group='.source']").hide();
+                $("." + jQuery(this).val()).show();
+                Components.PolicySystem.ConnectionOnChanged(e)
+            });
+            Components.Core.Hooks.addAction("before_component_save", function (e) {
+                console.log(e);
+                return { submit: true };
+            })
+        },
+        ConnectionOnChanged: function (event) {
+            console.log("This is Core");
+        }
+
+
+    };
+
+    function autoCasePull() {
+        $(".case-pull").on("change", function () {
+            topper = $(this).closest(".sync-wrap");
+            val = topper.find(".case-destination").val();
+            autoGetStates(val, topper, $(this).val(), ".case-pass");
+        })
+    }
+
+    function autoGetStates(caseFormId, topper, removeOption, field) {
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: '/admin/getStateByFormId',
+            data: { caseformid: caseFormId },
+            dataType: "json",
+            success: function (response) {
+                topper.find(field).html("");
+                topper.find(field).append("<option value=''>Please select</option>");
+                console.log(response);
+                if (response.length > 0) {
+                    for (i = 0; i < response.length; i++) {
+                        if (response[i].value != removeOption) {
+                            topper.find(field).append("<option value='" + response[i].value + "'>" + response[i].text + "</option>");
+                        }
+
+                    }
+                }
+            },
+            error: function (response) {
+            }
+        });
+
+    }
+    //on case source change event
+    $('.case-source').on('change', function () {
+
+        topper = $(this).closest(".sync-wrap");
+        //topper.find('#case-map-table > tbody').find('tr').not('.hide').remove();
+        //caseTable(topper);
+        getCaseTables($(this).val(), "source", topper);
+        getCaseTables($(this).val(), "policy", topper);
+        casePolicyFieldChangeInit();
+    });
+
+    //on change case-enable event
+    $('.case-destination').on('change', function () {
+        topper = $(this).closest(".sync-wrap");
+        //  topper.find('#case-map-table > tbody').find('tr').not('.hide').remove();
+        // caseTable(topper);
+        getCaseTables($(this).val(), "source", topper);
+        getCaseTables($(this).val(), "destination", topper);
+        getCaseTables($(this).val(), "policy", topper);
+        getCaseTables($(this).val(), "policy-dest", topper);
+        topper.find("#case-map-table > tbody tr.hide").show();
+        sourceTableChangeInit();
+        destinationTableChangeInit();
+        casePolicyFieldChangeInit();
+        casePolicyFieldDestChangeInit();
+        autoGetStates($(this).val(), topper, "", ".case-pull");
+        // autoGetStates($(this).val(), topper, "", ".case-pass");
+        autoGetStates($(this).val(), topper, "", ".case-fail");
+        topper.find("#addItem").removeAttr("disabled");
+        topper.find("#addItem").attr("onclick", "cloneRow(this)");
+    });
+
+    //on change case-source event
+    $('.case-type-source-main').on('change', function () {
+        topper = $(this).closest(".sync-wrap");
+        caseTypeSource(topper);
+    });
+
+
+
+    //add new row
+    function cloneRow(item) {
+        // debugger;
+        topper = $(item).closest(".sync-wrap");
+        sourceTableChangeUnbind(topper);
+        destinationTableChangeUnbind(topper);
+        var lastrow = topper.find("#case-map-table > tbody tr:last");
+        if (lastrow.length == 0) {
+            topper.find("#case-map-table >tbody").append('<tr class="hide" style="display:none">'
+                + '<td>'
+                + '<div class="row form-row">'
+                + '<div class="col-lg-6"><label>Source Table</label><select class="custom-select custom case-type-source-table" name="Configs[0][sourcetable]">'
+                + '<option value="">Please select Table</option></select>'
+                + ' </div>'
+                + ' <div class="col-lg-6"><label>Source Field</label>'
+                + '<select class="custom-select custom case-type-source" name="configs[0][sourcefield]"> <option value="">Please select Field</option>'
+                + ' </select></div></div> </td>'
+                + ' <td>'
+                + '<div class="row"> <div class="col-lg-6">  <label>Destination Table</label>'
+                + ' <select class="custom-select custom case-type-destination-table" name="Configs[0][destinationtable]">'
+                + ' <option value="">Please select Table</option>  </select> </div>'
+                + ' <div class="col-lg-6"><label> Destination Field</label>'
+                + ' <select class="custom-select custom case-type-destination" name="configs[0][destinationfield]">'
+                + ' <option value="">Please select Field</option></select></div></div>'
+                + ' </td>'
+                + '<td class="delete-row"><i class="ri-delete-bin-line" title="Remove" onclick="deleteRow(this)"></i></td></tr>');
+            topper.find(".case-source").trigger('change');
+            topper.find(".case-destination").trigger('change');
+        }
+        else {
+            lastrow.clone().removeClass("hide").insertAfter(lastrow);
+        }
+
+        sourceTableChangeInit();
+        destinationTableChangeInit();
+    }
+
+    function clonePolicy(item) {
+        topper = $(item).closest(".sync-wrap");
+        topper.find(".case-policy-table").unbind();
+        topper.find(".case-policy-field").unbind();
+        topper.find(".case-policy-dest-table").unbind();
+        topper.find(".case-policy-dest-field").unbind();
+        var lastrow = topper.find("#mainPolicy > .row:last");
+        lastrow.clone().insertAfter(lastrow);
+        casePolicyFieldChangeInit();
+        casePolicyFieldDestChangeInit();
+    }
+    function deletePolicyRow(obj) {
+        topper = $(obj).closest(".sync-wrap");
+        if (topper.find("#mainPolicy > .row").length == 2) {
+            toastr.warning("This can't be deleted");
+        }
+        else {
+            $(obj).parents(".policy").remove();
+        }
+
+    }
+    function deleteRow(obj) {
+
+        $(obj).parents("tr").remove();
+        console.log("yes")
+    }
+    //init case-policy-field-table
+    function casePolicyFieldChangeInit() {
+        $(".case-policy-table").on("change", function () {
+            topper = $(this).closest(".sync-wrap");
+            //  debugger;
+            var field = $(this).closest(".row").find(".case-policy-field");
+            getSourceTableFields($(this).val(), field);
+        });
+    }
+    function casePolicyFieldDestChangeInit() {
+        $(".case-policy-dest-table").on("change", function () {
+            topper = $(this).closest(".sync-wrap");
+            //  debugger;
+            var field = $(this).closest(".row").find(".case-policy-dest-field");
+            getCaseTableFields(topper.find(".case-destination").val(), $(this).val(), field);
+        });
+    }
+
+    //init sourcetable change event
+    function sourceTableChangeInit() {
+        $(".case-type-source-table").on("change", function () {
+            var field = $(this).closest("tr").find(".case-type-source");
+            topper = $(this).closest(".sync-wrap");
+            getSourceTableFields($(this).val(), field);
+
+        });
+    }
+
+
+
+
+    //remove source table change events
+    function sourceTableChangeUnbind() { $(".case-type-source-table").unbind(); }
+
+    //remove destination table events
+    function destinationTableChangeUnbind() { $(".case-type-destination-table").unbind(); }
+
+    //init destinationtable change event
+    function destinationTableChangeInit() {
+        $(".case-type-destination-table").on("change", function () {
+            topper = $(this).closest(".sync-wrap");
+            var field = $(this).closest("tr").find(".case-type-destination");
+            getCaseTableFields(topper.find(".case-destination").val(), $(this).val(), field);
+        });
+    }
+
+    //hide show function for case source selected
+    function caseTypeSource(topper) {
+        if (topper.find(".case-type-source-main option:selected").val() != "") {
+            topper.find("#case-require-auth").parent().show();
+        }
+        else {
+            topper.find("#case-require-auth").parent().hide();
+        }
+        if (topper.find(".case-type-source-main option:selected").val() == "tenant-database") {
+            topper.find(".case-tenant").parent().parent().removeAttr('style', 'display:none !important');
+        } else {
+            topper.find(".case-tenant").parent().parent().attr('style', 'display:none !important');
+        }
+    };
+
+    //on case tenant select
+    $(document).on("change", ".case-tenant", function () {
+        // debugger
+        topper = $(this).closest(".sync-wrap");
+        caseSource(topper);
+    });
+
+    //populate case type by tenant
+    function caseSource(topper) {
+        var selectedTenant = topper.find(".case-tenant").val();
+        if (selectedTenant != null && selectedTenant != '') {
+            $.getJSON(CiceroVars.base_url + "form-list-source", { selected_tenant_id: selectedTenant }, function (types) {
+                if (types != null && !jQuery.isEmptyObject(types)) {
+                    var typeSelect = topper.find(".case-source");
+                    typeSelect.empty();
+                    typeSelect.append($('<option/>', {
+                        value: null,
+                        text: "Please select Case Type"
+                    }));
+                    $.each(types, function (index, types) {
+                        typeSelect.append($('<option/>', {
+                            value: types.value,
+                            text: types.text
+                        }));
+                    });
+                };
+            });
+        }
+    };
+
+
+
+
+    //hide show function for case enabled
+    function caseTable(topper) {
+        if (topper.find(".case-source option:selected").val() != null && topper.find(".case-source option:selected").val() != "") {
+            topper.find("#case-map-table").parent().show();
+            topper.find(".case-pull").parent().parent().removeAttr('style', 'display:none !important');
+            topper.find(".case-policy-field").parent().show();
+            topper.find(".case-process").parent().show();
+        } else {
+            topper.find("#case-map-table").parent().hide();
+            topper.find(".case-pull").parent().parent().attr('style', 'display:none !important');
+            topper.find(".case-policy-field").parent().hide();
+            topper.find(".case-process").parent().hide();
+        }
+    };
+
+
+
+
+    function getCaseTables(selectedcase, type, topper) {
+        alert(type);
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: '/admin/getcreatedtable',
+            data: { caseformid: selectedcase, tableFor: type },
+            dataType: "json",
+            success: function (response) {
+                if (response.length > 0) {
+                    var typeSelect;
+                    if (type == "source") {
+                        typeSelect = topper.find(".case-type-source-table");
+                    }
+                    else if (type == "destination") {
+                        typeSelect = topper.find(".case-type-destination-table");
+                    }
+                    else if (type == "policy") {
+                        typeSelect = topper.find(".case-policy-table");
+                    }
+                    else {
+                        typeSelect = topper.find(".case-policy-dest-table");
+                    }
+                    typeSelect.empty();
+
+                    typeSelect.append($('<option/>', {
+                        value: null,
+                        text: "Please select Field"
+                    }));
+                    if (type == "source" || type == "policy") {
+                        for (i = 0; i < response.length; i++) {
+                            typeSelect.append($('<option/>', {
+                                value: response[i].value,
+                                text: response[i].text
+                            }));
+                        }
+                    }
+                    else {
+                        for (i = 0; i < response.length; i++) {
+                            typeSelect.append($('<option/>', {
+                                value: response[i].name,
+                                text: response[i].name
+                            }));
+                        }
+                    }
+
+                }
+            },
+            error: function (response) {
+            }
+        });
+        //$.getJSON(CiceroVars.base_url + "getcreatedtable", { caseformid: selectedcase }, function (types) {
+        //     if (types != null && !jQuery.isEmptyObject(types)) {
+        //         //console.log(types);
+        //         var typeSelect = jQuery("#case-policy-field");
+        //         typeSelect.empty();
+        //         typeSelect.append($('<option/>', {
+        //             value: null,
+        //             text: "Please Select Field"
+        //         }));
+        //         $.each(types, function (index, types) {
+        //             typeSelect.append($('<option/>', {
+        //                 value: types.value,
+        //                 text: types.text
+        //             }));
+        //         });
+        //     };
+        // });
+    };
+
+    function getSourceTableFields(selectedtable, field) {
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: '/admin/sync-source-table-column',
+            data: { tableName: selectedtable },
+            dataType: "json",
+            success: function (response) {
+
+                if (response.length > 0) {
+                    var typeSelect = field;
+                    typeSelect.empty();
+                    typeSelect.append($('<option/>', {
+                        value: null,
+                        text: "Please select Field"
+                    }));
+
+                    for (i = 0; i < response.length; i++) {
+                        typeSelect.append($('<option/>', {
+                            value: response[i].value,
+                            text: response[i].text
+                        }));
+                    }
+                }
+            },
+            error: function (response) {
+            }
+        });
+
+    }
+
+    function getCaseTableFields(selectedcase, selectedtable, field) {
+
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: '/admin/gettablefields',
+            data: { caseformid: selectedcase, tablename: selectedtable },
+            dataType: "json",
+            success: function (response) {
+
+                if (response.length > 0) {
+                    var typeSelect = field;
+                    typeSelect.empty();
+                    typeSelect.append($('<option/>', {
+                        value: null,
+                        text: "Please select Field"
+                    }));
+
+                    for (i = 0; i < response.length; i++) {
+                        typeSelect.append($('<option/>', {
+                            value: response[i].value,
+                            text: response[i].text
+                        }));
+                    }
+                }
+            },
+            error: function (response) {
+            }
+        });
+
+        //$.getJSON(CiceroVars.base_url + "getcreatedtable", { caseformid: selectedcase, tablename: selectedtable }, function (types) {
+        //    if (types != null && !jQuery.isEmptyObject(types)) {
+        //        //console.log(types);
+        //        var typeSelect = jQuery("#case-policy-field");
+        //        typeSelect.empty();
+        //        typeSelect.append($('<option/>', {
+        //            value: null,
+        //            text: "Please Select Field"
+        //        }));
+        //        $.each(types, function (index, types) {
+        //            typeSelect.append($('<option/>', {
+        //                value: types.value,
+        //                text: types.text
+        //            }));
+        //        });
+        //    };
+        //});
+    };
+    $(function () {
+        Components.PolicySystem.Init();
+        // caseTypeSource();
+        // caseTable();
+        sourceTableChangeInit();
+        destinationTableChangeInit();
+        casePolicyFieldChangeInit();
+        casePolicyFieldDestChangeInit();
+
+        autoCasePull();
+        // $(".case-source").trigger('change');
+        // $(".case-destination").trigger('change');
+
+
+        //$(".sourceType").on("change", function () {
+        //    topper = $(this).closest("sync-wrap");
+        //    value = $(this).val();
+        //    if (value == "rest-api") {
+        //        topper.find(".rest-api").removeClass("hidePart");
+        //        topper.find(".tenant-database").addClass("hidePart");
+        //    }
+        //    else if (value == "tenant-database") {
+        //        topper.find(".tenant-database").removeClass("hidePart");
+        //        topper.find(".rest-api").addClass("hidePart");
+        //    }
+        //    else {
+        //        topper.find(".tenant-database").addClass("hidePart");
+        //        topper.find(".rest-api").addClass("hidePart");
+        //    }
+        //});
+    })
+</script>

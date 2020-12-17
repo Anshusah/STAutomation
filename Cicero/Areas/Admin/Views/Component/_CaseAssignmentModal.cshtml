@@ -1,0 +1,58 @@
+﻿
+@using Cicero.Service.Models.Core;
+@using Cicero.Service.Helpers
+
+@model List<object>
+
+@inject Utils  _utils
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">*@
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+
+@if (Model.Count > 0)
+{
+    <div class="element-list-group">
+        <h5 class="element-list-group__title">Select Case Assignment</h5>
+        <ul class='element-list list-unstyled'>
+
+            @foreach (dynamic item in Model)
+            {
+                <li class='element-item'>
+                    <div class='custom-control custom-radio'>
+                        @*<input type="text" id="dest-@item.ComponentId" value="@item.configs[0].destination" hidden />*@
+                        <input type='radio' id='rad-@item.ComponentId' name='insert' data-type="caseassignment" value="@item.ComponentId" class='custom-control-input' data-json='{"id":"@item.ComponentId","title":"@item.Title"}'>
+
+                        <label class='custom-control-label' for='rad-@item.ComponentId'> @item.Title</label>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        There are no options available to select. Please create new assign by clicking the New Case Assignment button
+    </div>
+}
+
+
+<script>
+    $(function () {
+        $("[data-type='caseassignment']").on('click', function () {
+            //debugger;
+            value = $(this).val();
+            type = "Themes.Core.Components.CaseAssignment";
+            $("#wf-delete-comp").find("#wf-delete-comp-btn").attr("data-id", value);
+            $("#wf-delete-comp").find("#wf-delete-comp-btn").attr("data-type", type);
+            $("#wf-caseassignment-delete").removeAttr("disabled");
+        });
+    })
+
+</script>

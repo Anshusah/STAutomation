@@ -1,0 +1,21 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@using Cicero.Service.Services
+@model Cicero.Service.Models.Core.Elements.Textbox
+@inject ICommonService commonService
+@inject IUserService UserService
+@{
+Textbox tb = Model as Textbox;
+////string role = UserService.getUserRoleIdByLoggedInUser();
+////var Roledata = tb?.Permissions?.Where(p => p.RoleId == role).FirstOrDefault();
+}
+
+
+    <div class="fb-element">
+        <div class="form-group">
+            <label>
+                @tb.BackendLabel
+            </label>
+            <input class="form-control" type="text">
+        </div>
+    </div>
+

@@ -1,0 +1,85 @@
+12/4/2020 10:45:11 PM	This log contains information about the import schema operation into project 'SimpleTransferDB' on computer 'LAPTOP-V7DSNDUT' by user 'Vesuvio Labs'.
+12/4/2020 10:45:11 PM	Import of database schema has started.
+12/4/2020 10:45:26 PM	Gathering database credentials
+12/4/2020 10:45:26 PM	Gathering database options
+12/4/2020 10:45:26 PM	Gathering generic database scoped configuration option
+12/4/2020 10:45:26 PM	Gathering users
+12/4/2020 10:45:26 PM	Gathering roles
+12/4/2020 10:45:26 PM	Gathering application roles
+12/4/2020 10:45:26 PM	Gathering role memberships
+12/4/2020 10:45:26 PM	Gathering filegroups
+12/4/2020 10:45:26 PM	Gathering full-text catalogs
+12/4/2020 10:45:26 PM	Gathering assemblies
+12/4/2020 10:45:26 PM	Gathering certificates
+12/4/2020 10:45:26 PM	Gathering asymmetric keys
+12/4/2020 10:45:26 PM	Gathering symmetric keys
+12/4/2020 10:45:26 PM	Gathering encrypted symmetric keys
+12/4/2020 10:45:26 PM	Gathering schemas
+12/4/2020 10:45:26 PM	Gathering XML schema collections
+12/4/2020 10:45:26 PM	Gathering user-defined data types
+12/4/2020 10:45:26 PM	Gathering user-defined types
+12/4/2020 10:45:26 PM	Gathering table types
+12/4/2020 10:45:26 PM	Gathering unique keys for table types
+12/4/2020 10:45:26 PM	Gathering primary keys for table types
+12/4/2020 10:45:26 PM	Gathering indexes for table types
+12/4/2020 10:45:26 PM	Gathering check constraints for table types
+12/4/2020 10:45:26 PM	Gathering default constraints for table types
+12/4/2020 10:45:26 PM	Gathering partition functions
+12/4/2020 10:45:26 PM	Gathering partition schemes
+12/4/2020 10:45:26 PM	Gathering functions
+12/4/2020 10:45:26 PM	Gathering encrypted functions
+12/4/2020 10:45:26 PM	Gathering aggregates
+12/4/2020 10:45:26 PM	Gathering procedures
+12/4/2020 10:45:26 PM	Gathering encrypted procedures
+12/4/2020 10:45:26 PM	Gathering tables
+12/4/2020 10:45:27 PM	Gathering primary keys
+12/4/2020 10:45:28 PM	Gathering unique constraints
+12/4/2020 10:45:28 PM	Gathering foreign keys
+12/4/2020 10:45:28 PM	Gathering default constraints
+12/4/2020 10:45:29 PM	Gathering check constraints
+12/4/2020 10:45:29 PM	Gathering views
+12/4/2020 10:45:29 PM	Gathering encrypted views
+12/4/2020 10:45:29 PM	Gathering indexes
+12/4/2020 10:45:29 PM	Gathering statistics
+12/4/2020 10:45:29 PM	Gathering full-text index stoplists
+12/4/2020 10:45:29 PM	Gathering search property lists
+12/4/2020 10:45:29 PM	Gathering search properties
+12/4/2020 10:45:29 PM	Gathering full-text indexes
+12/4/2020 10:45:29 PM	Gathering column store indexes
+12/4/2020 10:45:29 PM	Gathering spatial indexes
+12/4/2020 10:45:29 PM	Gathering XML indexes
+12/4/2020 10:45:29 PM	Gathering Selective XML indexes
+12/4/2020 10:45:30 PM	Gathering encrypted triggers
+12/4/2020 10:45:30 PM	Gathering triggers
+12/4/2020 10:45:30 PM	Gathering encrypted and clr ddl triggers
+12/4/2020 10:45:30 PM	Gathering ddl triggers
+12/4/2020 10:45:30 PM	Gathering synonyms
+12/4/2020 10:45:30 PM	Gathering defaults
+12/4/2020 10:45:30 PM	Gathering data constraint uddt bindings
+12/4/2020 10:45:30 PM	Gathering rules
+12/4/2020 10:45:30 PM	Gathering data constraint uddt bindings
+12/4/2020 10:45:30 PM	Gathering message types
+12/4/2020 10:45:30 PM	Gathering queues
+12/4/2020 10:45:30 PM	Gathering contracts
+12/4/2020 10:45:30 PM	Gathering services
+12/4/2020 10:45:30 PM	Gathering event notifications
+12/4/2020 10:45:30 PM	Gathering remote service bindings
+12/4/2020 10:45:30 PM	Gathering broker priorities
+12/4/2020 10:45:30 PM	Gathering signatures
+12/4/2020 10:45:30 PM	Gathering data compression options
+12/4/2020 10:45:30 PM	Gathering sequence types
+12/4/2020 10:45:30 PM	Gathering security policies
+12/4/2020 10:45:30 PM	Gather column encryption keys
+12/4/2020 10:45:30 PM	Gathering column master keys
+12/4/2020 10:45:30 PM	Gathering external data sources
+12/4/2020 10:45:30 PM	Gathering external file formats
+12/4/2020 10:45:30 PM	Gathering external tables
+12/4/2020 10:45:30 PM	Gathering extended properties
+12/4/2020 10:45:30 PM	Gathering credentials
+12/4/2020 10:45:30 PM	Gathering logins
+12/4/2020 10:45:30 PM	Gathering server audits
+12/4/2020 10:45:31 PM	Scanning project for duplicate elements
+12/4/2020 10:45:32 PM	Finished duplicate element processing
+12/4/2020 10:45:34 PM	Finished importing database.
+12/4/2020 10:45:34 PM	A summary of the import was saved to the following location: D:\Project\SimpleTransfer\SimpleTransfer\SimpleTransfer\SimpleTransferDB\Import Schema Logs\SimpleTransferDB_20201204050011.log
+12/4/2020 10:45:34 PM	Click Finish to continue...

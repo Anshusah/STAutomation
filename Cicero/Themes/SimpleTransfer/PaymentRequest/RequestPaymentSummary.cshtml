@@ -1,0 +1,386 @@
+﻿@model Cicero.Service.Models.PaymentRequest.PaymentRequestViewModel
+@inject IUserService _UserService
+@{
+    ViewData["Title"] = "Payment Summary";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+    var payeeName = await _UserService.GetUserFullName();
+    var dueDate = Model.STPaymentRequestDetails.DueDate.ToString("MM/dd/yyyy");
+}
+
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        @*<input type="hidden" id="elmloggedinuser" name="elmloggedinuser" elm-name="elmloggedinuser" value="@_commonService.getLoggedInUserId()" />*@
+        <div class="container ">
+            <div class="row">
+                <div class="col">
+                    <div class="widget-box  border-bottom-0">
+                        <div class="widget-header flex-row justify-content-center border-bottom">
+                            <h5 class="title">Payment Request Summary</h5>
+                        </div>
+                        <div class="widget-content px-4">
+                            <div class="card card-lg my-5">
+                                <div class="card-header justify-content-between card-header-secondary">
+                                    <h5 class="mb-0">Payment Details</h5>
+                                    <a href="/payment/requestpayment" class="btn-edit">
+                                        @*<i class="fa fa-edit mr-2"></i>*@
+                                        Edit
+                                        <svg id="icon-edit" xmlns="http://www.w3.org/2000/svg" width="28" height="25" viewBox="0 0 31.643 35.307">
+                                            <g id="Group_1772" data-name="Group 1772" transform="translate(0)">
+                                                <g id="Group_1771" data-name="Group 1771" transform="translate(0)">
+                                                    <path id="Path_3934" data-name="Path 3934" d="M123.423,201.379A1.379,1.379,0,0,0,122.044,200H107.838a1.379,1.379,0,1,0,0,2.758h14.206A1.379,1.379,0,0,0,123.423,201.379Z" transform="translate(-100.95 -186.208)" fill="#00b4f1" />
+                                                    <path id="Path_3935" data-name="Path 3935" d="M107.838,280a1.379,1.379,0,0,0,0,2.758h8.628a1.379,1.379,0,0,0,0-2.758Z" transform="translate(-100.95 -260.691)" fill="#00b4f1" />
+                                                    <path id="Path_3936" data-name="Path 3936" d="M36.7,32.549H32.087a2.762,2.762,0,0,1-2.758-2.758V5.517a2.762,2.762,0,0,1,2.758-2.758H49.043A2.761,2.761,0,0,1,51.8,5.517V14a1.379,1.379,0,1,0,2.758,0V5.517A5.523,5.523,0,0,0,49.043,0H32.087A5.523,5.523,0,0,0,26.57,5.517V29.79a5.523,5.523,0,0,0,5.517,5.517H36.7a1.379,1.379,0,0,0,0-2.758Z" transform="translate(-26.57)" fill="#00b4f1" />
+                                                    <path id="Path_3937" data-name="Path 3937" d="M258.933,273.234a4.142,4.142,0,0,0-5.85,0l-7.572,7.555a1.379,1.379,0,0,0-.345.576l-1.649,5.429a1.379,1.379,0,0,0,1.688,1.73l5.567-1.542a1.379,1.379,0,0,0,.606-.353l7.556-7.542A4.142,4.142,0,0,0,258.933,273.234Zm-9.248,11.185-2.8.776.82-2.7,5.109-5.1,1.951,1.951Zm7.3-7.285-.267.267-1.951-1.951.266-.266a1.379,1.379,0,0,1,1.951,1.95Z" transform="translate(-228.501 -253.266)" fill="#00b4f1" />
+                                                    <path id="Path_3938" data-name="Path 3938" d="M122.044,120H107.838a1.379,1.379,0,0,0,0,2.758h14.206a1.379,1.379,0,0,0,0-2.758Z" transform="translate(-100.95 -111.725)" fill="#00b4f1" />
+                                                </g>
+                                            </g>
+                                        </svg>
+
+                                    </a>
+                                </div>
+                                <form id="paymentRequestSummaryForm" action="@Url.Content("~/payment/requestpaymentsummary.html")" method="post" enctype="multipart/form-data">
+                                    <div class="card-body px-5 flex-column">
+                                        <div class="payer-details border-bottom">
+
+                                            <div class="form-row align-items-center justify-content-start">
+                                                <div class="form-group col-sm-4 col-lg-4"><label for="companyName" class="text-light">Company Name:</label></div>
+                                                <div class="form-group col-sm-8 col-lg-8"> <label class="">N/A</label></div>
+
+                                            </div>
+                                            <div class="form-row align-items-center">
+                                                <div class="form-group col-sm-4 col-lg-4"><label for="contactName" class="text-light">Contact Name:</label></div>
+                                                <div class="form-group col-sm-8 col-lg-8"> <label>@Model.PayerName</label></div>
+
+                                            </div>
+                                            <div class="form-row align-items-center">
+                                                <div class="form-group  col-sm-4  col-lg-4"><label for="contactName" class="text-light">Email:</label></div>
+                                                <div class="form-group  col-sm-8 col-lg-8"> <label>@Model.PayerEmail</label></div>
+
+                                            </div>
+                                            <div class="form-row align-items-center">
+                                                <div class="form-group col-sm-4 col-lg-4"><label for="contactName" class="text-light">Country:</label></div>
+                                                <div class="form-group col-sm-8 col-lg-8"> <label>United Kingdom</label></div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row pt-4">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="amount">Amount</label>
+                                                    <input type="text" class="form-control disabled" value="@Model.RequestAmount"/>
+                                                    @*<span class="text-light small">20.00-100,000 GBP</span>*@
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="amount">Currency</label>
+                                                    <select class="custom-select form-control disabled">
+                                                        <option value="value">GBP</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label>Description</label>
+                                                    <textarea type="text" asp-for="STPaymentRequestDetails.Description" class="form-control disabled" cols="1" rows="2"></textarea>
+                                                   @* <span class="text-light small float-right"> 0 / 250</span>*@
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label>Payment Due Date</label>
+                                                    <input type="text" class="form-control date disabled" value="@dueDate" />
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <a href="#" class="btn btn-link mx-auto mt-3" data-toggle="modal" data-target=".modal-request-payment-preview">Preview</a>
+                                        <button type="submit" class="btn btn-primary px-5 mx-auto">Request Payment <i class='fa fa-angle-double-right ml-2'></i></button>
+                                        @*<div class="d-flex flex-column" >
+                                                <div class="form-group">
+                                                    <label>Enter Name</label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="name" value="" class="form-control" placeholder="Name, Email Address or Company" />
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-primary px-3 mx-auto">
+                                                                Go
+                                                                <i class='fa fa-angle-double-right'></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <h6>Most Recent</h6>
+                                                <ul class="list-group list-recent-payer">
+                                                    <li class="list-item">
+                                                        <div class="icon"><i class="fa fa-building fa-2x"></i></div>
+                                                        <div class="d-flex flex-column flex-1">
+                                                            <h6 class="mb-0">Aamir Khan</h6>
+                                                            <p class="mb-0">aamir@simpletransfer.co.uk</p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-item">
+                                                        <div class="icon"><i class="fa fa-building fa-2x"></i></div>
+                                                        <div class="d-flex flex-column flex-1">
+                                                            <h6 class="mb-0">Naufal Zamir</h6>
+                                                            <p class="mb-0">Naufal@zamirtelecom.com</p>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-item">
+                                                        <div class="icon"><i class="fa fa-user fa-2x"></i></div>
+                                                        <div class="d-flex flex-column flex-1">
+                                                            <h6 class="mb-0">Adil Ahmed</h6>
+                                                            <p class="mb-0">gfx.adil@gmail.com</p>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+
+                                                <hr />
+
+                                            </div>*@
+                                    </div>
+                                </form>
+                            </div>
+                            @*<div class="card card-lg">
+                                    <div class="card-header justify-content-between card-header-secondary">
+                                        <h5 class="mb-0">Payment Information</h5>
+
+                                    </div>
+                                    <div class="card-body px-5 flex-column">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="amount">Amount</label>
+                                                    <input type="text" name="amount" value="" class="form-control" />
+                                                    <span class="text-light small">20.00-100,000 GBP</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="amount">Currency</label>
+                                                    <select class="custom-select form-control">
+                                                        <option value="value">GBP</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label>Description</label>
+                                                    <input type="text" name="name" value="" class="form-control" />
+                                                    <span class="text-light small float-right"> 0 / 250</span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label>Payment Due Date</label>
+                                                    <input type="text" name="name" value="" class="form-control date" />
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <a href="#" class="btn btn-link mx-auto mt-3" data-toggle="modal" data-target=".modal-request-payment-preview">Preview</a>
+                                        <button type="submit" class="btn btn-primary px-5 mx-auto" onclick="window.location.href='@Url.Content("~/payment/requestsuccess.html")'" >Request Payment <i class='fa fa-angle-double-right ml-2'></i></button>
+                                    </div>
+                                </div>*@
+                            @*
+                                <div>
+                                    <form method="post">
+                                        @Html.AntiForgeryToken()
+                                        <div asp-validation-summary="All"></div>
+                                        <!-- Display all errors -->
+                                        <div class="form-group">
+                                            <label class="sr-only">Payer</label>
+                                            <input asp-for="PayerEmail" type="email" class="form-control" placeholder="Payer Email">
+                                            <span asp-validation-for="PayerEmail"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="sr-only">Amount (GBP)</label>
+                                            <input asp-for="RequestAmount" type="number" class="form-control" placeholder="Amount">
+                                            <span asp-validation-for="RequestAmount"></span>
+                                        </div>
+                                        <small class="form-text text-muted mb-4">Your payment request will be processed once the Payer accepts your request.</small>
+
+                                        <button type="submit" class="btn btn-primary btn-block">Request Payment</button>
+                                    </form>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <div class="modal modal-request-payment-preview" tabindex="-1" role="dialog" aria-labelledby="PpreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="mb-0">Preview</h5>
+                    <a href="#" class="close" data-dismiss="modal" aria-label="Close"><i class="ri-close-fill"></i></a>
+                </div>
+
+                <form id="paymentRequestSummaryFormModal" action="@Url.Content("~/payment/requestpaymentsummary.html")" method="post" enctype="multipart/form-data">
+                    <div class="modal-body px-lg-5">
+                        <div class="form-row align-items-center justify-content-start">
+                            <div class="form-group col-sm-2"><label for="to" class="text-light">To:</label></div>
+                            <div class="form-group col-sm-10"> <label class="">@Model.PayerEmail</label></div>
+
+                        </div>
+                        <div class="form-row align-items-center justify-content-start">
+                            <div class="form-group col-sm-2"><label for="to" class="text-light">Subject:</label></div>
+                            <div class="form-group col-sm-10"> <label class="">Payment request from @payeeName</label></div>
+
+                        </div>
+                        <div class="modal-request-payment-info bg-light border p-4 mb-4 rounded">
+                            <h4 class="title">Dear @Model.PayerName,</h4>
+                            <p class="mb-0">@payeeName would like to be paid through Simple Transfer.</p>
+                            <p>Payment request details:</p>
+                            <hr />
+                            <div class="form-row align-items-center justify-content-start">
+                                <div class="form-group col-sm-4 col-lg-4"><label for="dueBy" class="">Due By:</label></div>
+                                <div class="form-group col-sm-8 col-lg-8"> <label class="">@dueDate</label></div>
+
+                            </div>
+                            <div class="form-row align-items-center justify-content-start">
+                                <div class="form-group col-sm-4 col-lg-4"><label for="requestId" class="">Payment request ID::</label></div>
+                                <div class="form-group col-sm-8 col-lg-8"> <label class="">@Model.RequestId</label></div>
+
+                            </div>
+                            <div class="form-row align-items-center justify-content-start">
+                                <div class="form-group col-sm-4 col-lg-4"><label for="description" class="">Description:</label></div>
+                                <div class="form-group col-sm-8 col-lg-8"> <label class="">@Model.STPaymentRequestDetails.Description</label></div>
+
+                            </div>
+                            <div class="form-row align-items-center justify-content-start">
+                                <div class="form-group col-sm-4 col-lg-4"><label for="amount" class="">Amount:</label></div>
+                                <div class="form-group col-sm-8 col-lg-8"> <label class="">@Model.RequestAmount GBP</label></div>
+
+                            </div>
+                            <button type="submit" class="btn btn-primary px-5 mb-3" disabled>Pay<i class='fa fa-angle-double-right ml-2'></i></button>
+                            <p class="mb-0">Paying with Simple Transfer is easy and secure. <a href="#">Learn more.</a></p>
+                            <p class="mb-0">Have questions? Read our <a href="#"> FAQ.</a></p>
+                            <p class="mb-0">
+                                Simple Transfer provides global payment solutions to over 3 million users and thousands of integrated
+                                partners including Amazon, Google, Fiverr, Airbnb and more.
+                            </p>
+
+                        </div>
+                        <button type="submit" class="btn btn-primary px-5 mb-3" onclick="window.location.href='@Url.Content("~/payment/requestsuccess.html")'">Request Payment<i class='fa fa-angle-double-right ml-2'></i></button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var table = jQuery("#transactionlist");
+        table.dataTable({
+            "dom": 'r<"clear">t',
+
+            data: [
+                {
+                    "date": "2011/04/25",
+                    "description": "<span class='font-weight-medium title'>John Doe </span>- Withdrawal<br/> Completed",
+                    "amount": "<span class='font-weight-medium title'>200</span>",
+                    "runningBalance": "0.00",
+                    "actions": "<i class='ri-arrow-right-s-line'></i>"
+
+                },
+                {
+                    "date": "2011/04/25",
+                    "description": "<span class='font-weight-medium title'>John Doe </span>- Withdrawal<br/> Completed",
+                    "amount": "<span class='font-weight-medium title'>200</span>",
+                    "runningBalance": "0.00",
+                    "actions": "<i class='ri-arrow-right-s-line'></i>"
+                }
+            ],
+
+            "columns": [
+                { "title": "Date", "data": "date", "orderable": true },
+                { "title": "Description", "data": "description", "orderable": true },
+
+                {
+                    "title": "Amount", "data": null, "orderable": true,
+                    'render': function (data) {
+                        if (data.amount == null) {
+                            data.amount = "0";
+                        }
+
+                        if (data.currency == null) {
+                            data.currency = "GBP";
+                        }
+
+                        var amount = data.amount + " " + data.currency;
+                        return amount;
+                    }
+                },
+                { "title": "Running Balance", "data": "runningBalance", "orderable": false },
+
+                { "title": "", "data": "actions", "orderable": false, "class": "datatable__actions" }
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function (oSettings, json) {
+                jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+            },
+        });
+
+        jQuery(document).on("keyup", "#gridsearch", function () {
+            console.log(this.value);
+            table.fnFilter(this.value);
+        });
+        $('#transactionlist tbody').on('click', 'tr', function () {
+            $("#transaction-details").modal("toggle");
+        });
+
+
+        //var CloseAnimationTimeout;
+
+        //$('.datatable__filter-main .datatable__filter-search .form-control ').click(function () {
+        //    clearTimeout(CloseAnimationTimeout);
+        //    $('.datatable__filter-main .datatable__filter-search .form-control').stop().animate({
+        //      width: '100%'
+        //    }, '100000s');
+        //  })
+        //  .mouseout(function() {
+        //    CloseAnimationTimeout = setTimeout(function() {
+        //      $('.datatable__filter-main .datatable__filter-search .form-control').stop().animate({
+        //        width: '0'
+        //      }, '10000s');
+        //    }, 10000);
+        //  });
+
+    });
+</script>

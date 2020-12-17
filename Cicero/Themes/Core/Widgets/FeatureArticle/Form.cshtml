@@ -1,0 +1,436 @@
+@using Themes.Core.Widgets
+@using Cicero.Service.Services
+@inject IArticleService articleService
+<div class="form-group">
+    <label>Title</label>
+    <input class="form-control" type="text" name="Title" value="@Model.Title">
+</div>
+@{
+
+    FeatureArticle fa = Model as FeatureArticle;
+}
+<div class="row">
+    <div class="col">
+        <h5 class="mb-3">Articles</h5>
+        <div class="card">
+            <div class="table-responsive" style="max-height:200px;overflow:hidden; overflow-y:auto;border: 1px solid #ccc; border-radius: 5px;">
+                <table class="table table-bordered table-striped rounded w-100">
+
+                    <tbody>
+                        @{
+                            int i = -1;
+                            List<SelectListItem> ar = articleService.GetArticleList();
+                        }
+                        @if (ar != null && ar.Count > 0)
+                        {
+                            @foreach (SelectListItem item in ar)
+                            {
+                                string sels = "";
+                                {
+                                    i++;
+                                    if (fa.Article != null)
+                                    {
+                                        List<string> sa = fa.Article.Where(e => (string)e.ToString() == item.Value.ToString()).ToList();//
+                                        sels = (sa != null && sa.Count() > 0) ? "checked='checked'" : "";
+                                    }
+
+
+                                }
+                                <tr>
+                                    <td width="15px">
+                                        <input type="checkbox" @sels name="Article" value="@item.Value" />
+                                    </td>
+                                    <td>
+                                        @item.Text
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>No Articles</td>
+                            </tr>
+
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+            <small class="form-text text-muted mt-3"><strong>Note: </strong><em class="text-wrap">You can also display this widget anywhere in website using this <b class="text-danger">[widget id="@Model.WidgetId"]</b> shortcode.</em></small>
+        </div>
+    </div>
+    <div class="col">
+
+        <h5 class="mb-3">General Setting</h5>
+        @{
+            var defChecked = "";
+            var cusChecked = "";
+            var strCust = "display:none";
+            if (Model.Style == "Default")
+            {
+                defChecked = " checked='checked' ";
+            }
+            if (Model.Style == "Custom")
+            {
+                cusChecked = " checked='checked' ";
+                strCust = "display:block";
+            }
+        }
+        <h6 class="mb-1">Style</h6>
+        <p class="d-block mngwidget-elements-item-info help mb-1">Please choose a Style as your requirement.</p>
+
+        <div class="form-check form-check-inline">
+            <input type="radio" name="Style" @defChecked value="Default" data-slide-show=".0" data-slide-hide=".customization" id="@Model.WidgetId-defaultStyle" />
+            <label class="form-check-label" for="@Model.WidgetId-defaultStyle">Default</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="radio" name="Style" @cusChecked value="Custom" id="@Model.WidgetId-customStyle" data-slide-show=".customization" data-slide-hide=".0" />
+            <label class="form-check-label" for="@Model.WidgetId-customStyle">Custom</label>
+        </div>
+        @{
+            string CheckedString = "";
+        }
+        <div class="border p-4 bg-light mt-2 customization" style="@strCust">
+
+            <h6 class="mb-1">Base Layout</h6>
+            <p class="d-block mngwidget-elements-item-info help mb-3">Please choose a Box Type as your requirement.</p>
+
+            <div class="form-row">
+                @{
+                    string wtChecked = "";
+                    if (Model.LayoutType == "with-title")
+                    {
+                        wtChecked = " checked='checked' ";
+                    }
+
+                }
+
+
+                <div class="form-group col-sm-6 col-md-3">
+                    <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/with-title.svg" /></i>
+                    <div class="form-check pl-0">
+                        <input type="radio" name="LayoutType" @wtChecked value="with-title" id="@Model.WidgetId-with-title" />
+                        <label class="form-check-label" for="@Model.WidgetId-with-title">With Title</label>
+                    </div>
+                </div>
+                @{
+                    string wotChecked = "";
+
+                    if (Model.LayoutType == "without-title")
+                    {
+                        wotChecked = " checked='checked' ";
+                    }
+                }
+
+
+                <div class="form-group col-sm-6 col-md-3">
+                    <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/without-title.svg" /></i>
+                    <div class="form-check pl-0">
+                        <input type="radio" name="LayoutType" @wotChecked value="without-title" id="@Model.WidgetId-without-title" />
+                        <label class="form-check-label" for="@Model.WidgetId-without-title">Without Title</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+            <h6 class="mb-1 mt-3">Display As</h6>
+            <p class="d-block mngwidget-elements-item-info help mb-3">Please choose a Dispaly Type as your requirement.</p>
+            <div class="form-row">
+                @{
+                    CheckedString = "";
+                    if (Model.DisplayAs == "article")
+                    {
+                        CheckedString = " checked='checked' ";
+                    }
+                }
+                @*<div>
+                        <label class="ml-2">
+                            <i class="fa fa fa-address-card display-4 clearfix" aria-hidden="true"></i><br />
+                            <input type="radio" name="DisplayAs" value="article" @CheckedString class="mr-2" data-slide-show=".article-setting" data-slide-hide=".banner-setting" />Articles list
+                        </label>
+                    </div>*@
+                <div class="form-group col-sm-6 col-md-3">
+                    <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/articlelist.svg" /></i>
+                    <div class="form-check pl-0">
+                        <input type="radio" name="DisplayAs" value="article" @CheckedString class="mr-2" data-slide-show=".article-setting" data-slide-hide=".banner-setting" id="@Model.WidgetId-articleList" />
+                        <label class="form-check-label" for="@Model.WidgetId-articleList">Articles list</label>
+                    </div>
+                </div>
+                @{
+                    CheckedString = "";
+                    if (Model.DisplayAs == "banner")
+                    {
+                        CheckedString = " checked='checked' ";
+                    }
+                }
+                @*<div>
+                        <label class="ml-2">
+                            <i class="fa fa-address-card display-4 clearfix" aria-hidden="true"></i><br />
+                            <input type="radio" name="DisplayAs" value="banner" @CheckedString class="mr-2" data-slide-show=".banner-setting" data-slide-hide=".article-setting" />Banner
+                        </label>
+                    </div>*@
+                <div class="form-group col-sm-6 col-md-3">
+                    <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/featured-article.svg" /></i>
+                    <div class="form-check pl-0">
+                        <input type="radio" name="DisplayAs" value="banner" @CheckedString class="mr-2" data-slide-show=".banner-setting" data-slide-hide=".article-setting" id="@Model.WidgetId-banner" />
+                        <label class="form-check-label" for="@Model.WidgetId-banner">Banner</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="article-setting" style="@(Model.DisplayAs == "article"?"display:block":"display:none")">
+                <div class="bg-white p-3">
+                    <p class="mb-3 font-weight-bold">Choose Style:</p>
+                    <ul class="mb-0 m-0 p-0 list-unstyled">
+                        @{
+                            CheckedString = "";
+                            if (Model.CustomStyleArticle == "image-title-subtitle")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="CustomStyleArticle" value="image-title-subtitle" class="mr-2" />Image + Title + Description
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.CustomStyleArticle == "title-subtitle")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="CustomStyleArticle" @CheckedString value="title-subtitle" class="mr-2" />Title + Description
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.CustomStyleArticle == "title")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="CustomStyleArticle" @CheckedString value="title" class="mr-2" />Only Title
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="banner-setting" style="@(Model.DisplayAs == "banner"?"display:block":"display:none")">
+                <div class="bg-white p-3">
+                    <p class="mb-3 font-weight-bold">Choose Style:</p>
+                    <ul class="mb-0  m-0 p-0 list-unstyled">
+                        @{
+                            CheckedString = "";
+                            if (Model.CustomStyleBanner == "title-subtitle")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="CustomStyleBanner" @CheckedString value="title-subtitle" class="mr-2" />Title + Sub title
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.CustomStyleBanner == "title")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="CustomStyleBanner" @CheckedString value="title" class="mr-2" />Title
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.Navigation == "bullet")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <hr />
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="Navigation" value="bullet" @CheckedString class="mr-2" />Bullet Navigation
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.Navigation == "arrow")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="Navigation" value="arrow" @CheckedString class="mr-2" />Left/Right Arrow Navigation
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.Navigation == "both")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <li>
+                            <label class="ml-2">
+                                <input type="radio" name="Navigation" value="both" @CheckedString class="mr-2" />Bullet + Left/Right Arrow Navigation
+                            </label>
+                        </li>
+                        @{
+                            CheckedString = "";
+                            if (Model.Size == "fullscreen")
+                            {
+                                CheckedString = " checked='checked' ";
+                            }
+                        }
+                        <hr />
+                        <li>
+                            <label class="ml-2">
+                                <input type="checkbox" name="Size" value="fullscreen" @CheckedString class="mr-2" />Display as Fullscreen
+                            </label>
+                        </li>
+                        <hr />
+                        <li>
+                            <label class="ml-2">
+                                Alignment
+                                <select name="Align" class="form-control">
+                                    @{
+                                        CheckedString = "";
+                                        if (Model.Align == "left")
+                                        {
+
+                                            <option value="left" selected="selected">Left</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="left">Left</option>
+                                        }
+
+
+                                        if (Model.Align == "right")
+                                        {
+                                            <option value="right" selected="selected">Right</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="right">Right</option>
+
+                                        }
+
+
+                                        if (Model.Align == "center")
+                                        {
+                                            <option value="center" selected="selected">Center</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="center">Center</option>
+                                        }
+                                    }
+                                </select>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function click(event){
+
+
+    event.stopImmediatePropagation()
+
+
+
+    var _this=$(this).closest("tr");
+    var icon_obj=_this.find(".dropdown-item.active");
+    var icon=icon_obj.find("i").attr('class');
+    var link=_this.find("input[type='text']").val();
+    //alert(link)
+
+    //console.log(icon_obj)
+    _this.find(".btn.btn-outline-secondary.dropdown-toggle").removeClass("btn-outline-danger");
+    _this.find("input[type='text']").removeClass("border-danger").addClass("border-dark");
+
+
+        var html='<tr><td><div class="input-group mb-0">'+
+        '<div class="input-group-prepend">'+
+        '<button class="btn btn-outline-secondary" style="width:42px" type="button"><i class="'+icon+'"></i></button>'+
+        '</div>'+
+        '<input type="text" class="form-control border border-dark" name="Url[]" placeholder="Http Url" value="'+link+'">'+
+        '<input type="hidden" name="Icon[]" value="'+icon+'">'+
+        '<div class="input-group-append">'+
+        '<button type="button" class="btn btn-outline-secondary"><i class="fas fa-arrows-alt"></i></button>'+
+        '<button class="btn btn-outline-danger" data-confirm=\'{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete?";this.button.cancel="Cancel";this.button.confirm="Confirm Delete";this.open();},OnConfirm:function(e){e.closest("tr").remove();},OnCancelled:function(e){this.close();}}\' type="button"><i class="fas fa-trash-alt"></i></button>'+
+        '</div>'+
+        '</div></td></tr>';
+        _this.find("input").val("");
+        $(this).closest("table").find("tbody").append(html);
+
+
+    }
+$(document).ready(function(){
+
+    $(document).on("click","[data-widget-id='@Model.WidgetId'] .btn-add-social-link",click)
+    $(document).on("click","[data-widget-id='@Model.WidgetId'] .dropdown-item",function(event){
+
+        $(this).closest("ul").find("[data-widget-id='@Model.WidgetId'] .dropdown-item").removeClass("active");
+        $(this).addClass("active")
+        var _this=$(this).closest("tr");
+        _this.find("button[data-toggle='dropdown']").empty().append($(this).html());
+
+     })
+
+      $(document).one("click","[data-widget-id='@Model.WidgetId'] .save-widgets",function(event){
+        event.stopImmediatePropagation();
+
+            jQuery("[data-tmp]").trigger('click');
+            return;
+        })
+
+        /* Globally Used : Start */
+            $(document).on("change","[data-widget-id='@Model.WidgetId'] [data-slide-show]",function(e){
+            $(this).off("change")
+                var SelectedVal=jQuery(this).val();
+                if(event.target.type=="radio"){
+                    var elm= $('[data-widget-id="@Model.WidgetId"] input[name="'+e.target.name+'"]:checked');
+            //var elm= el.find('input[name="'+e.target.name+'"]:checked');
+                    if(elm.val()=="article"){
+                        var StrToHide=elm.data('slide-hide');
+                        var StrToShow=elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+                        //console.log("Checked Hide:- "+str_to_hide+", Show:- "+str_to_show)
+                    }else{
+                        var StrToHide=elm.data('slide-hide');
+                        var StrToShow=elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+                        //console.log("Checked Hide:- "+str_to_hide+", Show:- "+str_to_show)
+                    }
+                }
+
+
+            });
+        /* Globally Used : End */
+
+     })
+
+
+</script>
+

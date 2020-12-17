@@ -1,0 +1,520 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+@using Cicero.Service.Services
+
+@inject Utils utils
+@{
+	FormBuilderViewModel fm = Model as FormBuilderViewModel;
+}
+
+<div class="modal-header flex-column">
+	<h5 class="modal-title">Form Setting</h5>
+	<p class="mb-0">This settings helps you to customize Form.</p>
+</div>
+<div class="modal-body">
+	<div class="status"></div>
+	<ul class="fb-card">
+		<li class="active">
+			<header>General Setting</header>
+			<section>
+				<div class="form-row">
+					<div class="form-group col-lg-6">
+						<label>Display As</label>
+						<br />
+						<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio" checked name="displayAs" value="tab" class="custom-control-input" id="displayAsTab">
+							<label class="custom-control-label" for="displayAsTab">Tab</label>
+
+						</div>
+						<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio" name="displayAs" value="accordination" class="custom-control-input" id="displayAsAccordination">
+							<label class="custom-control-label" for="displayAsAccordination">Accordination</label>
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+		</li>
+		<li>
+			<header>Left Navigation</header>
+			<section>
+				<div class="form-row">
+					<div class="form-group col-lg-6">
+						<label for="FormsNavigationsName">Model Name</label>
+						<input type="text" id="FormsNavigationsName" class="form-control" name="Forms[Navigations][Name]" value="@fm?.Forms?.Navigations?.Name">
+					</div>
+					<div class="form-group col-lg-6">
+						<label for="FormsNavigationsTitle">Model Title</label>
+						<input type="text" id="FormsNavigationsTitle" class="form-control" name="Forms[Navigations][Title]" value="@fm?.Forms?.Navigations?.Title">
+					</div>
+
+				</div>
+				<div class="form-row">
+					<div class="form-group col-lg-6">
+						<label for="FormsNavigationsIdentifier">Url Slug</label>
+						<input type="text" id="FormsNavigationsIdentifier" class="form-control" name="Forms[Navigations][Identifier]" value="@fm?.Forms?.Navigations?.Identifier">
+					</div>
+					<div class="form-group col-lg-6">
+						<label for="FormsNavigationsIcon">Icon</label>
+						<input type="text" id="FormsNavigationsIcon" class="form-control" name="Forms[Navigations][Icon]" value="@fm?.Forms?.Navigations?.Icon">
+					</div>
+
+				</div>
+			</section>
+		</li>
+		<li class="database-form">
+			<header>Database Setting</header>
+			<section>
+				@if (fm.Forms != null && fm.Forms.Tables != null && fm.Forms.Tables.Count() > 0)
+				{
+					<div class="tab-wrapper">
+						<div class="tabs">
+							<ul class="nav nav-tabs nav-tabs-custom" id="form-table" style="position: relative;">
+								@foreach (var table in fm.Forms.Tables)
+								{
+									string ActiveClass = "";
+									string aclass = "";
+									int IndexTable = fm.Forms.Tables.IndexOf(table);
+									string TableName = (Utils.ConvertToString(table.Name) == "") ? "Untitled" + IndexTable : table.Name;
+									if (IndexTable == 0)
+									{
+										ActiveClass = "active";
+										aclass = "active show";
+									}
+								<li class="@ActiveClass nav-item">
+									<a class="@aclass nav-link" data-toggle="tab" href="#@TableName">
+										@TableName
+										<div class="tabClose">
+											<span class="ri-close-circle-line" title="Delete tab" aria-hidden="true" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#@TableName").remove(); $(this).parents(".nav-item").remove();},OnCancelled:function(){this.close();}}'></span>
+										</div>
+
+									</a>
+								</li>
+
+								}
+
+							</ul>
+							<a class="prev" href="javascript:void(0)" role="button" data-slide="prev" id="pop-left" title="Previous">
+								<i class="ri-arrow-left-s-fill"></i>
+								<span class="sr-only">Previous</span>
+							</a>
+							<a class="next" href="javascript:void(0)" role="button" data-slide="next" id="pop-right" title="Next">
+								<i class="ri-arrow-right-s-fill"></i>
+								<span class="sr-only">Next</span>
+							</a>
+
+						</div>
+						<div class="add-table-tab">
+							<button type="button" class="btn btn-outline-secondary" data-action="form-table-clone" value="Add Table">
+								<i class="ri-add-line btn-icon__icon"></i> <span>Add Table</span>
+							</button>
+						</div>
+					</div>
+
+					<div class="tab-content">
+						@if (fm.Forms.Tables != null && fm.Forms.Tables.Count() > 0)
+						{
+
+
+							@foreach (var table in fm.Forms.Tables)
+							{
+								string readonlyval = "";
+
+								string ActiveClass = "";
+								int IndexTable = fm.Forms.Tables.IndexOf(table);
+								string TableName = (Utils.ConvertToString(table.Name) == "") ? "Untitled" + IndexTable : table.Name;
+								if (IndexTable == 0)
+								{
+									ActiveClass = "active show";
+								}
+								else
+								{
+									ActiveClass = "fade in";
+								}
+								if (Utils.ConvertToString(table.Name) != "" && !Utils.ConvertToString(table.Name).Contains("Untitled"))
+								{
+									readonlyval = "readonly";
+								}
+								int fieldIndex = 0;
+								<div id="@TableName" class="tab-pane @ActiveClass">
+									<div class="form-row pt-2">
+										<div class="form-group col-lg-6">
+											<label>Name</label>
+											<input type="text" @readonlyval class="form-control" name="Forms[Tables][@IndexTable][Name]" value="@TableName" />
+										</div>
+									</div>
+									<div class="table-responsive">
+										<table class="table table-custom">
+											<thead>
+												<tr>
+													<th>Field Name</th>
+													<th>Field Type</th>
+													<th>Size</th>
+													<th>Default</th>
+													<th>Nullable</th>
+													<th>Primary Key</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody id="table-body-scroll">
+												@{
+													if (table.Fields != null && table.Fields.Count > 0)
+													{
+														foreach (var field in table.Fields)
+														{
+															string nullablename = "nullable_" + IndexTable + "_" + fieldIndex;
+															string pkname = "primaryKey_" + IndexTable + "_" + fieldIndex;
+															<tr class="field-data-clone">
+																<td>
+																	<input type="text" class="form-control" name="Forms[Tables][@IndexTable][Fields][@fieldIndex][Name]" data-name="Forms[Tables][@IndexTable][Fields][{0}][Name]" value="@field?.Name" />
+																</td>
+																<td> 
+																	
+																		@Html.DropDownList("Forms[Tables][" + IndexTable + "][Fields][" + fieldIndex + "][Type]",
+																utils.DataTypeList().Select(g =>
+															new SelectListItem() { Text = g.Text, Value = g.Value, Selected = (field?.Type == g.Value) }),
+															new { @data_name = "Forms[Tables][" + IndexTable + "][Fields][{0}][Type]", @class = "custom-select" })
+																</td>
+																<td><input type="text" class="form-control" name="Forms[Tables][@IndexTable][Fields][@fieldIndex][Size]" data-name="Forms[Tables][@IndexTable][Fields][{0}][Size]" value="@field?.Size" /></td>
+																<td><input type="text" class="form-control" name="Forms[Tables][@IndexTable][Fields][@fieldIndex][Default]" data-name="Forms[Tables][@IndexTable][Fields][{0}][Default]" value="@field?.Default" /></td>
+																<td>
+		
+																	<div class="custom-control  custom-checkbox">
+																		<input type="checkbox" class="custom-control-input" name="Forms[Tables][@IndexTable][Fields][@fieldIndex][Nullable]" value="true" data-name="Forms[Tables][@IndexTable][Fields][{0}][Nullable]" checked="@field?.Nullable" id="@nullablename"/>
+																		<label class="custom-control-label" for="@nullablename"></label>
+																	</div>
+																</td>
+																<td>
+																	<div class="custom-control  custom-checkbox">
+																		<input type="checkbox" class="custom-control-input" name="Forms[Tables][@IndexTable][Fields][@fieldIndex][PrimaryKey]" value="true" data-name="Forms[Tables][@IndexTable][Fields][{0}][PrimaryKey]" checked="@field?.PrimaryKey" id="@pkname" />
+																		<label class="custom-control-label" for="@pkname"></label>
+		
+																	</div>
+																</td>
+																<td>
+																	<div class="field-controller">
+																		<a class="fc-icon icon-copy" data-action='clone-field' title="Copy row">
+																			<i class="ri-file-copy-line"></i>
+																			<span class="sr-only">Copy</span>
+																		</a>
+																		<a class="fc-icon icon-delete" data-action='remove-field' title="Delete row">
+																			<i class="ri-close-line"></i>
+																			<span class="sr-only">Delete</span>
+																		</a>
+																	</div>
+																</td>
+															</tr>
+															fieldIndex++;
+
+														}
+													}
+													else
+													{
+														<tr class="field-data-clone">
+															<td>
+
+																<input type="text" class="form-control" name="Forms[Tables][@IndexTable][Fields][0][Name]" data-name="Forms[Tables][@IndexTable][Fields][{0}][Name]" value="" placeholder="Field Name" />
+															</td>
+															<td>
+																@Html.DropDownList("Forms[Tables][" + IndexTable + "][Fields][0][Type]",
+																utils.DataTypeList().Select(g =>
+																		new SelectListItem() { Text = g.Text, Value = g.Value }),
+														new { @data_name = "Forms[Tables][" + IndexTable + "][Fields][{0}][Type]", @class = "custom-select" })
+															</td>
+
+															<td><input type="text" class="form-control" name="Forms[Tables][@IndexTable][Fields][0][Size]" value="" data-name="Forms[Tables][@IndexTable][Fields][{0}][Size]" placeholder="Field Size" /></td>
+															<td><input type="text" class="form-control" name="Forms[Tables][@IndexTable][Fields][0][Default]" value="" data-name="Forms[Tables][@IndexTable][Fields][{0}][Default]" placeholder="Default Value" /></td>
+															<td> 
+		
+																<div class="custom-control custom-checkbox">
+																	<input type="checkbox" class="custom-control-input" name="Forms[Tables][@IndexTable][Fields][0][Nullable]"  data-name="Forms[Tables][@IndexTable][Fields][{0}][Nullable]" value="true" id="nullable"/>
+		
+																	<label class="custom-control-label" for="nullable"></label>
+																</div>
+															</td>
+															<td>
+																<div class="custom-control custom-checkbox">
+																	<input type="checkbox" class="custom-control-input" name="Forms[Tables][@IndexTable][Fields][0][PrimaryKey]" data-name="Forms[Tables][@IndexTable][Fields][{0}][PrimaryKey]" value="true" id="primaryKey" />
+
+																	<label class="custom-control-label" for="primaryKey"></label>
+																</div>
+
+															</td>
+															<td>
+																<div class="field-controller">
+																	<a class="fc-icon icon-copy" data-action='clone-field' title="Copy row">
+																		<i class="ri-file-copy-line"></i>
+																		<span class="sr-only">Copy</span>
+																	</a>
+																	<a class="fc-icon icon-delete" data-action='remove-field' title="Delete row">
+																		<i class="ri-delete-bin-4-line"></i>
+																		<span class="sr-only">Delete</span>
+																	</a>
+																</div>
+															</td>
+														</tr>
+													}
+												}
+
+
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+							}
+						}
+					</div>
+				}
+				else
+				{
+					
+					<div class="tab-wrapper">
+						<div class="tabs">
+							<ul class="nav nav-tabs nav-tabs-custom" id="form-table" style="position: relative;">
+
+								<li class="active nav-item">
+								<a class="nav-link" data-toggle="tab" href="#Untitled">Untitled*
+									<div class="tabClose">
+										<span class="ri-close-circle-line" title="Delete tab" aria-hidden="true" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("[data-element-id=]").remove();$("").remove();},OnCancelled:function(){this.close();}}'></span>
+									</div>
+								</a>
+								</li>
+								
+
+							</ul>
+							<a class="prev" href="javacript:void(0)" role="button" data-slide="prev" id="pop-left" title="Previous">
+								<i class="ri-arrow-left-s-fill"></i>
+								<span class="sr-only">Previous</span>
+							</a>
+							<a class="next" href="javacript:void(0)" role="button" data-slide="next" id="pop-right" title="Next">
+								<i class="ri-arrow-right-s-fill"></i>
+								<span class="sr-only">Next</span>
+							</a>
+						</div>
+						<div class="add-table-tab">
+							<button type="button" class="btn btn-outline-secondary" data-action="form-table-clone" value="Add Table">
+								<i class="ri-add-line btn-icon__icon"></i> <span>Add Table</span>
+							</button>
+						</div>
+					</div>
+
+					<div class="tab-content">
+						<div id="Untitled" class="tab-pane fade in active">
+							<div class="form-row">
+								<div class="form-group col-lg-6">
+									<label>Name</label>
+									<input type="text" class="form-control" name="Forms[Tables][0][Name]" value="" placeholder="Table Name">
+								</div>
+
+							</div>
+							<div class="table-responsive">
+								<table class="table table-custom">
+									<thead>
+										<tr>
+											<th>Field Name</th>
+											<th>Field Type</th>
+											<th>Size</th>
+											<th>Default</th>
+											<th>Nullable</th>
+											<th>Primary Key</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="field-data-clone">
+											<td>
+
+												<input type="text" class="form-control" name="Forms[Tables][0][Fields][0][Name]" data-name="Forms[Tables][0][Fields][{0}][Name]" value="" placeholder="Field Name">
+											</td>
+											<td>
+												@Html.DropDownList("Forms[Tables][0][Fields][0][Type]",
+												utils.DataTypeList().Select(g =>
+														new SelectListItem() { Text = g.Text, Value = g.Value }),
+							new { @data_name = "Forms[Tables][0][Fields][{0}][Type]", @class = "custom-select" })
+											</td>
+
+											<td><input type="text" class="form-control" name="Forms[Tables][0][Fields][0][Size]" value="" data-name="Forms[Tables][0][Fields][{0}][Size]" placeholder="Field Size"></td>
+											<td> <input type="text" class="form-control" name="Forms[Tables][0][Fields][0][Default]" value="" data-name="Forms[Tables][0][Fields][{0}][Default]" placeholder="Default Value"></td>
+											<td>
+		
+												<div class="custom-control custom-checkbox">
+													<input type="checkbox" class="custom-control-input" name="Forms[Tables][0][Fields][0][Nullable]"  data-name="Forms[Tables][0][Fields][{0}][Nullable]" value="true" id="nullable">
+		
+													<label class="custom-control-label" for="nullable"></label>
+												</div>
+											</td>
+											<td>
+												<div class="custom-control custom-checkbox">
+													<input type="checkbox" class="custom-control-input" name="Forms[Tables][0][Fields][0][PrimaryKey]" data-name="Forms[Tables][0][Fields][{0}][PrimaryKey]" value="true" id="primaryKey">
+													<label class="custom-control-label" for="primaryKey"></label>
+												</div>
+											</td>
+											<td>
+												<div class="field-controller">
+													<a class="fc-icon icon-copy" data-action='clone-field' title="Copy Row">
+														<i class="ri-file-copy-line"></i>
+														<span class="sr-only">Copy</span>
+													</a>
+													<a class="fc-icon icon-delete" data-action='remove-field' title="Delete Row">
+														<i class="ri-file-copy-line"></i>
+														<span class="sr-only">Delete</span>
+													</a>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					</div>
+
+
+				}
+				<div hidden class=" tab-pane fade tab-content-clone" id="Untitled1">
+					<div class="form-row">
+						<div class="form-group col-lg-6">
+							<label>Name</label>
+							<input type="text" class="form-control" data-fb-name="Forms[Tables][{0}][Name]" value="" placeholder="Table Name">
+
+						</div>
+
+					</div>
+					<div class="table-responsive">
+						<table class="table table-custom">
+							<thead>
+								<tr>
+									<th>Field Name</th>
+									<th>Field Type</th>
+									<th>Size</th>
+									<th>Default</th>
+									<th>Nullable</th>
+									<th>Primary Key</th>
+									<th width="13%" class="text-white">....</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="field-data-clone">
+									<td>
+										<input type="text" class="form-control" data-name="Forms[Tables][{0}][Fields][{1}][Name]" value="" placeholder="Field Name" />
+									</td>
+									<td>
+										@Html.DropDownList("Forms[Tables][0][Fields][0][Type]_1",
+										utils.DataTypeList().Select(g =>
+												new SelectListItem() { Text = g.Text, Value = g.Value }),
+					new { @data_name = "Forms[Tables][{0}][Fields][{1}][Type]", @class = "custom-select" })
+									</td>
+
+									<td><input type="text" class="form-control" value="" data-name="Forms[Tables][{0}][Fields][{1}][Size]" placeholder="Field Size" /></td>
+									<td><input type="text" class="form-control" value="" data-name="Forms[Tables][{0}][Fields][{1}][Default]" placeholder="Default Value" /></td>
+									<td>
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input" data-name="Forms[Tables][{0}][Fields][{1}][Nullable]" value="true" id="nullable"/>
+											<label class="custom-control-label" for="nullable"></label>
+										</div>
+									</td>
+									<td>
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input" data-name="Forms[Tables][{0}][Fields][{1}][PrimaryKey]" value="true" id="primaryKey"/>
+											<label class="custom-control-label" for="primaryKey"></label>
+										</div>
+											
+									</td>
+									<td>
+										<div class="field-controller">
+											<a class="fc-icon icon-delete" data-action='clone-field' title="Copy row">
+												<i class="ri-file-copy-line"></i>
+												<span class="sr-only">Copy</span>
+											</a>
+											<a class="fc-icon icon-copy" data-action='remove-field' title="Delete row">
+												<i class="ri-delete-bin-4-line"></i>
+												<span class="sr-only">Delete</span>
+											</a>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</section>
+		</li>
+
+	</ul>
+</div>
+<script>
+	var offsetVal = 100;
+    $(document).on("click", "#pop-right", function (e) {
+        console.log("pop right");
+		let liEleRight = $(this).parent().parent().find('ul').first().find('li');
+		let ttRight = parseInt(liEleRight.first().css('width'));
+		let lastLi = parseInt(liEleRight.last().offset().left) + parseInt(liEleRight.last().css('width'));
+		let rightBot = parseInt($('#pop-right').offset().left);
+		let rightDistance = rightBot - lastLi;
+        if (rightDistance < 0) {
+			var leftValue = $('#form-table').css('left');
+            if (leftValue == "auto") {
+                leftValue = "0";
+            }
+            let foset = (parseInt(leftValue) - offsetVal + 50) + 'px';
+            $('#form-table').css('left', foset);
+
+		}
+		determineTableBottomToHide();
+	});
+	//left
+    $(document).on("click", "#pop-left", function (e) {
+                console.log("pop left");
+		let liEleLeft = $(this).parent().parent().find('ul').first().find('li');
+		let ttLeft = parseInt(liEleLeft.first().css('width'));
+
+        let firstLi = parseInt(liEleLeft.first().offset().left) + parseInt(liEleLeft.first().css('width'));;
+		let leftBot = parseInt($('#pop-left').offset().left);
+
+		let leftDistance = leftBot - firstLi;
+        if (leftDistance > -40) {
+			var leftValue = $('#form-table').css('left');
+            if (leftValue == "auto") {
+                leftValue = "0";
+            }
+			let foset = (parseInt(leftValue) + offsetVal) + 'px';
+			$('#form-table').css('left', foset);
+		}
+		determineTableBottomToHide();
+	});
+
+	function determineTableBottomToHide() {
+		let tabs = $('#form-table').first().find('li');
+		// console.log(tabs);
+
+		//left
+		let firstLi = parseInt(tabs.first().offset().left);
+		let leftBot = parseInt($('#pop-left').parent().offset().left);
+
+		// console.log( firstLi + ' || ' + leftBot);
+		let preLeftdistance = leftBot - firstLi;
+		//console.log(preLeftdistance);
+		if (preLeftdistance <= 10) {
+			$('#pop-left').hide();
+		} else {
+			$('#pop-left').show();
+		}
+
+		//right
+		let lastLi = parseInt(tabs.last('li').offset().left);
+		let rightBot = parseInt($('#pop-right').parent().offset().left);
+
+		console.log(lastLi + ' || ' + rightBot);
+		let preRightdistance = rightBot - lastLi;
+		console.log(preRightdistance);
+		if (preRightdistance >= 100) {
+			$('#pop-right').hide();
+		} else {
+			$('#pop-right').show();
+		}
+	}
+
+</script>

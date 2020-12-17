@@ -1,0 +1,385 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Cicero.Service.Services
+@using Cicero.Data.Entities
+@using Cicero.Service.Helpers
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserService _userService
+@inject IActivityLogService _activityLog
+@inject IMessageService _messageService
+@inject Cicero.Service.Helpers.Permission Permission
+@inject Globals GlobalValues
+@inject Utils utils
+
+@{
+    var user = UserManager.GetUserAsync(User);
+    var tenantList = await GlobalValues.CanAsync();
+    string tenant_identifier = utils.GetTenantFromSession();
+
+     string loggedUser = _userService.getLoggedInUserId();
+    int unreadMsgCount = _messageService.GetUnreadMessagesCount(loggedUser);
+    var unreadMsg = await _messageService.GetMessagesByUserIdOrMarkMessageAsRead(loggedUser, new List<int>());
+}
+
+<header class="header">
+    <!-- search starts -->
+    <!-- <div class="d-flex">
+        
+        <button class="navbar-toggler handheld-on" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon">
+                <i class="fas fa-bars"></i>
+            </span>
+        </button>
+        <a class="navbar-brand handheld-on" href="#">
+            <img src="~/admin/assets/img/site-logo.png" alt="Vesuvio Admin Template">
+        </a>
+
+    </div> -->
+    <!-- search ends -->
+    <!-- user control starts -->
+    <nav class="header__topbar">
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <a href="#" class="nav-link toggle-aside" data-toggle="tooltip" data-placement="right" title="Show/Hide Menu">
+                    <div class="nav-item-topbar__icon">
+                        <i class="ri-menu-2-line"></i>
+                    </div>
+                </a>
+            </li>
+            @if (Permission.Can(UserCan.Create_Tenant))
+            {
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="goto-selected">Choose a Tenant</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        @if (tenantList != null)
+                        {
+                            @foreach (var item in tenantList)
+                            {
+                                var isActive = "";
+                                if (item.Value == utils.GetTenantFromSession())
+                                {
+                                    isActive = "active";
+                                }
+                                <a href="#" class="dropdown-item @isActive" data-tenant-value="@item.Value" data-tenant-text="@item.Text">@item.Text</a>
+                            }
+                        }
+
+                    </div>
+                </li>
+            }
+            @if (Convert.ToBoolean(ViewData["TxnMgmtPage"]) == true)
+            {
+                <li class="nav-item">
+                    <a href="@Url.Content("~/admin.html")" title="Home" data-placement="right">
+                        <div class="nav-item-topbar__icon">
+                            <i class="ri-home-2-line"></i>
+                        </div>
+                    </a>
+                </li>
+            }
+            <li class="flex-grow-1"></li>
+            @if (Permission.Can(UserCan.Create_Role) && Permission.Can(UserCan.Admin_Layout) && Permission.Can(UserCan.Create_User) &&
+            Permission.Can(UserCan.Create_Queue) && Permission.Can(UserCan.Create_Form) && !Permission.Can(UserCan.Create_Tenant))
+            {
+                <li class="nav-item configuration">
+                    <a href="@Url.Content("~/admin.html#")" class="nav-link" data-toggle="tooltip" data-placement="right" title="Configuration">
+                        <div class="nav-item-topbar__icon">
+                            <i class="ri-settings-3-line"></i>
+                        </div>
+                    </a>
+                </li>
+            }
+
+
+            @*message show muted unmute later*@
+            @*<li class="dropdown notification notification-msg px-4">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="far fa-envelope"></i>
+            </a>
+        @{var unreadMsg = await _messageService.GetAllMessages();
+            var unreadMsgManager = await _messageService.GetMessagesByUserId(user.Result.Id);}
+        @if (Permission.Can(UserCan.Reply_All_Message))
+        {
+            @if (unreadMsg != null)
+            {
+                @if (unreadMsg.Count() > 0)
+                {
+                    <span class="notification-badge badge badge-danger badge-pill" id="notification-log-count">
+                        @unreadMsg.Where(x => x.IsRead == false).Count()
+                    </span>
+                }
+
+            }
+        }
+        else if (Permission.Can(UserCan.View_Message))
+        {
+            @if (unreadMsgManager != null)
+            {
+                @if (unreadMsgManager.Count() > 0)
+                {
+                    <span class="notification-badge badge badge-danger badge-pill" id="notification-log-count">
+                        @unreadMsgManager.Where(x => x.IsRead == false).Count()
+                    </span>
+                }
+            }
+        }
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-md notification-content" aria-labelledby="dropdownMenuLink">
+            <div class="notification-head d-flex justify-content-between">
+                <h6>Messages</h6>
+                //<a href="~/admin/0/message.html">Create New</a>
+        </div>
+        <div class="notification-body" id="message">
+            @if (unreadMsg != null && unreadMsg.Count() > 0)
+            {
+                @if (Permission.Can(UserCan.Reply_All_Message))
+                {
+                    @foreach (var item in unreadMsg)
+                    {
+                        <a href="@Url.Content("~/admin"+ utils.GetTenantForUrl(false) + "/" + utils.EncryptId(item.Id) +"/messages.html")">
+                            <div class="media">
+                                <div class="media-img circle">
+                                    <img class="" src="~/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(item.From, "default-avatar.png")" alt="Generic placeholder image">
+                                </div>
+                                <div class="media-body">
+                                    <p>
+                                        <strong>From: </strong> @item.NameSender
+                                        <strong>To: </strong>
+                                        @foreach (var name in item.NameReceiver)
+                                        {
+                                            @name
+                                            if (!item.NameReceiver.Last().Equals(name, StringComparison.Ordinal))
+                                            {
+                                                <span>, </span>
+                                            }
+                                        }
+                                        <strong>Subject: </strong>@item.Subject
+                                        <strong>Sent on: </strong>@item.CreatedAt
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+                else if (Permission.Can(UserCan.View_Message))
+                {
+                    @foreach (var item in unreadMsgManager)
+                    {
+                        <a href="@Url.Content("~/admin"+ utils.GetTenantForUrl(false) + "/" + utils.EncryptId(item.Id) +"/messages.html")">
+                            <div class="media">
+                                <div class="media-img circle">
+                                    <img class="" src="~/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(item.From, "default-avatar.png")" alt="Generic placeholder image">
+                                </div>
+                                <div class="media-body">
+                                    <p>
+                                        <strong>From: </strong>@item.NameSender
+                                        <strong>Subject: </strong>@item.Subject
+                                        <strong>Sent on: </strong>@item.CreatedAt
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+            }
+            else
+            {
+                <a href="#">
+                    <div class="media">
+                        <div class="media-body">
+                            <p>
+                                No items to display
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+        <div class="notification-foot text-right">
+            <a href="@Url.Content("~/admin"+ utils.GetTenantForUrl(false) + "/" + utils.EncryptId(0) +"/messages.html")">View All</a>
+        </div>
+        </div>
+        </li>*@
+            <li class="nav-item dropdown">
+                @if (Permission.Can(UserCan.View_Message))
+                {
+
+                    <a class="nav-link" href="#" id="" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Message</span>
+                        <span class="badge badge-danger badge-pill">@(unreadMsgCount == 0 ? "" : unreadMsgCount.ToString())</span>
+                        <div class="nav-item-topbar__icon" data-toggle="tooltip" data-placement="bottom" title="Message">
+                            <i class="ri-mail-line"></i>
+                        </div>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right border-0 shadow p-0" aria-labelledby="">
+
+                        <div class="notification" id="message">
+                            <form action="@Url.Content("/user/markMessageAsRead.html")" method="post">
+                                <div class="notification__header">
+                                    <h6 class="m-0 notifiction__header-title">Message</h6>
+                                    <button type="submit" class="btn btn-icon btn-light" @*data-toggle="tooltip" data-placement="top"*@ title="" data-original-title="Mark all as read">
+                                        <span class="sr-only">Clear all</span>
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
+                                </div>
+                            </form>
+                            <!--//.notification__header-->
+                            @if (unreadMsg != null)
+                            {
+                                @foreach (var item in unreadMsg.Take(8))
+                                {
+                                    if (item.IsRead == false)
+                                    {
+                                        <a class="notification__item notification__item--unread" href="@Url.Content("/admin/messageDetail.html?id=" + item.Id)">
+                                            <div class="notification__item-details">
+                                                <p class="mb-0 notification__item-title">
+                                                    @item.Subject
+                                                </p>
+                                                <small class="notification__item-sender sentby"><b><span class="sr-only">Sent by: </span>@item.NameSender</b></small>
+                                                <span class="text-secondary mx-1">&bull;</span>
+                                                <small class="sentdate text-muted notification__item-time">@Utils.GetDefaultDateFormatToDetail(item.CreatedAt)</small>
+                                            </div>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="notification__item notification__item--read" href="@Url.Content("/user/messageDetail.html?id=" + item.Id)">
+                                            <div class="notification__item-details">
+                                                <p class="mb-0 notification__item-title">@item.Subject</p>
+
+                                                <small class="notification__item-sender sentby"><b><span class="sr-only">Sent by: </span>@item.NameSender</b></small>
+                                                <span class="text-secondary mx-1">&bull;</span>
+                                                <small class="sentdate text-muted notification__item-time">@Utils.GetDefaultDateFormatToDetail(item.CreatedAt)</small>
+                                            </div>
+                                        </a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+
+                                <div class="d-flex justify-content-center align-items-center p-4">No Messages</div>
+
+                            }
+                            <div class="notification__footer">
+                                <a class="btn btn-light btn-block" href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/" + utils.EncryptId(0) + "/messages.html")">View all</a>
+                            </div>
+                            <!--//.notification__footer-->
+                        </div>
+                        <!--//.notification-->
+
+
+                    </div>
+
+                } //.Message alert
+
+                @*<div class="dropdown-menu dropdown-menu-right border-0 shadow" aria-labelledby="">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+            </div>*@
+            </li>
+
+            <li class="nav-item dropdown notification">
+                <a class="nav-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <!-- <i class="far fa-bell"></i> -->
+                    <div class="nav-item-topbar__icon" data-toggle="tooltip" data-placement="top" title="Notification">
+                        <i class="ri-notification-3-line"></i>
+                    </div>
+                    <span class="sr-only">Notifiction</span>
+
+                    @{var unreadLog = await _activityLog.GetUnreadActivityLog("ALL"); }
+                    @if (unreadLog.Count() > 0)
+                    {
+                        <span class="notification-badge badge badge-danger badge-pill" id="notification-log-count">
+                            @unreadLog.Count()
+                        </span>
+                    }
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0" aria-labelledby="dropdownMenuLink">
+                    <div class="notification">
+                        <div class="notification__header">
+                            <h6 class="m-0 notifiction__header-title">Notification</h6>
+                            <a class="btn btn-icon btn-light" href="#" onclick="javascript:Cicero.ActivityLog.NotificationRead()" data-toggle="tooltip" data-placement="bottom" title="Clear All">
+                                <span class="sr-only">Clear all</span>
+                                <i class="ri-check-double-line"></i>
+                            </a>
+                            @*<button class="btn btn-outline-danger px-2 py-0  mr-2 btn-rounded" data-id="" onclick='javascript:Cicero.ActivityLog.NotificationRead()'>Delete</button>*@
+                        </div>
+                        <div class="notification__body" id="notification-activity-log">
+                            @if (await _activityLog.GetUnreadActivityLog() != null)
+                            {
+                                @foreach (var item in await _activityLog.GetUnreadActivityLog("SOME"))
+                                {
+                                    <div class="notification__item notification__item--unread">
+                                        <div class="notification__item-user">
+                                            <a href="#">
+                                                <img class="rounded-circle" src="~/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(item.UserId, "default-avatar.png")" alt="Generic placeholder image" width="32" height="32">
+                                            </a>
+                                        </div>
+                                        <div class="notification__item-details">
+                                            <p class="mb-0 notification__item-title">@Html.Raw(item.Details)</p>
+                                            <small class="text-muted notification__item-time">5 days ago</small>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="notification__item">
+                                    <p class="mb-0">No items to display</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="notification__footer">
+                            <a class="btn btn-light btn-block" href="@Url.Content("/admin"+ utils.GetTenantForUrl(false)+ "/activity-notification.html")">view all</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link d-flex align-items-center" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="false">
+                    <div class="nav-item-topbar__user">
+                        <img class="rounded-circle" width="28" height="28" src="/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(UserManager.GetUserId(User),"default-avatar.jpg")" alt="Kishan Sharma">
+                        <span class="mx-2">
+                            @if (user.Result != null)
+                            {@user.Result.FirstName @user.Result.LastName}
+                        </span>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink1">
+                    <div class="user-card">
+                        <div class="user-card__avatar">
+                            <img class="" src="/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(UserManager.GetUserId(User),"default-avatar.jpg")" alt="...">
+                        </div>
+                        <div class="user-card__name">
+                            <h5 class="mb-0">
+                                @if (user.Result != null)
+                                {@user.Result.FirstName @user.Result.LastName}
+                            </h5>
+                            <p class="mb-0 text-muted">
+                                @if (user.Result != null)
+                                {@user.Result.Email}
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <a class="dropdown-item" href="~/admin/@utils.GetTenantForUrl(false)/profile.html">Profile Settings</a>
+                    @*<a class="dropdown-item" href="@Url.Content("~/admin"+utils.GetTenantForUrl(false)+"/user/"+user.Result.Id+"/edit.html")">Profile Settings</a>*@
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="@Url.Content("~/st/adminuser/signout.html")">Logout</a>
+                </div>
+            </li>
+            <!-- user control ends -->
+        </ul>
+    </nav>
+
+</header>
+<!-- //HEADER -->

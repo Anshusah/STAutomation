@@ -1,0 +1,100 @@
+.merge-fields-group {
+    h6 {
+        font-weight: normal;
+        padding-right: 1rem;
+        flex: 1;
+        margin: 0;
+    }
+    .field-ui-draggable {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: transparent;
+        cursor: grab;
+        border: 2px solid transparent;
+        padding: .5rem;
+        position: relative;
+        border-radius: 0.25rem;
+        .badge {
+            cursor: pointer;
+        }
+        &:hover {
+            border-color: var(--primary)!important;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
+            z-index: 100;
+            .drag-icon {
+                opacity: 1;
+            }
+            .field-actions {
+                opacity: 1;
+            }
+        }
+    }
+    .drag-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='10' viewBox='0 0 6 10'%3E%3Cg id='Group_1012' data-name='Group 1012' transform='translate(15362 7112)' opacity='0.2'%3E%3Ccircle id='Ellipse_1' data-name='Ellipse 1' cx='1' cy='1' r='1' transform='translate(-15362 -7112)'/%3E%3Ccircle id='Ellipse_6' data-name='Ellipse 6' cx='1' cy='1' r='1' transform='translate(-15358 -7112)'/%3E%3Ccircle id='Ellipse_2' data-name='Ellipse 2' cx='1' cy='1' r='1' transform='translate(-15362 -7108)'/%3E%3Ccircle id='Ellipse_5' data-name='Ellipse 5' cx='1' cy='1' r='1' transform='translate(-15358 -7108)'/%3E%3Ccircle id='Ellipse_3' data-name='Ellipse 3' cx='1' cy='1' r='1' transform='translate(-15362 -7104)'/%3E%3Ccircle id='Ellipse_4' data-name='Ellipse 4' cx='1' cy='1' r='1' transform='translate(-15358 -7104)'/%3E%3C/g%3E%3C/svg%3E%0A");
+        width: 6px;
+        height: 10px;
+        opacity: 0.4;
+        margin-right: 0.5rem;
+    }
+    .field-actions {
+        opacity: 0;
+    }
+}
+.merge-field-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    &[aria-expanded="true"] {
+        .fa-plus {
+            display: none;
+        }
+    }
+    &[aria-expanded="false"] {
+        .fa-minus {
+            display: none;
+        }
+    }
+    &:hover {
+        background: #f4f4f4;
+    }
+}
+.field-toggle {
+    width: 1.6rem;
+    height: 1.6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.field-text {
+    flex-grow: 1;
+}
+.field-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.field-icon {
+    padding: 0 .5rem;
+    cursor: pointer;
+}
+.merge-fields-draggable {
+    padding: 0.5rem;
+    margin: 0;
+    .ui-sortable-placeholder {
+        background: #F4F4F4!important;
+    }
+}
+.merge-fields-no-data {
+    text-align: center;
+    margin: 0;
+    pointer-events: none;
+}
+.textarea-container {
+    &.ui-state-active {
+        opacity: 0.5;
+    }
+}

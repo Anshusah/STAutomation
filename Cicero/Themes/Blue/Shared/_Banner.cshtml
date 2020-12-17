@@ -1,0 +1,15 @@
+﻿@using Cicero.Service.Services
+@inject IArticleService Article
+@{  
+var banner = Article.GetArticleByIdentifier("home-banner");
+if (banner != null && !string.IsNullOrEmpty(banner.Content))
+{
+    <div class="section promo progressive1 replace1">
+        <div class="container">
+            <div class="promo__content">
+                @Html.Raw(banner.Content)
+            </div>
+        </div>
+    </div>
+}
+}

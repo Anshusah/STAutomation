@@ -1,0 +1,119 @@
+.query-builder {
+    .rules-group-container {
+        background: #fbfbfb !important;
+    }
+
+    .rules-group-header {
+        display: flex;
+        justify-content: space-between;
+
+        .drag-handle {
+            margin-left: auto;
+        }
+    }
+
+    .rules-group-body {
+    }
+
+    .rules-list {
+    }
+
+    .rule-container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1rem !important;
+        background: #fff !important;
+    }
+
+    .rule-header {
+        margin-left: auto;
+        order: 5;
+    }
+
+    .rule-filter-container {
+    }
+
+    .rule-operator-container {
+    }
+
+    .rule-value-container {
+    }
+
+    .btn-default {
+        background: #fff;
+        border-color: #e6e6e6;
+    }
+
+    .btn-xs:not(.dropdown-toggle) {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 0.2rem;
+    }
+
+    .bootstrap-select {
+    }
+
+    .dropdown-toggle {
+        border: 1px solid #E6E6E6;
+        border-radius: 0.25rem;
+    }
+
+    .group-conditions {
+        margin-left: .5rem;
+    }
+
+    .drag-handle {
+    }
+
+    .glyphicon {
+        font-family: remixicon !important;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        margin-right: .5rem;
+
+        &-sort {
+            &:after {
+                content: "\ea72";
+            }
+        }
+
+        &-plus {
+            &:after {
+                content: "\ea11";
+            }
+        }
+
+        &-plus-sign {
+            &:after {
+                content: "\ea0f";
+            }
+        }
+
+        &-check {
+            &:after {
+                content: "\eb6d";
+            }
+        }
+
+        &-unchecked {
+            &:after {
+                content: "\eb67";
+            }
+        }
+
+        &-random {
+            &:after {
+                content: "\F084";
+            }
+        }
+
+        &-remove {
+            &:after {
+                content: "\eb7f";
+            }
+        }
+    }
+}

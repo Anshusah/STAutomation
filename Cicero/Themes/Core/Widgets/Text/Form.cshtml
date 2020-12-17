@@ -1,0 +1,23 @@
+﻿@using Themes.Core.Widgets
+@{
+    Text text = Model as Text;
+    string FormatChecked = "";
+    if (text.FormatContent == "1")
+    {
+        FormatChecked = " checked='checked' ";
+    }
+}
+<div class="form-group">
+    <label>Title</label>
+    <input class="form-control" type="text" name="Title" value="@text.Title">
+</div>
+<div class="form-group">
+    <label>Content</label>
+    <textarea class="form-control" type="text" style="height:200px;" name="Content">@text.Content</textarea>
+</div>
+<div class="form-group mb-1">
+    <label>
+        <input type="checkbox" name="FormatContent" value="1" @FormatChecked /> Format content with pragraph tags?
+    </label>
+    <small class="form-text text-muted float-right"><strong>Shortcode: </strong><b class="text-danger">[widget id="@Model.WidgetId"]</b></small>
+</div>

@@ -1,0 +1,133 @@
+﻿@using Cicero.Service.Models;
+@using Cicero.Service.Helpers;
+@model Cicero.Service.Models.SimpleTransfer.RateSupplierFeeConfigViewModel
+@inject Utils utils
+@inject Cicero.Service.Services.SimpleTransfer.IRateSupplierFeeConfigService IRateSupplierFeeConfigService
+@{
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Supplier Fee";
+}
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + "/RateSupplierFeeConfig.html")">Supplier Fee</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Supplier Fee</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Supplier Fee</h3>
+            <div class="page-toolbar">
+                <a href="@Url.Content("~/admin" + "/RateSupplierFeeConfig/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-fill"></i><span class="btn__label">Create New</span></a>
+            </div>
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="@Url.Content("~/admin" + "/RateSupplierFeeConfig/"+Model.Id+"/edit.html")" method="post" class="page-container grid-horizontal-viewport form-container">
+                <div class="page-body">
+                    <div class="form-wrapper">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="grid-column form-overview">
+                            <div class="form-group">
+                                <label class="control-label">Country</label>
+                                <select asp-for="CountryCode" class="custom-select countryList">
+                                    <option value="">Select Country</option>
+                                    @{
+                                        foreach (var ls in Model.CountryList)
+                                        {
+                                            <option value="@ls.Value">@ls.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="CountryCode" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Service</label>
+                                <select asp-for="PayoutModeId" class="custom-select countryList">
+                                    <option value="">Select Service</option>
+                                    @{
+                                        foreach (var ls in Model.PayoutModeList)
+                                        {
+                                            <option value="@ls.Value">@ls.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="PayoutModeId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Supplier</label>
+                                <select asp-for="SupplierId" class="custom-select countryList">
+                                    <option value="">Select Supplier</option>
+                                    @{
+                                        foreach (var ls in Model.SupplierList)
+                                        {
+                                            <option value="@ls.Value">@ls.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="SupplierId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UpperLimitAmount" class="control-label"></label>
+                                <input asp-for="UpperLimitAmount" class="form-control" />
+                                <span asp-validation-for="UpperLimitAmount" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="LowerLimitAmount" class="control-label"></label>
+                                <input asp-for="LowerLimitAmount" class="form-control" />
+                                <span asp-validation-for="LowerLimitAmount" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="FeeAmount" class="control-label"></label>
+                                <input asp-for="FeeAmount" class="form-control" />
+                                <span asp-validation-for="FeeAmount" class="text-danger"></span>
+                            </div> 
+                            <div class="form-group">
+                                <label asp-for="FeePercentage" class="control-label"></label>
+                                <input asp-for="FeePercentage" class="form-control" />
+                                <span asp-validation-for="FeePercentage" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Remark" class="control-label"></label>
+                                <input asp-for="Remark" class="form-control" />
+                                <span asp-validation-for="Remark" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Created At</label>
+                                <input type="text" value="@Model.CreatedDate" name="CreatedDate" id="CreatedDate" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                            </div>
+                            <div class="form-group">
+                                <label>Last updated</label>
+                                <input type="text" value="@Model.UpdatedDate" name="UpdatedDate" id="UpdatedDate" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label><br />
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    @Html.RadioButtonFor(model => model.Status, true, new { @id = "enable", @class = "custom-control-input" })
+                                    <label class="custom-control-label" for="enable">Active</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    @Html.RadioButtonFor(model => model.Status, false, new { @id = "disable", @class = "custom-control-input" })
+                                    <label class="custom-control-label" for="disable">Inactive</label>
+                                </div>
+                            </div>
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                                <a class="btn btn-outline-secondary btn-back" href="@Url.Content("/admin" +  "/RateSupplierFeeConfig.html")">Go back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+

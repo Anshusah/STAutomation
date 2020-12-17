@@ -1,0 +1,25 @@
+.footer {
+    padding-top: 3rem;
+    border-top: 1px solid $gray-200;
+    background: #fff;
+    .list-unstyled {
+        a {
+            color: $body-color;
+        }
+    }
+}
+.footer-alt {
+    padding: 1rem;
+    background: transparent;
+    border: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.social-media li {
+    margin: 0 0.5rem;
+}
+.footer-brand {
+    display: inline-block;
+}

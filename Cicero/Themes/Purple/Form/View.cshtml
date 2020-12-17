@@ -1,0 +1,420 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model CaseViewModel
+@inject ICaseService caseService
+@inject Permission Permission
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Claim";
+    dynamic data = new object();
+    ViewData["body"] = "full-layout";
+    if (Model.Id != 0)
+    {
+        data = Json.Serialize((dynamic)ViewBag.formData);
+    }
+    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+
+    Cicero.Service.Models.Core.FormBuilder FB = new Cicero.Service.Models.Core.FormBuilder() { FormData = fbvm, Side = "frontend", HttpContext = HttpContextAccessor.HttpContext };
+
+}
+
+
+<!-- container s -->
+<style>
+    .case-view-page {
+        background-color: #fff;
+    }
+
+    .claim-detail-header {
+        font-weight: bold;
+    }
+
+    .list {
+        color: rgba(0, 0, 0,.6)
+    }
+
+    .detail-info-list li {
+        width: 60%;
+    }
+
+    .detail-info-list .detail-info-title {
+        color: rgba(0, 0, 0,.6)
+    }
+
+    .detail-info-list .detail-info-value {
+        float: right;
+        color: rgba(0, 0, 0,1)
+    }
+
+    .damage-detail-list {
+        margin: 15px 0;
+    }
+
+    li.damage-detail-list span {
+        display: block;
+    }
+
+        li.damage-detail-list span.damage-detail-value {
+            color: rgba(0, 0, 0,1);
+        }
+
+    li.claim-circumstances-list {
+        padding: 15px 0;
+    }
+
+        li.claim-circumstances-list:not(:last-child) {
+            border-bottom: 1px solid #E6E6E6;
+        }
+
+    .claim-circumstances-list span {
+        /* padding: 10px; */
+        display: block;
+    }
+
+        .claim-circumstances-list span.claim-circumstances-ques {
+            color: rgba(0, 0, 0,1);
+            padding-bottom: 12px;
+            font-weight: bold;
+        }
+
+    .image-wrapper {
+        position: relative;
+        margin: 0 -15px;
+        height: 560px;
+        background: url(/Themes/Purple/img/view-bg-img.png) center center no-repeat;
+        background-size: cover;
+    }
+
+    .img-slider {
+        display: flex;
+        top: 50%;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        z-index: 2;
+        background: rgba(255, 255, 255, .5);
+        border-radius: 500px;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .img-slider:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .img-slider.prev {
+            left: 40px;
+        }
+
+        .img-slider.next {
+            right: 40px;
+        }
+
+    .ad-img-wrapper .img-container {
+        border: 1px solid #CED4DA;
+        padding: 32px;
+        border-radius: 3px;
+    }
+    .case__top {
+        padding: 2rem;
+        background: #fff;
+    }
+    .case__top .breadcrumb {
+        padding: 0;
+        background: transparent;
+    }
+    .case__header-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+    .case__action {
+        text-align: right;
+    }
+    .case__title-text {
+        display: inline;
+        vertical-align: middle;
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .case__meta {
+        margin-top: 0.5rem;
+    }
+    .case__type-name {
+        display: inline;
+    }
+    .case__created-time {
+        display: inline;
+        margin-left: 0.5rem;
+    }
+    .dot-separator {
+        position: relative;
+        padding-left: 1rem;
+    }
+    .dot-separator:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 3px;
+        height: 3px;
+        background: #ccc;
+        border-radius: 10em;
+    }
+    .case__content {
+        padding: 2rem;
+    }
+    .case__list {
+        margin-bottom: 0;
+    }
+    .case__item {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #E6E6E6;
+        padding: 1rem 0;
+    }
+    .case__item:last-child {
+        border-bottom: 0;
+    }
+    .case__list--stacked .case__item {
+        flex-direction: column;
+    }
+    .case__label {
+        color: #666;
+        margin-right: 1rem;
+    }
+    .case__data {
+        text-align: right;
+    }
+    .case__list--stacked .case__data {
+        text-align: left;
+    }
+    .card--case {
+        border: 0;
+        height: 100%;
+    }
+    .card--case .card-body {
+        padding: 2rem;
+    }
+</style>
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <main role="main" class="main-content">
+                <div class="absolute-fill">
+                    <div class="main-content-area">
+                        <section class="section-claim-info">
+                            <div class="case__top">
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                        <li class="breadcrumb-item"><a href="#">Claims</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Overview</li>
+                                    </ol>
+                                </nav>
+                                <div class="case__header-wrapper">
+                                    <div class="case__header">
+                                        <div class="case__title">
+                                            <h1 class="case__title-text">
+                                                <span class="title">Claim ID:</span>
+                                                <span class="value">@Model.CaseGeneratedId</span>
+                                            </h1>
+                                            <span class="badge badge-success badge-pill py-2 px-3 ml-2">@Model.QueueName</span>
+                                        </div>
+                                        <div class="case__meta">
+                                            <div class="case__type-name">@Model.CaseFormName</div>
+                                            <div class="case__created-time text-muted small dot-separator">Created on @Model.CreatedAt.ToLongDateString()</div>
+                                        </div>
+                                    </div>
+                                    <div class="case__action">
+                                        <div class="mb-1">
+                                            <a href="@Url.Content("~/admin/form"+ _utils.GetTenantForUrl(false) +"/" + Model.CaseFormUrl + "/" + _utils.EncryptId(Model.Id) + "/edit.html")" class="btn btn-outline-secondary">Edit</a>
+                                            <a href="#" class="btn btn-danger">Delete</a>
+                                        </div>
+                                        <div class="text-muted small">Last updated on @Model.UpdatedAt.ToLongDateString()</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="case__content">
+                                @Html.Raw(FB.RenderView2(data))
+                            </div>
+                           
+
+                        </section>
+
+
+
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</div>
+<!-- container e -->
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+
+@*@if (Model.Id != 0)
+{
+
+    <script>
+            $(function () {
+        var allValues = JSON.parse('@data');
+         $.each(allValues, function (k, v) {
+            if ($('[name="' + k + '"]').attr('multiple') == 'multiple') {
+                $.each(v.split(","), function (i, e) {
+                    $("[name='" + k + "'] option[value='" + e + "']").prop("selected", true);
+                });
+            }
+            else if ($('[name="' + k + '"]').attr('type') == 'radio')
+            {
+                $("[name='" + k + "']").removeAttr("checked");
+                $("[name='" + k + "'][value='" + v + "']").prop("checked",true);
+            }
+            else {
+                $('[name="' + k + '"]').val(v);
+            }
+
+        });
+
+        });
+    </script>
+}*@
+@section Scripts{
+    <script src="~/js/inputmask.js"></script>
+    <script src="~/js/jquery.inputmask.bundle.js"></script>
+    <script src="~/js/form_builder_render_frontendtab.js"></script>
+    <script src="~/js/form_builder_form_validation.js"></script>
+    <script type="text/javascript">
+
+        jQuery(document).ready(function () {
+
+            getcountrylist("");
+            function getcountrylist(thisdata) {
+                let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin"+_utils.GetTenantForUrl(false) + "/country-list")",
+                    //data: ,
+                    success: function (d) {
+                        if (d != null) {
+                            $.each(d, function (k, l) {
+                                //console.log($(thisdata).attr("id"));
+                                //  if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                $("#" + $(".country").attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                //  }
+                            })
+                        }
+                    }
+                });
+            }
+
+        });
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+    </script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.number').number(true, 2);
+            $(document).on("keypress", ".datepicker", function (e) {
+                e.preventDefault();
+            });
+
+            $(document).on("keypress", ".datetimepicker", function (e) {
+                e.preventDefault();
+            });
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+        });
+
+        //country list populate
+        function getcountrylist(thisdata) {
+            let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/country-list")",
+                        //data: ,
+                        success: function (d) {
+                            if (d != null) {
+
+                                $.each(d, function (k, l) {
+                                    console.log($(thisdata).attr("id"));
+                                    if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                        $("#" + $(thisdata).attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                    }
+                                })
+                            }
+                        }
+                });
+        };
+        //save to draft
+        $(document).on("click", "#save-btn", function (e) {
+            var url = "@Url.Content("/admin/form/" + @_utils.GetTenantForUrl(true) + @_utils.GetParams("form") + "/" + @_utils.EncryptId(Model.Id) + "/edit.html")";
+
+            window.location = url;
+        });
+        //send claim
+
+    </script>
+}

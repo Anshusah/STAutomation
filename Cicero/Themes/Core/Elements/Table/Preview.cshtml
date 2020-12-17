@@ -1,0 +1,72 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@using Cicero.Service.Services
+@model Cicero.Service.Models.Core.Elements.Table
+@inject ICommonService commonService
+@inject IUserService UserService
+@{
+Table tb = Model as Table;
+////string role = UserService.getUserRoleIdByLoggedInUser();
+////var Roledata = tb?.Permissions?.Where(p => p.RoleId == role).FirstOrDefault();
+///
+
+}
+
+    <div class="fb-element">
+        <div class="form-group px-2 table-responsive">
+            <table class="@tb.BackendClass">
+                <thead>
+                    @if (tb.Header != null && tb.Header.Count > 0)
+                    {
+                        var parents = tb.Header.Where(x => x.ParentId == "0").ToList();
+                        if (parents.Count > 0)
+                        {
+                            <tr>
+                                @foreach (var parent in parents)
+                                {
+                                    int col = tb.Header.Where(x => x.ParentId == parent.HeaderId).Count();
+                                    <th @Html.Raw(parent.Attribute) colspan="@parent.Colspan">@parent.HeaderTitle</th>
+                                }
+                            </tr>
+                        }
+                        if(parents.Count>0)
+                        {
+                            <tr>
+                                @foreach(var parent in parents)
+                                {
+                                    var children = tb.Header.Where(x => x.ParentId == parent.HeaderId).ToList();
+                                    foreach(var child in children)
+                                    {
+                                        <th @Html.Raw(child.Attribute) colspan="@child.Colspan"> @child.HeaderTitle</th>
+                                    }
+                                }
+                            </tr>
+                        }
+
+                    }
+                    @*@if (tb.Column != null && tb.Column.Count > 0)
+                    {
+                        int index = 0;
+                            <tr>
+
+                                @foreach (var co in tb.Column)
+                                {
+                                    string title = "column" + index;
+
+                                    if (co.Caption != null)
+                                    {
+                                        <th class="@co.Setting.BackendClass">@co.Caption</th>
+                                    }
+                                    else
+                                    {
+                                        <th class="">@title</th>
+                                    }
+
+                                    index++;
+                                }
+                            </tr>
+                    }*@
+                </thead>
+           </table>
+        </div>
+    </div>
+

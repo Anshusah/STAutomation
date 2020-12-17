@@ -1,0 +1,465 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model UserViewModel
+@inject IUserService _userService
+@inject IMediaService _mediaService
+@inject ICommonService commonService
+@inject ISkillSetService SkillSetService
+@inject Permission Permission
+@inject Utils utils
+
+@{
+
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " User";
+    var tenantId = commonService.GetTenantIdByIdentifier(utils.GetTenantFromSession());
+    var groupList = await _mediaService.GetMediaGroup(tenantId);
+}
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/users.html")">Users</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) User</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Users</h3>
+            @if (Permission.Can(UserCan.Create_User))
+            {
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/user/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-fill"></i><span class="btn__label">Create New</span></a>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/user/"+Model.Id+"/edit.html")" method="post" class="page-container grid-horizontal-viewport">
+                <div class="page-aside">
+                    <div class="aside-wrapper">
+                        <div class="aside-header">
+                            <h5>Manage Users</h5>
+                            <p>This section helps you to add/edit or delete Users. Please make changes on required fields and Click on "Save Change" buttons.</p>
+                        </div>
+                        <div class="aside-body">
+                            <div class="form-group">
+                                <label>Status</label><br />
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    @Html.RadioButtonFor(model => model.Status, 1, new { @id = "enable", @class = "custom-control-input" })
+                                    <label class="custom-control-label" for="enable">Active</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    @Html.RadioButtonFor(model => model.Status, 0, new { @id = "disable", @class = "custom-control-input" })
+                                    <label class="custom-control-label" for="disable">Inactive</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Created</label>
+                                <input type="text" value="@Model.CreatedAt" name="CreatedAt" id="CreatedAt" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                            </div>
+                            <div class="form-group">
+                                <label>Last updated</label>
+                                <input type="text" value="@Model.UpdatedAt" name="UpdatedAt" id="UpdatedAt" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="form-wrapper">
+                        @Html.AntiForgeryToken()
+                        <div class="status"></div>
+                        <div asp-validation-summary="All" role="alert"></div>
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="TenantId" value="@Model.TenantId" />
+                        <div class="form-body">
+
+                            @*<div class="form-group">
+                                    <label>Status</label><br />
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        @Html.RadioButtonFor(model => model.Status, 1, new { @id = "enable", @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="enable">Active</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        @Html.RadioButtonFor(model => model.Status, 0, new { @id = "disable", @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="disable">Inactive</label>
+                                    </div>
+                                </div>*@
+
+                            <div class="form-group d-none">
+                                @Html.LabelFor(model => model.UserId, htmlAttributes: new { @class = "required" })
+                                <input asp-for="UserId" class="form-control" autocomplete="off" />
+                                @Html.ValidationMessageFor(m => m.UserId, "", new { @class = "text-danger" })
+                            </div>
+
+                            @*<div class="form-group">
+                                    <label>Created</label>
+                                    <input type="text" value="@Model.CreatedAt" name="CreatedAt" id="CreatedAt" class="form-control-plaintext" readonly="readonly" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Last updated</label>
+                                    <input type="text" value="@Model.UpdatedAt" name="UpdatedAt" id="UpdatedAt" class="form-control-plaintext" readonly="readonly" />
+                                </div>*@
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "required" })
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "required" })
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="RoleId"></label>
+                                        <select asp-for="RoleId" class="custom-select" asp-items="Model.RoleList">
+                                            <option value="">Select Category</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label asp-for="UserSkillSetId"></label>
+                                        <select asp-for="UserSkillSetId" class="custom-select" asp-items="SkillSetService.GetAllSkillSetForTenant()">
+                                            <option value="0">Not Applicable</option>
+                                        </select>
+                                        <small class="form-text text-muted">Select Not Applicable if unnecessary.</small>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "required" })
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group ">
+                                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "" })
+                                        @Html.PasswordFor(model => model.Password, new { @class = "form-control", id = "Password", data_val = "false", autocomplete = "new-password" })
+                                        @if (Model.Id != "0")
+                                        {
+                                            <small class="form-text text-muted">Leave it as blank if you want to keep old Password.</small>
+                                        }
+                                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "" })
+                                        @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "required" })
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "required" })
+                                @Html.TextAreaFor(model => model.Address, new { @class = "form-control", data_val = "false" })
+                                @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group">
+                                <button type="button" data-toggle="modal" data-target="#assignGroupModal" class="btn btn-outline-secondary">Assign Group</button>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="fileuploader fileuploader--theme-avatar p-0 align-items-start">
+                                    <div class="fileuploader__wrapper" style="display: none">
+                                        <div class="fileuploader__list">
+                                            <ul class="media-list fileuploader__items">
+                                                @foreach (var item in _userService.GetImagesByUserId(Model.Id).Take(1))
+                                                {
+                                                    @if (System.IO.Path.GetExtension(item.Url) == ".pdf")
+                                                    {
+                                                        <li class="thumbs fileuploader__item">
+                                                            <a href="javascript:void(0)">
+                                                                <img src="/uploads/pdf-icon.png">
+                                                                <i class="fas" aria-hidden="true">
+                                                                    <img src='/frontend/img/delete.png' />
+                                                                </i>
+                                                            </a>
+                                                            <input type="hidden" name="images[]" value="@item.Id">
+                                                        </li>
+                                                    }
+                                                    else if (System.IO.Path.GetExtension(item.Url) == ".doc" || System.IO.Path.GetExtension(item.Url) == ".docx" || System.IO.Path.GetExtension(item.Url) == ".txt")
+                                                    {
+                                                        <li class="thumbs fileuploader__item">
+                                                            <a href="javascript:void(0)">
+                                                                <img src="/uploads/doc-icon.png">
+                                                                <i class="fas" aria-hidden="true">
+                                                                    <img src='/frontend/img/delete.png' />
+                                                                </i>
+                                                            </a>
+                                                            <input type="hidden" name="images[]" value="@item.Id">
+                                                        </li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="thumbs fileuploader__item">
+                                                            <div class="fileuploader__item-image">
+                                                                <img src="/uploads/@item.Url">
+                                                                <!-- <i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i> -->
+                                                            </div>
+                                                            <div class="actions-holder">
+                                                                <button class="btn fileuploader__action fileuploader__action-remove" type="button" title="Remove">
+                                                                    <i class="fileuploader__icon-remove remixicon-close-circle-fill" aria-hidden="true"></i>
+                                                                </button>
+                                                            </div>
+                                                            <input type="hidden" name="images[]" value="@item.Id">
+                                                        </li>
+                                                    }
+                                                }
+                                                <!-- <li class="thumbs add fileuploader__input"><button type="button" class="btn btn-link fileuploader__input-button" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.User.InsertImages(e)},OnCancelled:function(){this.close();}}'>Browse</button></li> -->
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="thumbs add fileuploader__input">
+                                        <button type="button" class="btn btn-outline-secondary fileuploader__input-button" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.User.InsertImages(e)},OnCancelled:function(){this.close();}}'>Upload profile picture</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<input type="text" name="Ids" id="Ids" value="[]" hidden />*@
+                        <div id="assignGroupModal" class="modal fade" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Assign Group</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group group-add__form">
+                                            <label for="inputGroupName">Add new group</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="inputGroupName" id="inputGroupName" onkeydown="return (event.keyCode!=13);" placeholder="Type group name">
+                                                <div class="input-group-append">
+                                                    <button type="button" id="addGroupBtn" class="btn btn-outline-secondary">Add</button>
+                                                </div>
+                                            </div>
+                                            <span id="inputGroupNameSpan" class="text-danger"></span>
+                                        </div>
+
+                                        @foreach (var item in groupList)
+                                        {
+                                            var c = "";
+                                            if (Model.Ids != null && Model.Ids.Contains(item.Id.ToString()))
+                                            {
+                                                c = "checked";
+                                            }
+                                            <div class="form-group group-add__item">
+                                                <div class="checkboxDiv group-add__checkbox">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" name="Ids" value="@item.Id" @c class="custom-control-input" id="gid_@item.Id" /><label class="custom-control-label" for="gid_@item.Id">@item.Title</label>
+                                                    </div>
+                                                </div>
+                                                <div class="group-add__form-edit">
+                                                    <div class="group-add__form-control">
+                                                        <input type="text" class="form-control groupName">
+                                                    </div>
+                                                    <div class="group-add__form-actions">
+                                                        <div class="group-add__form-action-save">
+                                                            <button type="button" class="btn btn-link btn-sm saveEditGroupBtn" data-mediaid="@item.Id" title="Save">Save</button>
+                                                            <button type="button" class="btn btn-link btn-sm cancelEditGroupBtn" title="Cancel">Cancel</button>
+                                                        </div>
+                                                        <div class="group-add__form-action-edit">
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm editGroupBtn" data-mediaid="@item.Id" title="Edit"><i class="ri-pencil-line"></i><span class="sr-only">Edit</span></button>
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){deleteGroup(@item.Id);},OnCancelled:function(){this.close();}}' data-mediaid="@item.Id" title="Delete"><i class="ri-close-line"></i><span class="sr-only">Delete</span></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        @*<button type="button" class="btn btn-primary">Save</button>*@
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-footer">
+                            @if ((Model.Id == "0" && Permission.Can(UserCan.Create_User)) || (Model.Id != "0" && Permission.Can(UserCan.Update_User)) || (Model.Id == _userService.getLoggedInUserId() && Permission.Can(UserCan.Edit_Profile)))
+                            {
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                            }
+                            <a class="btn btn-outline-secondary btn-back" href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/users.html")">Go back</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        roleSkillSetActive();
+    });
+
+    $('#RoleId').on('change', function () {
+        roleSkillSetActive();
+    });
+
+    //hide show skill set depending on which side the role is for
+    function roleSkillSetActive() {
+
+        var roleSides = @Html.Raw(ViewBag.RoleSide);
+        var roleVal = $("#RoleId").val();
+        var roleside = $("#UserSkillSetId").val();
+        $.each(roleSides, function (i, v) {
+            if (roleVal == v.Value && v.Text == "backend") {
+                if (roleside == "0") {
+                    $("#UserSkillSetId").val("");
+                }
+                $("#UserSkillSetId").val(roleside);
+                $("#UserSkillSetId").show();
+                $("#UserSkillSetId").siblings("label").show();
+                $("#UserSkillSetId").siblings("small").show();
+                return false;
+            }
+            else {
+                $("#UserSkillSetId").val("0");
+                $("#UserSkillSetId").hide();
+                $("#UserSkillSetId").siblings("label").hide();
+                $("#UserSkillSetId").siblings("small").hide();
+            }
+        });
+    }
+
+    $('#addGroupBtn').on('click', function () {
+        var groupName = $('#inputGroupName').val();
+
+        if (groupName == "") {
+            $('#inputGroupNameSpan').text("Please type group name.");
+            return false;
+        }
+
+        if (groupName.length > 20) {
+            $('#inputGroupNameSpan').text("Please type group name less than 20 characters.");
+            return false;
+        }
+
+        var url = '/admin/mediaGroup/creategroup.html?groupName=' + groupName;
+        $.post(url, function (result) {
+            if (result != 0) {
+                $('#inputGroupName').val(null);
+                var dataConfirm = '{OnInit:function(){this.size="";this.title="Confirm";this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){deleteGroup(' + result + ');},OnCancelled:function(){this.close();}}';
+
+                var datas = '<div class="group-add__form-edit">' +
+                    '<div class="group-add__form-control"><input type="text" class="form-control groupName"></div>' +
+                    '<div class="group-add__form-actions">' +
+                    '<div class="group-add__form-action-save">' +
+                    '<button type="button" class="btn btn-link btn-sm saveEditGroupBtn" data-mediaid="' + result + '" title="Save">Save</button>' +
+                    '<button type="button" class="btn btn-link btn-sm cancelEditGroupBtn" title="Cancel">Cancel</button>' +
+                    '</div>' +
+                    '<div class="group-add__form-action-edit">' +
+                    '<button type="button" class="btn btn-outline-secondary btn-sm editGroupBtn" data-mediaid="' + result + '" title="Edit"><i class="ri-pencil-line"></i><span class="sr-only">Edit</span></button>' +
+                    '<button type="button" class="btn btn-outline-secondary btn-sm deleteGroupBtn" data-mediaid="' + result + '" title="Delete"><i class="ri-close-line"></i><span class="sr-only">Delete</span></button>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+
+                var divData = '<div class="form-group group-add__item"><div class="group-add__checkbox"><div class="custom-control custom-checkbox"><input type="checkbox" name="Ids" class="custom-control-input" value="' + result + '" id="gid_' + result + '"><label class="custom-control-label" for="gid_' + result + '">' + groupName + '</label></div></div>' + datas + '</div>';
+                $('.modal-body').append(divData);
+                $('button.deleteGroupBtn[data-mediaid=' + result + ']').attr("data-confirm", dataConfirm)
+            }
+        })
+    })
+
+    $('#inputGroupName').on('keyup', function () {
+        var value = $(this).val();
+        $('#inputGroupNameSpan').text("");
+        if (value == "") {
+            $('#inputGroupNameSpan').text("Please type group name.");
+        }
+
+    })
+
+    $(document).on('click', '.editGroupBtn', function () {
+        //debugger
+        var value = $(this).parents('.group-add__item').find('.custom-control-label').text();
+        $(this).parents(".group-add__item").addClass("group-add--edit");
+        $(this).parents('.group-add__item').find('.groupName').val(value);
+    })
+
+    $(document).on('click', '.saveEditGroupBtn', function () {
+        //debugger
+        var thisEvent = $(this);
+        var groupName = $(this).parents('.group-add__item').find('.groupName').val();
+
+        if (groupName == "") {
+            toastr.warning("Please type group name.");
+            return false;
+        }
+
+        if (groupName.length > 20) {
+            toastr.warning("Please type group name less than 20 characters.");
+            return false;
+        }
+
+        var mediaId = $(this).attr('data-mediaid');
+        var url = '/admin/mediaGroup/creategroup.html?groupName=' + groupName + "&mediaId=" + mediaId;
+        $.post(url, function (result) {
+            if (result != 0) {
+                thisEvent.parents('.group-add__item').find('.custom-control-label').text(groupName);
+                thisEvent.parents(".group-add__item").removeClass("group-add--edit");
+            }
+        })
+    })
+
+    function deleteGroup(id) {
+        //debugger
+        var url = '/admin/media/remove.html?mediaId=' + id;
+        $.post(url, function (result) {
+            if (result) {
+                $('button[data-mediaid=' + id + ']').parents('.form-group').remove();
+            }
+        })
+    }
+
+    //$(document).on('click', '.deleteGroupBtn', function (e) {
+    //    //debugger
+    //    var thisEvent = $(this);
+    //    var mediaId = $(this).attr('data-mediaid');
+    //    var url = '/admin/media/remove.html?mediaId=' + mediaId;
+    //    $.post(url, function (result) {
+    //        if (result) {
+    //            thisEvent.parents('.form-group').remove();
+    //        }
+    //    })
+    //})
+
+    $(document).on('click', '.cancelEditGroupBtn', function (e) {
+        $(this).parents(".group-add__item").removeClass("group-add--edit");
+    })
+</script>

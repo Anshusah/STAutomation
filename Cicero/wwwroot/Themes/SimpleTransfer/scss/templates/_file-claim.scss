@@ -1,0 +1,134 @@
+$alpha: 48%;
+.module-header {
+    // p {
+    //     font-size: 1.25rem;
+    //     max-width: 404px;
+    //     margin: auto;
+    // }
+}
+.module-selector {
+    &--frontend {
+        h3 {}
+    }
+}
+
+.module-type {
+    margin-bottom: .5rem;
+    color: $gray-600;
+    @media (min-width: 768px) {
+        height: 80px;
+    }
+    &--icon {
+        font-size: 4rem;
+    }
+    &--img {}
+}
+
+.module-content {
+    border: 2px solid var(--primary);
+    background-color: lighten($color: $primary, $amount: $alpha);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.25rem;
+}
+.module-tab {
+    border: 1px solid rgba(0, 0, 0, 0.125)!important;
+    position: relative;
+    text-decoration: none!important;
+    transition: all 250ms linear;
+    color: #2b2b2b;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #fff;
+    cursor: pointer;
+    &:hover, &.show {
+        background-color: lighten($color: $primary, $amount: $alpha);
+        border-color: transparent!important;
+        box-shadow: 0 0 0 2px $primary;
+        color: #2b2b2b;
+    }
+    &.disabled {
+        background-color:#f4f4f4;
+        opacity: 0.8;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+}
+.module-tab .fa-check-circle {
+    position: absolute;
+    font-size: 1.142857142857143rem;
+    right: 1rem;
+    top: 1rem;
+    color: $primary;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 100ms 100ms 0 linear;
+}
+.module-tab.show .fa-check-circle {
+    visibility: visible;
+    opacity: 1;
+    transition: all 250ms 300ms linear;
+}
+
+.repeat-items {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+    padding: 1.5rem;
+}
+.repeat-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    &:last-child {
+        border-bottom: 0;
+    }
+    &-header {     
+    }
+    &-title {
+        font-size: 1rem;
+        font-weight: bold;
+        margin: 0;
+        span {
+            display: block;
+            cursor: pointer;
+            padding: 1rem;
+            transition: all 250ms linear;
+            &:hover {
+                background: $gray-100;
+            }
+            &:after {
+                float: right;
+                content: "";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                font-size: 1.5rem;
+            }
+            &[aria-expanded="false"] {
+                &:after {
+                    content: "\EA41";
+                }
+            }
+            &[aria-expanded="true"] {
+                color: $primary;
+                &:after {
+                    content: "\EA67";
+                }
+            }
+        }
+    }
+    &-body {
+        padding: 1rem;
+    }
+}

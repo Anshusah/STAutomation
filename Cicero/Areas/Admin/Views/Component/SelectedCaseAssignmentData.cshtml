@@ -1,0 +1,299 @@
+﻿@using Themes.Core.Components
+@using Cicero.Service.Services
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+@inject IRoleService roleService
+@inject IQueueService queueService
+@inject Permission Permission
+@inject IFormBuilderService formBuilderService
+@inject ICommonService commonService
+@inject ISynchronizeService synchronizeService
+@inject ISkillSetService _skillSetService
+@inject Utils utils
+
+@{
+    CaseAssignment caseAssignment = Model as CaseAssignment;
+    var loggedUser = commonService.getLoggedInUserId();
+    string roleId = commonService.GetRoleIdByUserId(loggedUser);
+    List<SelectListItem> skillset = _skillSetService.GetAllSkillSetForTenant().ToList();
+    var skillsetstring = _skillSetService.GetAllSkillSetJsonForTenant();
+}
+<style>
+    .hidePart {
+        display: none;
+    }
+</style>
+<form class="widgets-body">
+    <input name="json" type="text" value="@caseAssignment.json" hidden>
+
+    <li class="widget-location dashed-border active on" data-component-id="@caseAssignment.ComponentId" data-type="@caseAssignment.ComponentType" style="display:none"></li>
+    <style>
+
+
+        .add-clause {
+            color: var(--green);
+            padding: 2px;
+        }
+
+        .remove-clause {
+            color: var(--red);
+            padding: 2px;
+        }
+    </style>
+    <div class="sync-wrap">
+        <i class="close-sync"></i>
+        <div class="row mb-2">
+            <div class="form-group col-lg-6">
+                <label>Title</label>
+                <input type="text" name="Title" class="form-control" value="@caseAssignment.Title">
+            </div>
+            <div class="form-group col-lg-6">
+                <label>Form</label>
+                <select class="form-control custom-select" name="FormId" value="@caseAssignment.FormId" disabled>
+                    <option value="">Choose Form</option>
+                    @foreach (var item in formBuilderService.FormList("" + utils.GetTenantFromSession() + ""))
+                    {
+                        if (caseAssignment.FormId == item.Value)
+                        {
+                            <option selected="selected" value="@item.Value">@item.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+
+                    }
+                </select>
+            </div>
+            <div class="form-group col-lg-6">
+                <label>Role</label>
+                <select class="form-control custom-select" name="RoleId" value="@caseAssignment.RoleId">
+                    <option value="">Choose Role</option>
+                    @foreach (var item in commonService.GetBackOfficeRoleList())
+                    {
+                        if (caseAssignment.RoleId == item.Value)
+                        {
+                            <option selected="selected" value="@item.Value">@item.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+
+                    }
+                </select>
+            </div>
+            <div class="form-group col-lg-6">
+            </div>
+            @for (int i = 0; i < skillset.Count; i++)
+            {
+
+                <div class="form-group col-lg-6">
+                    <label>Skillset</label>
+                    <select class="form-control custom-select" name="SkillSetId[]" readonly>
+                        <option selected="selected" value="@skillset[i].Value">@skillset[i].Text</option>
+                    </select>
+                </div>
+                <div class="form-group col-lg-6">
+                    <label>Time Limit</label>
+                    @if (caseAssignment.TimeLimit != null && caseAssignment.TimeLimit.Count > 0)
+                    {
+                        <input name="TimeLimit[]" class="form-control" type="number" min="0" max="400" value="@caseAssignment.TimeLimit[i]">
+                    }
+                    else
+                    {
+                        <input name="TimeLimit[]" class="form-control" type="number" min="0" max="400" value="@caseAssignment.TimeLimit">
+                    }
+
+                    <small>Note: Time in hours. How long the case is estimated to be resolved</small>
+                </div>
+                <div class="form-group col-lg-12">
+                    <div id="rules-@caseAssignment.ComponentId-@skillset[i].Value"></div>
+                </div>
+            }
+        </div>
+
+    </div>
+
+</form>
+
+<style type="text/css">
+
+    .query-builder .rules-group-container {
+        width: 100%;
+    }
+
+    .query-builder .rules-group-container {
+        padding: 10px;
+        padding-bottom: 6px;
+        border: 1px solid #d8d8d8;
+        background: rgb(242, 242, 242);
+    }
+
+    .bootstrap-select .dropdown-menu.inner {
+        width: 300px;
+    }
+</style>
+
+<script>
+
+    //Components.Core.LoadScript('script.js', document.body,function(){
+        //alert("loaded")
+    //});
+    $('[data-toggle="tooltip"]').tooltip();
+
+
+    var options = {
+        default_group_flags: {
+            condition_readonly: false,
+            no_add_group: false
+        },
+        allow_empty: true,
+        //default_filter: 'name',
+        sort_filters: true,
+
+        filters: [],
+        plugins: {
+            'bt-tooltip-errors': { delay: 100 },
+            'sortable': null,
+            'filter-description': { mode: 'bootbox' },
+            'bt-selectpicker': true,
+            //'chosen-selectpicker': null,
+            'unique-filter': null,
+            'bt-checkbox': { color: 'primary' },
+            'invert': null,
+            'not-group': null
+        }
+    };
+
+    var skillset = @Html.Raw(skillsetstring);
+
+    $.each(skillset, function (i, v) {
+        var $b = $('#rules-@caseAssignment.ComponentId-'+v);
+
+        $('#rules-@caseAssignment.ComponentId-' + v).on('afterCreateRuleInput.queryBuilder', function (e, rule) {
+            if (rule.filter.plugin == 'selectize') {
+                rule.$el.find('.rule-value-container').css('min-width', '200px')
+                    .find('.selectize-control').removeClass('form-control');
+            }
+        });
+
+        //muted
+        Components.Core.Hooks.addAction("filter_caseassignment_options", function (e, f) {
+            $.each(e.filters, function (i, v) {
+                var skillsetoptions = "";
+                $.each(v.skillset, function (ski, skv) {
+                    skillsetoptions += '<option value ="'+skv.Value+'">'+skv.Text+'</options>';
+
+                });
+                v.input = function (rule, name) {
+                    //var $changecontainer = rule.$el.find('.rule-filter-container');
+
+                    return '<input class="form-control" name ="' + name + '_realvalue" type ="number"/> <br/> <select class="form-control" name="' + name + '_skillset" style="display:block;">' + skillsetoptions + '</select>';
+                }
+                v.valueGetter = function (rule) {
+                    return rule.$el.find('.rule-value-container [name$=_realvalue]').val()
+                        + '|' + rule.$el.find('.rule-value-container [name$=_skillset]').val();
+                    //rule.$el.find('.rule-value-container .combinedvalue').val(rule.$el.find('.rule-value-container [name$=_realvalue]').val()
+                    //    + '.' + rule.$el.find('.rule-value-container [name$=_skillset]').val());
+                }
+                v.valueSetter = function (rule, value) {
+
+                    if (rule.operator.nb_inputs > 0 && value != null) {
+                        var val = value.split('|');
+                        rule.$el.find('.rule-value-container [name$=_realvalue]').val(val[0]).trigger('change');
+                        rule.$el.find('.rule-value-container [name$=_skillset]').val(val[1]).trigger('change');
+                    }
+                }
+            });
+            return e;
+        });
+        $(document).ready(function () {
+
+            options.filters = JSON.parse('@Html.Raw(caseAssignment.GetFormFilters(caseAssignment.FormId))');
+
+            //options = Components.Core.Hooks.doAction("filter_caseassignment_options", options);
+            //options = options[0];
+            $b.queryBuilder(options);
+            //console.log(options.filters);
+            //console.log(options.filters)
+            //$b.queryBuilder(options);
+
+            try{
+                $("#rules-@caseAssignment.ComponentId-"+v).queryBuilder('setFilters',true,options.filters);
+            } catch (e) {
+
+            }
+            try {
+                var rulesData = JSON.parse(decodeURIComponent('@caseAssignment.json'));
+                $("#rules-@caseAssignment.ComponentId-" + v).queryBuilder('setRules', rulesData[i]);
+            } catch (e) {
+
+            }
+
+            @*$(document).on("change", "[name='FormId']", function () {
+
+                var formId=$(this).val();
+                $.ajax({
+                    dataType: "json",
+                    method: "POST",
+                    url: "/ajax.html",
+                    data: {action:"on_automation_component_form_change",form_id:formId},
+                    success: function(data){
+                        try{
+                        $("#rules-@caseAssignment.ComponentId").queryBuilder('setFilters',true,data);
+                        }catch(e){
+
+                        }
+                    }
+                });
+            });*@
+
+        })
+
+    });
+
+    Components.CaseAssignment = {
+        Init: function () {
+            Components.Global.Init();
+            Components.Core.Hooks.addAction("before_component_save", function (e) {
+                return { submit: true };
+            })
+        }
+
+    };
+    Components.Core.Hooks.addAction('before_component_save', function (e, f) {
+        if (e.component_type == "Themes.Core.Components.CaseAssignment") {
+            let ruleObject = [];
+            let rules = "";
+            $.each(skillset, function (i, v) {
+                ruleObject.push($("#rules-" + e.component_id + "-" + v).queryBuilder('getRules'));
+            });
+
+            rules = encodeURIComponent(JSON.stringify(ruleObject));
+
+            $('input[name=json]').val(rules);
+            if (rules == null) {
+                return { submit: false };
+            }
+        }
+        return { submit: true };
+    });
+    Components.Core.Hooks.addAction('after_component_save', function (e, f) {
+        if (e.component_type == "Themes.Core.Components.CaseAssignment") {
+            try {
+                let res = JSON.parse(decodeURIComponent(e.args.json));
+                $.each(skillset, function (i, v) {
+                    $("#rules-" + e.args.component_id + "-" + v).queryBuilder('setRules', res[i]);
+                });
+            } catch (e) { }
+            return true;
+        }
+    });
+
+    $(function () {
+        $("select[name='FormId']").val(wf.vars.formId);
+        $("select[name='FormId']").trigger("change");
+    })
+
+</script>

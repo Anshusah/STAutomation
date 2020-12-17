@@ -1,0 +1,193 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model CaseViewModel
+@inject ICaseService caseService
+@inject Permission Permission
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["body"] = "full-layout";
+    ViewData["Title"] = "Claim";
+    dynamic data = new object();
+    if (Model.Id != 0)
+    {
+        data = Json.Serialize((dynamic)ViewBag.formData);
+    }
+    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+
+    Cicero.Service.Models.Core.FormBuilder FB = new Cicero.Service.Models.Core.FormBuilder() { FormData = fbvm, Side = "frontend", HttpContext = HttpContextAccessor.HttpContext };
+
+}
+<link href="~/scrollable-tab plugin/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+
+<script src="~/js/inputmask.js"></script>
+<script src="~/js/jquery.inputmask.bundle.js"></script>
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <div class="main-content" role="main">
+                <div class="absolute-fill">
+                    <div class="main-content-area">
+                        <form id="caseform" action="@Url.Content("~/admin/form/"+ _utils.GetTenantForUrl(true) + _utils.GetParams("form") + "/" + _utils.EncryptId(Model.Id) +"/edit.html")" method="post" class="position-relative" enctype="multipart/form-data">
+                            @*<label class="version-top font-weight-bold">Version: @Model.Version</label>*@
+                            <input type="hidden" asp-for="Id" id="case_id" />
+                            @*<input type="hidden" asp-for="StateName" />*@
+
+
+                            <!-- <h3 class="">Home and Contents Claim Form</h3> -->
+                            @if (Model.Id != 0)
+                            {
+                                @Html.Raw(FB.Render())
+                            }
+                            else
+                            {
+                                @Html.Raw(FB.Render())
+                            }
+
+                            <div class="card-footer">
+                                <div class="nav-tab-link">
+                                    <button type="button" id="back-btn" class="btn btn-link px-0" style="display: none;">
+                                        <i class="fas fa-chevron-left"></i> Back
+                                    </button>
+                                </div>
+                                <div class="nav-tab-controls">
+                                    @*@if ((Model.Id == 0 && Permission.Can(UserCan.Create_Claim) || Model.Id != 0 && Permission.Can(UserCan.Update_Claim))  )
+                                        {*@
+                                    <input type="hidden" name="btn-type" id="btn-type" />
+                                    <button type="button" class="btn btn-outline-secondary btn-save" id="save-btn">Save</button>
+                                    <button type="button" class="btn btn-primary btn-send" id="send-btn">Send</button>
+                                    @*}*@
+                                    <button class="btn btn-primary btn-continue" type="button" id="next-btn">Continue</button>
+                                </div>
+
+                            </div>
+
+
+
+                        </form>
+                    </div>
+                </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/form_builder_render_frontendtab.js"></script>
+    <script src="~/js/form_builder_form_validation.js"></script>
+    <script src="~/js/render_form_data.js"></script>
+    <script src="~/scrollable-tab plugin/jquery.scrolling-tabs.min.js"></script>
+    @if (Model.Id != 0)
+    {
+
+        <script>
+
+
+            $(function () {
+                //clone collection for number field
+                    let cc = $('[number-target]');
+                    $.each(cc, function (k, l) {
+                        cloneByNumber(l);
+                    });
+                var allValues = JSON.parse('@data');
+                renderData(allValues);
+        });
+        </script>
+    }
+    else
+    {
+        <script>
+
+            //clone collection for number field
+            let cc = $('[number-target]');
+            if (cc > 0) {
+                $.each(cc, function (k, l) {
+                    cloneByNumber(l);
+                });
+            }
+
+        </script>
+
+    }
+    @section Scripts{
+
+
+        <script type="text/javascript">
+
+
+        jQuery(document).ready(function () {
+
+            getcountrylist("");
+            function getcountrylist(thisdata) {
+                let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin"+_utils.GetTenantForUrl(false) + "/country-list")",
+                    //data: ,
+                    success: function (d) {
+                        if (d != null) {
+                            $.each(d, function (k, l) {
+                                //console.log($(thisdata).attr("id"));
+                                //  if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                $("#" + $(".country").attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                //  }
+                            })
+                        }
+                    }
+                });
+            }
+
+        });
+
+
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+                //$("#back-btn").hide();
+        });
+
+        //save to draft
+        $(document).on("click", "#save-btn", function (e) {
+            $("#StateName").val("@_appSetting.Get("app_claim_front")");
+             $("#btn-type").val("save");
+            $("#caseform").validate().settings.ignore = "*";
+            onSendButtonClick("caseform");
+        });
+        //send claim
+        $(document).on("click", "#send-btn", function (e) {
+            $("#StateName").val("@_appSetting.Get("app_claim_back")");
+            $("#btn-type").val("send");
+         //   $("#caseform").submit();
+            var formstring = '@_utils.GetParams("Form")';
+            checkValidation("caseform", formstring);
+        });
+
+        </script>
+    }

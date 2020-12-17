@@ -1,0 +1,162 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+@using Microsoft.AspNetCore.Http
+@model List<Theme>
+@inject Permission Permission
+@inject AppSetting appSetting
+@inject Utils appUtils
+@inject IHttpContextAccessor _httpContextAccessor;
+@{
+    ViewBag.Title = "Edit Theme";
+    Theme _theme = ViewData["theme"] as Theme;
+}
+<!-- content starts -->
+
+    <div class="page-wrapper page-themes">
+        <div class="page-header">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Themes</li>
+                </ol>
+            </nav>
+            <div class="page-header__main">
+                <h3 class="page-title">Themes</h3>
+                <div class="page-toolbar">
+                    <a href="/admin/themes/edit.html" class="btn btn-primary">
+                        <i class="btn__icon ri-add-fill"></i><span class="btn__label">Create Theme</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="page-container grid-horizontal-viewport">
+                <div class="page-body">
+                    <div class="theme-wrapper">
+                        <div class="theme-lists">
+                            @{
+                                string exf = appSetting.Get("app_theme");
+                            }
+                            @foreach (Theme item in Model)
+                            {
+                                var screenshot = item.Screenshot;
+                                if (string.IsNullOrEmpty(screenshot)) {
+                                    screenshot = "screenshot.png";
+                                }
+                                <div class="theme-item">
+					                <div class="card theme-card">
+                                        <div class="loading">
+                                            <div class="spinner-border" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+						                <div class="img-container">
+                                            @if (exf == item.Name)
+                                            {
+                                                <div class="checked-mark" data-toggle="tooltip" data-replacement="top" title="Selected">
+                                                    <i class="ri-check-fill"></i>
+                                                </div>
+                                            }
+							                <div class="img-item"><img class="card-img-top" src="/Themes/@item.Name/@screenshot" alt="@item.Title" onerror="this.src='/images/no-theme.png'"></div>
+						                </div>
+						                <!-- <a href="/admin/themes/edit.html" class="edit-icon"><i class="fas fa-pen"></i></a> -->
+						                <div class="card-body">
+							                <h5 class="card-title mb-2">@(item.Title == null ? item.Name : item.Title)</h5>
+							                <p class="card-text mb-2 sr-only">
+								                @if (string.IsNullOrEmpty(item.ShortDescription))
+								                {
+									                <text>No Description</text>
+								                }
+								                else
+								                {
+									                @item.ShortDescription;
+								                }
+							                </p>
+                                            <div class="text-muted small">Last updated 2 days ago</div>
+							
+                                            <div class="dropdown">
+                                                    <button class="btn btn-light btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="ri-more-fill"></i>
+                                                        <span class="sr-only">Action</span>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                        @if (exf == item.Name)
+                                                        {
+                                                            <button data-toggle="modal" data-target="#@item.Name" class="dropdown-item bg-success text-white" disabled><i class="ri-checkbox-circle-fill mr-2"></i>Activated</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button data-theme="@item.Name" class="dropdown-item"><i class="ri-check-line mr-2"></i>Activate</button>
+                                                        }
+                                                        <div class="dropdown-divider"></div>
+                                                        <button data-toggle="modal" data-target="#@item.Name" class="dropdown-item"><i class="ri-search-eye-line mr-2"></i>Preview</button>
+                                                        <a href="/admin/themes/edit.html" class="dropdown-item"><i class="ri-pencil-line mr-2"></i>Edit theme</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a href="/admin/themes/edit.html" class="dropdown-item disabled"><i class="ri-delete-bin-4-line mr-2"></i>Delete</a>
+                                                    </div>
+                                                </div>
+							
+						                </div>
+
+					                </div>
+                                </div>
+                    
+                                <div class="modal fade" id="@item.Name" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Previewing "@item.Name" Theme</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body p-0">
+                                                @*@await Html.PartialAsync("../../Themes/"+item.Name+"Index.cshtml")*@
+                                                <iframe src="@Url.Content("~/?theme=")@item.Name" id="frame-@item.Name" frameborder="0" width="100%" height="500" style="background-image:url(/images/loader.gif); background-position:center center; background-repeat:no-repeat;" onload="$(document).ready(function(){resizeFrame('frame-@item.Name');});"></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- content ends -->
+<script type="text/javascript">
+    function resizeFrame(e) {
+        var body = document.body,
+        html = document.documentElement;
+        var iFrame = document.getElementById(e);
+        var nHeight=0;
+        //var iframeWin = iFrame.contentWindow.document.body;
+        nHeight=$(window).height() //iframeWin.scrollHeight;
+        iFrame.style.height = nHeight-(100)+'px'; //set the frame height to correspond to the content
+    }
+    jQuery(document).ready(function(){
+        jQuery(document).on("click","[data-theme]",function(){
+            var th=jQuery(this).data("theme");
+            var _this = jQuery(this);
+            $.ajax({
+                    type: "POST",
+                    url: '/admin/' + '@appUtils.GetTenantFromSession()' + '/theme/activate.html',
+                    dataType:"json",
+                    data:{"Theme":th},
+                    beforeSend: function(response){
+                        _this.parent().parent().parent().parent().addClass('show');
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    },
+                    error: function(response){
+                        //data = 0;
+                    }
+                });
+        });
+    });
+</script>

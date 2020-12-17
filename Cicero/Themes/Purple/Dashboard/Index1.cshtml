@@ -1,0 +1,1667 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model CaseFormViewModel
+@inject IUserService _userService
+@inject IActivityLogService _activityLog
+@inject Utils  _utils
+@inject Permission permission
+
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Theme theme = ViewData["theme"] as Theme;
+    string tenant_identifier = _utils.GetTenantFromSession();
+    var count = (dashboardCounts)ViewBag.Count;
+}
+
+<!-- page head starts -->
+@if (permission.Can(UserCan.Admin_Layout) && !permission.Can(UserCan.Create_Tenant))
+{
+    <link href="../../Themes/@theme.GetName(false)/css/tenant.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.11/css/bootstrap-select.css">
+
+    <div class="container form-container">
+        <div class="form-header">
+            <h1 class="form-title text-capitalize">@Model.Name</h1>
+            <p class="form-details"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
+        </div>
+        <div class="form-box-list" style="display:none;">
+            <div class="all-forms">
+                <ul class="form-list list-group list-unstyled d-flex flex-row"></ul>
+            </div>
+            <a class="prev position-absolute" href="JavaScript:void(0);" role="button" data-slide="prev" style="top:40%;left:-20px;z-index:2;">
+                <i class="fas fa-chevron-circle-left text-dark shadow rounded-circle " id="sc-left"></i>
+            </a>
+            <a class="next position-absolute" href="JavaScript:void(0);" role="button" data-slide="next" style="top:40%;right:-20px;z-index:2;">
+                <i class="fas fa-chevron-circle-right text-dark shadow rounded-circle  " id="sc-right"></i>
+            </a>
+            <!-- <ul class="form-list1 list-group list-unstyled d-flex flex-row">
+                <li class='list-group-item d-flex align-items-center justify-content-center' onclick='createNewForm()'>
+                    <a class='d-flex flex-column align-items-center' href='#'>
+                        <i class='form-icon ri-add-line'></i>
+                    </a>
+                </li>
+            </ul> -->
+            <div class="form-btn-holder">
+                <a href="javascript:void(0);" onclick='createNewForm()' class="form-add-btn">
+                    <i class='form-icon ri-add-line'></i>
+                </a>
+            </div>
+        </div>
+   
+    @*//new dashboard for tenant admin*@
+        <div class="container-form-types">
+            <!-- <button class="btn btn-danger" id="cancelProcess" disabled="disabled" data-toggle="modal">Click to Cancel this process <i class="fas fa-times-circle"></i></button> -->
+            <div id="loading">
+                <div class="spinner">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @* Build your form  start*@
+                <div class="col-lg-4 mb-4">
+                        <div class="form-card card" id="step1">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <div class="icon icon-sketch">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32.071" height="32.144" viewBox="0 0 32.071 32.144">
+                                        <g id="contact" transform="translate(-0.59 0)">
+                                            <g id="Group_671" data-name="Group 671" transform="translate(0.59 0)">
+                                                <g id="Group_670" data-name="Group 670" transform="translate(0 0)">
+                                                    <path id="Path_287" data-name="Path 287" d="M25.979,30.487a.321.321,0,0,1-.321.321H4.947a.321.321,0,0,1-.346-.293c0-.009,0-.019,0-.028V2.139a2.285,2.285,0,0,0-.12-.728H25.09a.9.9,0,0,1,.889.9s0,0,0,.007V14.105h1.336V2.32A2.238,2.238,0,0,0,25.09.075H3.1A1.831,1.831,0,0,0,1.566.309,2.318,2.318,0,0,0,.591,2.226V7.1A1.61,1.61,0,0,0,2.146,8.76H3.263V30.487A1.657,1.657,0,0,0,4.92,32.144H25.632a1.657,1.657,0,0,0,1.683-1.63c0-.009,0-.018,0-.027V24.795H25.979ZM3.263,7.424H2.148c-.107,0-.22-.134-.22-.321V2.226a1,1,0,0,1,.381-.815A.5.5,0,0,1,2.6,1.324v.087h.281a.835.835,0,0,1,.388.728V7.424Z" transform="translate(-0.59 0)" fill="#2b2b2b" />
+                                                    <path id="Path_288" data-name="Path 288" d="M280.28,216.476,278.2,214.4a.668.668,0,0,0-.942,0l-10.376,10.376a.668.668,0,0,0-.134.2l-1.73,3.8a.668.668,0,0,0,.882.882l3.8-1.73a.669.669,0,0,0,.2-.134l10.376-10.376A.668.668,0,0,0,280.28,216.476Zm-13.309,11.231.595-1.336.715.715Zm2.459-1.336-1.129-1.122,7.008-7.015,1.156,1.136Zm7.957-7.95-1.129-1.129,1.477-1.476,1.129,1.129Z" transform="translate(-248.404 -200.787)" fill="#2b2b2b" />
+                                                    <rect id="Rectangle_414" data-name="Rectangle 414" width="12.026" height="1.336" transform="translate(8.686 4.752)" fill="#2b2b2b" />
+                                                    <rect id="Rectangle_415" data-name="Rectangle 415" width="12.026" height="1.336" transform="translate(8.686 9.429)" fill="#2b2b2b" />
+                                                    <rect id="Rectangle_416" data-name="Rectangle 416" width="12.026" height="1.336" transform="translate(8.686 14.105)" fill="#2b2b2b" />
+                                                    <rect id="Rectangle_417" data-name="Rectangle 417" width="5.345" height="1.336" transform="translate(8.686 18.782)" fill="#2b2b2b" />
+                                                    <rect id="Rectangle_418" data-name="Rectangle 418" width="1.336" height="1.336" transform="translate(16.036 18.782)" fill="#2b2b2b" />
+                                                    <rect id="Rectangle_419" data-name="Rectangle 419" width="1.336" height="1.336" transform="translate(19.376 18.782)" fill="#2b2b2b" />
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <h6 class="card-title mb-2">Build your form</h6>
+                                <p class="card-text">
+                                    Nunc vel sem et tellus pretium ultricies quis eget nibh fusce condimentum.
+                                </p>
+                                <div class="iscompleted-icon ishidden">
+                                    <span class="process-option">
+                                        <a id="step1-revert" class="cancel-process">Cancel</a>
+                                        <a id="step1-url">Edit</a>
+                                    </span>
+                                    <span class="icon-checked" data-toggle="tooltip" data-placement="top" title="Saved data"><i class="ri-checkbox-circle-fill"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                @* Build your form end *@
+
+                @*Roles Management start*@
+                <div class="col-lg-4 mb-4">
+                    <div class="form-card card isdisabled" id="step2">
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <div class="icon icon-role-mgmt">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                    <path id="network" d="M28.509,0a3.49,3.49,0,0,0-3.069,5.155l-5.719,5.719a4.624,4.624,0,0,0-5.7,0L9.561,6.411a2.3,2.3,0,0,0,.33-1.175A2.327,2.327,0,1,0,7.564,7.564a2.3,2.3,0,0,0,1.175-.33L13.2,11.7a4.625,4.625,0,0,0,0,5.7L5.832,24.763a3.456,3.456,0,1,0,.727.918l7.464-7.464a4.627,4.627,0,0,0,2.268.942v5.911a3.491,3.491,0,1,0,1.164,0V19.159a4.627,4.627,0,0,0,2.268-.942l4.462,4.462a2.3,2.3,0,0,0-.33,1.175,2.327,2.327,0,1,0,2.327-2.327,2.3,2.3,0,0,0-1.175.33L20.545,17.4a4.625,4.625,0,0,0,0-5.7l5.623-5.623A3.489,3.489,0,1,0,28.509,0ZM6.4,5.236A1.164,1.164,0,1,1,7.564,6.4,1.165,1.165,0,0,1,6.4,5.236ZM3.491,29.673a2.327,2.327,0,1,1,2.327-2.327A2.33,2.33,0,0,1,3.491,29.673ZM19.2,28.509a2.327,2.327,0,1,1-2.327-2.327A2.33,2.33,0,0,1,19.2,28.509ZM16.873,18.036a3.491,3.491,0,1,1,3.491-3.491A3.494,3.494,0,0,1,16.873,18.036Zm10.473,5.818a1.164,1.164,0,1,1-1.164-1.164A1.165,1.165,0,0,1,27.345,23.855ZM28.509,5.818a2.327,2.327,0,1,1,2.327-2.327A2.33,2.33,0,0,1,28.509,5.818Z" fill="#797979" />
+                                </svg>
+                            </div>
+                            <h6 class="card-title mb-2">Role Management</h6>
+                            <p class="card-text">
+                                Nunc vel sem et tellus pretium ultricies quis eget nibh fusce condimentum.
+                            </p>
+                            <div class="iscompleted-icon ishidden">
+                                <span class="process-option">
+                                    <a id="step2-revert" class="cancel-process">Cancel</a>
+                                    <a id="step2-url">Edit</a>
+                                </span>
+                                <span class="icon-checked" data-toggle="tooltip" data-placement="top" title="Saved data"><i class="ri-checkbox-circle-fill"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* User management start *@
+                <div class="col-lg-4 mb-4">
+                    <div class="form-card card isdisabled" id="step3">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <div class="icon icon-user-mgmt">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="39.5" height="31.57" viewBox="0 0 39.5 31.57">
+                                        <g id="network_1_" data-name="network (1)" transform="translate(0 -42.56)">
+                                            <g id="Group_641" data-name="Group 641" transform="translate(12.67 50.385)">
+                                                <g id="Group_640" data-name="Group 640">
+                                                    <path id="Path_265" data-name="Path 265" d="M143.08,126.56c-4.367,0-7.08,2.236-7.08,5.858a.745.745,0,0,0,.745.745h12.67a.745.745,0,0,0,.745-.745C150.16,128.8,147.448,126.56,143.08,126.56Zm-5.537,5.113c.492-3.346,4.315-3.622,5.537-3.622s5.046.276,5.537,3.622Z" transform="translate(-136 -126.56)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_643" data-name="Group 643" transform="translate(16.21 42.56)">
+                                                <g id="Group_642" data-name="Group 642">
+                                                    <path id="Path_266" data-name="Path 266" d="M177.54,42.56a3.54,3.54,0,1,0,3.54,3.54A3.54,3.54,0,0,0,177.54,42.56Zm0,5.59a2.05,2.05,0,1,1,2.05-2.05A2.05,2.05,0,0,1,177.54,48.15Z" transform="translate(-174 -42.56)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_645" data-name="Group 645" transform="translate(0 67.527)">
+                                                <g id="Group_644" data-name="Group 644" transform="translate(0 0)">
+                                                    <path id="Path_267" data-name="Path 267" d="M7.08,310.56C2.713,310.56,0,312.8,0,316.418a.745.745,0,0,0,.745.745h12.67a.745.745,0,0,0,.745-.745C14.16,312.8,11.448,310.56,7.08,310.56Zm-5.537,5.113c.492-3.346,4.308-3.622,5.537-3.622s5.046.276,5.537,3.622Z" transform="translate(0 -310.56)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_647" data-name="Group 647" transform="translate(3.54 59.702)">
+                                                <g id="Group_646" data-name="Group 646">
+                                                    <path id="Path_268" data-name="Path 268" d="M41.54,226.56a3.54,3.54,0,1,0,3.54,3.54A3.54,3.54,0,0,0,41.54,226.56Zm0,5.59a2.05,2.05,0,1,1,2.05-2.05A2.05,2.05,0,0,1,41.54,232.15Z" transform="translate(-38 -226.56)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_649" data-name="Group 649" transform="translate(25.34 67.527)">
+                                                <g id="Group_648" data-name="Group 648" transform="translate(0 0)">
+                                                    <path id="Path_269" data-name="Path 269" d="M279.08,310.56c-4.367,0-7.08,2.236-7.08,5.858a.745.745,0,0,0,.745.745h12.67a.745.745,0,0,0,.745-.745C286.16,312.8,283.448,310.56,279.08,310.56Zm-5.537,5.113c.492-3.346,4.308-3.622,5.537-3.622s5.046.276,5.537,3.622Z" transform="translate(-272 -310.56)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_651" data-name="Group 651" transform="translate(28.88 59.702)">
+                                                <g id="Group_650" data-name="Group 650">
+                                                    <path id="Path_270" data-name="Path 270" d="M313.54,226.56a3.54,3.54,0,1,0,3.54,3.54A3.54,3.54,0,0,0,313.54,226.56Zm0,5.59a2.05,2.05,0,1,1,2.05-2.05A2.05,2.05,0,0,1,313.54,232.15Z" transform="translate(-310 -226.56)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                            <g id="Group_653" data-name="Group 653" transform="translate(15.674 57.972)">
+                                                <g id="Group_652" data-name="Group 652">
+                                                    <path id="Path_271" data-name="Path 271" d="M176.176,216.265l-3.108-3.123v-4.4a.745.745,0,0,0-1.491,0v4.4l-3.108,3.108a.748.748,0,0,0,1.051,1.066l2.8-2.81,2.8,2.81a.745.745,0,0,0,1.051-1.051Z" transform="translate(-168.247 -208)" fill="#797979" />
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </svg>
+
+                                </div>
+                                <h6 class="card-title mb-2">User Management</h6>
+                                <p class="card-text">
+                                    Nunc vel sem et tellus pretium ultricies quis eget nibh fusce condimentum.
+                                </p>
+                                <div class="iscompleted-icon ishidden">
+                                    <span class="process-option">
+                                        <a id="step3-revert" class="cancel-process">Cancel</a>
+                                        <a id="step3-url">Edit</a>
+                                    </span>
+                                    <span class="icon-checked" data-toggle="tooltip" data-placement="top" title="Saved data"><i class="ri-checkbox-circle-fill"></i></span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                @* User management end *@
+            </div>
+
+            <div class="row">
+
+                @* Build workflow start *@
+                <div class="col-lg-4 mb-4">
+                    <div class="form-card card isdisabled" id="step4">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <div class="icon icon-build">
+                                    <svg id="file" xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+                                        <path id="Path_289" data-name="Path 289" d="M14.844,21.375H.594A.593.593,0,0,1,0,20.781V.594A.593.593,0,0,1,.594,0H11.874a.591.591,0,0,1,.42.174l2.969,2.969a.591.591,0,0,1,.174.42V20.781a.593.593,0,0,1-.594.594ZM1.188,20.188H14.25V3.808L11.629,1.187H1.187Zm0,0" fill="#797979" />
+                                        <path id="Path_290" data-name="Path 290" d="M155.563,41.188h-2.969a.594.594,0,0,1,0-1.187h2.969a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-140.719 -37.031)" fill="#797979" />
+                                        <path id="Path_291" data-name="Path 291" d="M152.594,4.156A.593.593,0,0,1,152,3.563V.594a.594.594,0,0,1,1.188,0V3.563A.593.593,0,0,1,152.594,4.156Zm0,0" transform="translate(-140.719)" fill="#797979" />
+                                        <path id="Path_292" data-name="Path 292" d="M318.844,245.375h-14.25a.593.593,0,0,1-.594-.594V224.594a.593.593,0,0,1,.594-.594h11.281a.591.591,0,0,1,.42.174l2.969,2.969a.591.591,0,0,1,.174.42v17.219A.593.593,0,0,1,318.844,245.375Zm-13.656-1.187H318.25V227.808l-2.621-2.621H305.187Zm0,0" transform="translate(-281.438 -207.375)" fill="#797979" />
+                                        <path id="Path_293" data-name="Path 293" d="M459.563,265.188h-2.969a.594.594,0,0,1,0-1.187h2.969a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-422.156 -244.406)" fill="#797979" />
+                                        <path id="Path_294" data-name="Path 294" d="M456.594,228.156a.593.593,0,0,1-.594-.594v-2.969a.594.594,0,0,1,1.188,0v2.969A.593.593,0,0,1,456.594,228.156Zm0,0" transform="translate(-422.156 -207.375)" fill="#797979" />
+                                        <path id="Path_295" data-name="Path 295" d="M55.719,113.188H48.594a.594.594,0,0,1,0-1.187h7.125a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-44.438 -103.688)" fill="#797979" />
+                                        <path id="Path_296" data-name="Path 296" d="M55.719,153.188H48.594a.594.594,0,0,1,0-1.187h7.125a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-44.438 -140.719)" fill="#797979" />
+                                        <path id="Path_297" data-name="Path 297" d="M52.156,193.188H48.594a.594.594,0,0,1,0-1.187h3.563a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-44.438 -177.75)" fill="#797979" />
+                                        <path id="Path_298" data-name="Path 298" d="M352.906,361.188h-8.312a.594.594,0,0,1,0-1.187h8.313a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-318.469 -333.281)" fill="#797979" />
+                                        <path id="Path_299" data-name="Path 299" d="M352.906,401.188h-8.312a.594.594,0,0,1,0-1.187h8.313a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-318.469 -370.313)" fill="#797979" />
+                                        <path id="Path_300" data-name="Path 300" d="M352.906,441.188h-8.312a.594.594,0,0,1,0-1.187h8.313a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-318.469 -407.344)" fill="#797979" />
+                                        <path id="Path_301" data-name="Path 301" d="M352.906,329.188h-8.312a.594.594,0,0,1,0-1.187h8.313a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-318.469 -303.656)" fill="#797979" />
+                                        <path id="Path_302" data-name="Path 302" d="M344.594,337.5a.593.593,0,0,1-.594-.594v-8.312a.594.594,0,0,1,1.188,0v8.313A.593.593,0,0,1,344.594,337.5Zm0,0" transform="translate(-318.469 -303.656)" fill="#797979" />
+                                        <path id="Path_303" data-name="Path 303" d="M400.594,367.125a.593.593,0,0,1-.594-.594v-5.937a.594.594,0,0,1,1.188,0v5.938A.593.593,0,0,1,400.594,367.125Zm0,0" transform="translate(-370.313 -333.281)" fill="#797979" />
+                                        <path id="Path_304" data-name="Path 304" d="M456.594,337.5a.593.593,0,0,1-.594-.594v-8.312a.594.594,0,0,1,1.188,0v8.313A.593.593,0,0,1,456.594,337.5Zm0,0" transform="translate(-422.156 -303.656)" fill="#797979" />
+                                        <path id="Path_305" data-name="Path 305" d="M96.594,312.313a.593.593,0,0,1-.594-.594v-7.125a.594.594,0,0,1,1.188,0v7.125A.593.593,0,0,1,96.594,312.313Zm0,0" transform="translate(-88.875 -281.438)" fill="#797979" />
+                                        <path id="Path_306" data-name="Path 306" d="M109.656,401.188H96.594a.594.594,0,0,1,0-1.187h13.063a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-88.875 -370.313)" fill="#797979" />
+                                        <path id="Path_307" data-name="Path 307" d="M248.591,402.966a.594.594,0,0,1-.42-1.014l1.781-1.781a.594.594,0,0,1,.84.84l-1.781,1.781A.592.592,0,0,1,248.591,402.966Zm0,0" transform="translate(-229.591 -370.31)" fill="#797979" />
+                                        <path id="Path_308" data-name="Path 308" d="M250.372,378.966a.592.592,0,0,1-.42-.174l-1.781-1.781a.594.594,0,0,1,.84-.84l1.781,1.781a.594.594,0,0,1-.42,1.014Zm0,0" transform="translate(-229.591 -348.091)" fill="#797979" />
+                                        <path id="Path_309" data-name="Path 309" d="M400.594,104.313a.593.593,0,0,1-.594-.594V96.594a.594.594,0,0,1,1.188,0v7.125A.593.593,0,0,1,400.594,104.313Zm0,0" transform="translate(-370.313 -88.875)" fill="#797979" />
+                                        <path id="Path_310" data-name="Path 310" d="M237.656,97.188H224.594a.594.594,0,0,1,0-1.187h13.063a.594.594,0,0,1,0,1.188Zm0,0" transform="translate(-207.375 -88.875)" fill="#797979" />
+                                        <path id="Path_311" data-name="Path 311" d="M224.591,74.966a.594.594,0,0,1-.42-1.014l1.781-1.781a.594.594,0,0,1,.84.84l-1.781,1.781A.593.593,0,0,1,224.591,74.966Zm0,0" transform="translate(-207.372 -66.654)" fill="#797979" />
+                                        <path id="Path_312" data-name="Path 312" d="M226.372,98.966a.593.593,0,0,1-.42-.174l-1.781-1.781a.594.594,0,0,1,.84-.84l1.781,1.781a.594.594,0,0,1-.42,1.014Zm0,0" transform="translate(-207.372 -88.872)" fill="#797979" />
+                                    </svg>
+
+                                </div>
+                                <h6 class="card-title mb-2">Build Workflow</h6>
+                                <p class="card-text">
+                                    Nunc vel sem et tellus pretium ultricies quis eget nibh fusce condimentum.
+                                </p>
+                                <div class="iscompleted-icon ishidden">
+                                    <span class="process-option">
+                                        <a id="step4-revert" class="cancel-process">Cancel</a>
+                                        <a id="step4-url">Edit</a>
+                                    </span>
+                                    <span class="icon-checked" data-toggle="tooltip" data-placement="top" title="Saved data"><i class="ri-checkbox-circle-fill"></i></span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                @* Build workflow end *@
+
+                @* Email Template *@
+                <div class="col-lg-4 mb-4">
+                    <div class="form-card card isdisabled" id="step5">
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <div class="icon icon-template">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="29.333" height="33" viewBox="0 0 29.333 33">
+                                    <g id="files" transform="translate(-28.445)">
+                                        <g id="Group_697" data-name="Group 697" transform="translate(46.778 22)">
+                                            <g id="Group_696" data-name="Group 696" transform="translate(0)">
+                                                <path id="Path_317" data-name="Path 317" d="M318.389,341.333a5.5,5.5,0,1,0,5.5,5.5A5.506,5.506,0,0,0,318.389,341.333Zm0,9.778a4.278,4.278,0,1,1,4.278-4.278A4.283,4.283,0,0,1,318.389,351.111Z" transform="translate(-312.889 -341.333)" fill="#797979" />
+                                            </g>
+                                        </g>
+                                        <g id="Group_699" data-name="Group 699" transform="translate(49.223 25.055)">
+                                            <g id="Group_698" data-name="Group 698">
+                                                <path id="Path_318" data-name="Path 318" d="M356.041,388.841a.611.611,0,0,0-.847.17l-2.105,3.158-1.325-.883a.611.611,0,0,0-.678,1.017l1.833,1.222a.611.611,0,0,0,.847-.169l2.444-3.667A.611.611,0,0,0,356.041,388.841Z" transform="translate(-350.814 -388.738)" fill="#797979" />
+                                            </g>
+                                        </g>
+                                        <g id="Group_701" data-name="Group 701" transform="translate(28.445)">
+                                            <g id="Group_700" data-name="Group 700" transform="translate(0)">
+                                                <path id="Path_319" data-name="Path 319" d="M53.923,8.3,45.415.169A.611.611,0,0,0,44.993,0H29.056a.611.611,0,0,0-.611.611V32.389a.611.611,0,0,0,.611.611h16.5a.611.611,0,1,0,0-1.222H29.667V1.222H44.334V9.167a.611.611,0,0,0,.611.611h7.944V20.167a.611.611,0,0,0,1.222,0V8.744A.611.611,0,0,0,53.923,8.3Zm-8.367.253V1.995l6.863,6.561Z" transform="translate(-28.445)" fill="#797979" />
+                                            </g>
+                                        </g>
+                                        <g id="Group_703" data-name="Group 703" transform="translate(37.612 11.611)">
+                                            <g id="Group_702" data-name="Group 702" transform="translate(0)">
+                                                <path id="Path_320" data-name="Path 320" d="M179.57,185.758l-7.944-5.5a.611.611,0,0,0-.959.5v11a.611.611,0,0,0,.959.5l7.944-5.5a.611.611,0,0,0,0-1.005Zm-7.681,4.836v-8.667l6.26,4.334Z" transform="translate(-170.667 -180.15)" fill="#797979" />
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+
+
+                            </div>
+                            <h6 class="card-title mb-2">Email Template</h6>
+                            <p class="card-text">
+                                Nunc vel sem et tellus pretium ultricies quis eget nibh fusce condimentum.
+                            </p>
+                            <div class="iscompleted-icon ishidden">
+                                <span class="process-option">
+                                    <a id="step5-revert" class="cancel-process">Cancel</a>
+                                    <a id="step5-url">Edit</a>
+                                </span>
+                                <span class="icon-checked" data-toggle="tooltip" data-placement="top" title="Saved data"><i class="ri-checkbox-circle-fill"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Theme *@
+                <div class="col-lg-4 mb-4">
+                    <div class="form-card card isdisabled" id="step6">
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <div class="icon icon-thems">
+                                <svg id="line-chart" xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+                                    <g id="Group_673" data-name="Group 673" transform="translate(31.62)">
+                                        <g id="Group_672" data-name="Group 672">
+                                            <path id="Path_313" data-name="Path 313" d="M270.71,0a3.19,3.19,0,1,0,3.19,3.19A3.185,3.185,0,0,0,270.71,0Zm0,4.741a1.551,1.551,0,1,1,1.551-1.551A1.55,1.55,0,0,1,270.71,4.741Z" transform="translate(-267.52)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_675" data-name="Group 675" transform="translate(0 18.18)">
+                                        <g id="Group_674" data-name="Group 674">
+                                            <path id="Path_314" data-name="Path 314" d="M3.19,153.813A3.19,3.19,0,1,0,6.38,157,3.185,3.185,0,0,0,3.19,153.813Zm0,4.741A1.551,1.551,0,1,1,4.741,157,1.55,1.55,0,0,1,3.19,158.554Z" transform="translate(0 -153.813)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_677" data-name="Group 677" transform="translate(9.481 8.699)">
+                                        <g id="Group_676" data-name="Group 676">
+                                            <path id="Path_315" data-name="Path 315" d="M83.4,73.6a3.19,3.19,0,1,0,3.19,3.19A3.185,3.185,0,0,0,83.4,73.6Zm0,4.741a1.551,1.551,0,1,1,1.551-1.551A1.55,1.55,0,0,1,83.4,78.341Z" transform="translate(-80.213 -73.6)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_679" data-name="Group 679" transform="translate(16.201 15.419)">
+                                        <g id="Group_678" data-name="Group 678">
+                                            <path id="Path_316" data-name="Path 316" d="M140.256,130.453a3.19,3.19,0,1,0,3.19,3.19A3.185,3.185,0,0,0,140.256,130.453Zm0,4.741a1.551,1.551,0,1,1,1.551-1.551A1.55,1.55,0,0,1,140.256,135.194Z" transform="translate(-137.066 -130.453)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_681" data-name="Group 681" transform="translate(20.492 4.273)">
+                                        <g id="Group_680" data-name="Group 680">
+                                            <rect id="Rectangle_420" data-name="Rectangle 420" width="17.058" height="1.639" transform="matrix(0.706, -0.708, 0.708, 0.706, 0, 12.074)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_683" data-name="Group 683" transform="translate(13.774 12.982)">
+                                        <g id="Group_682" data-name="Group 682">
+                                            <rect id="Rectangle_421" data-name="Rectangle 421" width="1.639" height="4.766" transform="matrix(0.706, -0.708, 0.708, 0.706, 0, 1.161)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_685" data-name="Group 685" transform="translate(4.294 12.983)">
+                                        <g id="Group_684" data-name="Group 684">
+                                            <rect id="Rectangle_422" data-name="Rectangle 422" width="8.661" height="1.639" transform="translate(0 6.125) rotate(-45)" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_687" data-name="Group 687" transform="translate(0.025 36.361)">
+                                        <g id="Group_686" data-name="Group 686">
+                                            <rect id="Rectangle_423" data-name="Rectangle 423" width="37.95" height="1.639" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_689" data-name="Group 689" transform="translate(33.991 13.465)">
+                                        <g id="Group_688" data-name="Group 688">
+                                            <rect id="Rectangle_424" data-name="Rectangle 424" width="1.639" height="23.715" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_691" data-name="Group 691" transform="translate(18.975 25.329)">
+                                        <g id="Group_690" data-name="Group 690">
+                                            <rect id="Rectangle_425" data-name="Rectangle 425" width="1.639" height="11.851" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_693" data-name="Group 693" transform="translate(2.37 27.699)">
+                                        <g id="Group_692" data-name="Group 692">
+                                            <rect id="Rectangle_426" data-name="Rectangle 426" width="1.639" height="9.481" fill="#797979" />
+                                        </g>
+                                    </g>
+                                    <g id="Group_695" data-name="Group 695" transform="translate(11.851 20.576)">
+                                        <g id="Group_694" data-name="Group 694">
+                                            <rect id="Rectangle_427" data-name="Rectangle 427" width="1.639" height="16.604" fill="#797979" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <h6 class="card-title mb-2">Themes</h6>
+                            <p class="card-text">
+                                Nunc vel sem et tellus pretium ultricies quis eget nibh fusce condimentum.
+                            </p>
+                            <div class="iscompleted-icon ishidden">
+                                <span class="process-option">
+                                    <a id="step6-revert" class="cancel-process">Cancel</a>
+                                    <a id="step6-url">Edit</a>
+                                </span>
+                                <span class="icon-checked" data-toggle="tooltip" data-placement="top" title="Saved data"><i class="ri-checkbox-circle-fill"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @* Themes end *@
+            </div>
+
+        </div>
+    </div>
+    <div class="bottom-options">
+        <div class="container">
+            <!-- page head ends -->
+            <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-light" id="cancelProcess" data-toggle="modal" data-target="#delConfirmationPopUp">Cancel all process</button>
+                    <button class="btn btn-success ml-2" id="confirmationProcess" disabled="disabled" data-toggle="modal" data-target="confirmationPopUp">Confirmation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    @*//Confimation modal*@
+    <div class="modal fade custom-modal" id="confirmationPopUp" tabindex="-1" role="dialog" aria-labelledby="confirmationPopUpLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationPopUpLabel">Configuration Completion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-text">
+                    You have successfully completed the configuration process.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="continue">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade custom-modal" id="windowPopUp" tabindex="-1" role="dialog" aria-labelledby="windowPopUp" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content modal-content-height">
+                <div class="modal-header pr-0 py-0">
+                    <h5 class="modal-title" id="windowPopUpLabel"></h5>
+                    <div class="modal-header-icon">
+                        <button type="button" class="btn btn-expand" title="Fullscreen Mode">
+                            <span aria-hidden="true" class="ri-fullscreen-line"></span>
+                        </button>
+                        <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close" onclick="checkAllConditions()" title="Close">
+                            <span aria-hidden="true" class="ri-close-line"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body modal-iframe-holder p-0" id="modal-text-window">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade custom-modal" id="delConfirmationPopUp" tabindex="-1" role="dialog" aria-labelledby="delConfirmationPopUpLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delConfirmationPopUpLabel">Cancel Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-text">
+                    Are you sure you want to cancel the configuration process?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="continueDel" onclick="cancelNew()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade custom-modal" id="createNewForm" tabindex="-1" role="dialog" aria-labelledby="createNewForm" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createNewFormLabel">Create New Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-text">
+                    <p class="mb-4">
+                        Please enter a Form Name to create a new form and continue the process.
+                    </p>
+                    <div class="form-group">
+                        <label>Form Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Home and Contents Insurance" id="form-title" name="form-title" />
+                    </div>
+                    <div class="form-group">
+                        <label>Form Icon</label>
+                        <select class="form-control selectpicker" id="form-icon" name="form-icon">
+                                <option value="">Select Icon</option>
+                                <option data-icon="ri-home-4-line" value="ri-home-4-line"> Home</option>
+                                <option data-icon="ri-car-line" value="ri-car-line"> Auto</option>
+                                <option data-icon="ri-archive-line" value="ri-archive-line"> Cargo</option>
+                                <option data-icon="ri-briefcase-line" value="ri-briefcase-line"> Business</option>
+                                <option data-icon="ri-plane-line" value="ri-plane-line"> Travel</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-primary" id="continueSave" onclick="saveForm()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade custom-modal" id="delProcessConfirm" tabindex="-1" role="dialog" aria-labelledby="delProcessConfirm" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delConfirmationPopUpLabel">Cancel Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-text">
+                    Are you sure you want to cancel the process?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="continueDelProcess">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+
+    <script>
+
+        var offsetVal = 104;
+
+        $(document).on("click", "#sc-right", function (e) {
+            let liEleRight = $(this).parent().parent().find('ul').first().find('li');
+            let ttRight = parseInt(liEleRight.first().css('width'));
+
+            let lastLi = parseInt(liEleRight.last().offset().left) + parseInt(liEleRight.last().css('width'));
+            let rightBot = parseInt($('#sc-right').offset().left);
+            rightBot = rightBot - 84;
+            let rightDistance = rightBot - lastLi;
+            if (rightDistance < 0) {
+                let foset = (parseInt($('.form-list').css('left')) - offsetVal) + 'px';
+                $('.form-list').css('left', foset);
+            }
+            determineBottomToHide();
+        });
+        //left
+        $(document).on("click", "#sc-left", function (e) {
+            let liEleLeft = $(this).parent().parent().find('ul').first().find('li');
+            let ttLeft = parseInt(liEleLeft.first().css('width'));
+
+            let firstLi = parseInt(liEleLeft.first().offset().left) + 20;
+            let leftBot = parseInt($('#sc-left').offset().left);
+
+            let leftDistance = leftBot - firstLi;
+            if (leftDistance > -40) {
+                let foset = (parseInt($('.form-list').css('left')) + offsetVal) + 'px';
+                $('.form-list').css('left', foset);
+            }
+            determineBottomToHide();
+        });
+
+        function determineBottomToHide() {
+            let tabs = $('.form-list').first().find('li');
+            // console.log(tabs);
+
+            //left
+            let firstLi = parseInt(tabs.first().offset().left);
+            let leftBot = parseInt($('#sc-left').parent().offset().left);
+
+            // console.log( firstLi + ' || ' + leftBot);
+            let preLeftdistance = leftBot - firstLi;
+            //console.log(preLeftdistance);
+            if (preLeftdistance <= 10) {
+                $('#sc-left').hide();
+            } else {
+                $('#sc-left').show();
+            }
+
+            //right
+            let lastLi = parseInt(tabs.last('li').offset().left);
+            let rightBot = parseInt($('#sc-right').parent().offset().left);
+
+            console.log(lastLi + ' || ' + rightBot);
+            let preRightdistance = rightBot - lastLi;
+            console.log(preRightdistance);
+            if (preRightdistance >= 143) {
+                $('#sc-right').hide();
+            } else {
+                $('#sc-right').show();
+            }
+        }
+
+        function setFormListPosition() {
+            var pos = parseInt($('.form-active').offset().left);
+            var total = 4 * 104;
+            //  let leftBut = parseInt($('#sc-left').offset().left);
+            // var diff = pos - leftBut;
+            final = ((parseInt(pos / 104)) * 104) - total;
+            console.log(final);
+            if (final > 0) {
+                $('.form-list').css('left', -final);
+            }
+
+            determineBottomToHide();
+        }
+
+    </script>
+
+    @* new dashboard scripts *@
+    <script>
+            //iniitilize
+        var formKey = 'form_' + '@_utils.EncryptId(Model.Id)';
+        var tenant_identifier = '@tenant_identifier';
+        var currStep = "step";
+        var selectedForm = '@_utils.EncryptId(Model.Id)';
+        var stepCount = 1;
+        var isNew = '@ViewBag.isNew';
+        var finalCount = 8;
+        var formName = '@Model.Name';
+        var hasAllCount = false;
+        var isComplete = false;
+        var intervals="";
+        var urls = {
+                "step0": "#",
+                "step1": "/admin/" + tenant_identifier + "/builderform/" + selectedForm + "/edit.html?display=nosidebar",
+                "step2": "/admin/" + tenant_identifier + "/roles.html?display=nosidebar",
+                "step3": "/admin/" + tenant_identifier + "/users.html?display=nosidebar",
+                "step4": "/admin/" + tenant_identifier + "/manage/stateworkflow.html?display=nosidebar&formId=" + @Model.Id,
+                "step5": "/admin/" + tenant_identifier + "/templates.html?display=nosidebar",
+                "step6": "/admin/" + tenant_identifier + "/themes.html?display=nosidebar",
+                "step7": ""
+            };
+
+        var dashboardCurrData;
+        var defaultData = {
+            "formId": "",
+            "formName": "",
+            "roleIds": [],
+            "workflowIds": [],
+            "templateIds": [],
+            "userIds": [],
+            "theme": "",
+            "confirmation": true,
+            "currentStep": "1",
+            "isNew": false,
+            "startDateTime": "",
+            "endDateTime": ""
+        };
+            ///
+
+            //reset all variables
+        var resetAll = function () {
+                currStep = "step";
+                selectedForm = "";
+                stepCount = 1;
+                hasAllCount = false;
+                isComplete = false;
+                isNew = "false";
+                intervals;
+                clearLocalStorage();
+            }
+
+            //on click create new link
+        var createNew = function () {
+                console.log("createNew");
+                $(".box-container-in").attr("style", "display:none");
+                $(".create-new").attr("style", "display:block");
+                $("#cancelCreate").removeAttr("disabled");
+                startUp();
+                clearLocalStorage();
+            }
+            //on click cancel button
+        var cancelNew = function () {
+                console.log("cancelNew");
+                $(".box-container-in").attr("style", "display:block;");
+                $(".create-new").attr("style", "display:none");
+                $("#form-name").val("");
+                $("#form-name").removeAttr("disabled");
+                $("#createNew").removeAttr("disabled");
+                deleteCreatedData(function () {
+                    clearLocalStorage();
+                    delCurrData(formKey);
+                    window.location.replace("/admin.html");
+                    $("#delConfirmationPopUp").modal('hide');
+                },"all")
+
+        }
+
+        $("#cancelCreate").on("click", function () {
+            $(".box-container-in").attr("style", "display:block;");
+            $(".create-new").attr("style", "dispaly:none");
+            $("#form-name").val("");
+            $("#form-name").removeAttr("disabled");
+            $("#createNew").removeAttr("disabled");
+        });
+        //delete Created data
+        var deleteCreatedData = function (callback, step) {
+
+                if (dashboardCurrData.roleIds.length > 0 || dashboardCurrData.userIds.length > 0 || dashboardCurrData.workflowIds.length > 0 || dashboardCurrData.formId != "") {
+                    $.ajax({
+                        async: false,
+                        type: "POST",
+                        url: '/admin/' + tenant_identifier + '/deletedata.html',
+                        data: { roles: dashboardCurrData.roleIds, users: dashboardCurrData.userIds, workflow: dashboardCurrData.workflowIds, FormId: dashboardCurrData.formId, delStep: step },
+                        //contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            data = response;
+                            return callback("");
+                        },
+                        error: function (response) {
+                            data = 0;
+                            return callback(0);
+                        }
+                    });
+                }
+                else {
+                    return callback("");
+                }
+
+        }
+            //check if all steps has been completed already
+        var checkSteps = function (data,isNew) {
+            if (isNew == 'False') {
+                if (parseInt(data.roleCount) > 1 && parseInt(data.userCount) > 1 && parseInt(data.workflowCount) >= 1 && parseInt(data.claimFormsCount) >= 1 && parseInt(data.mediaCount) >= 1) {
+                    //all disabled and click of each should be enabled
+                    hasAllCount = true;
+                }
+                else {
+                    if(parseInt(data.mediaCount) >= 1) { stepCount = 5; }
+                    else if (parseInt(data.workflowCount) >= 1) { stepCount = 4; }
+                    else if (parseInt(data.userCount) > 1) { stepCount = 3; }
+                    else if (parseInt(data.roleCount) > 1) { stepCount = 2; }
+                    else if (parseInt(data.claimFormsCount) >= 1) { stepCount = 1; }
+                   // else if (parseInt(data.mediaCount) >= 1) { stepCount = 5; }
+                    else { stepCount = 6; }
+                }
+            }
+            else {
+                stepCount = dashboardCurrData.currentStep;
+            }
+
+            }
+
+        //Completion btn click
+            $("#continue").on('click', function () {
+                stepCount = finalCount;
+                checkCancelbtn();
+                localStorageSetConfirmation(true);
+                localStorageSetIsNew(false);
+                localStorageSetCurrStep(stepCount)
+                saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                // initialLoadCheck();
+                checkAllConditions();
+                updateSteps();
+                $("#confirmationPopUp").modal('hide');
+            })
+
+            //reset to initial step
+        var startUp = function () {
+            $("#" + Object.keys(urls)[stepCount - 2] + "-arrow").addClass("ishidden");
+                resetAll();
+            $("#selected-form-text").html("");
+                $("#selectForm").val(selectedForm);
+                for (var i = 0; i <= Object.keys(urls).length; i++) {
+                   // setUrl(Object.keys(urls)[i]);
+                    removeUrl(Object.keys(urls)[i]);
+                    $("#" + Object.keys(urls)[i]).addClass("isdisabled");
+                    $("#" + Object.keys(urls)[i]).removeClass("is-activated");
+                    $("#" + Object.keys(urls)[i] + " .iscompleted-icon").addClass("ishidden");
+                    $("#" + Object.keys(urls)[i - 1] + "-arrow").addClass("ishidden");
+                    if (i == Object.keys(urls).length - 1) {
+                        console.log(Object.keys(urls)[i - 1] + "-arrow");
+                        $("#" + Object.keys(urls)[i - 1] + "-arrow").addClass("ishidden");
+                        $("#" + Object.keys(urls)[i]).removeClass("is-completed");
+
+                    }
+                }
+            $("#step0").removeClass("isdisabled");
+            $("#step0 .iscompleted-icon").addClass("ishidden");
+        }
+
+            //when all steps are completed
+        var complete = function (isNew) {
+                $("#step0").removeClass("isdisabled");
+
+                for (var i = 0; i <= Object.keys(urls).length; i++) {
+                    setUrl(Object.keys(urls)[i],true);
+                    $("#" + Object.keys(urls)[i]).removeClass("isdisabled");
+                    $("#" + Object.keys(urls)[i]).addClass("is-activated");
+                    if(i == Object.keys(urls).length)
+                    {
+                        if (isNew != true) {
+                            $("#" + Object.keys(urls)[i-1] + " .iscompleted-icon").removeClass("ishidden");
+                        }
+                        else {
+                            $("#" + Object.keys(urls)[i-1] + " .iscompleted-icon").addClass("ishidden");
+                        }
+                    }
+                    else
+                     {
+                         $("#" + Object.keys(urls)[i] + " .iscompleted-icon").removeClass("ishidden");
+                     }
+
+                    if (i == Object.keys(urls).length-1) {
+                        console.log(Object.keys(urls)[i-1] + "-arrow");
+                        $("#" + Object.keys(urls)[i - 1] + "-arrow").removeClass("ishidden");
+                        $("#" + Object.keys(urls)[i]).addClass("is-completed");
+                    }
+                }
+                stepCount = finalCount;
+
+            }
+
+            //next step work
+        var nextStep = function (currStep) {
+                    $("#" + currStep + stepCount).addClass("isdisabled");
+                    $("#" + currStep + stepCount + " .iscompleted-icon").removeClass("ishidden");
+                    $("#" + currStep + stepCount + "-arrow").removeClass("ishidden");
+                    $("#" + currStep + (stepCount - 1) + "-arrow").addClass("ishidden");
+                    stepCount++;
+                    $("#" + currStep + stepCount).removeClass("isdisabled");
+                    setUrl(currStep + stepCount);
+                }
+
+
+            //when new form create follow each steps
+        var stepByStep = function (step) {
+                var count = getCounts();
+                switch (step) {
+                    case "step1":
+                        if (count.claimFormsCount >= 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step2":
+                        if (count.roleCount > 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step3":
+                        if (count.userCount > 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step4":
+                        if (count.workflowCount >= 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step5":
+                        if (count.mediaCount >= 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step6":
+                        nextStep(currStep);
+                        removeUrl(step);
+                        clearInterval(intervals);
+                        intervals = null;
+                        complete(true);
+                        break;
+                    case "step7":
+                        break;
+                }
+            }
+
+
+
+            //get count of all the dashboard steps
+        var getCounts = function () {
+                var data;
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url: '/admin/' + tenant_identifier + '/latestcount.html',
+                    data: { caseFormId: selectedForm },
+                    //contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                     success: function (response) {
+                         data = response;
+                    },
+                    error: function (response) {
+                        data = 0;
+                    }
+                });
+                return data;
+            }
+
+            //create and save new form
+        var saveForm = function () {
+                var name = $("#form-title").val();
+                var tenantId = tenant_identifier;
+                var icon = $("#form-icon").val();
+                $.ajax({
+                    type: "POST",
+                    url: '/admin/' + tenant_identifier + '/builderform/createAction.html',
+                    data: { formName:name, tenant_identifier: tenantId, formIcon:icon},
+                    dataType: "json",
+                    success: function (response) {
+                        if (response != 0) {
+                            selectedForm = response;
+                            formKey = "form_" + selectedForm;
+                            createNewStorage();
+                           // setUrl(currStep + stepCount);
+                            localStorageSetFormId(response);
+                            localStorageSetIsNew(true);
+                            localStorageSetConfirmation(false);
+                            localStorageSetFormName(name);
+                            localStorageSetCurrStep(1);
+                            getSystemDateTime();
+                            checkCancelbtn();//check for cancelbtn
+                            saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                            window.location.replace("/admin/" + selectedForm + "/adminconfig.html?isNew=true");
+                        }
+                    },
+                    error: function (response) {
+
+                    }
+                });
+            }
+            //gets system's datetime
+        var getSystemDateTime = function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/admin/' + tenant_identifier + '/getsystemdatetime.html',
+                    dataType: "json",
+                    success: function (response) {
+                        dashboardCurrData.startDateTime = response;
+                        updateLocalStorage();
+                    },
+                    error: function (e) { }
+                });
+        }
+
+
+        //updates to Current Step
+        var updateSteps = function (isNew) {
+            //$("#step0").addClass("isdisabled");
+            $("#step0 .iscompleted-icon").removeClass("ishidden");
+            for (i = 0; i <stepCount; i++) {
+
+                $("#" + Object.keys(urls)[i]).removeClass("isdisabled");
+                $("#" + Object.keys(urls)[i]).addClass("is-activated");
+                $("#" + Object.keys(urls)[i]).removeAttr("onclick");
+                $("#" + Object.keys(urls)[i-1] + "-arrow").addClass("ishidden");
+                $("#" + Object.keys(urls)[i] + " .iscompleted-icon").removeClass("ishidden");
+                setUrl(Object.keys(urls)[i], true);
+                $("#" + Object.keys(urls)[i] + "-revert").removeClass("display");
+            }
+            setCancelProcess(Object.keys(urls)[stepCount - 1]);
+            setUrl(Object.keys(urls)[stepCount],false);
+            $("#" + Object.keys(urls)[stepCount]).removeClass("isdisabled");
+            console.log(Object.keys(urls)[stepCount - 1] + "-arrow");
+            $("#" + Object.keys(urls)[stepCount - 1] + "-arrow").removeClass("ishidden");
+            // stepCount++;
+        }
+
+
+
+       //on available form select change
+        var selectChange = function () {
+
+            $("#selectForm").on("change", function () {
+                if ($(this).val() != "") {
+
+                    $("#selected-form-text").html($('#selectForm :selected').text());
+                    var data = getCounts();
+                    //checkSteps(data,false);
+                    if (dashboardCurrData.isNew == false) {
+                        localStorageSetConfirmation(true);
+                        if (stepCount == "" || stepCount == 1) {
+                            checkSteps(data, false);
+                        }
+                    }
+                    else {
+                        checkSteps(data, true);
+                    }
+                    if (hasAllCount == true) {
+                        complete();
+                    }
+                    else {
+                        updateSteps();
+                    }
+
+                    //stepChange(currStep);
+                    selectedForm = $(this).val();
+                    localStorageSetFormId($(this).val());
+                    checkCancelbtn();//check for cancelbtn
+                    //setUrl(currStep + stepCount);
+                    //  $("#" + currStep + stepCount).on("click", buildForm);
+                }
+                else {
+                    startUp();
+                    stepRevert(currStep);
+                    removeUrl(currStep + stepCount);
+                }
+            });
+        }
+
+
+        var stepChange = function (currStep) {
+                $("#" + currStep + (stepCount - 1)).removeClass("isdisabled");
+                $("#" + currStep + (stepCount - 1)).addClass("is-activated");
+                $("#" + currStep + (stepCount - 1) + " .iscompleted-icon").removeClass("ishidden");
+                $("#" + currStep + (stepCount - 1)+ "-arrow").removeClass("ishidden");
+                $("#" + currStep + stepCount).removeClass("isdisabled");
+
+            }
+
+        var stepRevert = function (currStep) {
+                $("#" + currStep + (stepCount - 1)).removeClass("isdisabled");
+                $("#" + currStep + (stepCount - 1) + " .iscompleted-icon").addClass("ishidden");
+            $("#" + currStep + (stepCount - 1) + "-arrow").addClass("ishidden");
+            $("#" + currStep + (stepCount - 2) + "-arrow").removeClass("ishidden");
+                $("#" + currStep + stepCount).addClass("isdisabled");
+            }
+            //remove onclick action
+
+        function delProcess(step) {
+            deleteCreatedData(function () {
+                stepRevert(currStep);
+                stepCount = stepCount - 1;
+                localStorageSetCurrStep(stepCount);
+
+                switch (step) {
+                    case "step1":
+                        clearLocalStorage();
+                        delCurrData(formKey);
+                        window.location.replace("/admin.html");
+                        break;
+                    case "step2":
+                        localStorageSetCurrRoles("");
+                        updateSteps();
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        checkForProcessBtn();
+                        break;
+                    case "step3":
+                        localStorageSetCurrUsers("");
+                        updateSteps();
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        checkForProcessBtn();
+                        break;
+                    case "step4":
+                        localStorageSetCurrWorkflow("");
+                        updateSteps();
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        checkForProcessBtn();
+                        break;
+
+                    case "step5":
+                        updateSteps();
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        checkForProcessBtn();
+                        break;
+                    case "step6":
+                        updateSteps();
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        checkForProcessBtn();
+                        break;
+                }
+
+
+
+                //checkCancelbtn();
+                $("#delProcessConfirm").modal('hide');
+            },step)
+        }
+        var setCancelProcess = function (step) {
+            $("#" + step + "-revert").attr("data-toggle", "modal");
+            $("#" + step + "-revert").attr("data-target", "#delProcessConfirm");
+            $("#" + step + "-revert").addClass("display");
+            $("#continueDelProcess").attr("onclick", "delProcess('" + step + "')");
+        }
+
+
+        var removeUrl = function (step)
+        {
+            $("#" + step).removeAttr("onclick");
+            $("#" + step).removeAttr("data-target");
+            $("#" + step + "-url").removeAttr("onclick");
+            $("#" + step + "-url").removeAttr("data-target");
+        }
+
+        var setUrl = function (step, forEdit) {
+
+            if (forEdit == true) {
+                switch (step) {
+                    case "step1":
+                        //  $("#step1").attr("onclick", "buildUrl(" / admin / " + tenant_identifier + " / caseform / " + selectedForm + " / edit.html",first"));
+                        $("#step1-url").attr('onclick', 'buildUrlEdit("/admin/" + tenant_identifier + "/builderform/" + selectedForm + "/edit.html?display=nosidebar&isNew=")');
+                        break;
+                    case "step2":
+                        $("#step2-url").attr("onclick", 'buildUrlEdit("' + urls.step2 + '&isNew=")');
+                        break;
+                    case "step3":
+                        $("#step3-url").attr("onclick", 'buildUrlEdit("' + urls.step3 + '&isNew=")');
+                        break;
+                    case "step4":
+                        $("#step4-url").attr("onclick", 'buildUrlEdit("' + urls.step4 + '&isNew=")');
+                        break;
+                    case "step5":
+                        $("#step5-url").attr("onclick", 'buildUrlEdit("' + urls.step5 + '&isNew=")');
+                        break;
+                    case "step6":
+                        $("#step6-url").attr("onclick", 'buildUrlEdit("' + urls.step6 + '&isNew=")');
+                        break;
+                    case "step7":
+                        $("#step7").attr("data-target", "#confirmationPopUp");
+                        break;
+                }
+            }
+
+            else {
+                switch (step) {
+                    case "step1":
+                        //  $("#step1").attr("onclick", "buildUrl(" / admin / " + tenant_identifier + " / caseform / " + selectedForm + " / edit.html",first"));
+                        $("#step1").attr('onclick', 'buildUrl("/admin/" + tenant_identifier + "/builderform/" + selectedForm + "/edit.html?display=nosidebar&isNew=")');
+                        break;
+                    case "step2":
+                        $("#step2").attr("onclick", 'buildUrl("' + urls.step2 + '&isNew=")');
+                        break;
+                    case "step3":
+                        $("#step3").attr("onclick", 'buildUrl("' + urls.step3 + '&isNew=")');
+                        break;
+                    case "step4":
+                        $("#step4").attr("onclick", 'buildUrl("' + urls.step4 + '&isNew=")');
+                        break;
+                    case "step5":
+                        $("#step5").attr("onclick", 'buildUrl("' + urls.step5 + '&isNew=")');
+                        break;
+                    case "step6":
+                        $("#step6").attr("onclick", 'buildUrl("' + urls.step6 + '&isNew=")');
+                        break;
+                    case "step7":
+                        $("#step7").attr("data-target", "#confirmationPopUp");
+                        break;
+                }
+
+            }
+        }
+
+        var buildUrlEdit = function (url) {
+            url = url + dashboardCurrData.isNew;
+            $("#modal-text-window").html("<iframe src='" + url + "'></iframe>");
+             $("#windowPopUp").modal('show');
+            //window.open(url, '_self');
+        }
+
+            //build url for navigation
+        var buildUrl=function(url)
+            {
+                url = url + dashboardCurrData.isNew;
+                stepCount++;
+            localStorageSetCurrStep(stepCount);
+            saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+            $("#modal-text-window").html("<iframe src='" + url + "'></iframe>");
+            $("#windowPopUp").modal('show');
+            }
+
+
+
+        function createNewForm() {
+            $("#createNewForm").modal('show');
+        }
+
+        var getTenantForms = function (callback) {
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/gettenantforms.html',
+                dataType: "json",
+                success: function (response) {
+                    JSON.stringify(response);
+                    $(".form-list").html("");
+                    if (response.length >= 1) {
+                        selectChange();
+                        for (i = 0; i < response.length; i++) {
+                            // var c = (response[i].name).split(',');
+                            var url = "/admin/" + response[i].encryptedId + "/adminconfig.html?isNew=false";
+                            //$(".form-list").append("<li class='form-list-item' onclick=navigateTo('"+url+"')>"
+                            //    + "<i class= 'form-icon " + c[2] + "' ></i >"
+                            //    + "<span class='form-text'title='" + c[1] + "'>" + c[1] + "</span>"
+                            //    + "</li>"
+                            //    );
+                            if (response[i].encryptedId == selectedForm) {
+                                $(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center form-active'>"
+                                    + "<a class='d-flex flex-column align-items-center' href='" + url + "'>"
+                                    + "<i class= 'form-icon " + response[i].icon + "' ></i >"
+                                    + "<span class='form-text'title='" + response[i].name + "'>" + response[i].name + "</span>"
+                                    + "</i></li>");
+
+                            }
+                            else {
+                                $(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center'>"
+                                    + "<a class='d-flex flex-column align-items-center' href='" + url + "'>"
+                                    + "<i class= 'form-icon " + response[i].icon + "' ></i >"
+                                    + "<span class='form-text'title='" + response[i].name + "'>" + response[i].name + "</span>"
+                                    + "</i></li>");
+                            }
+
+
+
+
+
+                            //$(".form-list").append("<a class='form-box' href='/admin/" + c[0] +"/adminconfig.html?isNew=false'><div class='form-icon'>"
+                            //    + "<i class='"+c[2]+"'></i></div>"
+                            //    + "<span class='form-text' title='"+c[1]+"'>"+c[1]+"</span>"
+                            //    + "</a>");
+                        }
+                        //$(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center' onclick='createNewForm()'>"
+                        //    + "<a class= 'd-flex flex-column align-items-center' href ='#'>"
+                        //    + "<i class= 'form-icon fa fa-plus' ></i >"
+                        //    + "</li>");
+
+                    }
+                    else {
+
+                        //$(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center' onclick='createNewForm()'>"
+                        //    + "<a class= 'd-flex flex-column align-items-center' href ='#'>"
+                        //    + "<i class= 'form-icon fa fa-plus' ></i >"
+                        //    + "</li>");
+                    }
+
+
+                    return callback();
+                },
+                error: function (response) {
+                }
+
+            });
+        }
+
+
+
+
+            //localstorage Operations
+        var localStorageSetFormId = function (formid) {
+                dashboardCurrData.formId = formid;
+                updateLocalStorage();
+        }
+        var localStorageSetIsNew = function (IsNew) {
+                dashboardCurrData.isNew = IsNew;
+                updateLocalStorage();
+        }
+        var localStorageSetFormName = function (name) {
+                dashboardCurrData.formName = name;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrStep = function (step) {
+                dashboardCurrData.currentStep = step;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrRoles = function (data) {
+                dashboardCurrData.roleIds = data;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrUsers = function (data) {
+                dashboardCurrData.userIds = data;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrWorkflow = function (data) {
+                dashboardCurrData.workflowIds = data;
+                updateLocalStorage();
+        }
+        var localStorageSetConfirmation = function (data) {
+            dashboardCurrData.confirmation = data;
+            updateLocalStorage();
+        }
+        var updateLocalStorage = function () {
+            localStorage.setItem(formKey, JSON.stringify(dashboardCurrData));
+        }
+
+        var clearLocalStorage = function () {
+            resetdashboardCurrData(function () {
+                localStorage.removeItem(formKey);
+            });
+        }
+        //Resets dashboardCurrData
+        var resetdashboardCurrData = function (callback) {
+            dashboardCurrData = {
+                "formId": "",
+                "formName": "",
+                "roleIds": [],
+                "workflowIds": [],
+                "templateIds": [],
+                "userIds": [],
+                "theme": "",
+                "confirmation": true,
+                "currentStep": "1",
+                "isNew": false,
+                "startDateTime": "",
+                "endDateTime": ""
+            }
+
+            return callback("");
+
+        }
+        //end local storage operation
+
+        var validateStep = function (dataCount, callback) {
+                switch (stepCount) {
+                    case 2:
+                        $.ajax({
+                            type: "POST",
+                            url: '/admin/' + tenant_identifier + '/checkcaseform.html',
+                            data: { encrypedId: dashboardCurrData.formId },
+                            dataType: "json",
+                            success: function (response) {
+                                if (response == true) {
+                                    stepCount = stepCount - 1;
+                                    localStorageSetCurrStep(stepCount);
+                                    saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                                }
+                                return callback("");
+                            },
+                            error: function () {
+                                return callback("");}
+                        });
+                        break;
+                    case 3:
+                        if (!(dataCount.roleCount > 1)) {
+                            stepCount--;
+                            localStorageSetCurrStep(stepCount);
+                            saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+
+                        }
+                        return callback("");
+                        break;
+                    case 4:
+                        if (!(dataCount.userCount > 1)) {
+                            stepCount--;
+                            localStorageSetCurrStep(stepCount);
+                            saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+
+                        }
+                        return callback("");
+                        break;
+                    case 5:
+                        if (!(dataCount.workflowCount >= 1)) {
+                            stepCount--;
+                            localStorageSetCurrStep(stepCount);
+                            saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+
+                        }
+                        return callback("");
+                        break;
+                    case 6:
+                        return callback("");
+                        break;
+                    case 7:
+                        //isComplete = true;
+                        //complete(true);
+                        return callback("");
+                        break;
+            }
+
+        }
+
+        //check for cancel button (enable/disable)
+        var checkCancelbtn = function () {
+            if (dashboardCurrData.confirmation == true) {
+                $("#cancelProcess").attr("disabled", "disabled");
+                $("#cancelProcess").attr("data-target", "#delConfirmationPopUp");
+            }
+            else {
+                $("#cancelProcess").removeAttr("disabled");
+                $("#cancelProcess").attr("data-target", "#delConfirmationPopUp");
+            }
+        }
+
+        var checkForProcessBtn = function () {
+            if (stepCount == finalCount-1) {
+                //$("#cancelProcess").removeAttr("disabled");
+                //$("#cancelProcess").attr("data-target", "#delConfirmationPopUp");
+                if (dashboardCurrData.confirmation == false) {
+                    $("#confirmationProcess").removeAttr("disabled");
+                    $("#confirmationProcess").attr("data-target", "#confirmationPopUp");
+                    $("#confirmationProcess").attr("title", "Click to confirm the configuration.")
+                }
+
+                }
+            else {
+                if (dashboardCurrData.confirmation == true) {
+                    $("#confirmationProcess").attr("disabled", "disabled");
+                    $("#confirmationProcess").removeAttr("data-target");
+                    $("#confirmationProcess").attr("title","Configuration is already confirmed.")
+                    //$("#cancelProcess").removeAttr("disabled");
+                    //$("#cancelProcess").attr("data-target", "#delConfirmationPopUp");
+                }
+                else {
+                    $("#confirmationProcess").attr("disabled", "disabled");
+                    $("#confirmationProcess").removeAttr("data-target");
+                    $("#confirmationProcess").attr("title", "Please complete all the process first.")
+                    //$("#cancelProcess").attr("disabled", "disabled");
+                    //$("#cancelProcess").removeAttr("data-target");
+                }  }
+
+        }
+
+
+        var showLoading = function () {
+            $("#loading").fadeIn("10");
+        }
+        var hideLoading = function () {
+            $("#loading").fadeOut("400");
+        }
+        var createNewStorage = function (selectedForm) {
+            localStorage.setItem(formKey, JSON.stringify(defaultData));
+            dashboardCurrData = JSON.parse(localStorage.getItem(formKey));
+           // localStorageSetFormId(selectedForm);
+            //saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+
+        }
+        var checkKeyOnStorage = function (key,callback) {
+            var found = false;
+            for (var i = 0; i < localStorage.length; i++) {
+                var keycheck = localStorage.key(i);
+                if (keycheck == key) {
+                    found = true;
+                    dashboardCurrData = JSON.parse(localStorage.getItem(key));
+                }
+            }
+
+            if (found == false) {
+                getCurrData(key, function () {
+                    return callback();
+                });
+
+            }
+            else {
+                return callback();
+            }
+
+        }
+            //on page load
+        $(function () {
+            showLoading();
+            getTenantForms(function () {
+                initialLoadCheck(function () {
+                      $(".form-box-list").fadeIn(500);
+                    setFormListPosition();
+                    hideLoading();
+                });
+            });
+
+        //initialize list of forms
+        })
+        function initialLoadCheck(callback) {
+
+            if (isNew == 'true') {
+                checkKeyOnStorage(formKey, function () {
+                    if (dashboardCurrData.startDateTime != "") {
+                        getAddedData();
+                    }
+                    var data = getCounts();
+                    checkSteps(data, true);
+                    if (hasAllCount == true) {
+                        complete();
+                    }
+                    else {
+                        stepCount = dashboardCurrData.currentStep;
+                        isNew = dashboardCurrData.isNew;
+                        if (stepCount > 1) {
+                            validateStep(data, function () {
+                                updateSteps(isNew);
+                            });
+                        }
+                        else {
+                            updateSteps(isNew);
+                        }
+                        $(".box-container-in").attr("style", "display:none");
+                        $(".create-new").attr("style", "display:block");
+                        $("#form-name").val(dashboardCurrData.formName);
+                        $("#form-name").attr("disabled", "disabled");
+                        $("#createNew").attr("disabled", "disabled");
+                    }
+
+
+                    if (stepCount >= 8) {
+                        isComplete = true;
+                        complete(false);
+
+                    }
+                    checkForProcessBtn();
+                    hideLoading();
+
+                });
+
+            }
+            else {
+                checkKeyOnStorage(formKey, function () {
+                    stepCount = dashboardCurrData.currentStep;
+                    if (dashboardCurrData.startDateTime != "") {
+                        getAddedData();
+                    }
+                    isNew = dashboardCurrData.isNew;
+                    if (selectedForm != "") {
+                        if (stepCount == "") {
+                            checkSteps(data, false);
+                        }
+                        var data = getCounts();
+                        if (hasAllCount == true) {
+                            complete();
+                        }
+                        else {
+
+                            isNew = dashboardCurrData.isNew;
+                            if (stepCount > 1) {
+                                validateStep(data, function () {
+                                    updateSteps(isNew);
+                                });
+                            }
+                            else {
+                                updateSteps(isNew);
+                            }
+                        }
+                    }
+
+
+                    if (stepCount >= 8) {
+                        isComplete = true;
+                        complete(false);
+
+                    }
+                    checkForProcessBtn();
+
+                });
+
+            }
+            return callback();
+
+        }
+
+        //get currently added data
+        var getAddedData = function () {
+            var rolesAdded, usersAdded, workflowAdded;
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/getaddeddata.html',
+                data: { startDateTime: dashboardCurrData.startDateTime },
+                dataType: "json",
+                success: function (response) {
+                        if (response.roleData != null) {
+                            rolesAdded = response.roleData.split(",");
+                            localStorageSetCurrRoles(rolesAdded);
+                        }
+                        if (response.userData != null) {
+                            usersAdded = response.userData.split(",");
+                            localStorageSetCurrUsers(usersAdded);
+                        }
+                        if (response.workflowData != null) {
+                            workflowAdded = response.workflowData.split(",");
+                            localStorageSetCurrWorkflow(workflowAdded);
+                    }
+                    saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                },
+                error: function () { }
+                });
+        }
+
+        function checkAllConditions() {
+            showLoading()
+            initialLoadCheck(function () {
+                hideLoading();
+            })
+        }
+
+        //db save
+        function saveCurrData(key,data) {
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/savecurrentdata.html',
+                data: { keyId: key, value: data },
+                dataType: "json",
+                success: function (response) {
+                    if (response != 0 || response != null) {
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+
+        function getCurrData(key,callback) {
+            var data = "";
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/getcurrentdata.html',
+                data: { keyId: key },
+                dataType: "json",
+                success: function (response) {
+                    if (response != 0 && response != null) {
+                        dashboardCurrData = JSON.parse(response.value);
+                        updateLocalStorage();
+                        return callback();
+                    } else {
+                        createNewStorage();
+                        // setUrl(currStep + stepCount);
+                        localStorageSetFormId(selectedForm);
+                        localStorageSetIsNew(false);
+                        localStorageSetConfirmation(false);
+                        localStorageSetFormName(formName);
+                        localStorageSetCurrStep(1);
+                        getSystemDateTime();
+                        //checkCancelbtn();//check for cancelbtn
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        return callback();
+                    }
+
+                },
+                error: function (response) {
+                    return callback();
+                }
+            });
+
+        }
+
+        function delCurrData(key) {
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/delcurrentdata.html',
+                data: { keyId: key },
+                dataType: "json",
+                success: function (response) {
+                    if (response != 0) {
+
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+        //db save end
+
+	$(document).ready(function () {
+		$("button.btn-expand").click(function () {
+
+			//$(this).removeClass("btn-expand").addClass("btn-compress");
+			if ($(this).find("span").hasClass("ri-fullscreen-line")) {
+                $(".modal-xl").addClass("fullscreen-mode");
+                $(this).attr('title', 'Exit Fullscreen Mode');
+				$(this).find("span").removeClass("ri-fullscreen-line");
+				$(this).find("span").addClass("ri-fullscreen-exit-line");
+			} else {
+                $(".modal-xl").removeClass("fullscreen-mode");
+                $(this).attr('title', 'Fullscreen Mode');
+				$(this).find("span").removeClass("ri-fullscreen-exit-line");
+				$(this).find("span").addClass("ri-fullscreen-line");
+			}
+
+
+
+
+		});
+		//$("button.btn-compress").click(function () {
+		//	$(".modal-dialog.modal-dialog-width").removeClass("modal-full-width");
+		//	$(this).removeClass("btn-expand").addClass("btn-compress");
+		//	$(this).find("span").removeClass("fa-compress");
+		//	$(this).find("span").addClass("fa-expand");
+
+
+		//});
+
+
+	});
+    </script>
+
+}

@@ -1,0 +1,7 @@
+﻿<!-- Hidden Fields : Start -->
+@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Recaptcha
+@{
+    Recaptcha tb = Model as Recaptcha;
+}
+<div class="g-recaptcha" data-site="@tb.SiteKey" id="@tb.BackendId"></div>

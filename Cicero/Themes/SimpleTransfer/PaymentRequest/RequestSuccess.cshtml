@@ -1,0 +1,146 @@
+﻿@model Cicero.Service.Models.PaymentRequest.PaymentRequestViewModel
+@using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+@inject IConfiguration config
+@{
+    ViewData["Title"] = "Request Success";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+    var id = Model.Id;
+    Model.STPaymentRequestDetails.Reminder = (Model.STPaymentRequestDetails.Reminder == null) ? "" : Model.STPaymentRequestDetails.Reminder;
+    var callbackUrl = config.GetSection("BaseApiUrl").Value + "payment/request/onlinepayment?id=";
+    callbackUrl = callbackUrl + id;
+}
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        <div class="container ">
+            <div class="row">
+                <div class="col">
+                    <div class="widget-box border-bottom-0">
+                        <div class="widget-header flex-row justify-content-center border-bottom">
+
+                            <h5 class="title">Request a Payment</h5>
+
+
+
+                        </div>
+                        <div class="widget-content px-4">
+                            <div class="card card-lg my-5">
+                                <div class="card-body border px-5 flex-column">
+                                    <div class="icon icon-check mx-auto mb-4">
+                                        <i class="ri-check-line ri-2x"> </i>
+                                    </div>
+                                    <h5 class="title text-uppercase mx-auto"> Submitted</h5>
+                                    <p class="mx-auto">Payment request @Model.RequestId was sent to @Model.PayerName</p>
+                                </div>
+                                <div class="card-footer py-4 px-5 border bg-white border-top-0">
+                                    <h6 class="mx-auto mb-0 title">What's Next?</h6>
+                                    <div class="text-primary"><a href="/st/payment/index" class="mr-2">Manage Payment Request</a>|<a href="/payment/requestpayment" class="ml-2">Request Another Payment</a></div>
+                                </div>
+                            </div>
+                            <div class="card card-lg mb-5">
+                                <div class="card-body border px-5 flex-column">
+
+                                    <h6 class="title font-weight-normal mx-auto"> Share direct link with your payer</h6>
+
+                                    <div class="d-flex mx-auto">
+                                        <div class="icon icon-whatsapp border-0">
+                                            <a href="javascript:"><i class="ri-whatsapp-line ri-3x"></i></a>
+                                        </div>
+                                        <div class="icon icon-skype border-0">
+                                            <a href="javascript:"><i class="ri-skype-line ri-3x"></i></a>
+                                        </div>
+                                        <div class="icon icon-messenger border-0">
+                                            <a href="javascript:"><i class="ri-messenger-line ri-3x"></i></a>
+                                        </div>
+                                        <div class="icon icon-file-copy border-0">
+                                            <a href="javascript:" onclick="copyToClipboard();"> <i class="fa fa-copy fa-2x"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer py-4 px-5 border bg-white border-top-0">
+                                    <h6 class="title font-weight-normal mx-auto"> Automatic reminder schedule</h6>
+                                    <div class="payment-remainder-type">
+                                        <div class="remainder-option">
+                                            <div class="icon icon-bell mx-auto mb-md-4 @((Model.STPaymentRequestDetails.Reminder.Contains("1") ? "active": ""))" data-reminder="1"><i class="fa fa-bell"></i></div>
+                                            <div><h6 class="mb-0">1 Week </h6> <small class="text-light">Before Due Date</small></div>
+                                        </div>
+                                        <div class="remainder-option">
+                                            <div class="icon icon-bell mx-auto mb-md-4  @((Model.STPaymentRequestDetails.Reminder.Contains("2") ? "active": ""))" " data-reminder="2"><i class="fa fa-bell"></i></div>
+                                            <div><h6 class="mb-0"> On Due Date</h6></div>
+                                        </div>
+                                        <div class="remainder-option">
+                                            <div class="icon  icon-bell mx-auto mb-md-4  @((Model.STPaymentRequestDetails.Reminder.Contains("3") ? "active": ""))" " data-reminder="3"><i class="fa fa-bell"></i></div>
+                                            <div><h6 class="mb-0">1 Week</h6><small class="text-light">After Due Date</small></div>
+                                        </div>
+
+                                        @*<div class="custom-control custom-checkbox custom-control-inline">
+                                                <input type="checkbox" class="custom-control-input" id="remainderBeforeDate">
+                                                <label class="custom-control-label" for="remainderBeforeDate"> </label>
+                                            </div>
+
+                                            <!-- Default inline 2-->
+                                            <div class="custom-control custom-checkbox custom-control-inline">
+                                                <input type="checkbox" class="custom-control-input" id="remainderOnDate">
+                                                <label class="custom-control-label" for="remainderOnDate"><h6 class="mb-0"> On Due Date</h6></label>
+                                            </div>
+
+                                            <!-- Default inline 3-->
+                                            <div class="custom-control custom-checkbox custom-control-inline">
+                                                <input type="checkbox" class="custom-control-input" id="remainderAfterDate">
+                                                <label class="custom-control-label" for="remainderAfterDate"><h6 class="mb-0">1 Week</h6><small class="text-light">After Due Date</small></label>
+                                            </div>*@
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+</div>
+
+<script>
+    function copyToClipboard() {
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val("@callbackUrl").select();
+        var result = document.execCommand("copy");
+        $temp.remove();
+        if (result) {
+            toastr.info("link copied");
+        }
+
+    };
+
+    $('.icon-bell').on("click", function (e) {
+        $.ajax({
+            url: "@Url.Content("~/payment/reminder.html")",
+            get: "get",
+            data: { id: "@id", reminder: $(this).data("reminder") },
+            success: function (response) {
+                if (response) {
+                    $(e.currentTarget).toggleClass("active");
+                    if ($(e.currentTarget).hasClass("active")) {
+                        toastr.success("Reminder set successfully");
+                    }
+                    else {
+                        toastr.info("Reminder removed successfully");
+                    }
+                }
+                else {
+                    toastr.error("Reminder set failed");
+                }
+            },
+            error: function (error) {
+                toastr.error("Reminder set failed");
+            }
+        });
+    })
+</script>
+

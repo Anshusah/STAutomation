@@ -1,0 +1,399 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Services
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@model UserViewModel
+@inject IUserService _iUserService
+@inject Permission Permission
+@inject Utils  _utils
+
+@{
+    ViewData["Title"] = "Profile";
+      var image = _iUserService.GetImagesByUserId(Model.Id).Take(1).FirstOrDefault();
+    var value = 0;
+    if(image != null)
+    {
+        value = image.Id;
+    }
+}
+
+<style>
+    span:hover {
+        cursor: pointer;
+    }
+</style>
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + ".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Profile</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col">
+            <div class="absolute-fill">
+                <div class="main-content-area">
+                    <div class="container">
+                        <div class="py-5" style="max-width: 500px; margin: auto;">
+                            <h3>Profile Settings</h3>
+                            <form action="@Url.Content("~/user/profile.html")" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="status"></div>
+                                <div asp-validation-summary="All"></div>
+                                <input type="hidden" name="Id" value="@Model.Id" />
+                                <div class="fileuploader fileuploader--theme-avatar">
+                                    <div class="fileuploader__wrapper">
+                                        <div class="fileuploader__list">
+                                            <div class="fileuploader__items">
+                                                <div class="thumbs fileuploader__item">
+                                                    <div class="fileuploader__item-image">
+                                                        @if (image != null)
+                                                        {
+                                                            <img src="/uploads/@image.Url">
+                                                        }
+                                                    </div>
+                                                    <div class="actions-holder">
+                                                        <button class="btn fileuploader__action fileuploader__action-remove" type="button" title="Remove">
+                                                            <i class="fileuploader__icon-remove ri-close-circle-fill" aria-hidden="true"></i>
+                                                        </button>
+                                                    </div>
+                                                    <input type="hidden" name="images[]" value="@value">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="thumbs add fileuploader__input">
+                                        @*<button type="button" class="btn btn-link fileuploader__input-button" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e, objs, $this){
+                                                     Cicero.User.InsertImages(e, objs, this)},OnCancelled:function(){this.close();}}'>
+                                                Change Profile Picture
+                                            </button>*@
+                                        <button type="button" class="btn btn-link fileuploader__input-button" data-toggle="modal" data-target="#changeProfile">
+                                            Change Profile Picture
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="FirstName">First name</label>
+                                    <input asp-for="FirstName" type="text" class="form-control">
+                                    <span asp-validation-for="FirstName"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="LastName">Last name</label>
+                                    <input asp-for="LastName" type="text" class="form-control">
+                                    <span asp-validation-for="LastName"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Email">Email address</label>
+                                    <input asp-for="Email" type="text" class="form-control" placeholder="someone@example.com">
+                                    <span asp-validation-for="Email"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="PhoneNumber">Phone number</label>
+                                    <input asp-for="PhoneNumber" type="text" class="form-control">
+                                    <span asp-validation-for="PhoneNumber"></span>
+                                </div>
+                                <div class="py-4">
+                                    <!-- <h6>Password settings</h6>
+                                    <p>
+                                        <small class="text-muted">Click below to change Password.</small>
+                                    </p> -->
+                                    <button type="button" id="btn-chng-pass" class="btn btn-link px-0" data-toggle="modal" data-target="#changePassword">Change password</button>
+                                    <div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePassword" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0 pb-2">
+                                                    <h5 class="modal-title" id="changePasswordTitle">Password Setting</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="loading">
+                                                        <div class="d-flex justify-content-center">
+                                                            <div class="spinner-border" role="status">
+                                                                <span class="sr-only">Loading...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @*<form action="/" method="post">
+
+                                                                                <div class="form-group">
+                                                                                    <label class="">Old Password</label>
+                                                                                    <input type="password" name="name" value="" class="form-control" />
+                                                                                    @*<input asp-for="OldPassword" type="password" class="form-control" placeholder="Current Password">
+                                                        <span asp-validation-for="OldPassword" class="text-danger"></span>
+                                                                                </div>
+                                                                                        <div class="form-group">
+                                                                                            <label class="">New Password</label>
+                                                                                            <input type="password" name="name" value="" class="form-control" />
+                                                                                            @*<input asp-for="NewPassword" type="password" class="form-control" placeholder="New Password">
+                                                                <span asp-validation-for="NewPassword" class="text-danger"></span>
+                                                                                        </div>
+                                                                                        <div class="form-group">
+                                                                                            <label class="">Confirm Password</label>
+                                                                                            <input type="password" name="name" value="" class="form-control" />
+                                                                                            @*<input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm New Password">
+                                                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                                                                        </div>
+                                                                                    </form>*@
+                                                </div>
+                                                <div class="modal-footer border-0 pt-2">
+                                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" id="chng-pass-save" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-start align-items-center">
+                                    @if (Permission.Can(UserCan.Edit_Profile) && _iUserService.getLoggedInUserId() == Model.Id)
+                                    {
+                                        <button type="submit" class="btn btn-primary mr-2">Update profile</button>
+
+                                        }
+                                        <!-- <a class="btn btn-outline-secondary" href="@Url.Content("~/user/dashboard.html")">Cancel</a> -->
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="changeProfile" tabindex="-1" role="dialog" aria-labelledby="changeProfile" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="fileuploader fileuploader--theme-dragdrop">
+                        <div class="fileuploader__input">
+                            <div class="fileuploader__icon-main"></div>
+                            <h3 class="fileuploader__input-caption">Drag and drop to upload</h3>
+                            <p>or <a href="#" id="browseSpan">Browse</a><input class="form-control" type="file" id="browseFile" hidden /> to choose file</p>
+                            <span class="file-extension">jpg, jpeg ,png, gif (optimal resolution 120 x 120)</span>
+                        </div>
+                    </div>
+                    @*<div class="fileuploader__input" style="height: 200px; border: 1.5px dashed gray;">
+                            <div class="text-center">
+                                <i class="ri-file-upload-line"></i>
+                                <br>Drag and drop to upload<br>
+                                or <span style="color:blue;" id="browseSpan" onclick="return browseClicked();">Browse</span><input class="form-control" type="file" id="browseFile" hidden />
+                                to choose file <br> <br> jpg, jpeg ,png, gif ( optimal resolution 120 x 120)
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    @*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+    @section Scripts{
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script type="text/javascript">
+            $('.fileuploader__action-remove').click(function () {
+                $('.fileuploader__item-image').html('');
+                $('.fileuploader__item input').val(0);
+            });
+
+        $('#browseSpan').click(function () {
+            $('#browseFile').trigger("click");
+        })
+
+        $(".fileuploader__input").bind("dragenter", function () {
+                $(this).addClass('fileuploader-dragging');
+                return false;
+            });
+
+            $(".fileuploader__input").bind("dragleave", function () {
+                $(this).removeClass('fileuploader-dragging');
+                return false;
+            });
+
+        $(".fileuploader__input").bind("drop", function (e) {
+                $(this).removeClass('fileuploader-dragging');
+                var files = event.dataTransfer.files;
+                if (files.length > 1) {
+                     toastr.warning("Select Only 1 file");
+                }
+                else {
+                    console.log("drop");
+                    var result = checkExtension(files[0].name);
+                    if (!result) {
+                         toastr.warning("Please select jpg, jpeg, png, gif file only");
+                    }
+                    else {
+                        checkHeightAndWidth(files[0]).then(function (e) {
+                       if (e) {
+                           $('#changeProfile').modal("toggle");
+                   insertDropImage(files);
+                       }
+                   });
+                    }
+
+                }
+                return false;
+            });
+        $(".fileuploader__input").bind('dragover', function () {
+                $(this).addClass('fileuploader-dragging')
+                return false;
+            });
+
+        $("input:file").change(function (e) {
+            console.log("browse");
+            var files = e.target.files;
+            var result = checkExtension(files[0].name);
+               if (!result) {
+                         toastr.warning("Please select jpg, jpeg, png, gif file only");
+            }
+               else {
+                   checkHeightAndWidth(files[0]).then(function (e) {
+                       if (e) {
+                           $('#changeProfile').modal("toggle");
+                   insertDropImage(files);
+                       }
+                   });
+            }
+
+        });
+
+                function insertDropImage(e) {
+
+                var formData = new FormData();
+
+  for (var i = 0; i != e.length; i++) {
+    formData.append("files", e[i]);
+                }
+
+                $.ajax(
+                    {
+                        url: "@Url.Content("/user/uploadFiles.html")",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        type: "POST",
+                        success: function (data) {
+                            console.log("files");
+                            $.each(data, function (i, v) {
+                var extension = v.url.substr((v.url.lastIndexOf('.') + 1));
+                if (extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif") {
+                    jQuery("<img src='/uploads/" + v.url + "'>").appendTo(".fileuploader__item-image");
+                    $('.fileuploader__item input').val(v.id);
+                }
+            });
+                        }
+                    }
+                );
+        };
+
+        function checkExtension(fileName) {
+            var extension = fileName.substr((fileName.lastIndexOf('.') + 1)).toLowerCase();
+            if (extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif") {
+                return true;
+            }
+            return false;
+        }
+
+        async function checkHeightAndWidth(file) {
+
+            return new Promise((resolve, reject) => {
+        var _URL = window.URL || window.webkitURL;
+        let img = new Image();
+        img.onload = function(e) {
+            if (this.width >= 120 && this.height >= 120) {
+                resolve(true);
+            }
+            else {
+                 toastr.warning("Image size must be greater than 120 x 120 pixels");
+                resolve(false);
+            }
+
+        };
+        img.src = _URL.createObjectURL(file);
+    });
+}
+        //open state modal to change password
+        $(document).on("click", "#btn-chng-pass", function (e) {
+            //e.preventDefault();
+            $.ajax({
+                type: "GET",
+                dataType: "html",
+                url: "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/change-password")",
+                //data: { id: "@Model.Id" },
+                beforeSend: function() {
+                    $(".loading").css('dislay', 'block');
+                    $(".modal-footer").css({
+                        'pointer-events': 'none',
+                        'opacity': 0.5
+                    });
+                },
+                complete: function(){
+                    $(".loading").css('dislay', 'none');
+                    $(".modal-footer").css({
+                        'pointer-events': 'initial',
+                        'opacity': 1
+                    });
+                },
+                success: function (data) {
+                    if (data != "" && data != " ") {
+                        //document.getElementById("queue-form").reset();
+
+                        $('#changePassword').find(".modal-body").html(data);
+                        //$('#changePassword').modal('show');
+
+                        //$("#form_id").trigger();
+                    }
+                }
+            });
+        });
+
+        //chnage pass
+        $(document).on("click", "#chng-pass-save", function (e) {
+            //e.preventDefault();
+
+            let checker = $( "#chng-form" ).valid();
+
+            if (checker == true) {
+                let temp = $("#chng-form").serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/change-password")",
+                    data: temp,
+                    beforeSend: function() {
+                        $(".loading--absolute").css('dislay', 'flex');
+                        $(".modal-footer").addClass("disabled-action");
+                    },
+                    complete: function(){
+                        $(".loading--absolute").css('dislay', 'none');
+                        $(".modal-footer").removeClass("disabled-action");
+                    },
+                    success: function (html) {
+                        let message = html.message;
+
+                        $("#modal-status").replaceWith('<div class="status show" id="#modal-status"><div class="alert alert-'+html.status+'">'+message+'</div></div>');
+                        document.getElementById("chng-form").reset();
+                        if (html.status != "danger") {
+                                $(".status").replaceWith('<div class="status show"><div class="alert alert-'+html.status+'">'+message+'</div></div>');
+                                $("#changePassword").modal('toggle');
+                        }
+
+
+                        //$("#form_id").trigger();
+
+                    }
+                });
+            }
+
+
+        });
+
+            $("#media").on('show.bs.modal', function () {
+                $('#media .btn-primary').addClass("fromProfile");
+            });
+        </script>
+
+
+    }

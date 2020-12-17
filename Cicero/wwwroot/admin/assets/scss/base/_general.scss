@@ -1,0 +1,123 @@
+body {
+    font-size: $font-normal;
+    font-family: $font-body;
+    background: theme(bg,bodybg);
+    zoom: initial !important;
+}
+
+.sidebar .navbar-nav .dropdown-menu {
+    position: static;
+}
+
+
+// scrollbar
+.slimScrollBar {
+    opacity: 0.15 !important;
+}
+
+.slimScrollDiv {
+    .slimScrollBar {
+        display: none !important;
+    }
+    &:hover {
+        .slimScrollBar {
+            display: block !important;
+        }
+    }
+}
+/*@media only screen and (min-width: 768px) {
+    .sidebar-sticky {
+        overflow-x: initial !important;
+    overflow-y: initial !important;
+    }
+}*/
+
+.copyright {
+    position: fixed;
+    bottom: 10px;
+    left: 20px;
+    color: theme(text,light);
+    font-size: 1.2rem;
+    opacity: 0.5;
+}
+
+
+
+  // Tooltips
+  .tooltip-demo a {
+    white-space: nowrap;
+  }
+  
+  .bd-example-tooltip-static .tooltip {
+    position: relative;
+    display: inline-block;
+    margin: 10px 20px;
+    opacity: 1;
+  }
+
+  .social {
+      a {
+          color: theme(icon, dark);
+          
+          &:hover {
+              text-decoration: none;
+              color: theme(text, link-color);
+          }
+          i {
+            font-size: 1.8rem;
+          }
+      }
+  }
+
+
+  /*flybox*/
+.image-flybox {
+    &-nav {
+        position: absolute;
+        top: calc(50% - 14px);
+        z-index: 3;
+        display: block;
+        width: 16px;
+        height: 28px;
+        padding: 0 13px;
+        opacity: 0;
+        display: block;
+        transition: all 0.3s ease;
+    }
+
+    &:hover {
+        .image-flybox-nav {
+            opacity: 1;
+        }
+    }
+
+    &-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 3;
+    }
+
+    img {
+        transition: all 0.3s ease;
+    }
+}
+
+.picPrev {
+    background: url(../img/previous.svg) no-repeat;
+    left: 10px;
+}
+
+.picNext {
+    background: url(../img/next.svg) no-repeat;
+    right: 10px;
+}
+
+.modal-content, .modal-body {
+    transition: all 0.3s ease;
+}
+
+.modal.fade .modal-dialog {
+    transition: all 0.3s ease !important;
+}
+

@@ -1,0 +1,424 @@
+﻿@{
+    ViewData["Title"] = "Recipient List";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+
+}
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        @*<input type="hidden" id="elmloggedinuser" name="elmloggedinuser" elm-name="elmloggedinuser" value="@_commonService.getLoggedInUserId()" />*@
+        <div class="container dashboard-container">
+
+            <div class="dashboard-content">
+                <div class="banner-hero">
+                    <div class="user-info user-info-l">
+                        <h5 class="mb-0">Good Evening</h5>
+                        @*<h3>@(Model.FirstName + " " + Model.LastName)xyx xyx</h3>*@
+                        <h3>Adil Ahmed </h3>
+
+                        <div class="user-info-item  h5"><span class="label font-weight-light">Customer ID</span><h5>@*@Model.CustomerId*@ &nbsp; 154881617</h5></div>
+                    </div>
+
+                    <div class="user-info user-info-r">
+                        <div class="notification-content" onclick="location.href='@Url.Content("/jazzcash/payer/notifications")'">
+                            <span class="notification-text">Notification</span>  <div class="notification-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30.272" height="30.853" viewBox="0 0 48.272 48.853">
+                                    <g id="Group_2017" data-name="Group 2017" transform="translate(-1604.728 -267)">
+                                        <g id="Bell-line" transform="translate(1583.395 268)">
+                                            <path id="Path_4818" data-name="Path 4818" d="M162.145,424.972a7.485,7.485,0,0,1-7.477-7.477,1.5,1.5,0,1,1,2.991,0,4.486,4.486,0,1,0,8.972,0,1.5,1.5,0,1,1,2.991,0A7.485,7.485,0,0,1,162.145,424.972Zm0,0" transform="translate(-120.874 -377.12)" fill="#f4f5fa" />
+                                            <path id="Path_4819" data-name="Path 4819" d="M57.72,99.89h-32.9a3.49,3.49,0,0,1-2.269-6.141,13.363,13.363,0,0,0,4.761-10.232V77.957a13.957,13.957,0,0,1,27.914,0v5.559a13.359,13.359,0,0,0,4.741,10.218A3.488,3.488,0,0,1,57.72,99.89Zm-16.449-32.9A10.978,10.978,0,0,0,30.3,77.957v5.559a16.341,16.341,0,0,1-5.8,12.5.5.5,0,0,0-.18.383.5.5,0,0,0,.5.5h32.9a.5.5,0,0,0,.5-.5.491.491,0,0,0-.176-.379,16.346,16.346,0,0,1-5.806-12.505V77.957A10.978,10.978,0,0,0,41.271,66.991Zm0,0" transform="translate(0 -58.019)" fill="#f4f5fa" />
+                                            <path id="Path_4820" data-name="Path 4820" d="M220.163,8.972a1.5,1.5,0,0,1-1.5-1.5V1.5a1.5,1.5,0,1,1,2.991,0V7.477A1.5,1.5,0,0,1,220.163,8.972Zm0,0" transform="translate(-178.892)" fill="#f4f5fa" />
+                                        </g>
+
+                                    </g>
+                                </svg>
+                                <span class="notification-value">@*@Model.NotificationCount*@0</span>
+                            </div>
+                        </div>
+                        <div class="my-1"><span class="label">Local Time:</span> @*@Model.LocalTime*@ <span class="value">18:52</span></div>
+                        <div class="my-1"><span class="label">Last Visit:</span> @*@Model.LocalTime*@ <span class="value">05/13/2020 12:03 EST</span></div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row pt-4">
+                @*<div class="col-lg-12 d-flex">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-0 title d-block">Recipient List</h5>
+                            <p class="d-block ">Updated every several minutes</p>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+                                <i class="ri-add-circle-line mr-2"></i> Add Recepient
+
+                            </button>
+                        </div>
+                    </div>*@
+                <div class="col-md-12">
+
+
+                    <div class="widget-box  border-bottom-0">
+                        <form action="@Url.Content("~/jazzcash/recipient/action.html")" id="recipient-form" method="post">
+                            <div class="flex-row justify-content-between widget-header">
+                                <div>
+                                    <h5 class="title mb-0"> Recipients</h5>
+                                    <small>List of recipient recently you've interacted with.</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="datatable__filter-main" data-toggle="tooltip" data-placement="top" title="Click for Search">
+                                        <div class="datatable__filter-search w-100">
+                                            <div class="form-inline">
+                                                <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <button type="button" onclick="window.location.href = '@Url.Content("~/jazzcash" + "/recipient/0/edit.html")'" class="btn btn-add btn-link btn-add" data-toggle="tooltip" data-placement="top" title="Add Recipient">
+                                        <i class="ri-user-add-line"></i>
+                                    </button>
+                                    <button name="apply" type="button" class="btn btn-link btn-dlt" data-toggle="tooltip" data-placement="top" title="Delete Recipient" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to "+ $("#action").children("option:selected").val()+" selected security question?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#recipient-form").submit()},OnCancelled:function(){this.close();}}'><i class="ri-delete-bin-7-line"></i></button>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                @*<ul class="list-transaction">
+
+                                        <li class="list-transaction__item grid-container grid-col">
+                                            <div class="  text-left">
+                                                <span class="name">Jhon Doe</span>
+                                            </div>
+                                            <div class="">
+                                                <span>Address</span>
+                                            </div>
+                                            <div class="">
+                                                <span class="">Account No</span>
+                                            </div>
+
+                                            <div class="">
+                                                <span class="date"> 4 April 2020</span>
+                                            </div>
+
+                                            <div class="">
+                                                <div class="amount">-200.00 <span>USD</span></div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <i class="ri-arrow-right-s-line ri-2x"></i>
+                                            </div>
+                                        </li>
+                                        <li class="list-transaction__item grid-container grid-col">
+                                            <input type="checkbox" name="name" value="" hidden id="list1" class="recipientList1" />
+                                            <div class="  text-left">
+                                                <span class="name">Jhon Doe</span>
+                                            </div>
+                                            <div class="">
+                                                <span>Address</span>
+                                            </div>
+                                            <div class="">
+                                                <span class="">Account No</span>
+                                            </div>
+
+                                            <div class="">
+                                                <span class="date"> 4 April 2020</span>
+                                            </div>
+
+                                            <div class="">
+                                                <div class="amount">-200.00 <span>USD</span></div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <i class="ri-arrow-right-s-line ri-2x"></i>
+                                            </div>
+                                        </li>
+                                        <li class="list-transaction__item grid-container grid-col">
+                                            <input type="checkbox" name="name" value="" id="list1" class="recipientList1" hidden />
+                                            <div class="  text-left">
+                                                <span class="name">Jhon Doe</span>
+                                            </div>
+                                            <div class="">
+                                                <span>Address</span>
+                                            </div>
+                                            <div class="">
+                                                <span class="">Account No</span>
+                                            </div>
+
+                                            <div class="">
+                                                <span class="date"> 4 April 2020</span>
+                                            </div>
+
+                                            <div class="">
+                                                <div class="amount">-200.00 <span>USD</span></div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <i class="ri-arrow-right-s-line ri-2x"></i>
+                                            </div>
+                                        </li>
+                                    </ul>*@
+
+
+
+
+                                <div class="table-wapper">
+                                    <table id="recipientList" class="table table-hover table-custom table-responsive d-table w-100"></table>
+                                </div>
+                                <!-- Button trigger modal -->
+                                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recipientDetails">
+                                        recipient details
+                                    </button>*@
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="recipientDetails" tabindex="-1" role="dialog" aria-labelledby="recipientDetails" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title title" id="exampleModalLongTitle">Payment Request Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="recipient-detail__about">
+                        <div class="profile">
+                            <div class="icon-wrapper"><i class="ri-building-line ri-3x"></i></div>
+                        </div>
+                        <div class="details d-flex flex-column">
+                            <span class="name">Adil Ahmed ABC Company</span>
+                            <h5 class="amount">20.00 GBP</h5>
+                            <h6 class="Status title mb-0">Payment Request Pending</h6>
+                            <span class="small ">Due by 13th March 2020</span>
+
+                        </div>
+                    </div>
+
+                </div>
+                <nav>
+                    <div class="nav nav-tabs nav-tabs-grid" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Timeline</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Details</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="timeline__wrapper">
+                            <div class="timeline">
+                                <div class="timeline__container success succeed">
+                                    <div class="timeline__content ">
+
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container success ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="p-4">
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Name</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>Jhon Doe</h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Address</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>
+                                        Park Avenue, STOKE-ON-TRENT
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Date</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>
+                                        April 4, 2020
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var table = jQuery("#recipientList");
+        var customCheckbox = '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input dt-checkboxes" id=""><label class="custom-control-label"></label></div>';
+        table.dataTable({
+            "processing": true,
+            "serverSide": true,
+            "dom": 'r<"clear">t',
+            "ajax": { "url": "@Url.Content("~/jazzcash/payer/recipientlist.html")", "type": "POST" },
+            "oLanguage": { sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>" },
+            'stateSave': false,
+            'select': {
+                info: false,
+                style: 'multi'
+            },
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'render': function (data, type, row, meta) {
+                        if (type === 'display') {
+                            data = customCheckbox;
+                        }
+                        return data;
+                    },
+                    'checkboxes': {
+                        'selectRow': true,
+                        'selectAll': true,
+                        'selectAllRender': customCheckbox
+                    }
+                }
+            ],
+            "rowCallback": function (row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+            },
+            //data: [
+            //    {
+            //        "name": "Tiger Nixon",
+            //        "address": "System Architect",
+            //        "date": "2011/04/25",
+            //        "amount": "200 gbp",
+            //        "Status": "<span class='badge bagde-success'>Success</span>",
+            //        "actions": "<i class='ri-arrow-right-s-line'></i>"
+            //    },
+            //    {
+            //        "name": "Tiger Nixon",
+            //        "address": "System Architect",
+            //        "date": "2011/04/25",
+            //        "amount": "200 gbp",
+            //        "Status": "<span class='badge bagde-success'>Success</span>",
+            //        "actions": "<i class='ri-arrow-right-s-line'></i>"
+            //    }
+            //],
+
+            "columns": [
+                 { "title": "", "data": "id", "orderable": false },
+                { "title": "Payer Name", "data": "name", "orderable": true },
+                { "title": "Addess", "data": "address", "orderable": true },
+                //{
+                //    "title": "Amount", "data": null, "orderable": true,
+                //    'render': function (data) {
+                //        if (data.amount == null) {
+                //            data.amount = "0";
+                //        }
+
+                //        if (data.currency == null) {
+                //            data.currency = "GBP";
+                //        }
+
+                //        var amount = data.amount + " " + data.currency;
+                //        return amount;
+                //    }
+                //},
+                //{
+                //    "title": "Status", "data": null, "orderable": false,
+                //    'render': function (data) {
+                //        if (data.status == null) {
+                //            data.status = "";
+                //        }
+                //        //var content = data.content.length > 100 ? data.content.substr(0, data.content.lastIndexOf(' ', 100)) : data.content;
+                //        var content = data.status;
+                //        if (content == "1") {
+                //            return "<span class='badge badge-warning badge-pill'>Pending</span>";
+                //        }
+                //        else if (content == "2") {
+                //            return "<span class='badge badge-info badge-pill'>InProgress</span>";
+                //        }
+                //        else {
+                //            return "<span class='badge badge-success badge-pill'>Received</span>"
+                //        }
+                //    }
+                //},
+                { "title": "", "data": "action", "orderable": false, "class": "datatable__actions" }
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function (oSettings, json) {
+                jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+            },
+        });
+
+        jQuery(document).on("keyup", "#gridsearch", function () {
+            console.log(this.value);
+            table.fnFilter(this.value);
+        });
+        $('#recipientList tbody').on('click', 'tr:not(:first-child):not(:last-child)', function () {
+            var isEmpty = $(this).find('td').hasClass('dataTables_empty');
+            if (!isEmpty) {
+                $("#recipientDetails").modal("toggle");
+            }
+        });
+    });
+</script>

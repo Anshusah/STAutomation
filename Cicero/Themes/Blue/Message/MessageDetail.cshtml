@@ -1,0 +1,219 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model MessageViewModel
+@inject Permission Permission
+@inject IUserService _userService
+@inject IMessageService _messageService
+@inject ICaseService _caseService
+@inject IUserService _UserService
+@inject Utils _utils
+
+@{
+    ViewData["Title"] = "Message Detail";
+    ViewData["body"] = "full-layout";
+    var managerList = _userService.GetBackendUserList().Where(x => x.RoleName == "Claims manager" || x.RoleName == "Loss Adjuster");
+    string userImage = await _UserService.GetDefaultOrFirstImagesByUserId(_UserService.getLoggedInUserId(), "");
+}
+
+<style>
+    .case__top {
+        padding: 2rem;
+        background: #fff;
+    }
+
+        .case__top .breadcrumb {
+            padding: 0;
+            background: transparent;
+        }
+
+    .case__data {
+        text-align: right;
+    }
+
+    .case__content {
+        padding: 2rem;
+    }
+
+       .selectize-dropdown .optgroup-header{
+        color: darkcyan;     
+    }
+</style>
+
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <main class="main-content" role="main">
+                <div class="absolute-fill">
+                    @await Html.PartialAsync("~/Themes/Blue/Message/_PartialMessageDetails.cshtml", Model)
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", "#reply-message", function (e) {
+        $('#replyDiv').show();
+    })
+
+    $(document).on("click", "#cancel-btn", function (e) {
+        $('#replyDiv').hide();
+
+        $('#message-form').trigger("reset");
+        $('#select-state').val(null).change();
+        $('#claimid').val("").change();
+
+        var control = $select[0].selectize;
+        control.clear();
+    })
+</script>
+
+<script type="text/javascript" src="~/frontend/js/jquery.slimscroll.js"></script>
+<script>
+    $(document).ready(function () {
+         $('.pop').addClass("img__pop");
+            $.each($('.pop'), function (i, v) {
+                $(this).attr("data-slide", (i+1));
+            })
+              $('.pop').removeClass("pop");
+            createLightBox();
+    })
+        var $select = $('#select-state').selectize({
+            maxItems: 1
+        });
+
+        $('#select-manager').selectize({
+            maxItems: 1
+        });
+           var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+            var theme = (theme_match && theme_match[1]) || 'default';
+            var themes = ['default', 'legacy', 'bootstrap2', 'bootstrap3'];
+            $('head').append('<link rel="stylesheet" href="@Url.Content("~/css/selectize.css")"' + theme + '.css">');
+
+            var $themes = $('<div>').addClass('theme-selector').insertAfter('h1');
+            for (var i = 0; i < themes.length; i++) {
+                //$themes.append('<a href="?theme=' + themes[i] + '"' + (themes[i] === theme ? ' class="active"' : '') + '>' + themes[i] + '</a>');
+    }
+
+      jQuery(document).on("change", "#select-state", function () {
+                if ($('#select-state').val().length > 0) {
+                    $("#send-message").prop('disabled', false);
+                } else {
+                    $("#send-message").prop('disabled', true);
+                }
+            });
+</script>
+
+<script>
+        function createLightBox() {
+            var slides = '';
+           // var thumbnail = '';
+            var length = 0;
+            var i = 1;
+            $.each($('.fileuploader__item-image img'), function (index, value) {
+                  var imgsrc = $(this).attr("src");
+                if (imgsrc.toLowerCase().indexOf("uploads") >= 0) {
+                    length++;
+                }
+            })
+            $.each($('.fileuploader__item-image img'), function (index, value) {
+                var imgsrc = $(this).attr("src");
+                var imgTitle = $(this).attr('data-imgtitle');
+                if (imgsrc.toLowerCase().indexOf("uploads") >= 0) {
+                    var currentIndex = i++;
+                    //imgsrc = 'https://www.w3schools.com/howto/img_nature_wide.jpg';
+                    slides += '<div class="lightbox__item mySlides"> <div class="numbertext">' + (currentIndex) + '/ ' + length + '</div> <img src="' + imgsrc + '" class="lightbox__img"> </div>';
+                  //  thumbnail += '<div class="column"> <img class="demo" src="' + imgsrc + '" onclick="currentSlide(' + (currentIndex) + ')" alt="' + imgTitle + '"> </div>';
+                }
+            });
+
+            var buttons = '<a href="#" class="prev lightbox__prev lightbox__icon" onclick="plusSlides(-1)"><span class="sr-only">Previous</span></a> <a href="#" class="next lightbox__next lightbox__icon" onclick="plusSlides(1)"><span class="sr-only">Next</span></a> <!-- Caption text -->';
+            var caption = '<div class="slide-caption"><div id="caption"></div></div>';
+            var count = '<div class="slide-counter"><span id="currentNumber"></span>/' + length + '</div>';
+            var modal = '<div id="lightBoxModal" class="lightbox"><div class="lightbox__dialog"><div class="lightbox__toolbar">'+ count + caption +'<a href="#" class="lightbox__close lightbox__icon" onclick="closeModal()"><i class="sr-only">Close</i></a></div><div class="lightbox__content">' + slides + buttons + '' + '</div></div></div>';
+
+            $('body').append(modal);
+           //  showSlides(slideIndex);
+        }
+
+    // Open the Modal
+    function openModal() {
+        $("#lightBoxModal").css("display", "block");
+    }
+
+    // Close the Modal
+    function closeModal() {
+        $("#lightBoxModal").css("display", "none");
+        $('.lightbox__backdrop').remove();
+    }
+
+     $(document).on('keyup', function (e) {
+        if (e.keyCode === 27) {
+            e.preventDefault();
+            closeModal()
+        }
+        if (e.keyCode == 37) {
+            if ($('#lightBoxModal').css('display') == "block") {
+                plusSlides(-1)
+            }
+        }
+         if (e.keyCode == 39) {
+              if ($('#lightBoxModal').css('display') == "block") {
+                  plusSlides(1);
+            }
+        }
+    });
+
+    var slideIndex = 1;
+
+    // Next/previous controls
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    // Thumbnail image controls
+    function currentSlide(n) {
+        slideIndex = n;
+        showSlides(slideIndex);
+    }
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        //  var dots = document.getElementsByClassName("demo");
+        var captionText = document.getElementById("caption");
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+        $('#currentNumber').text(slideIndex);
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        //for (i = 0; i < dots.length; i++) {
+        //    dots[i].className = dots[i].className.replace(" active", "");
+        //}
+        slides[slideIndex - 1].style.display = "block";
+        var windowInnerHeight = window.innerHeight;
+        var imgHeight = $(slides[slideIndex - 1]).find('img').height();
+        if (imgHeight > windowInnerHeight) {
+            $('.lightbox__img').css('max-height', (windowInnerHeight * 0.9) + 'px');
+        }
+
+        // dots[slideIndex - 1].className += " active";
+        // captionText.innerHTML = dots[slideIndex - 1].alt;
+    }
+    $(document).on("click", '.img__pop', function (e) {
+        var slide = $(e.currentTarget).attr("data-slide");
+        currentSlide(parseInt(slide));
+        openModal();
+        var slidess = document.getElementsByClassName("mySlides");
+        var _windowInnerHeight = window.innerHeight;
+        var _imgHeight = $(slidess[parseInt(slide) - 1]).find('img').height();
+        if (_imgHeight > _windowInnerHeight) {
+            $('.lightbox__img').css('max-height', (_windowInnerHeight * 0.9) + 'px');
+        }
+        $('body').append('<div class="lightbox__backdrop show"></div>');
+    })
+
+</script>

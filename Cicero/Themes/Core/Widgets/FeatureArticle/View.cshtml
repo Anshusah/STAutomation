@@ -1,0 +1,180 @@
+﻿@using Themes.Core.Widgets
+@using Cicero.Service.Models
+@inject Cicero.Service.Services.IArticleService Article
+@{
+    FeatureArticle ca = Model as FeatureArticle;
+    if (ca.Article != null)
+    {
+        string siz = "false";
+        if (!string.IsNullOrEmpty(ca.Size))
+        {
+            siz = ca.Size;
+        }
+
+
+        <div class="widget-wrap @ca.WidgetLocation widget-custom-article @ca.Size=@siz  @ca.Align @ca.Navigation">
+            @if (!string.IsNullOrEmpty(ca.Title) && ca.LayoutType == "with-title")
+            {
+                <h6 class="widget-title widget-extra-article-title">@ca.Title</h6>
+            }
+            <div class="widget-content widget-extra-article-content">
+                @if (ca.DisplayAs == "banner")
+
+                {
+                    <div class="widget-slider-wrap" id="slider-@ca.WidgetId">
+                        @foreach (string articleid in ca.Article)
+                        {
+                            int index = ca.Article.IndexOf(articleid.ToString());
+                            var article = Article.GetArticleById(Convert.ToInt32(articleid));
+                            var img = Article.GetImagesByArticleId(Convert.ToInt32(articleid));
+                            string imageUrl = "";
+                            if (img != null && img.Count() > 0)
+                            {
+                                imageUrl = img.FirstOrDefault().Url;
+
+                            }
+                            else
+                            {
+                                imageUrl = "avatar.png";
+                            }
+                            <ul>
+                                <li>
+                                    @if (ca.CustomStyleBanner == "title-subtitle")
+                                    {
+                                        <h6>@article.Title</h6>
+                                        <span>@Html.Raw(article.Excerpt)</span>
+                                    }
+                                    else
+                                    {
+                                        <h6>@article.Title</h6>
+                                    }
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                    <script type="text/javascript">
+                               @{
+                            string inf = "false";
+                            if (!string.IsNullOrEmpty(ca.Infinite))
+                            {
+                                inf = ca.Infinite;
+                            }
+                        }
+
+                        jQuery(document).ready(function(){
+                            $('#slider-@ca.WidgetId').slick({
+                                dots: true,
+                                infinite: @inf,
+                                arrows: true,
+                                  speed: @ca.Speed,
+                                  slidesToShow: @ca.SlideToShow,
+                                  slidesToScroll:@ca.SlideToScroll,
+/*
+responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }
+]
+*/
+                            });
+                        })
+                    </script>
+                }
+                else if (ca.DisplayAs == "article")
+                {
+                    <ul>
+                        @foreach (string articleid in ca.Article)
+                        {
+                            int index = ca.Article.IndexOf(articleid.ToString());
+                            var article = Article.GetArticleById(Convert.ToInt32(articleid));
+                            var img = Article.GetImagesByArticleId(Convert.ToInt32(articleid));
+                            string imageUrl = "";
+                            if (img != null && img.Count() > 0)
+                            {
+                                imageUrl = img.FirstOrDefault().Url;
+
+                            }
+                            else
+                            {
+                                imageUrl = "avatar.png";
+                            }
+                            <li>
+                                @if (ca.CustomStyleArticle == "image-title-subtitle")
+                                {
+                                    <div>
+                                        <img src="/uploads/@imageUrl" />
+                                        <h6>@article.Title</h6>
+                                        <span>@Html.Raw(article.Excerpt)</span>
+                                    </div>
+                                }
+                                else if (ca.CustomStyleArticle == "title-subtitle")
+                                {
+                                    <h6>@article.Title</h6>
+                                    <span>@Html.Raw(article.Excerpt)</span>
+                                }
+                                else
+                                {
+                                    <h6>@article.Title</h6>
+                                }
+
+
+                                @*<div>
+                                        <img src="/uploads/@imageUrl" />
+                                        <h6>@article.Title</h6>
+                                        <span>@Html.Raw(article.Excerpt)</span>
+                                    </div>*@
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <text> Widget is null </text>
+    }
+}
+@*
+    <div class="widget-wrap aboutus widget-extra-article">
+        if(title==visible){
+        <h6 class="widget-title widget-extra-article-title">Title</h6>
+        }
+        <div class="widget-content widget-extra-article-content">
+            if(BANNER){
+                <div>Loop with images+titles+contents</div>
+            }else{
+                <ul>
+                    <li>
+                        <a>
+                            <img>
+                            <h6>Title</h6>
+                            <span>Content</span>
+                        </a>
+                    </li>
+                </ul>
+            }
+        </div>
+    </div>
+*@
+

@@ -1,0 +1,65 @@
+.custom-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8.503' height='6.344' viewBox='0 0 8.503 6.344'%3E%3Cpath id='play-solid' d='M6.01,3.565,1.025.109C.62-.172,0,.1,0,.795v6.91c0,.623.576,1,1.025.686L6.01,4.937A.871.871,0,0,0,6.01,3.565Z' transform='translate(8.503) rotate(90)' fill='%2391969d'/%3E%3C/svg%3E%0A")!important;
+}
+.datetime {
+    background-image: url("data:image/svg+xml,%3Csvg id='calendar-line' xmlns='http://www.w3.org/2000/svg' width='15.043' height='15.043' viewBox='0 0 15.043 15.043'%3E%3Cpath id='Path_506' data-name='Path 506' d='M0,0H15.043V15.043H0Z' fill='none'/%3E%3Cpath id='Path_507' data-name='Path 507' d='M11.4,2.254h2.507a.627.627,0,0,1,.627.627V12.909a.627.627,0,0,1-.627.627H2.627A.627.627,0,0,1,2,12.909V2.88a.627.627,0,0,1,.627-.627H5.134V1H6.387V2.254h3.761V1H11.4ZM10.148,3.507H6.387V4.761H5.134V3.507H3.254V6.014H13.282V3.507H11.4V4.761H10.148Zm3.134,3.761H3.254v5.014H13.282Z' transform='translate(-0.746 -0.373)' fill='%23666'/%3E%3C/svg%3E%0A")!important;
+    padding-right: 2.2rem;
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    background-size: 16px;
+}
+.custom-file-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.custom-switch {
+    .custom-control-label {
+        &::before {
+            text-overflow: ellipsis;
+            left: -2.25rem;
+            width: 2.2rem;
+            border-radius: 10rem;
+            height: 1.3rem;
+            border: 0;
+            background: #ccc;
+        }
+
+        &::after {
+            top: calc(.25rem + 2px);
+            left: calc(-2.25rem + 2px);
+            width: calc(1.3rem - 4px);
+            height: calc(1.3rem - 4px);
+            border-radius: 10rem;
+            background: #fff;
+        }
+    }
+
+    .custom-control-input:checked ~ .custom-control-label::after {
+        transform: translateX(0.9rem);
+    }
+}
+// .custom-switch-lg {
+//     .custom-control-label {
+//         &::before {
+//             text-overflow: ellipsis;
+//             left: -2.25rem;
+//             width: 3rem;
+//             border-radius: 1rem;
+//             height: 1.35rem;
+//         }
+
+//         &::after {
+//             top: calc(.25rem + 2px);
+//             left: calc(-2.15rem + 2px);
+//             width: calc(1.25rem - 4px);
+//             height: calc(1.25rem - 4px);
+//             border-radius: 1rem;
+//         }
+//     }
+
+//     .custom-control-input:checked ~ .custom-control-label::after {
+//         transform: translateX(1.5rem);
+//     }
+// }
+

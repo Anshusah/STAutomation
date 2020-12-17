@@ -1,0 +1,79 @@
+.card {
+    width: 100%;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+    border:none;
+
+    &-lg {
+        max-width: 850px;
+        margin: auto;
+    }
+
+    &-header {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .btn {
+            &-edit {
+                position: absolute;
+                top: 50%;
+                right: 1rem;
+                transform: translateY(-50%);
+                @include rfs(1.25rem);
+
+                i {
+                    vertical-align: middle;
+                    margin-left: .5rem;
+                }
+            }
+        }
+
+        .form {
+            &-group {
+                margin-bottom: 0;
+            }
+        }
+
+        &:first-child {
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+
+        &-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+
+            @include media-breakpoint-up(md) {
+                text-align: center;
+            }
+        }
+
+        &-secondary {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: #fff;
+
+            @include media-breakpoint-up(md) {
+                text-align: center;
+            }
+        }
+    }
+
+    &-body {
+        border: 1px solid $border-color;
+        display: flex;
+        /*flex-flow:column;*/
+        padding: 3rem 3rem;
+        border-top: 0;
+        /*border-bottom-left-radius: .5rem;
+        border-bottom-right-radius: .5rem;*/
+        background-color: #fff;
+        text-align:left;
+
+        &-light {
+            background-color: #f8f8f8;
+        }
+    }
+}

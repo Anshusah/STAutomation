@@ -1,0 +1,636 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model Cicero.Service.Models.JazzCash.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+
+<style>
+    .disable {
+        pointer-events: none;
+    }
+
+    .clickablecard:hover {
+        cursor: pointer;
+    }
+</style>
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+
+    <header class="header">
+
+        <div class="container">
+            <nav class="navbar navbar-expand-md py-3 px-4 justify-content-between">
+                <h2 class="sr-only">Main Navigation</h2>
+                <a class="st-logo" href="#"><img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" class="img img-responsive" alt="Simple Transfer - Login" /></a>
+                <ul class="navbar-nav nav justify-content-end">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Contact Us <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Faq's</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="main-content">
+        <div class="container">
+            <div class="widget__form-layout">
+                <div class="form-layout__header ">
+                    <h4 class="title mb-0 ">Contact Details</h4>
+                </div>
+                <div class="form-layout__content align-items-start content-bordered">
+                    
+                    
+                    <form action="/" method="post" id="form-contactDetails-individual" class="w-100">
+
+                        <div class="form-group">
+                            <label class="form-label"> First Name</label><sup>*</sup>
+                            <input asp-for="FirstName" type="text" class="form-control" id="firstName-individual" value="" placeholder=" First Name" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Legal Last Name</label><sup>*</sup>
+                            <input asp-for="LastName" type="text" class="form-control" id="lastName-individual" value="" placeholder="Legal Last Name" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label><sup>*</sup>
+                            <input asp-for="Username" type="email" class="form-control" id="username-individual" value="" placeholder="adilahmed@appiskey.com" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="form-label">Postal Zip Code</label><sup>*</sup>
+                            <input asp-for="Address" type="text" class="form-control" id="addressLine1-individual" value="" placeholder="Postal Zip Code" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="form-label">Country</label><sup>*</sup>
+                            <select asp-for="CountryCode" class="custom-select" id="country-individual">
+                                <option value="" selected>Select Country</option>
+                                <option value="value">text</option>
+                            </select>
+                            <span asp-validation-for="CountryCode" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">Address</label><sup>*</sup>
+                            <input asp-for="Address" type="text" class="form-control" id="addressLine1-individual" value="" placeholder="Address" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mobile Number</label><sup>*</sup>
+                            <input asp-for="MobileNumber" type="text" id="number-individual" value="" class="form-control form-field " placeholder="+92 3158157497">
+                            <span id="spnCodeStatus"></span>
+                            <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label><sup>*</sup>
+                            <input asp-for="DOB" type="date" id="dob-individual" value="" class="form-control" placeholder="Date of Birth" >
+                            <span asp-validation-for="DOB" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group col-lg-8">
+                                <p class="mb-0">Want to pay faster next time? Create a password and we’ll save your details.</p>
+                            </div>
+                        </div>
+                        <div class="form-row align-items-end">
+                            <div class="form-group col-lg-6">
+                                <label class="mb-1">Your username will be </label>
+                                <h6 class="title mb-0">gfx.adil@gmail.com</h6>
+
+                            </div>
+                          
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label><sup>*</sup>
+                            <input asp-for="Password" type="password" class="form-control" id="password-individual" value="" placeholder="Enter Password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-next" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#confirmModal">
+                            Verify <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                <g id="arrow" transform="translate(-4.57)">
+                                    <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                        <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                        <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                    </form>
+
+
+                </div>
+            </div>
+
+            @* old layot register form *@
+            @*<div class="form-layout__wrapper mb-4">
+            <div class="form-layout__content">
+
+                <div class="icon icon-default mb-3"><div class="label-icon border rounded-circle p-4"><img src="~/Themes/JazzCash/img/commerce.png" alt="Alternate Text" /></div></div>
+                <h4>Pay <span class="title"> 20.00 GBP</span> to <span class="title">Adil Ahmed</span></h4>
+                <div><span>Request ID:</span> <span class="value text-dark"> 447849955</span></div>
+            </div>
+        </div>*@
+            @*<div class="form-layout__wrapper mt-0">
+            <div class="form-layout__header ">
+                <h4 class="title mb-0 ">Contact Details</h4>
+            </div>
+            <div class="form-layout__content align-items-start content-bordered">
+                <p class="mb-3">Please  fill in the fields in English characters only</p>
+                <div class="form-group">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input asp-for="PayeeType" type="radio" id="customRadioInline2" name="customRadioInline1" value="company" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="customRadioInline2">Company</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input asp-for="PayeeType" type="radio" id="customRadioInline1" name="customRadioInline1" value="individual" class="custom-control-input">
+                        <label class="custom-control-label" for="customRadioInline1">Individual</label>
+                    </div>
+
+                </div>
+                <form action="/" method="post" id="form-contactDetails-company" class="companyForm">
+                    <p class="mb-3">Please  fill in the fields in English characters only</p>
+                    <div class="form-group">
+                        <label class="form-label">Company Details</label><sup>*</sup>
+                        <input type="text" class="form-control" name="companyName" value="" placeholder="Company's Legal Name" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <select asp-for="CountryCode" class="custom-select" id="country-individual">
+                            <option value="" selected>Select Country</option>
+                            <option value="value">text</option>
+                        </select>
+                        <span asp-validation-for="CountryCode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label><sup>*</sup>
+                        <input asp-for="Address" type="text" class="form-control" id="addressLine1-individual" value="" placeholder="Address" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company Website</label><sup>*</sup>
+                        <input type="text" class="form-control" name="companyWebsite" id="companyWebsite-company" value="" placeholder="Company Website URL (Optional)" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Person Detail</label><sup>*</sup>
+                        <input type="text" class="form-control" name="" value="" placeholder="Contact Person Detail" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label><sup>*</sup>
+                        <input  type="email" class="form-control" id="emailAdderss-individual" value="" placeholder="Email Address" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mobile Number</label><sup>*</sup>
+                        <input type="text" id="number-company" value="" class="form-control form-field" placeholder="+92 3158157497">
+                        <span id="spnCodeStatus-company"></span>
+                        <span class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date of Establishment</label><sup>*</sup>
+                        <input type="date" name="date of establishment" value="" class="form-control form-field " placeholder="Date of Establishment">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload Id</label>
+                        <div class="file-uploader">
+                            <input type="file" id="document-company" value="" class="file-uploader-input" placeholder="Upload Id">
+                            <label class="file-uploader-label"><span class="icon"><i class="ri-add-line"></i></span></label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-lg-8">
+                            <p class="mb-0">Want to pay faster next time? Create a password and we’ll save your details.</p>
+                        </div>
+                    </div>
+                    <div class="form-row align-items-end">
+                        <div class="form-group col-lg-6">
+                            <label class="mb-1">Your username will be </label><sup>*</sup>
+                            <h6 class="title mb-0">gfx.adil@gmail.com</h6>
+
+                        </div>
+                        <div class="form-group col-lg-6 text-right">
+                            <a href="#">Copy Payment Link</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label><sup>*</sup>
+                        <input type="password" class="form-control" id="password-company" value="" placeholder="Enter Password" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-next" data-backdrop="static" data-toggle="modal" data-keyboard="false" data-target="#confirmModal">
+                        Submit <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                            <g id="arrow" transform="translate(-4.57)">
+                                <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                    <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                    <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+
+                </form>
+                <form action="/" method="post" id="form-contactDetails-individual" hidden>
+
+                    <div class="form-group">
+                        <label class="form-label">Legal First Name</label><sup>*</sup>
+                        <input asp-for="FirstName" type="text" class="form-control" id="firstName-individual" value="" placeholder="Legal First Name" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Legal Last Name</label><sup>*</sup>
+                        <input asp-for="LastName" type="text" class="form-control" id="lastName-individual" value="" placeholder="Legal Last Name" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label><sup>*</sup>
+                        <input asp-for="Username" type="email" class="form-control" id="username-individual" value="" placeholder="adilahmed@appiskey.com" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="form-label">Country</label><sup>*</sup>
+                        <select asp-for="CountryCode" class="custom-select" id="country-individual">
+                            <option value="" selected>Select Country</option>
+                            <option value="value">text</option>
+                        </select>
+                        <span asp-validation-for="CountryCode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="form-label">Address</label><sup>*</sup>
+                        <input asp-for="Address" type="text" class="form-control" id="addressLine1-individual" value="" placeholder="Address" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mobile Number</label><sup>*</sup>
+                        <input asp-for="MobileNumber" type="text" id="number-individual" value="" class="form-control form-field " placeholder="+92 3158157497">
+                        <span id="spnCodeStatus"></span>
+                        <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label><sup>*</sup>
+                        <input asp-for="DOB" type="date" id="dob-individual" value="" class="form-control" placeholder="Date of Birth">
+                        <span asp-validation-for="DOB" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Upload Id</label>
+                        <div class="file-uploader">
+                            <input type="file" id="document-company" value="" class="file-uploader-input" placeholder="Upload Id">
+                            <label class="file-uploader-label"><span class="icon"><i class="ri-add-line"></i></span></label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-lg-8">
+                            <p class="mb-0">Want to pay faster next time? Create a password and we’ll save your details.</p>
+                        </div>
+                    </div>
+                    <div class="form-row align-items-end">
+                        <div class="form-group col-lg-6">
+                            <label class="mb-1">Your username will be </label>
+                            <h6 class="title mb-0">gfx.adil@gmail.com</h6>
+
+                        </div>
+                        <div class="form-group col-lg-6 text-right">
+                            <a href="#">Copy Payment Link</a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label><sup>*</sup>
+                        <input asp-for="Password" type="password" class="form-control" id="password-individual" value="" placeholder="Enter Password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-next" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#confirmModal">
+                        Submit <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                            <g id="arrow" transform="translate(-4.57)">
+                                <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                    <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                    <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+
+                </form>
+
+
+            </div>
+        </div>*@
+
+        </div>
+
+        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <div class="st__modal-confirm">
+                            <div class="icon-success mb-3"><div class="label-icon"><i class="ri-check-line ri-2x"></i></div></div>
+                            <h5 class="mb-3 title font-weight-light">
+                                Thank you! Your account registration
+                                is now complete!
+                            </h5>
+                            <p class="small">
+                                You need to verify your email by clicking the link send by us to the email provided.
+                            </p>
+                            <p class="small  mb-4">
+                                Please feel free to reach out to one of our friendly support representative on 0203 570  8090
+                                or email us at <strong>customersupport@simpletransfer.co.uk</strong>
+                            </p>
+                            <button onclick="window.location.href = '@Url.Content("/jazzcash/payer/landingpage")'" class="btn btn-block btn-primary w-75 mx-auto">
+                                Home
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" width="12.204" height="12.608" viewBox="0 0 12.204 12.608">
+                                    <g id="arrow" transform="translate(-4.57)">
+                                        <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                            <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#fff" />
+                                            <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#fff" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="row copyright-section">
+                <div class="mx-auto">
+                    <small>&copy;Copyright  Fast Track Money Transfer Limited 2020</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+@section Scripts{}
+<script>
+    var data = {};
+    var isMobileNumberVerifed = false;
+    $('.btn-next').on("click", function (e) {
+        var which = $(e.currentTarget).parents('form').attr('id');
+        switch (which) {
+            case "form-contactDetails-individual":
+                if ($("#form-contactDetails-individual").valid()) {
+
+                    if (!isMobileNumberVerifed) {
+                        toastr.warning("Please Verify Your Mobile Number.");
+                        return false;
+                    }
+                    else {
+                        $("#btnVerifyOtp").trigger('click');
+                    }
+                    $('#v-pills-contact-tab').addClass("complete");
+                    $('#v-pills-security-tab').removeClass("disable");
+                    $('#v-pills-security-tab').trigger("click");
+                }
+                break;
+
+            case "form-securityDetail-individual":
+                if ($("#form-securityDetail-individual").valid()) {
+                    $('#v-pills-security-tab').addClass("complete");
+                    $('#v-pills-end-tab').removeClass("disable");
+                    $('#v-pills-end-tab').trigger("click");
+                }
+                break;
+
+            case "form-contactDetails-company":
+                var country = $('#country-individual').val();
+                var addressLine1 = $('#addressLine1-individual').val();
+                var addressLine2 = $('#addressLine2-individual').val();
+                var city = $('#cityTown-individual').val();
+                var postalCode = $('#postalCode-individual').val();
+                var number = $('#number-individual').val();
+
+                data.CountryCode = country;
+                data.Address = addressLine1;
+                data.Address2 = addressLine2;
+                data.City = city;
+                data.PostCode = postalCode;
+                data.MobileNumber = number;
+
+                $('#v-pills-contact-tab').addClass("complete");
+                $('#v-pills-security-tab').removeClass("disable");
+                $('#v-pills-security-tab').trigger("click");
+                break;
+
+            case "form-securityDetail-company":
+                $('#v-pills-security-tab').addClass("complete");
+                $('#v-pills-end-tab').removeClass("disable");
+                $('#v-pills-end-tab').trigger("click");
+                break;
+
+
+            case "form-almostDone-individual":
+                getDataForIndividual();
+
+                if ($("#form-almostDone-individual").valid()) {
+                    var result = submitForm().then(function (r) {
+                        debugger
+                        if (r) {
+                            $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+                        }
+                    });
+                }
+                break;
+
+            case "form-almostDone-company":
+                var payeeType = $('input[type=radio][name=customRadioInline1]').val();
+
+                var jazzCashAccount = $('#jazzCashAccount-company').val();
+
+                data.JazzCashAccount = jazzCashAccount;
+                data.PayeeType = (payeeType == "individual") ? 1 : 2;
+                var result = submitForm().then(function (r) {
+                    if (r) {
+                        $('#confirmModal').modal({ backdrop: 'static', keyboard: false });
+                    }
+                });
+                break;
+        }
+    });
+
+    $('input[type=radio][name=customRadioInline1]').change(function () {
+        $('#v-pills-contact-tab').removeClass("complete");
+        $('#v-pills-security-tab').addClass("disable");
+        $('#v-pills-security-tab').removeClass("complete");
+        $('#v-pills-end-tab').addClass("disable");
+
+        if (this.value == 'individual') {
+            $('.companyForm').attr("hidden", "hidden");
+            $('form').not('.companyForm').removeAttr("hidden");
+        }
+        else if (this.value == 'company') {
+            $('.companyForm').removeAttr("hidden");
+            $('form').not('.companyForm').attr("hidden", "hidden");
+        }
+    });
+
+    $("#btnSendOtp").click(function () {
+        isMobileNumberVerifed = false;
+        $(this).tooltip('hide')
+        if ($("#form-contactDetails-individual").valid()) {
+
+            var fewSeconds = 120;
+            // Ajax request
+            var btn = $(this);
+            btn.attr('disabled', true);
+            setTimeout(function () {
+                btn.attr('disabled', false);
+                $("#spnCodeStatus").html("");
+            }, fewSeconds * 1000);
+            $.ajax({
+                url: '/st/user/sendotp',
+                data: {
+                    mobileNumber: $("#number-individual").val()
+                },
+                error: function () {
+                    toastr.error('An error has occurred');
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data == true) {
+                        $("#spnCodeStatus").html("<span class='text-success small font-weight-light'>Code Sent! Resend after 2 minutes.</span>");
+                        $("#verifyOtp-div").show();
+                    }
+                    else {
+                        $("#spnCodeStatus").html("<span class='text-danger small font-weight-light'>An error has occurred!</span>");
+                    }
+                },
+                type: 'GET'
+            });
+        }
+    });
+
+    $("#btnVerifyOtp").click(function () {
+        if ($("#form-contactDetails-individual").valid()) {
+            if ($("#verificationCode-individual").val() == "" || $("#verificationCode-individual").val() == undefined) {
+                $("#spnCodeValidate").html("<span class='text-danger small font-weight-light'>Please enter code.</span>");
+            } else {
+                $.ajax({
+                    url: '/st/user/verifyotp',
+                    data: {
+                        mobileNumber: $("#number-individual").val(),
+                        otp: $("#verificationCode-individual").val()
+                    },
+                    error: function () {
+                        toastr.error('An error has occurred');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data == true) {
+                            $("#verifyOtp-div").hide();
+                            $("#sendOtpParagraph").hide();
+                            $("#spnCodeStatus").html("<span class='text-success small font-weight-light'>Verified!</span>");
+                            isMobileNumberVerifed = true;
+                        }
+                        else {
+                            $("#spnCodeValidate").html("<span class='text-danger small font-weight-light'>Code doesn't match. Please try again.</span>");
+                        }
+                    },
+                    type: 'GET'
+                });
+            }
+        }
+    });
+
+    async function submitForm() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/jazzcash/payer/register.html",
+                type: "post",
+                data: { data: data },
+                success: function (response) {
+                    toastr.success("Registration Success");
+                    resolve(true);
+                    return;
+                },
+                error: function (error) {
+                    toastr.error("Registration Failed");
+                    resolve(false);
+                    return;
+                }
+            });
+        });
+    }
+
+    function getDataForIndividual() {
+        var firstName = $('#firstName-individual').val();
+        var lastName = $('#lastName-individual').val();
+        var dob = $('#dob-individual').val();
+
+        data.FirstName = firstName;
+        data.LastName = lastName;
+        data.DOB = dob;
+
+        var country = $('#country-individual').val();
+        var addressLine1 = $('#addressLine1-individual').val();
+        var number = $('#number-individual').val();
+
+        data.CountryCode = country;
+        data.Address = addressLine1;
+        data.MobileNumber = number;
+
+        var username = $('#username-individual').val();
+        var password = $('#password-individual').val();
+
+        data.Username = username;
+        data.Password = password;
+
+        var payeeType = $('input[type=radio][name=customRadioInline1]').val();
+
+        var jazzCashAccount = $('#jazzCashAccount-individual').val();
+
+        data.JazzCashAccount = jazzCashAccount;
+        data.PayeeType = (payeeType == "individual") ? 1 : 2;
+    }
+
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        target = target.slice(1);
+        switch (target) {
+            case "form-securityDetail":
+                if ($("#form-contactDetails-individual").valid()) {
+                        return true;
+                }
+                e.preventDefault();
+                break;
+
+            case "form-almostDone":
+                if ($("#form-securityDetail-individual").valid()) {
+                    if ($("#form-contactDetails-individual").valid()) {
+                            return true;
+                    }
+                }
+                e.preventDefault();
+                break;
+        }
+        debugger
+    });
+
+    var cards = document.querySelectorAll(".clickablecard");
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].addEventListener('click', function (e) {
+        }, false);
+    }
+</script>
+

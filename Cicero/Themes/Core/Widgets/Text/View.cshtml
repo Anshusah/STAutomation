@@ -1,0 +1,11 @@
+﻿@using Themes.Core.Widgets
+@{
+    Text text = Model as Text; //shortcode
+}
+
+<div class="widget-wrap @text.WidgetLocation widget-text">
+    <h6 class="widget-title widget-text-title">@text.Title</h6>
+    <p class="widget-content widget-text-content">
+        @text.Content
+    </p>
+</div>

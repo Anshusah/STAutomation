@@ -1,0 +1,44 @@
+﻿@inject Permission Permission
+@inject IUserService _userService
+@inject ICaseService _caseService
+@inject Utils _utils
+
+<div class="main-content-area">
+    <form action="@Url.Content("/user/markMessageAsRead.html")" id="users-form" method="post">
+        <div class="content__wrapper section__message">
+            <div class="content__header">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Message</li>
+                    </ol>
+                </nav>
+                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
+                    <h5>All Messages</h5>
+                    @if (Permission.Can(UserCan.Create_Message))
+                    {
+                        <div class="page-actionbtns d-flex justify-content-center align-content-center">
+                            <input type="text" class="form-control mr-2" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                            <select class="custom-select" name="action" id="action">
+                                <option value="">Select Action</option>
+                                <option value="markAsRead">Mark As Read</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                            <div class="col-sm-2 my-1" hidden>
+                                <button name="apply" id="apply" type="button" class="btn btn-secondary" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#users-form").submit()},OnCancelled:function(){this.close();}}'>Apply</button>
+                            </div>
+                            <a href="javascript:" id="new-message" class="btn btn-outline-secondary ml-1" data-toggle="modal" data-target="#exampleModal">Compose</a>
+                        </div>
+                    }
+                </div>
+
+
+            </div>
+
+            <div class="content__body p-0">
+                <table id="messages" class="table table-hover message-inbox"></table>
+            </div>
+        </div>
+    </form>
+</div>
+

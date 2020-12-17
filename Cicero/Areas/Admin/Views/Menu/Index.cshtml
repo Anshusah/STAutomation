@@ -1,0 +1,477 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model NavigationViewModel
+@inject Permission Permission
+@{
+    ViewBag.Title = "Manage Menus";
+}
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin.html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Menus</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage Menus</h3>
+    </div>
+
+    @using (Html.BeginForm("Index", "Menu", new { location = Model.SelectedLocation }, FormMethod.Post))
+    {
+        <div class="row">
+            @Html.AntiForgeryToken()
+            <div class="col-lg-4">
+                <div class="box clearfix border">
+                    <div class="box-header p-3" style="background-color: #f9f9f9;border-bottom: 1px solid #ebebeb;">
+                        <h5 class="box-title mb-0">Available Links</h5>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body p-3 clearfix">
+
+                        <div class="menu-lists">
+                            <ul class="ul-lists">
+                                <li class="active">
+                                    <a>Articles</a>
+                                    <ul class="ul-lists-childrens">
+                                        @foreach (var article in Model.Article)
+                                        {
+                                            <li>
+                                                <a class="item" data-json='{"type":"article","desc":"","class":"","url":"@article.Id","menu":"@article.Title","url_title":"@article.Title"}'>@article.Title</a>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a data-json='{"type":"custom","desc":"","url":"#","menu":"Custom Link","url_title":"","class":""}' class="item">Custom Link</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <div class="col-lg-8">
+                <div class="box  clearfix border">
+                    <div class="box-header p-2" style="background-color: #f9f9f9;border-bottom: 1px solid #ebebeb;">
+                        <div class="form-group d-flex align-items-center" style="margin-bottom:0px;">
+                            <select name="location" class="custom border" onChange="window.location='?location='+this.value">
+                                @foreach (var lo in Model.Locations)
+                                {
+                                    if (lo.ToString() == Model.SelectedLocation)
+                                    {
+                                        <option value="@lo" selected="selected">@lo</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@lo">@lo</option>
+                                    }
+                                }
+                            </select>
+                            <i>&nbsp;&nbsp;Choose any location.</i>
+                            @if (Permission.Can(UserCan.Update_Menu))
+                            {
+                                <button type="submit" class="btn btn-primary ml-auto">Save</button>
+                            }
+                        </div>
+                    </div>
+                    @{
+                        // Console.Write(Model.ExistingMenusDecoded); //prints: baa
+                    }
+
+                    <!-- /.box-header -->
+                    <div class="box-body p-3 clearfix">
+                        <textarea id="nav-json" name="json" style="width:0px; height:0px; opacity:0;">@Model.ExistingMenusEncoded</textarea>
+                        @{
+                            var json = Model.ExistingMenusDecoded;
+                            var target = "";
+                            var is_active = "";
+                            var index = 0;
+                            var desc = "";
+                        }
+
+                        <ul class='space first-space' id='navs'>
+                            @if (json != null)
+                            {
+                                foreach (var _Menu in json)
+                                {
+                                    index++;
+                                    is_active = "";
+                                    if (index == 1)
+                                    {
+                                        is_active = "active-";
+                                    }
+                                    <li class='route'>
+                                        <div class="mwrapper @is_active">
+                                            <div class="mtitle">
+                                                <span class='title'>@_Menu.menu</span>
+                                            </div>
+                                            <div class="mbody">
+                                                <div class="form-group menu">
+                                                    <label>Menu</label>
+                                                    <input type="text" name="menu[]" value="@_Menu.menu" class="form-control menu" />
+                                                </div>
+                                                <div class="form-group css_class">
+                                                    <label>CSS Class</label>
+                                                    <input type="text" name="css_class[]" value="@_Menu.css_class" class="form-control css_class" />
+                                                </div>
+
+                                                <div class="form-group desc">
+                                                    <label>Short Description</label>
+                                                    @{
+                                                        desc = "";
+                                                        if (_Menu.desc != null)
+                                                        {
+                                                            desc = _Menu.desc;
+                                                        }
+                                                    }
+                                                    <textarea class="form-control custom desc" name="desc[]" placeholder="eg: Get in Touch">@desc</textarea>
+                                                </div>
+                                                <div class="form-group url">
+                                                    @{
+                                                        if (_Menu.type != "custom")
+                                                        {
+                                                            <label for="selectnavs">URL : @_Menu.url_title</label>
+                                                            <input type="hidden" name="url[]" value="@_Menu.url" class="form-control url" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <label for="selectnavs">URL</label>
+                                                            <input type="text" name="url[]" value="@_Menu.url" class="form-control url" />
+                                                        }
+                                                        target = "";
+                                                        if (_Menu.target == "on")
+                                                        {
+                                                            target = "checked='checked'";
+                                                        }
+                                                    }
+                                                    <input type="hidden" name="type[]" class="type" value="@_Menu.type" />
+                                                    <input type="hidden" name="url_title[]" class="url_title" value="@_Menu.url_title" />
+                                                </div>
+                                                <div class="form-group target">
+                                                    <label>
+                                                        <input type="checkbox" id="target" @target name="target[]" class="custom target" />Open in new Window?
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="button" class="btn btn-danger">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="space">
+                                            @*@ObjectInfo.Print(_Menu.childrens)*@
+                                            @{
+                                                if (_Menu.childrens.Count() > 0)
+                                                {
+                                                    foreach (var __Menu in _Menu.childrens)
+                                                    {
+
+                                                        <li class='route'>
+                                                            <div class="mwrapper">
+                                                                <div class="mtitle">
+                                                                    <span class='title'>@__Menu.menu</span>
+                                                                </div>
+                                                                <div class="mbody">
+                                                                    <div class="form-group menu">
+                                                                        <label>Menu</label>
+                                                                        <input type="text" name="menu[]" value="@__Menu.menu" class="form-control menu" />
+                                                                    </div>
+                                                                    <div class="form-group css_class">
+                                                                        <label>CSS Class</label>
+                                                                        <input type="text" name="css_class[]" value="@__Menu.css_class" class="form-control css_class" />
+                                                                    </div>
+
+                                                                    <div class="form-group desc">
+                                                                        <label>Short Description</label>
+                                                                        @{
+                                                                            desc = "";
+                                                                            if (__Menu.desc != null)
+                                                                            {
+                                                                                desc = __Menu.desc;
+                                                                            }
+                                                                        }
+                                                                        <textarea class="form-control custom desc" name="desc[]" placeholder="eg: Get in Touch">@desc</textarea>
+                                                                    </div>
+                                                                    <div class="form-group url">
+                                                                        @{
+                                                                            if (__Menu.type != "custom")
+                                                                            {
+                                                                                <label for="selectnavs">URL : @__Menu.url_title</label>
+                                                                                <input type="hidden" name="url[]" value="@__Menu.url" class="form-control url" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <label for="selectnavs">URL</label>
+                                                                                <input type="text" name="url[]" value="@__Menu.url" class="form-control url" />
+                                                                            }
+                                                                            target = "";
+                                                                            if (__Menu.target == "on")
+                                                                            {
+                                                                                target = "checked='checked'";
+                                                                            }
+                                                                        }
+                                                                        <input type="hidden" name="type[]" class="type" value="@__Menu.type" />
+                                                                        <input type="hidden" name="url_title[]" class="url_title" value="@__Menu.url_title" />
+                                                                    </div>
+                                                                    <div class="form-group target">
+                                                                        <label>
+                                                                            <input type="checkbox" id="target" @target name="target[]" class="custom target" />Open in new Window?
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <button type="button" class="btn btn-danger">Delete</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <ul class="space">
+                                                                @{
+                                                                    if (__Menu.childrens.Count() > 0)
+                                                                    {
+                                                                        @*_Menu.menu*@
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        </li>
+                                                    }
+                                                }
+
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+
+                            }
+                        </ul>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    }
+
+
+</div>
+@section Scripts {
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            calcWidth($('#title0'));
+
+            window.onresize = function (event) {
+                console.log("window resized");
+
+                //method to execute one time after a timer
+
+            };
+
+            //recursively calculate the Width all titles
+            function calcWidth(obj) {
+                var titles =
+                    $(obj).siblings('.space').children('.route').children('.title');
+
+                $(titles).each(function (index, element) {
+                    var pTitleWidth = parseInt($(obj).css('width'));
+                    var leftOffset = parseInt($(obj).siblings('.space').css('margin-left'));
+
+                    var newWidth = pTitleWidth - leftOffset;
+
+                    if ($(obj).attr('id') == 'title0') {
+                        newWidth = newWidth - 10;
+                    }
+
+                    $(element).css({
+                        'width': newWidth,
+                    })
+
+                    calcWidth(element);
+                });
+
+            }
+
+            $('.space').sortable({
+
+                connectWith: '.space',
+                placeholder: "ui-state-highlight",
+                tolerance: 'pointer',
+                dropOnEmpty: true,
+                forceHelperSize: true,
+                /* xx */
+                refreshPositions: true,
+                forcePlaceholderSize: true,
+                //containment: 'window',
+                distance: 5,
+                opacity: 1,
+                /* uu */
+                // tolerance: "pointer",
+                zIndex: 9999999,
+                over: function (event, ui) {
+                    console.log("Overed");
+                },
+                change: function (event, ui) {
+                    collect();
+                },
+                start: function (event, ui) {
+                    jQuery(".space.first-space").addClass("start");
+                    collect();
+
+                },
+                stop: function (event, ui) {
+                    jQuery(".space.first-space").removeClass("start");
+                    collect();
+
+                },
+                receive: function (event, ui) {
+                    //calcWidth($(this).siblings('.title'));
+                    var json = $(ui.sender).data('json');
+
+                    if (typeof (json) == 'undefined') {
+                        collect();
+                        return;
+                    }
+                    var url = '';
+                    if (json.type == 'article') {
+                        url = '<label for="selectnavs">URL : ' + json.url_title + '</label><input type="hidden" name="url[]" value="' + json.url + '" class="form-control url" />';
+                    } else {
+                        url = '<label for="selectnavs">URL</label><input type="text" name="url[]" value="' + json.url + '" class="form-control url" />';
+                    }
+                    var dom = '<li class="route">' +
+                        '<div class="mwrapper active">' +
+                        '<div class="mtitle">' +
+                        '<span class="title">' + json.menu + '</span>' +
+                        '</div>' +
+                        '<div class="mbody">' +
+                        '<div class="form-group menu">' +
+                        '<label for="selectnavs">Menu</label>' +
+                        '<input type="text" name="menu[]" value="' + json.menu + '" class="form-control menu" />' +
+                        '</div>' +
+                        '<div class="form-group css_class">' +
+                        '<label>Menu Class</label>' +
+                        '<input class="form-control custom class" type="text" name="css_class[]" value="" />' +
+                        '</div>' +
+                        '<div class="form-group desc">' +
+                        '<label>Short Description</label>' +
+                        '<textarea class="form-control custom desc">' + json.desc + '</textarea>' +
+                        '</div>' +
+                        '<div class="form-group url">' +
+                        url
+                        + '<input type="hidden" name="type[]" value="' + json.type + '" class="type" />' +
+                        '<input type="hidden" name="type[]" value="' + json.url_title + '" class="url_title" />' +
+                        '</div>' +
+                        '<div class="form-group target">' +
+                        '<label><input type="checkbox" id="target" name="target[]" class="custom target" />Open in new Window?</label>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                        '<button type="button" class="btn btn-danger">Delete</button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<ul class="space">' +
+                        '</ul>' +
+                        '</li>';
+                    jQuery(this).find('a.item').replaceWith(dom);
+                    collect();
+
+                },
+            });
+            $('.space').disableSelection();
+            $('.ul-lists a[data-json]').draggable({
+                connectToSortable: '.space',
+                helper: 'clone',
+            });
+
+
+            jQuery(document).on("click", ".ul-lists>li", function () {
+                jQuery(this).find(">ul").slideToggle();
+                jQuery(this).toggleClass('active');
+            })
+            jQuery(document).on("click", ".ul-lists>li li", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".mwrapper", function () {
+                jQuery(this).find(">.mbody").slideToggle();
+                jQuery(this).toggleClass('active');
+            })
+            jQuery(document).on("click", ".mwrapper .mbody input,.mwrapper .mbody label,.mwrapper .mbody input,.mwrapper .mbody select,.mwrapper .mbody textarea", function (e) {
+                //e.preventDefault();
+                collect();
+                e.stopPropagation();
+                //e.stopImmediatePropagation();
+            });
+            jQuery(document).on("keyup change", ".mwrapper input,.mwrapper select,.mwrapper textarea", function (e) {
+                //e.preventDefault();
+                collect();
+
+            });
+            jQuery(document).on("keyup", ".mwrapper input.menu", function (e) {
+                //e.preventDefault();
+                jQuery(this).closest("li").find(".title").html(jQuery(this).val())
+                collect();
+                e.stopPropagation();
+                //e.stopImmediatePropagation();
+            });
+            jQuery(document).on("click", ".btn-danger", function () {
+                jQuery(this).closest("li").remove();
+                collect();
+            })
+
+
+        });
+        function collect() {
+            var arraymenu = new Array();
+
+            jQuery.each(jQuery("#navs>li"), function (i, v) {
+                var first = {};
+                first.index = i;
+                first.menu = jQuery(v).find("input.menu").val();
+                first.type = jQuery(v).find("input.type").val();
+                first.url = jQuery(v).find("input.url").val();
+                first.desc = jQuery(v).find("textarea.desc").val();
+                first.css_class = jQuery(v).find("input.css_class").val();
+                first.url_title = jQuery(v).find("input.url_title").val();
+                first.target = jQuery(v).find("input.target").is(":checked") ? 'on' : 'off';
+                first.childrens = [];
+                jQuery.each(jQuery(v).find(">ul>li"), function (_i, _v) {
+                    var second = {};
+                    second.index = _i;
+                    second.menu = jQuery(_v).find("input.menu").val();
+                    second.type = jQuery(_v).find("input.type").val();
+                    second.url = jQuery(_v).find("input.url").val();
+                    second.desc = jQuery(_v).find("textarea.desc").val();
+                    second.css_class = jQuery(_v).find("input.css_class").val();
+                    second.url_title = jQuery(_v).find("input.url_title").val();
+                    second.target = jQuery(_v).find("input.target").is(":checked") ? 'on' : 'off';
+                    second.childrens = [];
+                    jQuery.each(jQuery(_v).find(">ul li"), function (__i, __v) {
+                        var third = {};
+                        third.index = __i;
+                        third.menu = jQuery(__v).find("input.menu").val();
+                        third.type = jQuery(__v).find("input.type").val();
+                        third.url = jQuery(__v).find("input.url").val();
+                        third.url_title = jQuery(__v).find("input.url_title").val();
+                        third.desc = jQuery(__v).find("textarea.desc").val();
+                        third.css_class = jQuery(__v).find("input.css_class").val();
+                        third.target = jQuery(__v).find("input.target").is(":checked") ? 'on' : 'off';
+                        third.childrens = [];
+                        second.childrens.push(third);
+                    });
+                    first.childrens.push(second);
+
+                });
+
+                arraymenu.push(first)
+            });
+            console.log(JSON.stringify(arraymenu));
+            jQuery("#nav-json").val(JSON.stringify(arraymenu));
+        }
+    </script>
+
+}

@@ -1,0 +1,15 @@
+﻿@using Cicero.Service.Helpers
+@model Cicero.Service.Models.Component.ToastNotificationViewModel
+@*<script src="@Model.LibraryJsPath"></script>*@
+<script>
+    if (nToastNotify) {
+        nToastNotify.init({
+            firstLoadEvent: 'DOMContentLoaded',
+            messages: @Html.Raw(Model.ToastMessagesJson),
+            responseHeaderKey: '@Model.ResponseHeaderKey',
+            requestHeaderKey: '@Model.RequestHeaderKey',
+            libraryDetails:@Html.Raw(Model.LibraryDetails.ToJson()),
+            disableAjaxToasts:@Model.DisableAjaxToasts.ToString().ToLower()
+        });
+    };
+</script>

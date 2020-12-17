@@ -1,0 +1,102 @@
+.claim-item {
+    position: relative;
+    height: 100%;
+    .dropdown {
+        position: absolute;
+        right: 0.8rem;
+        top: 0.8rem;
+    }
+    .btn-icon {
+        opacity: 0.5;
+        background: transparent;
+        border-color: transparent;
+    }
+    &:hover {
+        .btn-icon {
+            opacity: 1;
+        }
+        .claim-item__content {
+            box-shadow: $box-shadow-sm;
+        }
+    }
+    &__content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        // padding: 1.5rem;
+        background: #fff;
+        border-radius: 0.25rem;
+        height: 100%;
+        position: relative;
+        text-decoration: none!important;
+        transition: $transition-base;
+
+        .h5 {
+            color: $body-color; 
+        }
+    }
+    &__body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+    }
+    &__footer {
+        padding: 1.5rem;
+        border-top: 1px solid $gray-100;
+        display: flex;
+        align-items: center;
+    }
+    &__type {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        margin-right: 1rem;
+        h6 {
+            margin: 0;
+            color: #666;
+        }
+        figure {
+            margin: 0 1rem 0 0;
+            img {
+                width: auto;
+                height: 24px;
+            }
+        }
+    }
+    &__address {
+        font-size: .857rem;
+        position: relative;
+        &:before {
+            content: "";
+            position: absolute;
+            left: -1rem;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: $gray-300;
+        }
+        flex: 1;
+        margin-left: 1rem;
+        p {
+            margin: 0;
+        }
+    }
+}
+.badge-notification {
+    position: absolute;
+    left: 1.5rem;
+    top: 1.5rem;
+    background: #fff;
+    color: var(--info);
+    border: 1px solid var(--info);
+    display: inline-flex;
+    font-size: .857rem;
+    font-weight: normal;
+    i {
+        margin-right: 0.2rem;
+    }
+}

@@ -1,0 +1,1240 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model DashboardViewModel
+@inject IArticleService _articleService
+@inject IUserService _userService
+@inject IActivityLogService _activityLog
+@inject Utils  _utils
+@inject Permission permission
+
+
+
+@{
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ChartDefinition.Select(x => x.DimensionOne).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ChartDefinition.Select(x => x.Quantity).ToList());
+    var ZValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ChartDefinition.Select(x => x.Settled).ToList());
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+
+     Theme theme = ViewData["theme"] as Theme;
+    string tenant_identifier = _utils.GetTenantFromSession();
+
+    <!-- page head starts -->
+
+    @if (permission.Can(UserCan.Admin_Layout) && !permission.Can(UserCan.Create_Tenant))
+    {
+
+        <link rel="stylesheet" href="../Themes/@theme.GetName(false)/css/tenant.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.11/css/bootstrap-select.css">
+        <!-- <div id="loading">
+            <div class="inside-loading">
+                <i class="fas fa-spin fa-cog"></i> Loading... please wait
+            </div>
+        </div> -->
+        <div id="loading">
+            <div class="spinner">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-wrapper" style="display:none;">
+            <div class="container dashboard-container">
+                <div class="dashboard-content">
+                    <div class="dashboard-header">
+                        <h1 class="dashboard-title">Welcome to Cicero!</h1>
+                        <h3 class="dashboard-subtitle">We are super excited to have you onboard.</h3>
+                        <p class="mx-auto">Claims management software so flexible that you will reach your business goals in no time.</p>
+                    </div>
+                    <div class="dashboard-body">
+                        <div class ="form-box-list">
+                            <div class="all-forms">
+                            <ul class="form-list list-group list-unstyled d-flex flex-row">
+                                <li class="list-group-item d-flex align-items-center justify-content-center">
+                                    <a class="d-flex flex-column align-items-center" href="#">
+                                        <img class="form-icon" src="~/Themes/@theme.GetName(false)/img/house.png" />
+                                        <span class="form-text">Home</span>
+                                    </a>
+
+                                </li>
+                                <li class="list-group-item d-flex align-items-center justify-content-center">
+                                    <a class="d-flex flex-column align-items-center" href="#">
+                                        <img class="form-icon" src="~/Themes/@theme.GetName(false)/img/car.png" />
+                                        <span class="form-text">Home</span>
+                                    </a>
+
+                                </li>
+                                <li class=" list-group-item d-flex align-items-center justify-content-center">
+                                    <a class="d-flex flex-column align-items-center" href="#">
+                                        <img class="form-icon" src="~/Themes/@theme.GetName(false)/img/package.png" />
+                                        <span class="form-text">Home</span>
+                                    </a>
+                                </li>
+                                <li class=" list-group-item d-flex align-items-center justify-content-center">
+                                    <a class="d-flex flex-column align-items-center" href="#">
+                                        <img class="form-icon" src="~/Themes/@theme.GetName(false)/img/statistics.png" />
+                                        <span class="form-text">Home</span>
+                                    </a>
+                                </li>
+                                <li class=" list-group-item d-flex align-items-center justify-content-center">
+                                    <a class="d-flex flex-column align-items-center" href="#">
+                                        <img class="form-icon" src="~/Themes/@theme.GetName(false)/img/plus-solid.png" />
+                                    </a>
+                                </li>
+                            </ul>
+                                </div>
+                            <a class="prev position-absolute" href="JavaScript:void(0);" role="button" data-slide="prev" style="top:40%;left:-20px;z-index:2;">
+                                <i class="fas fa-chevron-circle-left text-dark shadow rounded-circle " id="sc-left"></i>
+                            </a>
+                            <a class="next position-absolute" href="JavaScript:void(0);" role="button" data-slide="next" style="top:40%;right:-20px;z-index:2;">
+                                <i class="fas fa-chevron-circle-right text-dark shadow rounded-circle  " id="sc-right"></i>
+                            </a>
+                            <!-- <ul class="form-list1 list-group list-unstyled d-flex flex-row">
+                                <li class='list-group-item d-flex align-items-center justify-content-center' onclick='createNewForm()'>
+                                    <a class='d-flex flex-column align-items-center' href='#'>
+                                        <i class='form-icon ri-add-line'></i>
+                                    </a>
+                                </li>
+                            </ul> -->
+                            <div class="form-btn-holder">
+                                <a href="javascript:void(0);" onclick='createNewForm()' class="form-add-btn">
+                                    <i class='form-icon ri-add-line'></i>
+                                </a>
+                            </div>
+                        </div>             
+                        <div class="demo-wrapper mx-auto d-flex flex-column align-items-center"> 
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="88" height="88" viewBox="0 0 88 88">
+                                <defs>
+                                    <filter id="Rectangle_408" x="0" y="0" width="88" height="88" filterUnits="userSpaceOnUse">
+                                        <feOffset dy="3" input="SourceAlpha" />
+                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feFlood flood-opacity="0.161" />
+                                        <feComposite operator="in" in2="blur" />
+                                        <feComposite in="SourceGraphic" />
+                                    </filter>
+                                </defs>
+                                <g id="Group_620" data-name="Group 620" transform="translate(-424 -441)">
+                                    <g transform="matrix(1, 0, 0, 1, 424, 441)" filter="url(#Rectangle_408)">
+                                        <rect id="Rectangle_408-2" data-name="Rectangle 408" width="58" height="58" rx="29" transform="translate(15 12)" fill="#3a50e1" />
+                                    </g>
+                                    <path id="play-solid" d="M15.268,7.755,2.6.268A1.717,1.717,0,0,0,0,1.754V16.723a1.725,1.725,0,0,0,2.6,1.486l12.663-7.483A1.725,1.725,0,0,0,15.268,7.755Z" transform="translate(462 472.968)" fill="#fff" />
+                                </g>
+                            </svg>
+                            <span class="demo-title">Watch our system demo</span>
+                            <!-- <i class="fab fa-youtube"></i> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="copyright-section small text-white text-center">
+                    Copyright &copy; @DateTime.Now.Year Cicero. All rights reserved.
+                </div>
+            </footer>
+        </div>
+        <div class="modal fade custom-modal" id="createNewForm" tabindex="-1" role="dialog" aria-labelledby="createNewForm" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createNewFormLabel">Create New Form</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-text">
+                        <p class="mb-4">
+                            Please enter a Form Name to create a new form and continue the process.
+                        </p>
+                        <div class="form-group">
+                            <label for="form-title">Form Name</label>
+                            <input type="text" class="form-control" placeholder="e.g. Home and Contents Insurance" id="form-title" name="form-title" />
+                        </div>
+                        <div class="form-group">
+                            <label>Form Icon</label>
+                            <select class="form-control selectpicker" id="form-icon" name="form-icon">
+                                <option value="">Select Icon</option>
+                                <option data-icon="ri-home-4-line" value="ri-home-4-line">Home</option>
+                                <option data-icon="ri-car-line" value="ri-car-line">Auto</option>
+                                <option data-icon="ri-archive-line" value="ri-archive-line">Cargo</option>
+                                <option data-icon="ri-briefcase-line" value="ri-briefcase-line">Business</option>
+                                <option data-icon="ri-plane-line" value="ri-plane-line">Travel</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-primary" id="continue" onclick="saveForm()">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    else
+
+    {
+        <div class="container-fluid">
+            <!-- page head starts -->
+            <div class="page-head d-flex justify-content-between">
+                <!-- page head ends -->
+                <h3 class="mb-5">Welcome @Model.AppName,</h3>
+            </div>
+
+            <!-- quick stats starts -->
+            <div class="row mb-4">
+                <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+                    <div class="card quickstats quickstats--primary" onclick="window.location='@Url.Content("~/admin/users.html")'">
+                        <h6 class="quickstats-title">Total Users</h6>
+                        <i class="ri-group-2-line quickstats-icon"></i>
+                        <p class="quickstats-data" id="totalUsers">@Model.TotalUsers</p>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+                    <div class="card quickstats quickstats--success" onclick="window.location='@Url.Content("~/admin/afas fa-cogrticles.html")'">
+                        <h6 class="quickstats-title">Total Articles</h6>
+                        <i class="ri-article-line quickstats-icon"></i>
+                        <p class="quickstats-data" id="totalArticles">@Model.TotalArticles</p>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+                    <div class="card quickstats quickstats--warning">
+                        <h6 class="quickstats-title">New claims</h6>
+                        <i class="ri-water-flash-line quickstats-icon"></i>
+                        <p class="quickstats-data" id="totalNewClaims">@Model.NewClaims</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+                    <div class="card quickstats quickstats--info">
+                        <h6 class="quickstats-title">Total Claim</h6>
+                        <i class="ri-task-line quickstats-icon"></i>
+                        <p class="quickstats-data" id="totalClaims">@Model.TotalClaims</p>
+                    </div>
+                </div>
+            </div>
+            <!-- quick stats ends -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card card--user-activity height-fluid">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Activity</h5>
+                            <p class="text-muted small mb-0">Last four activites</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                @foreach (var item in Model.LastFourActivities)
+                                {
+                                    <div class="media">
+                                        <img class="rounded-circle img-fluid mr-3" src="~/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(item.UserId, "default-avatar.png")" alt="@item.UserId" width="48" height="48">
+                                        <div class="media-body">
+                                            <p class="mb-1">@Html.Raw(item.Details)</p>
+                                            <div class="small text-muted">@item.CreatedOn</div>
+                                        </div>
+                                        @{
+                                            int hoursPassed = (int)((DateTime.Now.AddHours(4) - item.CreatedOn).TotalHours);
+                                        }
+                                    </div>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card card--claim-stats height-fluid">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Claim Stats</h5>
+                            <p class="text-muted small mb-0">Last six months data for claims</p>
+                        </div>
+                        <div class="card-body chart-height-A">
+                            <canvas id="chart-claims"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-4 col-lg-6">
+                    <div class="card card--articles height-fluid">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Articles</h5>
+                        </div>
+                        <div class="card-body" id="news">
+                            @foreach (var item in Model.Articles)
+                            {
+                                <div class="media">
+                                    <img class="mr-3" src="~/uploads/@await _articleService.GetDefaultOrFirstImagesByArticleId(item.Id, "placeholder.png")" width="60" height="60" alt="@item.Title">
+                                    <div class="media-body">
+                                        <h6 class="media-title mb-1">
+                                            <a href="~/admin/article/@_utils.EncryptId(item.Id)/edit.html">@item.Title</a>
+                                        </h6>
+                                        <p>@item.Content</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6">
+                    <div class="card card--new-users height-fluid">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">New Users</h5>
+                            <p class="text-muted small mb-0">Last @Model.TotalUsers users created</p>
+                        </div>
+                        <div class="card-body" id="new-users">
+                            
+                                @foreach (var item in Model.Users)
+                                {
+                                    <div class="media">
+                                        <img class="rounded-circle mr-3 img-fluid" src="~/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(item.Id, "default-avatar.png")" alt="@item.DisplayName" width="48" height="48">
+                                        <div class="media-body">
+                                            <h6 class="media-title mb-1">
+                                                <a href="~/admin/user/@item.Id/edit.html">@item.DisplayName</a>
+                                            </h6>
+                                            <p class="text-muted small mb-0">@item.CreatedAt</p>
+                                        </div>
+                                        
+                                    </div>
+                                }
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card card--notice height-fluid">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Notice</h5>
+                        </div>
+                        <div class="card-body" id="notice">
+                            <ul class="list-unstyled notice-list">
+                                @if (await _activityLog.GetUnreadActivityLog() != null)
+                                {
+                                    @foreach (var item in await _activityLog.GetUnreadActivityLog("SOME"))
+                                    {
+                                        <li class="media">
+                                            <div class="media-body">
+                                                @*@Html.Raw(item.Details)*@
+                                                <p class="mb-0">@Html.Raw(item.Details)</p>
+                                                <small class="text-muted mb-0">@item.CreatedOn</small>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>
+                                        No items to display
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    }
+    @section scripts{
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script>
+
+            var offsetVal = 104;
+
+            $(document).on("click", "#sc-right", function (e) {
+                let liEleRight = $(this).parent().parent().find('ul').first().find('li');
+                let ttRight = parseInt(liEleRight.first().css('width'));
+
+                let lastLi = parseInt(liEleRight.last().offset().left) + parseInt(liEleRight.last().css('width'));
+                let rightBot = parseInt($('#sc-right').offset().left);
+                rightBot = rightBot - 84;
+                let rightDistance = rightBot - lastLi;
+                if (rightDistance < 0) {
+                    let foset = (parseInt($('.form-list').css('left')) - offsetVal) + 'px';
+                    $('.form-list').css('left', foset);
+                }
+                determineBottomToHide();
+            });
+            //left
+            $(document).on("click", "#sc-left", function (e) {
+                let liEleLeft = $(this).parent().parent().find('ul').first().find('li');
+                let ttLeft = parseInt(liEleLeft.first().css('width'));
+
+                let firstLi = parseInt(liEleLeft.first().offset().left) + 20;
+                let leftBot = parseInt($('#sc-left').offset().left);
+
+                let leftDistance = leftBot - firstLi;
+                if (leftDistance > -40) {
+                    let foset = (parseInt($('.form-list').css('left')) + offsetVal) + 'px';
+                    $('.form-list').css('left', foset);
+                }
+                determineBottomToHide();
+            });
+
+            function hideSideButtons() {
+                $('#sc-left').hide();
+                $('#sc-right').hide();
+            }
+            function determineBottomToHide() {
+                let tabs = $('.form-list').first().find('li');
+                // console.log(tabs);
+
+                //left
+                let firstLi = parseInt(tabs.first().offset().left);
+                let leftBot = parseInt($('#sc-left').parent().offset().left);
+
+                // console.log( firstLi + ' || ' + leftBot);
+                let preLeftdistance = leftBot - firstLi;
+                //console.log(preLeftdistance);
+                if (preLeftdistance <= 10) {
+                    $('#sc-left').hide();
+                } else {
+                    $('#sc-left').show();
+                }
+
+                //right
+                let lastLi = parseInt(tabs.last('li').offset().left);
+                let rightBot = parseInt($('#sc-right').parent().offset().left);
+
+                console.log(lastLi + ' || ' + rightBot);
+                let preRightdistance = rightBot - lastLi;
+                console.log(preRightdistance);
+                if (preRightdistance >= 143) {
+                    $('#sc-right').hide();
+                } else {
+                    $('#sc-right').show();
+                }
+
+
+            }
+
+
+
+        </script>
+
+
+        @* new dashboard scripts *@
+        <script>
+
+            //iniitilize
+            var hasForms = false;
+            var formKey ="";
+            var tenant_identifier = '@tenant_identifier';
+            var currStep = "step";
+            var selectedForm = "";
+            var stepCount = 1;
+            var isNew = "";
+            var finalCount = 6;
+            var hasAllCount = false;
+            var isComplete = false;
+            var intervals="";
+            var urls = {
+                "step0": "#",
+                "step1": "/admin/" + tenant_identifier + "/builderform/" + selectedForm + "/edit.html?display=nosidebar",
+                "step2": "/admin/" + tenant_identifier + "/roles.html?display=nosidebar",
+                "step3": "/admin/" + tenant_identifier + "/users.html?display=nosidebar",
+                "step4": "/admin/" + tenant_identifier + "/manage/queues.html?display=nosidebar",
+                "step5": "/admin/" + tenant_identifier + "/medias.html?display=nosidebar",
+                "step6": "/admin/" + tenant_identifier + "/medias.html?display=nosidebar",
+                "step7": ""
+            };
+
+        var dashboardCurrData;
+        var defaultData = {
+            "formId": "",
+            "formName": "",
+            "roleIds": [],
+            "workflowIds": [],
+            "mediaIds": [],
+            "userIds": [],
+            "report": "",
+            "confirmation": true,
+            "currentStep": "1",
+            "isNew": false,
+            "startDateTime": "",
+            "endDateTime": ""
+        };
+            ///
+
+            //reset all variables
+            var resetAll = function () {
+                currStep = "step";
+                selectedForm = "";
+                stepCount = 1;
+                hasAllCount = false;
+                isComplete = false;
+                isNew = "false";
+                intervals;
+               // clearLocalStorage();
+            }
+
+            //on click create new link
+            var createNew = function () {
+                console.log("createNew");
+                $(".box-container-in").attr("style", "display:none");
+                $(".create-new").attr("style", "display:block");
+                $("#cancelCreate").removeAttr("disabled");
+                startUp();
+                clearLocalStorage();
+            }
+            //on click cancel button
+            var cancelNew = function () {
+                console.log("cancelNew");
+                $(".box-container-in").attr("style", "display:block;");
+                $(".create-new").attr("style", "display:none");
+                $("#form-name").val("");
+                $("#form-name").removeAttr("disabled");
+                $("#createNew").removeAttr("disabled");
+                deleteCreatedData(function () {
+                    startUp();
+                    getTenantForms();
+                    checkCancelbtn();
+                    $("#delConfirmationPopUp").modal('hide');
+                })
+
+        }
+
+        $("#cancelCreate").on("click", function () {
+            $(".box-container-in").attr("style", "display:block;");
+            $(".create-new").attr("style", "dispaly:none");
+            $("#form-name").val("");
+            $("#form-name").removeAttr("disabled");
+            $("#createNew").removeAttr("disabled");
+        });
+        //delete Created data
+        var deleteCreatedData = function (callback) {
+            if (dashboardCurrData.roleIds.length > 0 || dashboardCurrData.userIds.length > 0 || dashboardCurrData.workflowIds.length > 0 || dashboardCurrData.formId != "") {
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url: '/admin/' + tenant_identifier + '/deletedata.html',
+                    data: { roles: dashboardCurrData.roleIds, users: dashboardCurrData.userIds, workflow: dashboardCurrData.workflowIds, FormId: dashboardCurrData.formId },
+                    //contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        data = response;
+                        return callback("");
+                    },
+                    error: function (response) {
+                        data = 0;
+                        return callback(0);
+                    }
+                });
+            }
+            else {
+                return callback("");
+            }
+
+        }
+            //check if all steps has been completed already
+        var checkSteps = function (data,isNew) {
+            if (isNew == 'False') {
+                if (parseInt(data.roleCount) > 1 && parseInt(data.userCount) > 1 && parseInt(data.workflowCount) >= 1 && parseInt(data.claimFormsCount) >= 1 && parseInt(data.mediaCount) >= 1) {
+                    //all disabled and click of each should be enabled
+                    hasAllCount = true;
+                }
+                else {
+                    if(parseInt(data.mediaCount) >= 1) { stepCount = 5; }
+                    else if (parseInt(data.workflowCount) >= 1) { stepCount = 4; }
+                    else if (parseInt(data.userCount) > 1) { stepCount = 3; }
+                    else if (parseInt(data.roleCount) > 1) { stepCount = 2; }
+                    else if (parseInt(data.claimFormsCount) >= 1) { stepCount = 1; }
+                   // else if (parseInt(data.mediaCount) >= 1) { stepCount = 5; }
+                    else { stepCount = 6; }
+                }
+            }
+            else {
+                stepCount = 1;
+            }
+
+
+            }
+
+        //Completion btn click
+            $("#continue").on('click', function () {
+                $("#" + Object.keys(urls)[Object.keys(urls).length - 1] + " .iscompleted-icon").removeClass("ishidden");
+                $("#" + Object.keys(urls)[Object.keys(urls).length - 1]).addClass("is-completed");
+                localStorageSetConfirmation(true);
+                localStorageSetIsNew(false);
+                $(".box-container-in").attr("style", "display:block;");
+                $(".create-new").attr("style", "display:none");
+                $("#form-name").val("");
+                $("#form-name").removeAttr("disabled");
+                $("#createNew").removeAttr("disabled");
+                $("#confirmationPopUp").modal('hide');
+                $("#selectForm").val(selectedForm);
+                $("#selected-form-text").html($('#selectForm :selected').text());
+                checkCancelbtn();
+            })
+
+            //reset to initial step
+        var startUp = function () {
+            $("#" + Object.keys(urls)[stepCount - 2] + "-arrow").addClass("ishidden");
+                resetAll();
+            $("#selected-form-text").html("");
+                $("#selectForm").val(selectedForm);
+                for (var i = 0; i <= Object.keys(urls).length; i++) {
+                   // setUrl(Object.keys(urls)[i]);
+                    removeUrl(Object.keys(urls)[i]);
+                    $("#" + Object.keys(urls)[i]).addClass("isdisabled");
+                    $("#" + Object.keys(urls)[i]).removeClass("is-activated");
+                    $("#" + Object.keys(urls)[i] + " .iscompleted-icon").addClass("ishidden");
+                    $("#" + Object.keys(urls)[i - 1] + "-arrow").addClass("ishidden");
+                    if (i == Object.keys(urls).length - 1) {
+                        console.log(Object.keys(urls)[i - 1] + "-arrow");
+                        $("#" + Object.keys(urls)[i - 1] + "-arrow").addClass("ishidden");
+                        $("#" + Object.keys(urls)[i]).removeClass("is-completed");
+
+                    }
+                }
+            $("#step0").removeClass("isdisabled");
+            $("#step0 .iscompleted-icon").addClass("ishidden");
+        }
+
+            //when all steps are completed
+            var complete = function (isNew) {
+                $("#step0").removeClass("isdisabled");
+
+                for (var i = 0; i <= Object.keys(urls).length; i++) {
+                    setUrl(Object.keys(urls)[i]);
+                    $("#" + Object.keys(urls)[i]).removeClass("isdisabled");
+                    $("#" + Object.keys(urls)[i]).addClass("is-activated");
+                    if(i == Object.keys(urls).length)
+                    {
+                        if (isNew != true) {
+                            $("#" + Object.keys(urls)[i-1] + " .iscompleted-icon").removeClass("ishidden");
+                        }
+                        else {
+                            $("#" + Object.keys(urls)[i-1] + " .iscompleted-icon").addClass("ishidden");
+                        }
+                    }
+                    else
+                     {
+                         $("#" + Object.keys(urls)[i] + " .iscompleted-icon").removeClass("ishidden");
+                     }
+
+                    if (i == Object.keys(urls).length-1) {
+                        console.log(Object.keys(urls)[i-1] + "-arrow");
+                        $("#" + Object.keys(urls)[i - 1] + "-arrow").removeClass("ishidden");
+                        $("#" + Object.keys(urls)[i]).addClass("is-completed");
+                    }
+                }
+                stepCount = finalCount;
+
+            }
+
+            //next step work
+            var nextStep = function (currStep) {
+                    $("#" + currStep + stepCount).addClass("isdisabled");
+                    $("#" + currStep + stepCount + " .iscompleted-icon").removeClass("ishidden");
+                    $("#" + currStep + stepCount + "-arrow").removeClass("ishidden");
+                    $("#" + currStep + (stepCount - 1) + "-arrow").addClass("ishidden");
+                    stepCount++;
+                    $("#" + currStep + stepCount).removeClass("isdisabled");
+                    setUrl(currStep + stepCount);
+                }
+
+
+            //when new form create follow each steps
+            var stepByStep = function (step) {
+                var count = getCounts();
+                switch (step) {
+                    case "step1":
+                        if (count.claimFormsCount >= 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step2":
+                        if (count.roleCount > 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step3":
+                        if (count.userCount > 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step4":
+                        if (count.workflowCount >= 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step5":
+                        if (count.mediaCount >= 1) {
+                            nextStep(currStep);
+                            removeUrl(step);
+                            clearInterval(intervals);
+                            intervals = null;
+                        }
+                        break;
+                    case "step6":
+                        nextStep(currStep);
+                        removeUrl(step);
+                        clearInterval(intervals);
+                        intervals = null;
+                        complete(true);
+                        break;
+                    case "step7":
+                        break;
+                }
+            }
+
+
+
+            //get count of all the dashboard steps
+            var getCounts = function () {
+                var data;
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url: '/admin/' + tenant_identifier + '/latestcount.html',
+                    data: { caseFormId: selectedForm },
+                    //contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                     success: function (response) {
+                         data = response;
+                    },
+                    error: function (response) {
+                        data = 0;
+                    }
+                });
+                return data;
+            }
+
+            //create and save new form
+        var saveForm = function () {
+            var name = $("#form-title").val();
+            var tenantId = tenant_identifier;
+            var icon = $("#form-icon").val();
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/builderform/createAction.html',
+                data: { formName: name, tenant_identifier: tenantId, formIcon: icon },
+                dataType: "json",
+                success: function (response) {
+                    if (response != 0) {
+                        selectedForm = response;
+                        formKey = "form_" + selectedForm;
+                        createNewStorage();
+                        localStorageSetFormId(response);
+                        localStorageSetIsNew(true);
+                        localStorageSetConfirmation(false);
+                        localStorageSetFormName(name);
+                        localStorageSetCurrStep(1);
+                        saveCurrData(formKey, JSON.stringify(dashboardCurrData));
+                        getSystemDateTime();
+                        checkCancelbtn();//check for cancelbtn
+                        window.location.replace("/admin/" + selectedForm + "/adminconfig.html?isNew=true");
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+            //gets system's datetime
+            var getSystemDateTime = function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/admin/' + tenant_identifier + '/getsystemdatetime.html',
+                    dataType: "json",
+                    success: function (response) {
+                        dashboardCurrData.startDateTime = response;
+                        updateLocalStorage();
+                    },
+                    error: function (e) { }
+                });
+        }
+
+
+        //updates to Current Step
+        var updateSteps = function (isNew) {
+            //$("#step0").addClass("isdisabled");
+            $("#step0 .iscompleted-icon").removeClass("ishidden");
+            for (i = 0; i <stepCount; i++) {
+
+                $("#" + Object.keys(urls)[i]).removeClass("isdisabled");
+                $("#" + Object.keys(urls)[i]).addClass("is-activated");
+                $("#" + Object.keys(urls)[i] + " .iscompleted-icon").removeClass("ishidden");
+            }
+
+            setUrl(Object.keys(urls)[stepCount],isNew);
+            $("#" + Object.keys(urls)[stepCount]).removeClass("isdisabled");
+            console.log(Object.keys(urls)[stepCount - 1] + "-arrow");
+            $("#" + Object.keys(urls)[stepCount - 1] + "-arrow").removeClass("ishidden");
+            // stepCount++;
+        }
+
+
+
+       //on available form select change
+        var selectChange = function () {
+
+            $("#selectForm").on("change", function () {
+                if ($(this).val() != "") {
+
+                    $("#selected-form-text").html($('#selectForm :selected').text());
+                    var data = getCounts();
+                    //checkSteps(data,false);
+                    if (dashboardCurrData.isNew == false) {
+                        localStorageSetConfirmation(true);
+                        if (stepCount == "" || stepCount == 1) {
+                            checkSteps(data, false);
+                        }
+                    }
+                    else {
+                        checkSteps(data, true);
+                    }
+                    if (hasAllCount == true) {
+                        complete();
+                    }
+                    else {
+                        updateSteps();
+                    }
+
+                    //stepChange(currStep);
+                    selectedForm = $(this).val();
+                    localStorageSetFormId($(this).val());
+                    checkCancelbtn();//check for cancelbtn
+                    //setUrl(currStep + stepCount);
+                    //  $("#" + currStep + stepCount).on("click", buildForm);
+                }
+                else {
+                    startUp();
+                    stepRevert(currStep);
+                    removeUrl(currStep + stepCount);
+                }
+            });
+        }
+
+
+            var stepChange = function (currStep) {
+                $("#" + currStep + (stepCount - 1)).removeClass("isdisabled");
+                $("#" + currStep + (stepCount - 1)).addClass("is-activated");
+                $("#" + currStep + (stepCount - 1) + " .iscompleted-icon").removeClass("ishidden");
+                $("#" + currStep + (stepCount - 1)+ "-arrow").removeClass("ishidden");
+                $("#" + currStep + stepCount).removeClass("isdisabled");
+
+            }
+
+            var stepRevert = function (currStep) {
+                $("#" + currStep + (stepCount - 1)).removeClass("isdisabled");
+                $("#" + currStep + (stepCount - 1) + " .iscompleted-icon").addClass("ishidden");
+                $("#" + currStep + (stepCount - 1) + "-arrow").addClass("ishidden");
+                $("#" + currStep + stepCount).addClass("isdisabled");
+            }
+            //remove onclick action
+        var removeUrl = function (step)
+        {
+            $("#" + step).removeAttr("onclick");
+            $("#" + step).removeAttr("data-target");
+        }
+
+        var setUrl = function (step) {
+            switch (step) {
+                case "step1":
+                    //  $("#step1").attr("onclick", "buildUrl(" / admin / " + tenant_identifier + " / builderform / " + selectedForm + " / edit.html",first"));
+                    $("#step1").attr('onclick', 'buildUrl("/admin/" + tenant_identifier + "/builderform/" + selectedForm + "/edit.html?display=nosidebar&isNew=")');
+                    break;
+                case "step2":
+                    $("#step2").attr("onclick", 'buildUrl("' + urls.step2 + '&isNew=")');
+                    break;
+                case "step3":
+                    $("#step3").attr("onclick", 'buildUrl("' + urls.step3 + '&isNew=")');
+                    break;
+                case "step4":
+                    $("#step4").attr("onclick", 'buildUrl("' + urls.step4 + '&isNew=")');
+                    break;
+                case "step5":
+                    $("#step5").attr("onclick", 'buildUrl("' + urls.step5 + '&isNew=")');
+                    break;
+                case "step6":
+                    $("#step6").attr("onclick", 'buildUrl("' + urls.step6 + '&isNew=")');
+                    break;
+                case "step7":
+                    $("#step7").attr("data-target", "#confirmationPopUp");
+                    break;
+            }
+        }
+
+            //build url for navigation
+            var buildUrl=function(url)
+            {
+                url = url + dashboardCurrData.isNew;
+                stepCount++;
+                localStorageSetCurrStep(stepCount);
+                window.open(url, '_self');
+                //if (hasAllCount == true) {
+                //    removeUrl(currStep + stepCount);
+                //    nextStep(currStep);
+
+                //}
+                //else {
+                //    if (stepCount < 7) {
+                //        if (!intervals) {
+                //            intervals = setInterval(
+                //                function () {
+                //                    stepByStep(currStep + stepCount);
+                //                    console.log("1");
+                //                }, 3000);
+                //        }
+                //    }
+                //}
+               // if (stepCount == Object.keys(urls).length) { complete(true); }
+            }
+
+
+
+        function createNewForm() {
+            $("#createNewForm").modal('show');
+        }
+        function navigateTo(url) {
+            console.log(url);
+            window.open(url, '_self');
+        }
+        var getTenantForms = function (callback) {
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/gettenantforms.html',
+                dataType: "json",
+                success: function (response) {
+                    JSON.stringify(response);
+                   $(".form-list").html("");
+                    if (response.length >= 1) {
+                        selectChange();
+                        for (i = 0; i < response.length; i++) {
+                            //  var c = (response[i].name).split(',');
+                            var url = "/admin/" + response[i].encryptedId + "/adminconfig.html?isNew=false";
+                            //$(".form-list").append("<li class='form-list-item' onclick=navigateTo('"+url+"')>"
+                            //    + "<i class= 'form-icon " + c[2] + "' ></i >"
+                            //    + "<span class='form-text'title='" + c[1] + "'>" + c[1] + "</span>"
+                            //    + "</li>"
+                            //    );
+
+                            $(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center'>"
+                                + "<a class='d-flex flex-column align-items-center' href='" + url + "'>"
+                                + "<i class= 'form-icon " + response[i].icon + "' ></i>"
+                                + "<span class='form-text' title='" + response[i].name + "'>" + response[i].name + "</span>"
+                                + "</i></li>");
+
+
+
+
+                            //$(".form-list").append("<a class='form-box' href='/admin/" + c[0] +"/adminconfig.html?isNew=false'><div class='form-icon'>"
+                            //    + "<i class='"+c[2]+"'></i></div>"
+                            //    + "<span class='form-text' title='"+c[1]+"'>"+c[1]+"</span>"
+                            //    + "</a>");
+                        }
+                        //$(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center' onclick='createNewForm()'>"
+                        //    + "<a class= 'd-flex flex-column align-items-center' href ='#'>"
+                        //    + "<i class= 'form-icon fa fa-plus' ></i >"
+                        //    + "</li>");
+                        hasForms = true;
+                    }
+                    else {
+                        hasForms = false;
+                        //$(".form-list").append("<li class='list-group-item d-flex align-items-center justify-content-center' onclick='createNewForm()'>"
+                        //    + "<a class= 'd-flex flex-column align-items-center' href ='#'>"
+                        //    + "<i class= 'form-icon fa fa-plus' ></i >"
+                        //    + "</li>");
+                    }
+                    $(".dashboard-wrapper").fadeIn(400);
+                    return callback();
+                },
+                error: function (response) {
+                }
+
+            });
+        }
+
+
+
+            //localstorage Operations
+        var localStorageSetFormId = function (formid) {
+                dashboardCurrData.formId = formid;
+                updateLocalStorage();
+        }
+        var localStorageSetIsNew = function (IsNew) {
+                dashboardCurrData.isNew = IsNew;
+                updateLocalStorage();
+        }
+        var localStorageSetFormName = function (name) {
+                dashboardCurrData.formName = name;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrStep = function (step) {
+                dashboardCurrData.currentStep = step;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrRoles = function (data) {
+                dashboardCurrData.roleIds = data;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrUsers = function (data) {
+                dashboardCurrData.userIds = data;
+                updateLocalStorage();
+        }
+        var localStorageSetCurrWorkflow = function (data) {
+                dashboardCurrData.workflowIds = data;
+                updateLocalStorage();
+        }
+        var localStorageSetConfirmation = function (data) {
+            dashboardCurrData.confirmation = data;
+            updateLocalStorage();
+        }
+        var updateLocalStorage = function () {
+            localStorage.setItem(formKey, JSON.stringify(dashboardCurrData));
+        }
+
+
+        var clearLocalStorage = function () {
+            resetdashboardCurrData(function () {
+                localStorage.setItem('dashboardData', JSON.stringify(dashboardCurrData));
+            });
+        }
+        //Resets dashboardCurrData
+        var resetdashboardCurrData = function (callback) {
+            dashboardCurrData = {
+                "formId": "",
+                "formName": "",
+                "roleIds": [],
+                "workflowIds": [],
+                "mediaIds": [],
+                "userIds": [],
+                "report": "",
+                "confirmation": true,
+                "currentStep": "",
+                "isNew": false,
+                "startDateTime": "",
+                "endDateTime": ""
+            }
+
+            return callback("");
+
+        }
+        //end local storage operation
+
+        var validateStep = function (dataCount, callback) {
+                switch (stepCount) {
+                    case 2:
+                        $.ajax({
+                            type: "POST",
+                            url: '/admin/' + tenant_identifier + '/checkcaseform.html',
+                            data: { encrypedId: dashboardCurrData.formId },
+                            dataType: "json",
+                            success: function (response) {
+                                if (response == true) {
+                                    stepCount = stepCount - 1;
+                                    localStorageSetCurrStep(stepCount);
+                                }
+                                return callback("");
+                            },
+                            error: function () { }
+                        });
+                        break;
+                    case 3:
+                        if (!(dataCount.roleCount > 1)) {
+                            stepCount--;
+                            localStorageSetCurrStep(stepCount);
+                            return callback("");
+                        }
+                        break;
+                    case 4:
+                        if (!(dataCount.userCount > 1)) {
+                            stepCount--;
+                            localStorageSetCurrStep(stepCount);
+                            return callback("");
+                        }
+                        break;
+                    case 5:
+                        if (!(dataCount.workflowCount >= 1)) {
+                            stepCount--;
+                            localStorageSetCurrStep(stepCount);
+                            return callback("");
+                        }
+                        break;
+                    case 6:
+                        break;
+                    case 7:
+                        isComplete = true;
+                        complete(true);
+                        break;
+                }
+        }
+
+        //check for cancel button (enable/disable)
+        var checkCancelbtn = function () {
+            if (dashboardCurrData.confirmation == true) {
+                $("#cancelProcess").attr("disabled", "disabled");
+                $("#cancelProcess").attr("data-target", "#delConfirmationPopUp");
+            }
+            else {
+                $("#cancelProcess").removeAttr("disabled");
+                $("#cancelProcess").attr("data-target", "#delConfirmationPopUp");
+            }
+        }
+
+        var showLoading = function () {
+            $("#loading").fadeIn("10");
+        }
+        var hideLoading = function () {
+            $("#loading").fadeOut("400");
+        }
+        var createNewStorage = function () {
+            localStorage.setItem(formKey, JSON.stringify(defaultData));
+            dashboardCurrData = JSON.parse(localStorage.getItem(formKey));
+        }
+        var checkKeyOnStorage = function (key) {
+            var found = false;
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key == formKey) {
+                    found = true;
+                    dashboardCurrData = JSON.parse(localStorage.getItem(key));
+                }
+            }
+            return found;
+        }
+            //initialize list of forms
+        $(function () {
+            showLoading();
+            getTenantForms(function () {
+                if (hasForms) {
+                    determineBottomToHide();
+                } else {
+                    hideSideButtons();
+                }
+                hideLoading();
+            });
+            //$(".dashboard-container").attr("style", "display:block;");
+
+            })
+
+        //get currently added data
+        var getAddedData = function () {
+            var rolesAdded, usersAdded, workflowAdded;
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/getaddeddata.html',
+                data: { startDateTime: dashboardCurrData.startDateTime },
+                dataType: "json",
+                success: function (response) {
+                        if (response.roleData != null) {
+                            rolesAdded = response.roleData.split(",");
+                            localStorageSetCurrRoles(rolesAdded);
+                        }
+                        if (response.userData != null) {
+                            usersAdded = response.userData.split(",");
+                            localStorageSetCurrUsers(usersAdded);
+                        }
+                        if (response.workflowData != null) {
+                            workflowAdded = response.workflowData.split(",");
+                            localStorageSetCurrWorkflow(workflowAdded);
+                        }
+                },
+                error: function () { }
+                });
+        }
+
+        //db save
+        function saveCurrData(key, data) {
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/savecurrentdata.html',
+                data: { keyId: key, value: data },
+                dataType: "json",
+                success: function (response) {
+                    if (response != 0) {
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+
+        </script>
+
+
+        <script type="text/javascript">
+
+    $(function () {
+            var chartName = "chart";
+                     var ctx = document.getElementById('chart-claims').getContext('2d');
+                     var data = {
+                        labels: @Html.Raw(XLabels),
+                         datasets: [
+                             {
+                                label: "Total Claims Filed",
+                                backgroundColor: [
+                                    'rgba(54, 162, 235, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(54, 162, 235, 1)'
+                                ],
+                                borderWidth: 1,
+                                data: @Html.Raw(YValues),
+                            },
+                            {
+                                label: "Settled Claims",
+                                backgroundColor: [
+                                    'rgba(40, 240, 100, 0.2)'
+
+                                ],
+                                borderColor: [
+                                    'rgba(40, 240, 100, 1)'
+                                ],
+                                borderWidth: 1,
+                                data: @Html.Raw(ZValues),
+                            }
+                         ]
+                     };
+
+            var options = {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,164,0.2)"
+                        }
+                        }],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            };
+
+       var myChart = new  Chart(ctx, {
+                options: options,
+                data: data,
+                type:'line'
+
+        });
+    });
+        </script>
+
+    }}

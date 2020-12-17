@@ -1,0 +1,112 @@
+
+
+.btn-icon {
+    width: 2.357142857142857rem;
+    height: 2.357142857142857rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-next, .btn-prev {
+    /*background-color: #fff;
+    box-shadow: 0 .5rem 1rem -2px rgba(0,0,0,.1);
+    color: $primary;*/
+  min-width:175px;
+    /*&:hover {
+        background-color: #fff;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+    &[disabled] {
+        color: $secondary;
+        box-shadow: 0 .5rem 1rem -2px rgba(0,0,0,.1);
+    }*/
+}
+.btn-link:hover{
+    text-decoration:none;
+}
+.btn-add, .btn-dlt {
+    display: flex;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    align-items: center;
+    justify-content:center;
+
+    i {
+        font-size: 1.25rem;
+    }
+}
+.btn-add {
+    &:hover {
+        background-color: rgba($gray-400,0.25);
+        color: $green;
+    }
+}
+.btn-dlt {
+    
+
+    &:hover {
+        background-color: rgba($gray-400,0.25);
+        color: $red;
+    }
+}
+.btn__has-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+        margin-left: 0.5rem;
+    }
+
+    &.btn-outline-primary {
+        .icon {
+            fill: var(--primary)
+        }
+
+        &:hover {
+            .icon {
+                fill: var(--white);
+            }
+        }
+    }
+
+    &.btn-primary {
+        .icon {
+            fill: var(--white);
+        }
+        /*&:hover {
+            .icon {
+                fill: var(--primary);
+            }
+        }*/
+    }
+
+    &.btn-link {
+        .icon {
+            fill: var(--primary);
+        }
+
+        &:hover {
+            .icon {
+                fill: #007ba5;
+            }
+        }
+    }
+
+    &.btn-outline-dark {
+        .icon {
+            fill: var(--dark);
+        }
+
+        &:hover {
+            .icon {
+                fill: var(--white);
+            }
+        }
+    }
+}
+
+
+

@@ -1,0 +1,40 @@
+.form-plaintext {
+    .form-control-plaintext {
+        padding: 0;
+        color: $black;
+    }
+
+    label {
+        margin: 0;
+        color:$gray-400;
+    }
+}
+
+//accounts tabs
+
+.account-type {
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 2rem 3rem 0;
+        border-bottom: 1px solid $border-color-light;
+    }
+
+    &__icon {
+        align-self: flex-start;
+    }
+
+    &__detail {
+        padding: 2.5rem 0;
+        .form-group{
+            margin-bottom:0;
+        }
+    }
+
+    &__selector {
+        text-align: center;
+        align-self: flex-start;
+        padding-top: 2.5rem;
+    }
+}

@@ -1,0 +1,39 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Models.Core;
+@model ForgotViewModel
+@{
+    ViewData["Title"] = "Forgot";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@{
+
+}
+
+@await Html.PartialAsync("../Shared/_Header.cshtml")
+<div class="account-access forgot-password--mod">
+    <div class="container">
+        <div class="account-access__wrapper">
+            <h3 class="text-center mb-5">Forgot your Password</h3>
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="status"></div>
+                <div asp-validation-summary="All"></div>
+                <!-- Display all errors -->
+                <p>Enter your email address that you used to register. We'll send you an email with a link to reset your password.</p>
+                <div class="form-group">
+                    <label class="sr-only">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="Email address">
+                    <span asp-validation-for="Email"></span>
+                </div>
+                <!-- <small class="form-text text-muted mb-4">Enter your Email if you have forgotten your Password.</small> -->
+
+                <button type="submit" class="btn btn-primary btn-block">Send email</button>
+            </form>
+            <p class="mt-5 text-center">Have an account? <a href="@Url.Content("~/user/login.html")">Login here</a></p>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("../Shared/_Footer.cshtml")
+@section Scripts{}

@@ -1,0 +1,69 @@
+.btn {
+    // font-size: $font-normal;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    &-primary {
+        //background-color: theme(button, primary);
+        //border-color: theme(button, primary);
+    }
+    &__icon {
+        margin-right: .3rem;
+    }
+    // group
+    &-group {
+        &-lg>.btn {
+            font-size: 2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        &-md>.btn {
+            font-size: 1.6rem;
+            padding: 0.7rem 1.5rem;
+
+        }
+    }
+
+    // size
+    &-lg {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    &-md {
+        font-size: 1.6rem;
+        padding: 0.7rem 1.5rem;
+    }
+
+    // roundness
+    &-rounded {
+        border-radius: 25px;
+    }
+
+    // fly
+    &-fly-r {
+        position: absolute;
+        top: 0px;
+        right: 20px;
+    }
+
+    &-icon {
+        width: 1.6rem;
+        height: 1.6rem;
+        background-color: transparent;
+        color: theme(icon, dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 0;
+        &:hover {
+            color: theme(icon, dark-hover);
+        }
+
+        &:active {
+            background: theme(bg, bodybg);
+        }
+    }
+}

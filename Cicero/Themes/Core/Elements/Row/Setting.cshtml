@@ -1,0 +1,227 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@using Cicero.Service.Services
+@inject IFormBuilderService FormBuilderService
+@{
+    Row row = Model as Row;
+    int formId = Convert.ToInt32(row.Data);
+    List<SelectListItem> formAllElements = FormBuilderService.GetFormFields(formId, true, true);
+}
+<div class="modal-header flex-column">
+    <h5 class="modal-title">Row Setting</h5>
+    <p class="mb-0">This settings helps you to customize Row.</p>
+</div>
+
+<div class="modal-body">
+    <div class="status"></div>
+    <ul class="fb-card">
+        <li class="active">
+            <header>Name</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="ElementName_@row.ElementId">Element Name</label>
+                        <input type="text" class="form-control" id="ElementName_@row.ElementId" @row.GetName("Name") value="@row.Name" data-name="elmName" />
+                        <small class="form-text text-muted">Input a Unique Name for this Element.</small>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="ElementName_@row.ElementId" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Frontend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-4">
+                        <label for="rowFrontendId_@row.FrontendId">Id</label>
+                        <input type="text" class="form-control" id="rowFrontendId_@row.FrontendId" @row.GetName("FrontendId") value="@row.FrontendId">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="rowFrontendClass_@row.FrontendId">Class</label>
+                        <input type="text" class="form-control" id="rowFrontendClass_@row.FrontendId" @row.GetName("FrontendClass") value="@row.FrontendClass">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="rowFrontendLabel_@row.FrontendId">Label</label>
+                        <input type="text" class="form-control" id="rowFrontendLabel_@row.FrontendId" @row.GetName("FrontendLabel") value="@row.FrontendLabel">
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="rowFrontendVisible_@row.FrontendId" class="switch">
+                        <input class="switch__input" id="rowFrontendVisible_@row.FrontendId" @row.GetName("FrontendVisible") type="checkbox" value="true" @row.GetChecked(row.FrontendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Backend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-4">
+                        <label for="rowBackendId_@row.BackendId">Id</label>
+                        <input type="text" class="form-control" id="rowBackendId_@row.BackendId" @row.GetName("BackendId") value="@row.BackendId">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="rowBackendClass_@row.BackendId">Class</label>
+                        <input type="text" class="form-control" id="rowBackendClass_@row.BackendId" @row.GetName("BackendClass") value="@row.BackendClass">
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="rowBackendLabel_@row.BackendId">Label</label>
+                        <input type="text" class="form-control" id="rowBackendLabel_@row.BackendId" @row.GetName("BackendLabel") value="@row.BackendLabel">
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="rowBackendVisible_@row.BackendId" class="switch">
+                        <input class="switch__input" id="rowBackendVisible_@row.BackendId" @row.GetName("BackendVisible") type="checkbox" value="true" @row.GetChecked(row.BackendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+
+        <li>
+            <header>Append Elements</header>
+            <section>
+                <div class="validation-rule-head select-option-head">
+                    <div class="form-row">
+                        <div class="col-lg-6">
+                            <label>Select Elements To Append</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="target_option_wrapper">
+                    @if (row.AppendElement != null && row.AppendElement.Count() > 0)
+                    {
+                        <div class="field-validation-wrapper">
+                            <div class="field-controller">
+                                <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                            </div>
+                            @foreach (var item in row.AppendElement)
+                            {
+                                <div class="form-row">
+                                    <div class="col-lg-3">
+                                        <select name="AppendElement[0]" class="custom-select" data-name="AppendElement[{0}]">
+                                            <option value="0">Please Select</option>
+                                            @if (formAllElements != null)
+                                            {
+                                                foreach (SelectListItem si in formAllElements)
+                                                {
+                                                    if (si.Value != row.ElementId)
+                                                    {
+                                                        <option selected="@(item == si.Value)" value="@si.Value">@si.Text</option>
+                                                    }
+
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="field-validation-wrapper">
+                            <div class="field-controller">
+                                <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy"><i class="ri-file-copy-line"></i></a>
+                                <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete"><i class="ri-delete-bin-4-line"></i></a>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-3">
+                                    <select name="AppendElement[0]" class="custom-select" data-name="AppendElement[{0}]">
+                                        <option value="0">Please Select</option>
+                                        @if (formAllElements != null)
+                                        {
+                                            foreach (SelectListItem si in formAllElements)
+                                            {
+                                                if (si.Value != row.ElementId)
+                                                {
+                                                    <option value="@si.Value">@si.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </section>
+        </li>
+
+        <li>
+            <header>Developer Options</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-12">
+                        <label for="rowTemplate_@row.ElementId">Template</label>
+                        <input type="text" class="form-control" id="rowTemplate_@row.ElementId" @row.GetName("Template") value="@row.Template">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <div class="switch-control">
+                            <label for="SetRepeat_@row.BackendId" class="switch">
+                                <input class="switch__input" id="SetRepeat_@row.BackendId" @row.GetName("SetAsRepeatItem") type="checkbox" value="true" @row.GetChecked(row.SetAsRepeatItem)>
+                                <span class="switch__state"></span>
+                                <span class="switch__label">Set As Repeat Item</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-lg-6 showInAccodian" style="display:none">
+                        <div class="switch-control">
+                            <label for="ShowInAccordion_@row.BackendId" class="switch">
+                                <input class="switch__input" id="ShowInAccordion_@row.BackendId" @row.GetName("ShowInAccordion") type="checkbox" value="true" @row.GetChecked(row.ShowInAccordion)>
+                                <span class="switch__state"></span>
+                                <span class="switch__label">
+                                     Show In Accordion
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-6" id="repeatTitle">
+                        <label for="">Repeat Item Title</label>
+                        <input class="form-control" @row.GetName("RepeatItemTitle") value="@row.RepeatItemTitle" />
+                    </div>
+                </div>
+
+            </section>
+        </li>
+
+    </ul>
+</div>
+
+<script>
+    $(function () {
+        ToggleIsRepeatSetting();
+        $("[name='SetAsRepeatItem']").on("change", function () {
+            ToggleIsRepeatSetting();
+        })
+    });
+
+    function ToggleIsRepeatSetting() {
+        var isRepeat = $("[name='SetAsRepeatItem']").prop("checked");
+        var repeatCheck = false;
+        if (isRepeat) {
+            repeatCheck = true;
+        }
+        if (repeatCheck) {
+            $("#repeatTitle").show();
+            $(".showInAccodian").show();
+        }
+        else {
+            $("#repeatTitle").hide();
+            $(".showInAccodian").hide();
+        }
+    }
+
+</script>

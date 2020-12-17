@@ -1,0 +1,251 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model QueueViewModel
+@inject IUserService _userService
+@inject Permission Permission
+@inject Utils  _utils
+
+@{
+
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Queue";
+
+}
+@{
+    string isNew = ViewContext.HttpContext.Request.Query["isNew"];
+}
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + ".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                @if (isNew == "true")
+                {
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queues.html?isNew=true")">Queues</a>
+                }
+                else
+                {
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queues.html")">Queues</a>
+                }
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Queue</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage Queues</h3>
+        @if (Permission.Can(UserCan.Create_Queue))
+        {
+            <div class="page-actionbtns">
+                @if (isNew == "true")
+                {
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queue/"+ _utils.EncryptId(0) +"/edit.html?isNew=true ")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+
+                }
+                else
+                {
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queue/"+ _utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+
+                }
+            </div>
+        }
+    </div>
+    <!-- page head ends -->
+    <div class="box px-5 pb-5 pt-5">
+        <div class="row">
+
+            <div class="col-lg-3">
+                <div class="box-header mb-4">
+                    <h4>Queue</h4>
+                    <p>
+                        This section helps you to add/edit or delete Queues. Please make changes on required fields and Click on "Save Change" buttons.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-9">
+
+                <form action="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queue/"+ _utils.EncryptId(Model.Id) +"/edit.html?isNew="+ isNew)" method="post">
+
+                    <div class="box-body">
+                        @Html.AntiForgeryToken()
+                        <div class="status"></div>
+                        <div asp-validation-summary="All" class="text-danger mt-2"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedBy" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        <div class="clearfix"></div>
+
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="panel rounded px-5 py-5 mb-3">
+
+                                    <div class="form-group">
+                                        <label for="">Queue Name</label>
+                                        <input asp-for="Name" type="text" class="form-control" id=""
+                                               placeholder="eg. Received">
+                                        <span asp-validation-for="Name"></span>
+                                    </div>
+
+                                    @*<div class="form-group">
+            <label for="">Side</label>
+            <select asp-for="Side" class="form-control custom" id="side-option">
+                <option value="">Choose an option</option>
+                <option value="backend">Backend</option>
+                <option value="frontend">Frontend</option>
+            </select>
+        </div>*@
+
+                                    <div class="form-row" id="role_group">
+                                        <div class="form-group col-md-6">
+                                            <label for="">Role for queue</label>
+                                            @*<select asp-for="RoleId" asp-items="@Model.RoleList" class="form-control custom" id="side-option">
+                                                <option>Choose an option</option>
+                                            </select>*@
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row" id="role_group">
+                                        <div class="form-group col-md-6">
+                                            <label for="">Form for queue</label>
+                                            @*<select asp-for="CaseFormId" asp-items="@Model.FormList" class="form-control custom">
+                                                <option value="0">Choose an option</option>
+                                            </select>*@
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            @*<label asp-for="Order"></label>
+                                            <input asp-for="Order" type="number" class="form-control" id=""
+                                                   placeholder="eg. 1">
+                                            <span asp-validation-for="Order"></span>*@
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="">Queue Url</label>
+                                        <input asp-for="UrlIdentifier" type="text" class="form-control" id=""
+                                               placeholder="eg. received">
+                                        <span asp-validation-for="UrlIdentifier"></span>
+                                    </div>
+
+                                    <div class="form-group" id="backend_side">
+                                        <label for="">Select all the states for this Queue to:</label>
+                                        <div class="box px-4 py-3" id="tenantMultipleSelect">
+                                            @if (Model != null && Model.StateList != null)
+                                            {
+                                                @foreach (var item in Model.StateList)
+                                                {
+                                                    var selected = "";
+                                                    if (Model.StateSelectedList != null && Model.StateSelectedList.Count() > 0 && Model.StateSelectedList.Any(x => x == item.Id))
+                                                    {
+                                                        selected = "checked='checked'";
+                                                    }
+                                                    <div class="form-check">
+                                                        <input name="StateSelectedList[]" @selected type="checkbox" class="form-check-input"
+                                                               id="@item.Id" value="@item.Id">
+                                                        <label class="form-check-label pl-2" for="name">
+                                                            @item.SystemName
+                                                        </label>
+                                                    </div>
+                                                }
+                                            }
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-footer mt-3">
+                        <div class=" d-flex">
+
+                            @if ((Model.Id == 0 && Permission.Can(UserCan.Create_Queue)) || (Model.Id != 0 && Permission.Can(UserCan.Update_Queue)))
+                            {
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                            }
+                            @if (isNew == "true")
+                            {
+                                <a class="btn btn-link" href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queues.html?isNew=true")">Cancel</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-link" href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/queues.html")">Cancel </a>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @*<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>*@
+    <script src="~/lib/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+
+            $('#notification').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#message').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#tenantMultipleSelect').slimScroll({
+                height: '100px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#userMultipleSelect').slimScroll({
+                height: '100px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            // custom select js
+            $(".color").click(function () {
+                var selCol = $(this).attr('id');
+                console.log(selCol);
+                $('.selectedCol').css('background', selCol);
+            });
+
+        });
+
+                //$(document).on("change", '#side-option', function () {
+
+                //    showHideRoleforQueue();
+
+                //});
+
+                //$(document).ready(function () {
+                //    showHideRoleforQueue();
+                //});
+
+                //function showHideRoleforQueue() {
+                //    if ($("#side-option").find(":selected").val() == "backend") {
+                //        $("#role_group").show();
+                //    }
+                //    else {
+                //        $("#role_group").hide();
+                //    }
+                //}
+
+    </script>
+
+}

@@ -1,0 +1,39 @@
+.claim-item {
+    position: relative;
+    height: 100%;
+    .dropdown {
+        position: absolute;
+        right: 0.8rem;
+        top: 0.8rem;
+    }
+    .btn-icon {
+        opacity: 0.5;
+        background: transparent;
+        border-color: transparent;
+    }
+    &:hover {
+        .btn-icon {
+            opacity: 1;
+        }
+        .claim-item__content {
+            box-shadow: $box-shadow;
+        }
+    }
+    &__content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 1.5rem;
+        background: #fff;
+        border-radius: 0.25rem;
+        height: 100%;
+        position: relative;
+        text-decoration: none!important;
+        transition: $transition-base;
+
+        .h5 {
+            color: $body-color; 
+        }
+    }
+}

@@ -1,0 +1,553 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@using Microsoft.AspNetCore.Http; 
+
+@model List<Widget>;
+@inject Permission Permission
+@inject IHttpContextAccessor _httpContextAccessor;
+
+@{
+    ViewBag.Title = "Manage Components";
+    Theme _theme = ViewData["theme"] as Theme;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.11/css/bootstrap-select.css">
+<script type="text/javascript">
+    String.prototype.format = String.prototype.format || function () {
+                    "use strict";
+                    var str = this.toString();
+                    if (arguments.length) {
+                        var t = typeof arguments[0];
+                        var key;
+                        var args = ("string" === t || "number" === t) ?
+                            Array.prototype.slice.call(arguments)
+                            : arguments[0];
+
+                        for (key in args) {
+                            str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
+                        }
+                    }
+
+                    return str;
+                };
+                //"Hello, {name}, are you feeling {adjective}?".format({name:"Kishan", adjective: "oK"});
+
+                // Or
+
+                //"a{0}bcd{1}ef".format("foo", "bar");
+var Components = {};
+    Components.Global = {
+        Init: function () {
+            /* Globally Used : Start */
+            $(document).on("change", "[data-slide-show]", function (e) {
+                $(this).off("change")
+                var el = $(this).closest("li[data-component-id]");
+                var SelectedVal = jQuery(this).val();
+                if (e.target.type == "radio") {
+                    var elm = el.find('input[name="' + e.target.name + '"]:checked');
+                    if (elm.val() == "article") {
+                        var StrToHide = elm.data('slide-hide');
+                        var StrToShow = elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+
+                    } else {
+                        var StrToHide = elm.data('slide-hide');
+                        var StrToShow = elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+
+                    }
+                }
+            });
+            $(document).on("change", "[type='checkbox'][data-target]", function (e) {
+                    $(this).off("change");
+                    var el = $(this).closest("li[data-component-id]");
+                    var SelectedVal = jQuery(this).val();
+                    if($(this).is(":checked")){
+                        $($(this).data("target")).slideDown();
+                    }else{
+                        $($(this).data("target")).slideUp();
+                    }
+            });
+            /* Globally Used : End */
+            }
+
+    };
+    Components.Core = {
+        LoadScript: function (e, where, call) {
+            var scriptTag = document.createElement('script');
+            scriptTag.src = e;
+
+            scriptTag.onload = call;
+            scriptTag.onreadystatechange = call;
+            scriptTag.onerror = function () { toastr.warning("Couldn't load sctipt: " + e) }
+            where.appendChild(scriptTag);
+        },
+        Hooks: {
+            actions: [],
+            addAction: function (type, method) {
+                Components.Core.Hooks.actions.push({ type: type, method });
+            },
+            doAction: function (type, arg) {
+                var strlen = [];
+                Components.Core.Hooks.actions = Components.Core.Hooks.actions.filter(function (item, index) {
+                    return Components.Core.Hooks.actions.indexOf(item) === index;
+                });
+                jQuery.each(Components.Core.Hooks.actions, function (i, v) {
+                    if (v.type == type) {
+                        var str_data = v.method.call(this, arg);
+                        if (typeof (str_data) == 'undefined') {
+                            console.log("This method is returning empty : \n" + v.method);
+                            str_data = "";
+                        }
+                        strlen.push(str_data);
+                    }
+                });
+                return strlen;
+            },
+
+        },
+        GenerateComponentId: function () {
+            function Generator() {
+                this.length = 8;
+                this.timestamp = +new Date;
+                var _getRandomInt = function (min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                this.generate = function () {
+                    var ts = this.timestamp.toString();
+                    var parts = ts.split("").reverse();
+                    var id = "";
+
+                    for (var i = 0; i < this.length; ++i) {
+                        var index = _getRandomInt(0, parts.length - 1);
+                        id += parts[index];
+                    }
+                    return id;
+                }
+            };
+
+            return new Generator().generate();
+
+        },
+        Init: function () {
+            $('.space,.first-space').sortable({
+
+                connectWith: '.space,.first-space',
+                placeholder: "ui-state-highlight",
+                tolerance: 'pointer',
+                dropOnEmpty: true,
+                forceHelperSize: true,
+                refreshPositions: true,
+                forcePlaceholderSize: true,
+                //containment: 'window',
+                distance: 5,
+                opacity: 1,
+                /* uu */
+                // tolerance: "pointer",
+                zIndex: 999999999999,
+                over: function (event, ui) {
+                    console.log("Overed");
+                },
+                change: function (event, ui) {
+
+                },
+                start: function (event, ui) {
+                    jQuery(".first-space").addClass("start");
+                },
+                stop: function (event, ui) {
+                    jQuery(".first-space").removeClass("start");
+                },
+                receive: function (event, ui) {
+
+                    var json = $(ui.sender).find("a.item").data('json');
+                    console.log(json)
+                    if (typeof (json) == 'undefined') {
+
+                        return;
+                    }
+                    var component_id = Components.Core.GenerateComponentId();
+
+                    var dom = '<li class="widget-location dashed-border" data-component-id="' + component_id + '" data-type="' + json.type + '">' +
+                        '<div class="widget-wrap "><div class="widget-title"><span class="title"><i class="fa ' + json.icon + '"></i></span><div class="widget-actions"><close></close><button type="button" class="btn btn-sm rounded-pill btn-remove" title="Remove from list"><i class="ri-close-line"></i><span class="sr-only">Delete</span></button><button type="button" class="btn btn-sm rounded-pill btn-toggle" title="Expand"><i class="ri-add-line show"></i><i class="ri-subtract-line hide"></i></button></div></div><form class="widget-body"></form></div>' +
+                        '</li>';
+                    jQuery(this).find('a.item').closest("li").replaceWith(dom);
+                    $.ajax({
+                        url: '/admin/ajax/update-component.html',
+                        data: {
+                            component_id: component_id,
+                            component_type: json.type,
+                            action: "create"
+                        },
+                        error: function () {
+                            toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            $("[data-component-id='" + data.component_id + "']").find(".widget-body").empty().append(data.content);
+                            $("[data-component-id='" + data.component_id + "']").find(".widget-body").slideDown();
+                           
+                        },
+                        type: 'POST'
+                    });
+
+                },
+            }).disableSelection();
+
+            $('.ul-lists li').draggable({
+                connectToSortable: '.space,.base',
+                helper: 'clone',
+            });
+
+
+            jQuery(document).on("click", ".ul-lists>li", function (e) {
+                jQuery(this).find(">ul").slideToggle();
+                jQuery(this).toggleClass('active');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".ul-lists>li li", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".widget-wrap .widget-title", function () {
+                jQuery(this).closest(".widget-wrap").find(">.widget-body").slideToggle();
+                jQuery(this).closest("li").toggleClass('active on');
+                $('.btn-toggle').prop('title') == 'Expand' ?  $('.btn-toggle').prop('title', 'Close') : $('.btn-toggle').prop('title', 'Expand');
+            })
+
+            jQuery(document).on("click", ".btn-danger", function () {
+                jQuery(this).closest("li").remove();
+            })
+            jQuery(document).on("click", ".btn-remove", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var component_id = $(this).closest("li").data("component-id");
+                var component_type = $(this).closest("li").data("type");
+                var post = {
+                    component_id: component_id,
+                    component_type: component_type,
+                    action: "delete"
+                }
+                var arr = $(this).serializeArray();
+                arr.forEach(function (item, index) {
+                    if (post[item.name] === undefined) {
+                        post[item.name] = item.value || '';
+                    } else {
+                        if (!post[item.name].push) {
+                            post[item.name] = [post[item.name]];
+                        }
+                        post[item.name].push(item.value || '');
+                    }
+                });
+                $("[data-component-id='" + component_id + "']").closest("li").fadeTo("slow", 0.5);
+                $.ajax({
+                    url: '/admin/ajax/delete-component.html',
+                    data: post,
+                    error: function () {
+                        toastr.error('An error has occurred');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $("[data-component-id='" + data.component_id + "']").closest("li").remove();
+
+                    },
+                    type: 'POST'
+                });
+
+            })
+
+            jQuery(document).on("submit", "form.widget-body", function (e) {
+                
+                e.preventDefault();
+                if ($.active > 0) {
+                    return false;
+                }
+
+                var component_id = $(this).closest("li").data("component-id");
+                var component_type = $(this).closest("li").data("type");
+                var post = {
+                    component_id: component_id,
+                    component_type: component_type,
+                    action: "update"
+                }
+                
+                    var actionResult = Components.Core.Hooks.doAction('before_component_save', post);
+                
+                var arr = $(this).serializeArray();
+                arr.forEach(function (item, index) {
+                    if (post[item.name] === undefined) {
+                        post[item.name] = item.value || '';
+                    } else {
+                        if (!post[item.name].push) {
+                            post[item.name] = [post[item.name]];
+                        }
+                        post[item.name].push(item.value || '');
+                    }
+                });
+
+                var t = null;
+                var _t = null;
+
+                var go = true;
+                //if (component_type == "Themes.Core.Components.CaseAutomation") {
+                    if (actionResult.length > 0) {
+                        for (var i = 0; i < actionResult.length; i++) {
+                            if (go == true && actionResult[i].submit == false) {
+                                go = false;
+                                break;
+                            }
+                        }
+                    }
+                //}
+                if (go) {
+                    
+                    $("[data-component-id='" + component_id + "']").closest("li").addClass("busy");
+                    $.ajax({
+                        url: '/admin/ajax/update-component.html',
+                        data: post,
+                        error: function () {
+                            toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            $("[data-component-id='" + data.component_id + "']").closest("li").removeClass("busy").addClass("saved").find("form.widget-body").empty().append(data.content);
+                            $("[data-component-id='" + data.component_id + "']").find(".widget-foot").prepend("<span class='widget-status success d-flex float-left'>Successfully Saved.</span>");
+                            var subtitle = $("[data-component-id='" + data.component_id + "']").closest("li");
+
+                            if (subtitle.find(".sub-title").length) {
+                                subtitle.find(".sub-title").empty().html(data.subtitle)
+                            } else {
+                                subtitle.find(".title").after("<span class='sub-title'>" + data.subtitle + "</span>"); //.adter(subtitle.find(".title"));
+                            }
+                            subtitle.on("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+                                function (event) {
+                                    try {
+                                        clearTimeout(t);
+                                    } catch (e) { }
+
+                                    t = setTimeout(function () {
+                                        subtitle.removeClass("saved");
+
+                                        try {
+                                            clearTimeout(_t);
+                                        } catch (e) {
+
+                                        }
+
+                                        _t = setTimeout(function () {
+                                            $(".widget-status").fadeTo("slow", 0.0, function () {
+                                                $(".widget-status").hide();
+                                            })
+                                        }, 1500)
+
+                                    }, 500)
+                                });
+                            //-------------------
+                            Components.Core.Hooks.doAction('after_component_save', { args: post, result: data });
+                        },
+                        type: 'POST'
+                    });
+                }
+
+            });
+        },
+        Save: function (e) {
+            $("[data-component-id='" + e + "'] form").submit();
+        }
+    }
+$(function () {
+
+        Object.keys(Components).forEach(function (key) {
+            try {
+                eval("Components." + key + ".Init()");
+                //eval("Components." + key + ".init()");
+
+            } catch (ev) {  }
+        })
+
+    })</script>
+
+
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin.html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Components</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage Components</h3>
+    </div>
+
+    <div class="mngwidget">
+        @Html.AntiForgeryToken()
+        <div class="mngwidget-elements">
+            <div class="box clearfix h-100">
+                <div class="box-header p-4">
+                    <h5 class="box-title">Component Elements</h5>
+                    <span class="text-muted">Drag and drop components as your requirement.</span>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="mngwidget-elements-content">
+                        <ul class="ul-lists widgets-list">
+                            @foreach (var item in _theme.Components)
+                            {
+                                var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                var _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                var _status = item.GetType().GetProperty("Status");
+
+                                var _icon = item.GetType().GetProperty("Icon");
+                                string __icon = "";
+                                if (_icon != null) { __icon = _icon.GetValue(item, null).ToString(); }
+
+                                if (_status != null && _status.GetValue(item, null).ToString().ToLower() == "active")
+                                {
+                                    <li class="mngwidget-elements-item d-flex align-items-center">
+                                        <figure class="figure figure-icon">
+                                            <i class="fas @__icon"></i>
+                                        </figure>
+                                        <div class="mngwidget-title">
+                                            <a data-json='{"type":"@_class","title":"@name","icon":"@__icon"}' class="item">@name</a>
+                                            <span class="d-block mngwidget-elements-item-info">@_desc</span>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="mngwidget-content">
+            <div class="box clearfix h-100 ">
+                <div class="box-header pt-4 pr-4 pl-4">
+                    <div class="form-group d-block align-items-center" style="margin-bottom:0px;">
+                        <h4 class="box-title mb-2">Active Components</h4>
+                        <p class="help">You can see all active and configured components in following section.</p>
+                      
+                    </div>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body p-3">
+
+                    @{
+                        var _Components = Model;
+
+                    }
+
+
+                    <ul class="space">
+                        @{
+                            List<object> wget = _theme.GetComponents();
+                            if (wget != null && wget.Count() > 0)
+                            {
+                                foreach (dynamic _v__Widget in wget)
+                                {
+
+                                    <li class='widget-location dashed-border ' data-component-id="@_v__Widget.ComponentId" data-type="@_v__Widget.ComponentType">
+                                        <div class="widget-wrap">
+
+                                            @{
+                                                _v__Widget.HttpContext = _httpContextAccessor.HttpContext;
+                                                _v__Widget.Theme = ViewData["theme"] as Theme;
+                                                _v__Widget.ComponentId = _v__Widget.ComponentId;
+                                                _v__Widget.ComponentType = _v__Widget.ComponentType;
+                                                _v__Widget.Action = "render";
+
+                                                ComponentResponse wr = _v__Widget.Update<object>(_v__Widget) as ComponentResponse;
+                                            }
+                                            <div class="widget-title">
+                                                <span class='title'><i title="@Html.Raw(wr.Title)" class="fa @wr.Icon"></i></span>
+                                                @if (!string.IsNullOrEmpty(wr.SubTitle))
+                                                {
+                                                    <span class='sub-title'>@wr.SubTitle</span>
+                                                }
+                                                <close></close>
+                                                <div class="widget-actions">
+                                                    <button type="button" class="btn btn-sm rounded-pill btn-remove" title="Remove from list">
+                                                            <i class="ri-close-line"></i>
+                                                            <span class="sr-only">Delete</span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm rounded-pill btn-toggle" title="Expand">
+                                                        <i class="ri-add-line show"></i>
+                                                        <i class="ri-subtract-line hide"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <form class="widget-body">
+
+                                                @Html.Raw(wr.Content)
+
+                                            </form>
+                                        </div>
+
+                                    </li>
+                                }
+
+
+                            }
+                        }
+                    </ul>
+
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+
+
+</div>
+
+<style type="text/css">
+    .dashed-border .widget-title .title {
+        /* display: inline-block; */
+    }
+
+    .dashed-border .widget-title .sub-title {
+        /* border-left: 1px solid #ccc;
+        margin-left: 5px;
+        padding-left: 5px; */
+    }
+
+    ul.space {
+        /* padding: 0px 5px !important;
+        margin: 0px; */
+    }
+
+    ul.space {
+         min-height: 200px; 
+    }
+
+    .dashed-border {
+        /* border: 1px dashed #a9a7a7; */
+    }
+
+    .active.on {
+        /* background-color: #f9f9f9|; */
+    }
+
+    .dashed-border .widget-title:before {
+        /* position: absolute;
+        right: 15px;
+        content: "\f107";
+        color: #999999; */
+    }
+    .widget-body {
+        /* margin-top: 20px; */
+    }
+</style>
+@section Scripts {
+<script type="text/javascript"></script>
+}

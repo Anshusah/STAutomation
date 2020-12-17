@@ -1,0 +1,403 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model List<MessageViewModel>
+@inject Permission Permission
+@inject IUserService _userService
+@inject IMessageService _messageService
+@inject ICaseService _caseService
+@inject Utils _utils
+
+@{
+    ViewData["Title"] = "Index";
+    var claimUserList = _userService.GetUserList();
+    var loggeduser = _userService.getLoggedInUserId();
+    var claimsList = _caseService.GetCaseListToSelectWithUserId();
+}
+<style>
+    .custom-upload-visual:hover {
+        cursor: pointer;
+    }
+
+    .case__top {
+        padding: 2rem;
+        background: #fff;
+    }
+
+        .case__top .breadcrumb {
+            padding: 0;
+            background: transparent;
+        }
+
+    .case__data {
+        text-align: right;
+    }
+
+    .case__content {
+        padding: 2rem;
+    }
+
+    .modal.custom .modal-dialog {
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin: 20px;
+    }
+
+    .table tr:hover {
+        cursor: pointer;
+    }
+
+    .message__seen {
+        background-color: lightgray;
+    }
+
+    .selectize-dropdown .optgroup-header {
+        color: darkcyan;
+    }
+</style>
+
+
+<!-- page head starts -->
+@*<nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) +".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Compose Message</li>
+        </ol>
+    </nav>
+    <div class="d-flex justify-content-between align-items-center">
+        <h3>Messages</h3>
+        @if (Permission.Can(UserCan.Create_Message))
+        {
+            <div class="page-actionbtns">
+                <a href="#" id="new-message" class="btn btn-primary btn-sm px-3"><i class="fas fa-plus"></i> Compose New</a>
+            </div>
+        }
+    </div>*@
+<!-- page head ends -->
+<div class="container-fluid">
+    @await Html.PartialAsync("~/Themes/Blue/Message/Messages.cshtml")
+</div>
+
+<div class="modal custom fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="message-form" action="@Url.Content("~/user"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(0) +"/messages.html")" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="msg-reply p-3 mb-5" id="msg-new-create">
+
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="form-group mb-2">
+                                    <select id="select-state" name="recipients[]" multiple class="demo-default" placeholder="Select a Claimant...">
+                                        @foreach (var item in claimUserList)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class=" form-row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="sr-only">Subject</label>
+                                    <input name="subject" id="new-subject" class="form-control" aria-describedby="subjectHelp" placeholder="Subject">
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="sr-only">Claim Id</label>
+                                    <select name="claimid" class="form-control" id="claimId">
+                                        <option value="">Select Claim if needed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="sr-only">Message</label>
+                                    <textarea name="content" class="form-control px-3 py-2" rows="3" placeholder="Message"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+
+                        </div> <div class="col">
+                            <div class="uploaded-files">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="send-message" disabled class="btn btn-primary">Send</button>
+                    <div class="custom-upload mr-3">
+                        <button type="button" class="custom-upload-visual btn btn-outline-secondary" data-media="{OnInit:function(){this.size=&quot;modal-lg&quot;;this.button.cancel=&quot;Cancel&quot;;this.button.insert=&quot;Insert Media&quot;;this.open();},OnInsert:function(e){Cicero.Message.InsertImages(e)},OnCancelled:function(){this.close();}}">
+                            <i class="ri-attachment-line"></i>
+                            <span>Add files</span>
+                        </button>
+                    </div>
+
+                    <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript">
+        var tableData = null;
+        var claimsList = @Html.Raw(Json.Serialize(claimsList));
+        $(document).ready(function () {
+          var selected = [];
+            var customCheckbox = '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input dt-checkboxes" id=""><label class="custom-control-label"></label></div>';
+            tableData = $("#messages").DataTable({
+                "processing": true,
+                "serverSide": true,
+                //"dom": 'r<"clear">t<"row"<"col-sm-3"l><"col-sm-3"i><"col-sm-6"p>><"clear">',
+                "dom": 'r<"clear">t<"datatable__controls"<"datatable__length"l><"datatable__info"i><"datatable__numbers"p>>',
+                'searching': true,
+                "ajax": { "url": "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/messages.html")", "type": "POST" },
+                'stateSave': false,
+                'select': {
+                    info: false
+                },
+                'columnDefs': [
+                    {
+                        'targets': 0,
+                        'render': function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = customCheckbox;
+                            }
+                            return data;
+                        },
+                        'checkboxes': {
+                            'selectRow': true,
+                            'selectAll': true
+                        }
+                    },
+                    {
+                        'targets': 4,
+                        'render': function (data) {
+                            return moment(data).format('Do MMMM, YYYY');
+                        }
+                    }
+                ],
+                'select': {
+                    'style': 'multi'
+                },
+                "rowCallback": function (row, data, index) {
+                    jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+                },
+                "drawCallback": function (settings) {
+                    $("#messages thead").remove();
+                },
+                "columns": [
+                    { "title": "", "data": "id", "orderable": false },
+                    {
+                        "title": "", "data": null, "orderable": false,
+                        'render': function (data) {
+                            return "<img class='rounded-circle' width='40' height='40' src='/uploads/" + data.senderImage + "' alt='"+ data.nameSender +"'> ";
+                        }
+                    },
+                    {
+                        "title": "", "data": null, "orderable": false,
+                        'render': function (data) {
+                            return "<div class='message__head'><div class='message__responder'><img class='rounded-circle' width='40' height='40' src='/uploads/" + data.senderImage + "' alt='"+ data.nameSender +"'></div><div class='message__subject'>" + data.subject + '</div></div>';
+                        }
+                    },
+                    {
+                        "title": "", "data": null, "orderable": false,
+                        'render': function (data) {
+                            if (data.content == null) {
+                                data.content = "";
+                            }
+                            var icons = "";
+                            if (!(data.attachment == "[]")) {
+                                icons = "<i class='ri-attachment-2 ml-2'></i>";
+                            }
+                            var content = data.content.length > 100 ? data.content.substr(0, data.content.lastIndexOf(' ', 100)) : data.content;
+                            return "<div class='message__fragment'>" + content + icons + "</div>";
+                        }
+                    },
+                    { "title": "Created At", "data": "createdAt", "type": "date", "orderable": false },
+                ],
+                order: [
+                    [1, "asc"]
+                ],
+                "paging": true,
+                "pageLength": 10,
+                lengthMenu: [
+                    [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+                ],
+                "createdRow": function (row, data, dataIndex) {
+                    if (data.isRead) {
+                        $(row).addClass('message__seen');
+                    }
+                },
+                "fnInitComplete": function (oSettings, json) {
+                    jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+                },
+            });
+        //jQuery(document).on("keyup", "#gridsearch", function() {
+        //        table.fnFilter(this.value);
+        //});
+            $(document).on("click", "#messages tbody tr td:not(:first-child)", function (e) {
+                var data = tableData.row(e.currentTarget.parentElement).data();
+                location.href = "/admin/messageDetail.html?id=" + data.id + "&isRead=" + data.isRead;
+        })
+
+   $(document).on('click', '.attachment__btn', function (e) {
+                e.currentTarget.parentElement.remove()
+            })
+});
+    </script>
+
+    <script type="text/javascript" src="~/frontend/js/jquery.slimscroll.js"></script>
+    <script>
+
+        var $select = $('#select-state').selectize({
+            maxItems: 1
+        });
+
+        $('#select-manager').selectize({
+            maxItems: 1
+        });
+           var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+            var theme = (theme_match && theme_match[1]) || 'default';
+            var themes = ['default', 'legacy', 'bootstrap2', 'bootstrap3'];
+            $('head').append('<link rel="stylesheet" href="@Url.Content("~/css/selectize.css")"' + theme + '.css">');
+
+            var $themes = $('<div>').addClass('theme-selector').insertAfter('h1');
+            for (var i = 0; i < themes.length; i++) {
+                //$themes.append('<a href="?theme=' + themes[i] + '"' + (themes[i] === theme ? ' class="active"' : '') + '>' + themes[i] + '</a>');
+            }
+    </script>
+    <script>
+        $(function () {
+            //$('#message').slimScroll({
+            //    height: '250px',
+            //    size: '5px',
+            //    alwaysVisible: false
+            //});
+            //if ($(window).width() > 992) {
+            //    $('#msgList').slimScroll({
+            //        height: '630px',
+            //        size: '5px',
+            //        alwaysVisible: false
+            //    });
+            //    $('#msgView').slimScroll({
+            //        height: '630px',
+            //        size: '5px',
+            //        alwaysVisible: false
+            //    });
+            //}
+
+            jQuery(document).on("click", "#reply-message", function () {
+                jQuery("#msg-new-create").hide();
+                jQuery("#empty-msg").hide();
+                jQuery("#msg-reply").show();
+            });
+
+            jQuery(document).on("click", "#new-message", function () {
+                jQuery("#msg-new-create").show();
+                jQuery("#empty-msg").hide();
+                jQuery("#msg-reply").hide();
+                jQuery("#msg-details").hide();
+
+                if ($(window).width() < 992 && !jQuery(".msg-box").hasClass("mobile")) {
+                    jQuery(".msg-box").addClass("mobile");
+                }
+            });
+
+            //jQuery(document).on("click", "#load-more-messages", function () {
+            //    console.log("why");
+            //    jQuery("#load-more-messages").hide();
+            //    jQuery("#msg-old-view").show();
+            //});
+
+            jQuery(document).on("click", ".goto-msg-list", function () {
+                if ($(window).width() < 992) {
+                    jQuery(".msg-box").removeClass("mobile");
+                }
+            });
+
+
+            jQuery(document).on("change", "#new-subject", function () {
+                if ($("#new-subject").val().trim() != "" && $('#select-state').val().length > 0) {
+                    $("#send-message").prop('disabled', false);
+                } else {
+                    $("#send-message").prop('disabled', true);
+                }
+            });
+
+            jQuery(document).on("change", "#select-state", function () {
+                var userId = $('#select-state').val();
+                var claimsData = claimsList.filter(x => x.userId == userId);
+                $('#claimId option:not(:first-child)').remove()
+                $.each(claimsData, function (i, item) {
+                    $('#claimId').append($('<option>', {
+                        value: item.value,
+                        text: item.text
+                    }));
+                });
+                if ($("#new-subject").val().trim() != "" && $('#select-state').val().length > 0) {
+                    $("#send-message").prop('disabled', false);
+                } else {
+                    $("#send-message").prop('disabled', true);
+                }
+            });
+
+            if ($(window).width() < 992 && jQuery(".msg-list-item").hasClass("active")) {
+                jQuery(".msg-box").addClass("mobile");
+            }
+        });
+
+        jQuery(document).on("keyup", "#gridsearch", function () {
+            tableData.search(this.value).draw();
+        });
+
+        $('#exampleModal').on('hidden.bs.modal', function () {
+            $('#message-form').trigger("reset");
+            $('#select-state').val(null).change();
+            $('#claimid').val("").change();
+
+            var control = $select[0].selectize;
+            control.clear();
+        })
+
+        $('#action').change(function (e) {
+            if (e.currentTarget.value != "") {
+                $('#apply').click();
+            }
+        })
+    </script>
+}
+
+
+

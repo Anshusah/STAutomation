@@ -1,0 +1,22 @@
+﻿@using Cicero.Service.Models.Core;
+@{
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+<!-- nav e -->
+<div class="jumbotron p-0">
+    <div class="rounded-0 inner-promo py-5">
+        <div class="position-relative z-index-2 container">
+            <h2 class="main-promo-caption heading">@Model.Title</h2>
+
+        </div>
+    </div>
+</div>
+<main role="main" class="container">
+    <div class="row mt-7 mb-7">
+        @Html.Raw(@Model.Content)
+
+    </div>
+</main>
+@await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Footer.cshtml")

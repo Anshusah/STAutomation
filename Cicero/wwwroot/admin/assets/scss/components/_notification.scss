@@ -1,0 +1,134 @@
+.notification {
+    &-head {
+        padding: 8px 16px;
+
+        a {
+            color: theme(text,link-dark);
+        }
+    }
+
+    &-badge {
+        // position: absolute;
+        // right: 1.5rem;
+        // top: 0.2rem;
+        // border: 2px solid #fff;
+        // min-width: 14px;
+        // max-width: 50px;
+        // font-size: 11px;
+        // background: $red;
+        // color: #fff;
+        // display: block;
+        // text-align: center;
+        // padding: 1px 3px;
+        // border-radius: 25px;
+    }
+
+    &-body {
+        .notification-item {
+            display: inline-block;
+
+            &:hover {
+                text-decoration: none;
+                background: theme(hover-bg, light);
+            }
+        }
+    }
+
+    &-msg {
+        margin-left: auto;
+
+        @include media('>tablet') {
+            margin-left: initial;
+        }
+
+        a {
+            display: inline-block;
+            color: theme(text,link-dark);
+
+            &:hover {
+                text-decoration: none;
+                background: theme(hover-bg, light);
+            }
+        }
+    }
+
+    &-foot {
+        padding: 8px 16px;
+        border-top: 1px solid theme(border, light);
+    }
+
+    .media {
+        padding: 10px 16px;
+
+        &-img {
+            margin-right: 8px;
+            margin-top: 3px;
+
+            img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .circle {
+            border-radius: 50%;
+            height: 38px;
+            width: 38px;
+            overflow: hidden;
+        }
+
+        p {
+            margin-bottom: 0;
+        }
+    }
+}
+
+
+.notification {
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    &__body {
+        max-height: 250px;
+        overflow: hidden;
+        overflow-y: auto;
+        position: relative;
+    }
+    &__footer {
+        padding: 1rem;
+        border-top: 1px solid #f8f9fa;
+    }
+    &__item {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        position: relative;
+        a {
+            font-weight: bold;
+            color: var(--gray-dark);
+        }
+        &--unread {
+            background-color: $white;
+            padding-right: 2rem;
+            &:after {
+                content: "";
+                width: 6px;
+                height: 6px;
+                background-color: var(--success);
+                border-radius: 10em;
+                position: absolute;
+                right: 1rem;
+            }
+        }
+    }
+    &__item-user {
+        margin-right: 1rem;
+    }
+}

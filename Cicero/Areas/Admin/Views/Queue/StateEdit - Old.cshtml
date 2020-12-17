@@ -1,0 +1,998 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model StateViewModel
+@inject IUserService _userService
+@inject Permission Permission
+@inject Utils  _utils
+
+@{
+
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " State";
+
+}
+
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + ".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/states.html")">States</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) State</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage States</h3>
+        @if (Permission.Can(UserCan.Create_Queue))
+        {
+            <div class="page-actionbtns">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/"+ _utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+            </div>
+        }
+    </div>
+    <!-- page head ends -->
+    <div class="box p-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="box-header mb-4">
+                    <h4>State</h4>
+                    <p>
+                        This section helps you to add/edit or delete States. Please make changes on required fields and Click on "Save Change" buttons.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <form action="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/"+ _utils.EncryptId(Model.Id) +"/edit.html")" method="post">
+                    <div class="box-body">
+
+                        @Html.AntiForgeryToken()
+                        <div class="status"></div>
+                        <div asp-validation-summary="All" class="text-danger mt-2"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedBy" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        <div class="clearfix"></div>
+                        <div class="form-row">
+                            <div class="col-xl-12">
+                                <div class="panel rounded p-5 mb-3">
+
+                                    <div class="form-row">
+                                        <div id="queue-name" class="form-group col-md-12 frontend">
+                                            <label for="Name">System State Name</label>
+                                            <input asp-for="SystemName" type="text" class="form-control" placeholder="eg. Received">
+                                            <small class="form-text text-muted color-help">Note: Color will be use in Frontend </small>
+                                            <div class="btn-group color-pick d-block" style="margin-top:26px;">
+                                                <input asp-for="Color" id="input-color-picker" type="text" class="form-control" hidden />
+                                                <span class="btn w-100 btn-primary dropdown-toggle selectedCol"
+                                                      data-toggle="dropdown" style="background:@Model.Color"></span>
+                                                <ul class="dropdown-menu dropdown-menu-right dropdown-md">
+                                                    <li class="dropdown-item">
+                                                        <span class="color berryred"
+                                                              id="#EF3A53"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color blue"
+                                                              id="#44A4F8"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color neon"
+                                                              id="#3BD593"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color dullpurple"
+                                                              id="#CF92DE"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color brightred"
+                                                              id="#FF6D4F"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color yellow"
+                                                              id="#FFB636"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color gold"
+                                                              id="#A88240"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color pink"
+                                                              id="#F66DAD"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color darkblue"
+                                                              id="#0C9CBA"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color green"
+                                                              id="#93D549"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color purlple"
+                                                              id="#9869E8"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color grey"
+                                                              id="#68655F"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color darkestblue"
+                                                              id="#3C598B"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color darkgreen"
+                                                              id="#5E8B3C"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color lightpink"
+                                                              id="#FB85F7"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color black"
+                                                              id="#000000"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color satpurple"
+                                                              id="#5D44C2"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color lightblue"
+                                                              id="#13BDF2"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color dullgreen"
+                                                              id="#9AA591"></span>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <span class="color orange"
+                                                              id="#F97F22"></span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="Name">State Action Name</label>
+                                            <input asp-for="ActionName" type="text" class="form-control" placeholder="eg. Received">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row border">
+                                        @*creating roles and permissions for states new implementation*@
+                                        @{
+                                            int tempcount = 0;
+                                        }
+                                        @*@if (Model.StatePermissions != null && Model.StatePermissions.Count > 0)
+                                        {
+                                            @foreach (var items in Model.StatePermissions)
+                                            {
+                                                if (Model.StatePermissions[0] == items)
+                                                {
+                                                    <div id="to-clone" class="form-group col-md-4 m-3 border" data-index="tempcount">
+                                                        <div class="form-group">
+                                                            <label for="">Display Name</label>
+                                                            <input name="StatePermissions[@tempcount][DisplayName]" type="text" class="form-control" value="@items.DisplayName" placeholder="eg. Received" />
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label for="">Role</label>
+                                                            <select name="StatePermissions[@tempcount][RoleId]" class="form-control custom">
+                                                                <option value="">Choose an option</option>
+                                                                @foreach (var roles in Model.RoleList)
+                                                                {
+                                                                    @if (roles.Value == items.RoleId)
+                                                                    {
+                                                                        <option value="@roles.Value" selected="selected">@roles.Text</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@roles.Value">@roles.Text</option>
+                                                                    }
+
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-check mt-2 ">
+                                                            @if (items.CanEdit == true)
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][CanEdit]" type="checkbox" checked class="form-check-input" value="true" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][CanEdit]" type="checkbox" class="form-check-input" value="true" />
+                                                            }
+
+                                                            <label class="form-check-label pl-2">Can this role Edit case</label>
+                                                        </div>
+                                                        <div class="form-check mt-2 ">
+                                                            @if (items.ViewMode == true)
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][ViewMode]" type="checkbox" checked class="form-check-input" value="true" />
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][ViewMode]" type="checkbox" class="form-check-input" value="true" />
+
+                                                            }
+                                                            <label class="form-check-label pl-2">View mode Enabled for role</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-group col-md-4 m-3 border" data-index="@tempcount">
+                                                        <div class="form-group">
+                                                            <label for="">Display Name</label>
+                                                            <input name="StatePermissions[@tempcount][DisplayName]" type="text" class="form-control" value="@items.DisplayName" placeholder="eg. Received" />
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label for="">Role</label>
+                                                            <select name="StatePermissions[@tempcount][RoleId]" class="form-control custom">
+                                                                <option value="">Choose an option</option>
+                                                                @foreach (var roles in Model.RoleList)
+                                                                {
+                                                                    @if (roles.Value == items.RoleId)
+                                                                    {
+                                                                        <option value="@roles.Value" selected="selected">@roles.Text</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@roles.Value">@roles.Text</option>
+                                                                    }
+
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-check mt-2 ">
+                                                            @if (items.CanEdit == true)
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][CanEdit]" type="checkbox" checked class="form-check-input" value="true" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][CanEdit]" type="checkbox" class="form-check-input" value="true" />
+                                                            }
+
+                                                            <label class="form-check-label pl-2">Can this role Edit case</label>
+                                                        </div>
+                                                        <div class="form-check mt-2 ">
+                                                            @if (items.ViewMode == true)
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][ViewMode]" type="checkbox" checked class="form-check-input" value="true" />
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <input name="StatePermissions[@tempcount][ViewMode]" type="checkbox" class="form-check-input" value="true" />
+
+                                                            }
+                                                            <label class="form-check-label pl-2">View mode Enabled for role</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                tempcount++;
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div id="to-clone" class="form-group col-md-4 m-3 border" data-index="0">
+                                                <div class="form-group">
+                                                    <label for="">Display Name</label>
+                                                    <input name="StatePermissions[0][DisplayName]" type="text" class="form-control dname" placeholder="eg. Received" />
+                                                </div>
+                                                <div class="form-group ">
+                                                    <label for="">Role</label>
+                                                    <select name="StatePermissions[0][RoleId]" asp-items="Model.RoleList" class="form-control custom role">
+                                                        <option value="">Choose an option</option>
+
+                                                    </select>
+                                                </div>
+                                                <div class="form-check mt-2 ">
+                                                    <input name="StatePermissions[0][CanEdit]" type="checkbox" class="form-check-input edit" value="true" />
+                                                    <label class="form-check-label pl-2">Can this role Edit case</label>
+                                                </div>
+                                                <div class="form-check mt-2 ">
+                                                    <input name="StatePermissions[0][ViewMode]" type="checkbox" class="form-check-input view" value="true" />
+                                                    <label class="form-check-label pl-2">View mode Enabled for role</label>
+                                                </div>
+                                            </div>
+                                        }*@
+
+
+                                        <div class="form-group col-md-12 m-3">
+                                            <button type="button" id="clone-btn" class="btn btn-primary">Add</button>
+                                        </div>
+
+                                    </div>
+
+                                    @*<div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="">Role for state</label>
+                                            <select asp-for="RoleId" asp-items="@Model.RoleList" class="form-control custom" id="side-option">
+                                                <option>Choose an option</option>
+                                            </select>
+                                        </div>
+                                    </div>*@
+
+                                    @*<div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label asp-for="Order"></label>
+                                            <input asp-for="Order" type="number" class="form-control"
+                                                   placeholder="eg. 1">
+                                            <span asp-validation-for="Order"></span>
+                                        </div>
+                                    </div>*@
+
+                                    <div class="form-group" id="backend_side">
+                                        <label for="">User can switch from this State to:</label>
+                                        <div class="box px-4 py-3" id="tenantMultipleSelect">
+                                            @if (Model != null && Model.StateList.Count() > 0)
+                                            {
+                                                @*@foreach (var item in Model.StateList)
+                                                {
+                                                    var selected = "";
+                                                    if (Model.StateSelectedList != null && Model.StateSelectedList.Count() > 0 && Model.StateSelectedList.Any(x => x == item.Id))
+                                                    {
+                                                        selected = "checked='checked'";
+                                                    }
+                                                    <div class="form-check">
+                                                        <input name="StateSelectedList[]" @selected type="checkbox" class="form-check-input"
+                                                               id="@item.Id" value="@item.Id">
+                                                        <label class="form-check-label pl-2" for="name">
+                                                            @item.SystemName
+                                                        </label>
+                                                    </div>
+                                                }*@
+                                            }
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="frontend_side">
+                                        <div class="form-check mt-4">
+                                            <input asp-for="NotifyUser" type="checkbox" class="form-check-input" id="exampleCheck11">
+                                            <label class="form-check-label pl-2" for="NotifyUser">
+                                                Notify
+                                                User when state is changed
+                                            </label>
+                                        </div>
+                                        <div class="form-check mt-2">
+                                            <input asp-for="NeedReason" type="checkbox" class="form-check-input" id="exampleCheck12">
+                                            <label class="form-check-label pl-2" for="NeedReason">
+                                                Required
+                                                reason to change in this state
+                                            </label>
+                                        </div>
+                                        <div class="form-check mt-2">
+                                            <input asp-for="CanEdit" type="checkbox" class="form-check-input" id="exampleCheck13">
+                                            <label class="form-check-label pl-2" for="CanEdit">
+                                                Enable
+                                                Edit option
+                                            </label>
+                                        </div>
+                                        <div class="form-check mt-2">
+                                            <input asp-for="CanDelete" type="checkbox" class="form-check-input" id="exampleCheck14">
+                                            <label class="form-check-label pl-2" for="CanDelete">
+                                                Enable
+                                                Delete option
+                                            </label>
+                                        </div>
+                                        <div class="form-check mt-2">
+                                            <input asp-for="UserAccess" type="checkbox" class="form-check-input" id="exampleCheck15">
+                                            <label class="form-check-label pl-2" for="CanDelete">
+                                                Assign to one user
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="box-footer mt-3">
+                        <div class=" d-flex">
+
+                            @if ((Model.Id == 0 && Permission.Can(UserCan.Create_Queue)) || (Model.Id != 0 && Permission.Can(UserCan.Update_Queue)))
+                            {
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                            }
+                            <a class="btn btn-link" href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/states.html")">Go back </a>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="panel rounded p-5 mb-3">
+                            <div class="form-group">
+                                <label asp-for="SystemName">System State Name</label>
+                                <input type="text" class="form-control" asp-for="SystemName" placeholder="">
+                            </div> <!--//.form-group-->
+                            <div class="form-group">
+                                <label for="stateNameFrontend">State Action Name</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" asp-for="ActionName" placeholder="">
+                                    <div class="input-group-append">
+                                        <input asp-for="Color" id="input-color-picker" type="text" class="form-control" hidden />
+                                        <button class="btn btn-primary" data-toggle="dropdown" type="button" id="button-addon1" data-placement="top" title="Choose color"><i class="fas fa-fill-drip"></i></button>
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-md">
+                                            <li class="dropdown-item">
+                                                <span class="color berryred"
+                                                      id="#EF3A53"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color blue"
+                                                      id="#44A4F8"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color neon"
+                                                      id="#3BD593"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color dullpurple"
+                                                      id="#CF92DE"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color brightred"
+                                                      id="#FF6D4F"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color yellow"
+                                                      id="#FFB636"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color gold"
+                                                      id="#A88240"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color pink"
+                                                      id="#F66DAD"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color darkblue"
+                                                      id="#0C9CBA"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color green"
+                                                      id="#93D549"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color purlple"
+                                                      id="#9869E8"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color grey"
+                                                      id="#68655F"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color darkestblue"
+                                                      id="#3C598B"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color darkgreen"
+                                                      id="#5E8B3C"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color lightpink"
+                                                      id="#FB85F7"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color black"
+                                                      id="#000000"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color satpurple"
+                                                      id="#5D44C2"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color lightblue"
+                                                      id="#13BDF2"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color dullgreen"
+                                                      id="#9AA591"></span>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <span class="color orange"
+                                                      id="#F97F22"></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted color-help">Note: Color will be used in Frontend</small>
+                            </div> <!--//.form-group-->
+                            <div class="card mb-3">
+                                <div class="card-header d-flex justify-content-end align-items-center">
+                                    <button class="btn btn-icon" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div> <!--//.card-header-->
+                                @if (Model.StateForForm != null && Model.StateForForm.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.StateForForm.Count(); i++)
+                                    {
+                                        <div class="collapse show" id="collapseOne">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label for="@Model.StateForForm[i].CaseFormId">Form ID</label>
+                                                    <select class="custom-select" asp-for="StateForForm[i].CaseFormId" asp-items="Model.CaseFormList">
+                                                        <option>Please Select an option</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group state-icon-group">
+                                                    <label>State's icon</label>
+                                                    <input type="text" asp-for="StateForForm[i].Icon" hidden />
+                                                    <div class="d-flex flex-wrap">
+                                                        <span class="state-icon-item border border-primary p-3 rounded mb-3 mr-3 selected"><img width="48" src="~/images/state/ic-draft.png" alt=""></span>
+                                                        <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-assign.png" alt=""></span>
+                                                        <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-evaluated.png" alt=""></span>
+                                                        <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-verified.png" alt=""></span>
+                                                        <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-settled.png" alt=""></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>User can switch from this State to:</label>
+
+                                                    <div>
+                                                        @*@if (Model != null && Model.StateList.Count() > 0)
+                                {
+                                    @foreach (var item in Model.StateList)
+                                    {
+                                        var selected = "";
+                                        var stateclass ="btn btn-outline-primary";
+                                        if (Model.StateForForm[i].StateSelectedList != null && Model.StateForForm[i].StateSelectedList.Count() > 0 && Model.StateForForm[i].StateSelectedList.Any(x => x == item.Id))
+                                        {
+                                            selected = "checked='checked'";
+                                            stateclass = "btn btn-primary";
+                                        }
+
+                                    <input name="StateForForm[@i].StateSelectedList[]" @selected type="checkbox" class="form-check-input"
+                                           id="@item.Id" value="@item.Id">
+                                    <button type="button" class="@stateclass">@item.SystemName</button>
+
+                                    }
+                                }*@
+                                                        @*@for (int l = 0; l < Model.StateForForm[i].StateSelectedList.Count(); l++)
+                                {
+                                    <input type="text" asp-for="StateForForm[i].StateSelectedList[l]" hidden />
+                                    <button type="button" class="btn btn-primary">Rejected</button>
+                                }*@
+                                                        @*<button type="button" class="btn btn-primary">Rejected</button>
+                                <button type="button" class="btn btn-outline-primary">Settled</button>
+                                <button type="button" class="btn btn-outline-primary">Pending</button>
+                                <button type="button" class="btn btn-outline-primary">Waiting</button>*@
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-xl-3 col-lg-5">
+                                                        <div class="form-group">
+                                                            <label for="@Model.StateForForm[i].Order">Order position</label>
+                                                            <input type="number" class="form-control" asp-for="StateForForm[i].Order" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                </div> <!--//.form-row-->
+                                                <div class="d-flex justify-content-between align-items-center border-bottom py-3 my-4">
+                                                    <h6>Display name settings</h6>
+                                                    <button type="button" class="btn btn-link"><i class="fas fa-plus"></i> Add more</button>
+                                                </div> <!--//.d-flex-->
+
+                                                <div class="row">
+                                                    @if (Model.StateForForm[i].StatePermissions != null && Model.StateForForm[i].StatePermissions.Count() > 0)
+                                                    {
+                                                        @for (int j = 0; j < Model.StateForForm[i].StatePermissions.Count(); j++)
+                                                        {
+                                                            <div class="col-xl-6 mb-4">
+                                                                <div class="card border">
+                                                                    <div class="card-body">
+                                                                        <div class="form-group">
+                                                                            <label for="@Model.StateForForm[i].StatePermissions[j].DisplayName">Display Name</label>
+                                                                            <input type="text" class="form-control" asp-for="StateForForm[i].StatePermissions[j].DisplayName" placeholder="">
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="role">Role</label>
+                                                                            <select class="custom-select" asp-for="StateForForm[i].StatePermissions[j].RoleId" asp-items="Model.RoleList">
+                                                                                <option>Choose an option</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="custom-control custom-checkbox">
+                                                                                <input type="checkbox" asp-for="StateForForm[i].StatePermissions[j].CanEdit" checked class="custom-control-input" value="true">
+                                                                                <label class="custom-control-label" for="StateForForm[@i].StatePermissions[@j].CanEdit">Can this role edit case</label>
+                                                                            </div>
+                                                                            <div class="custom-control custom-checkbox">
+                                                                                <input type="checkbox" asp-for="StateForForm[i].StatePermissions[j].ViewMode" checked class="custom-control-input" value="true">
+                                                                                <label class="custom-control-label" for="StateForForm[@i].StatePermissions[@j].ViewMode">View mode enabled for role</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-xl-6 mb-4">
+                                                            <div class="card border">
+                                                                <div class="card-body">
+                                                                    <div class="form-group">
+                                                                        <label for="@Model.StateForForm[i].StatePermissions[0].DisplayName">Display Name</label>
+                                                                        <input type="text" class="form-control" asp-for="StateForForm[i].StatePermissions[0].DisplayName" placeholder="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="role">Role</label>
+                                                                        <select class="custom-select" asp-for="StateForForm[i].StatePermissions[0].RoleId" asp-items="Model.RoleList">
+                                                                            <option>Choose an option</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" asp-for="StateForForm[i].StatePermissions[0].CanEdit" checked class="custom-control-input" value="true">
+                                                                            <label class="custom-control-label" for="StateForForm[@i].StatePermissions[0].CanEdit">Can this role edit case</label>
+                                                                        </div>
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" asp-for="StateForForm[i].StatePermissions[0].ViewMode" checked class="custom-control-input" value="true">
+                                                                            <label class="custom-control-label" for="StateForForm[@i].StatePermissions[0].ViewMode">View mode enabled for role</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                    <div class="col-xl-6 mb-4">
+                                                        <div class="card border">
+                                                            <div class="card-body">
+                                                                <div class="form-group">
+                                                                    <label for="displayName">Display Name</label>
+                                                                    <input type="text" class="form-control" id="displayName" placeholder="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="role">Role</label>
+                                                                    <select class="custom-select" id="role">
+                                                                        <option>Choose an option</option>
+                                                                        <option>2</option>
+                                                                        <option>3</option>
+                                                                        <option>4</option>
+                                                                        <option>5</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                                                        <label class="custom-control-label" for="customCheck1">Can this role edit case</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                                                        <label class="custom-control-label" for="customCheck2">View mode enabled for role</label>
+                                                                    </div>
+                                                                </div>
+                                                                <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                            </div>
+                                                        </div>
+                                                    </div> <!--//.col-xl-6-->
+                                                    <div class="col-xl-6 mb-4">
+                                                        <div class="card border">
+                                                            <div class="card-body">
+                                                                <div class="form-group">
+                                                                    <label for="displayName2">Display Name</label>
+                                                                    <input type="text" class="form-control" id="displayName2" placeholder="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="role2">Role</label>
+                                                                    <select class="custom-select" id="role2">
+                                                                        <option>Choose an option</option>
+                                                                        <option>2</option>
+                                                                        <option>3</option>
+                                                                        <option>4</option>
+                                                                        <option>5</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                                                        <label class="custom-control-label" for="customCheck3">Can this role edit case</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="customCheck4">
+                                                                        <label class="custom-control-label" for="customCheck4">View mode enabled for role</label>
+                                                                    </div>
+                                                                </div>
+                                                                <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                            </div>
+                                                        </div>
+                                                    </div> <!--//.col-xl-6-->
+                                                </div> <!--//.row-->
+                                            </div> <!--//.card-body-->
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="collapse show" id="collapseOne">
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label for="Model.StateForForm[0].CaseFormId">Form ID</label>
+                                                <select class="custom-select" asp-for="StateForForm[0].CaseFormId" asp-items="Model.CaseFormList">
+                                                    <option>Please Select an option</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group state-icon-group">
+                                                <label>State's icon</label>
+                                                <input type="text" asp-for="StateForForm[0].Icon" hidden />
+                                                <div class="d-flex flex-wrap">
+                                                    <span class="state-icon-item border border-primary p-3 rounded mb-3 mr-3 selected"><img width="48" src="~/images/state/ic-draft.png" alt=""></span>
+                                                    <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-assign.png" alt=""></span>
+                                                    <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-evaluated.png" alt=""></span>
+                                                    <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-verified.png" alt=""></span>
+                                                    <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-settled.png" alt=""></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-xl-3 col-lg-5">
+                                                    <div class="form-group">
+                                                        <label for="Model.StateForForm[0].Order">Order position</label>
+                                                        <input type="number" class="form-control" asp-for="StateForForm[0].Order" placeholder="">
+                                                    </div>
+                                                </div>
+                                            </div> <!--//.form-row-->
+                                            <div class="d-flex justify-content-between align-items-center border-bottom py-3 my-4">
+                                                <h6>Display name settings</h6>
+                                                <button type="button" class="btn btn-link"><i class="fas fa-plus"></i> Add more</button>
+                                            </div> <!--//.d-flex-->
+                                            <div class="row">
+
+                                                <div class="col-xl-6 mb-4">
+                                                    <div class="card border">
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                <label for="Model.StateForForm[0].StatePermissions[0].DisplayName">Display Name</label>
+                                                                <input type="text" class="form-control" asp-for="StateForForm[0].StatePermissions[0].DisplayName" placeholder="">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="StateForForm[0].StatePermissions[0].RoleId">Role</label>
+                                                                <select class="custom-select" asp-for="StateForForm[0].StatePermissions[0].RoleId" asp-items="Model.RoleList">
+                                                                    <option>Choose an option</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" asp-for="StateForForm[0].StatePermissions[0].CanEdit" checked class="custom-control-input" value="true">
+                                                                    <label class="custom-control-label" for="StateForForm[0].StatePermissions[0].CanEdit">Can this role edit case</label>
+                                                                </div>
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" asp-for="StateForForm[0].StatePermissions[0].ViewMode" checked class="custom-control-input" value="true">
+                                                                    <label class="custom-control-label" for="StateForForm[0].StatePermissions[0].ViewMode">View mode enabled for role</label>
+                                                                </div>
+                                                            </div>
+                                                            <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div> <!--//.row-->
+                                        </div> <!--//.card-body-->
+                                    </div>
+                                }
+                                @*<div class="collapse show" id="collapseOne">
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="formID">Form ID</label>
+                                            <select class="custom-select" id="formID">
+                                                <option>Home and Contents Claim</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group state-icon-group">
+                                            <label>State's icon</label>
+                                            <div class="d-flex flex-wrap">
+                                                <span class="state-icon-item border border-primary p-3 rounded mb-3 mr-3 selected"><img width="48" src="~/images/state/ic-draft.png" alt=""></span>
+                                                <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-assign.png" alt=""></span>
+                                                <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-evaluated.png" alt=""></span>
+                                                <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-verified.png" alt=""></span>
+                                                <span class="state-icon-item border border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-settled.png" alt=""></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>User can switch from this State to:</label>
+                                            <div>
+                                                <button type="button" class="btn btn-primary">Rejected</button>
+                                                <button type="button" class="btn btn-outline-primary">Settled</button>
+                                                <button type="button" class="btn btn-outline-primary">Pending</button>
+                                                <button type="button" class="btn btn-outline-primary">Waiting</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-xl-3 col-lg-5">
+                                                <div class="form-group">
+                                                    <label for="orderPosition">Order position</label>
+                                                    <input type="number" class="form-control" id="orderPosition" placeholder="">
+                                                </div>
+                                            </div>
+                                        </div> <!--//.form-row-->
+                                        <div class="d-flex justify-content-between align-items-center border-bottom py-3 my-4">
+                                            <h6>Display name settings</h6>
+                                            <button type="button" class="btn btn-link"><i class="fas fa-plus"></i> Add more</button>
+                                        </div> <!--//.d-flex-->
+
+                                        <div class="row">
+                                            <div class="col-xl-6 mb-4">
+                                                <div class="card border">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            <label for="displayName">Display Name</label>
+                                                            <input type="text" class="form-control" id="displayName" placeholder="">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="role">Role</label>
+                                                            <select class="custom-select" id="role">
+                                                                <option>Choose an option</option>
+                                                                <option>2</option>
+                                                                <option>3</option>
+                                                                <option>4</option>
+                                                                <option>5</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                                                <label class="custom-control-label" for="customCheck1">Can this role edit case</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                                                <label class="custom-control-label" for="customCheck2">View mode enabled for role</label>
+                                                            </div>
+                                                        </div>
+                                                        <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                    </div>
+                                                </div>
+                                            </div> <!--//.col-xl-6-->
+                                            <div class="col-xl-6 mb-4">
+                                                <div class="card border">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            <label for="displayName2">Display Name</label>
+                                                            <input type="text" class="form-control" id="displayName2" placeholder="">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="role2">Role</label>
+                                                            <select class="custom-select" id="role2">
+                                                                <option>Choose an option</option>
+                                                                <option>2</option>
+                                                                <option>3</option>
+                                                                <option>4</option>
+                                                                <option>5</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                                                <label class="custom-control-label" for="customCheck3">Can this role edit case</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="customCheck4">
+                                                                <label class="custom-control-label" for="customCheck4">View mode enabled for role</label>
+                                                            </div>
+                                                        </div>
+                                                        <button class="btn btn-outline-danger btn-block">Remove</button>
+                                                    </div>
+                                                </div>
+                                            </div> <!--//.col-xl-6-->
+                                        </div> <!--//.row-->
+                                    </div> <!--//.card-body-->
+                                </div>*@
+                            </div> <!--//.card-->
+                            <button type="button" class="btn btn-secondary btn-block py-2"><i class="fas fa-plus"></i> Add more</button>
+                            <div class="mt-5">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-a">
+                                    <label class="custom-control-label" for="customCheck-a">Notify user when state is changed</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-b">
+                                    <label class="custom-control-label" for="customCheck-b">Required reason to change in this state</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-c">
+                                    <label class="custom-control-label" for="customCheck-c">Enable Edit option</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-d">
+                                    <label class="custom-control-label" for="customCheck-d">Enable Delete option</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-e">
+                                    <label class="custom-control-label" for="customCheck-e">Assign to one user</label>
+                                </div>
+                            </div> <!--//.mt-5-->
+                        </div> <!--//.panel .rounded-->
+                    </div> <!--//.box-body-->
+                    <div class="box-footer mt-3">
+                        <div class=" d-flex">
+
+                            @if ((Model.Id == 0 && Permission.Can(UserCan.Create_Queue)) || (Model.Id != 0 && Permission.Can(UserCan.Update_Queue)))
+                            {
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                            }
+                            <a class="btn btn-link" href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/states.html")">Go back </a>
+                        </div>
+                    </div> <!--//.box-footer .mt-3-->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @*<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>*@
+    <script src="~/lib/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).on("click", '#clone-btn', function () {
+            let count = $("#to-clone").siblings().length;
+            let cloned = $("#to-clone").clone().removeAttr('id');
+
+            var index=parseInt(cloned.data("index"))+1;
+            console.log(cloned);
+            cloned.find(".dname").attr("name", "StatePermissions[" + index + "][DisplayName]").val("");
+            cloned.find(".role").attr("name", "StatePermissions[" + index + "][RoleId]").val("");
+            cloned.find(".edit").attr("name", "StatePermissions[" + index + "][CanEdit]").prop("checked", false);
+            cloned.find(".view").attr("name", "StatePermissions[" + index + "][ViewMode]").prop("checked", false);
+
+            cloned.insertAfter("#to-clone");
+
+        });
+
+        $(function () {
+
+            $('#notification').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#message').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#tenantMultipleSelect').slimScroll({
+                height: '100px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#userMultipleSelect').slimScroll({
+                height: '100px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            // custom select js
+            $(".color").click(function () {
+                var selCol = $(this).attr('id');
+                console.log(selCol);
+
+                $('.selectedCol').css('background', selCol);
+
+                if (jQuery("#input-color-picker").val().trim() == "") {
+                    jQuery("#input-color-picker").val(selCol);
+                }
+            });
+
+
+        });
+
+    </script>
+
+}

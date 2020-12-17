@@ -1,0 +1,275 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@inject AppSetting Setting
+@inject ICaseService CaseService
+@inject Permission Permission
+@inject Utils utils
+@inject IQueueService _QueueService
+@inject ICommonService _ICommonService
+@if (Permission.Can(UserCan.Create_Role) && Permission.Can(UserCan.Admin_Layout) && Permission.Can(UserCan.Create_User) && 
+    Permission.Can(UserCan.Create_Queue) && Permission.Can(UserCan.Create_Form) && !Permission.Can(UserCan.Create_Tenant))
+{
+<style>
+    @@media (min-width: 768px) {
+        .sidebar {
+            display: none;
+        }
+
+        .main {
+            margin-left: 0px;
+        }
+    }
+</style>
+
+}
+
+<!-- aside navigation starts -->
+<div class="navigation-container">
+    <aside class="sidebar">
+        <div class="sidebar__brand">
+            <a href="@Url.Content("~/admin.html")">
+                @*<img src="~/admin/assets/img/site-logo.png" alt="@Setting.Get("app_name")">*@
+                <img src="~/admin/assets/img/simpletransfer-logo-white.png" alt="@Setting.Get("app_name")">
+
+            </a>
+        </div>
+        <div class="sidebar__brand-mobile">
+            @*<a href="/" data-toggle="tooltip" data-placement="right" title="Vesuvio Labs">VL</a>*@
+            <a href="/" data-toggle="tooltip" data-placement="right" title="Simple Transfer">
+                <img src="~/admin/assets/img/Simple-transfer-mobile-logo.png" alt="@Setting.Get("app_name")" />
+            </a>
+        </div>
+        <div class="sidebar__menu" id="sidebar-sticky">
+            <nav class="menu-nav">
+                <ul class="menu-list">
+
+                    @{
+                        Theme theme = ViewData["Theme"] as Theme;
+                        var QueueList = _QueueService.GetBackendQueuesByActiveTenantIdAndRole();
+                        var AMenu = AdminMenu.getSTAdminMenus(utils.GetTenantFromSession());
+                        var ThemeMenu = theme.GetThemeNavigations(_ICommonService);
+                        if (ThemeMenu != null && ThemeMenu.Count > 0)
+                        {
+                           // AMenu.InsertRange(3, ThemeMenu);
+                        }
+
+                        foreach (var _Menu in AMenu)
+                        {
+                            string[] icons = { "fa-inbox", "fa-road", "fa-quote-left", "fa-sliders", "fa-tty", "fa-clone", "fa-calendar-times-o" };
+
+                            if (_Menu.Parent != "0")
+                            {
+                                continue;
+                            }
+
+
+                            if (!Permission.Can(_Menu.Permission) && _Menu.Permission != 0)
+                            {
+
+                                continue;
+
+                            }
+
+                            List<Menu> ChildList = new List<Menu>();
+                            foreach (var Menus in AMenu)
+                            {
+                                if (_Menu.Id == Menus.Parent) //if (_Menu.Id == Menus.Parent && Permission.CanSee(Menus.Type))
+                                {
+                                    ChildList.Add(Menus);
+                                }
+                            }
+
+                            string _randicon = _Menu.Icon;
+                            if (_randicon == null || _randicon == "")
+                            {
+                                _randicon = icons[new Random().Next(0, icons.Length)];
+                            }
+                            string _parent_css = "";
+                            if (ChildList.Count() > 0)
+                            {
+                                _parent_css = "nav-item ";
+                            }
+                            var _is_active = "";
+                            var result = _Menu.Url.ToString().Split('/');
+                            var controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+                            var action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+                            var path = ViewContext.RouteData.Values;
+                            if (controller == _Menu.Id || path.Any(x => x.Value.ToString() == _Menu.Id))
+                            {
+                                _is_active = " active";
+                            }
+
+                            /*if (_Menu.Id == "organisation" && (controller== "organisationschema" || controller == "organisationuser" || controller == "organisationteam" || controller == "organisationsite" || controller == "organisationrelationship"))
+                            {
+                            _is_active = " active";
+                            }*/
+
+                            string _is_open = " collapsed ";
+                            //if (ChildList.Count() > 0 && (controller == _Menu.Id || path.Any(x=> x.Value.ToString() == _Menu.Id)))
+                            if (ChildList.Count() > 0 && controller == _Menu.Id)
+                            {
+                                _is_open = "  active";
+                            }
+                            /*
+                            var _IsOrg = "";
+
+                            if ((GlobalUtils.getOrg() != null) && (_Menu.Id != "organisation" && _Menu.Id != "administrator" && _Menu.Id != "setting" && _Menu.Id != "role"))
+                            {
+                                _IsOrg = "orgs";
+                            }
+                            */
+
+
+                            <li class="menu-item @_parent_css @_is_open @_is_active" data-toggle="collapse" data-target="#menu@_Menu.Id" aria-expanded="false">
+                                @{
+                                    var url = Url.Content(_Menu.Url);
+                                    if (ChildList.Count() > 0 || (_Menu.Id == "case" && QueueList != null && QueueList.Count() > 0))
+                                    {
+                                        url = "javascript:void(0)";
+                                    }
+                                }
+                                <a href="@url" class=menu-link>
+                                    <!-- <i class="@_randicon fa-fw mr-3"></i> -->
+                                    <i class="@_randicon"></i>
+                                    <span>@_Menu.Name</span>
+                                    @if (ChildList.Count() > 0 || (_Menu.Id == "case" && QueueList != null && QueueList.Count() > 0))
+                                    {
+                                        <!-- <i class="fas fa-angle-down expand-icon"></i> -->
+                                        <i class="ri-arrow-down-s-line expand-icon"></i>
+                                    }
+
+                                </a>
+
+                                @if (ChildList.Count() > 0)
+                                {
+
+                                    var _is_show = "";
+                                    if (ChildList.Count() > 0 && (_Menu.Id == ChildList[0].Parent && (controller == _Menu.Id || path.Any(x => x.Value.ToString() == _Menu.Id))))
+                                    {
+                                        _is_show = "show";
+                                    }
+
+                                    <ul class="sub-menu collapse @_is_show" id="menu@_Menu.Id">
+
+                                        @foreach (var __Menu in ChildList)
+                                        {
+                                            /*
+                                            if (!Permission.CanSee(__Menu.Type))
+                                            {
+                                                continue;
+                                            }
+                                            if (!Permission.CanUserSee(__Menu.Permission))
+                                            {
+                                                continue;
+                                            }
+                                            */
+                                            var __is_active = "";
+                                            if ((action == __Menu.Id.ToLower() || path.Any(x => x.Value.ToString() == __Menu.Id.ToLower())) && (controller == _Menu.Id || path.Any(x => x.Value.ToString() == _Menu.Id)))
+                                            {
+                                                __is_active = "active";
+                                            }
+                                            var __icon = __Menu.Icon;
+                                            if (__icon == null || __icon == "")
+                                            {
+                                                __icon = "fa-pencil";
+                                            }
+
+                                            var total = "0";
+
+
+                                            <li class="sidelist @__is_active">
+                                                <a href="@Url.Content(__Menu.Url)" class="d-flex align-items-center">
+
+                                                    @__Menu.Name
+                                                    @if (total != "0" && total != "")
+                                                    {
+                                                        <span class="badge badge-primary ml-auto mr-4">@total</span>
+
+                                                    }
+                                                </a>
+
+                                                <!-- Inner -->
+                                                @{
+
+                                                    List<Menu> ChildChildList = new List<Menu>();
+                                                    foreach (var MenusS in AdminMenu.getSTAdminMenus(utils.GetTenantFromSession()))
+                                                    {
+                                                        if (__Menu.Id == MenusS.Parent) //if (__Menu.Id == MenusS.Parent && Permission.CanSee(MenusS.Type))
+                                                        {
+
+                                                            ChildChildList.Add(MenusS);
+                                                        }
+                                                    }
+
+                                                }
+                                                @if (ChildChildList.Count() > 0)
+                                                {
+                                                    <ul>
+                                                        @foreach (var ___Menu in ChildChildList)
+                                                        {
+                                                            var ___is_active = "";
+
+                                                            if (action == ___Menu.Id.ToLower() && _Menu.Id.ToLower() == controller)
+                                                            {
+                                                                ___is_active = "active";
+                                                            }
+                                                            var ___icon = ___Menu.Icon;
+                                                            if (___icon == null || __icon == "")
+                                                            {
+                                                                ___icon = "fa-pencil";
+                                                            }
+
+                                                            total = "0";// GlobalUtils.GetModuleValue(_Menu.Id.ToLower(), ___Menu.Id.ToLower());
+                                                            <li class="@___is_active">
+                                                                <a href="@Url.Content(___Menu.Url)">
+                                                                    <i class="fa @___icon small-icon"></i>
+                                                                    @___Menu.Name
+                                                                    @if (total != "0" || total != "")
+                                                                    {
+                                                                        <span class="badge badge-primary mr-4">@total</span>
+
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+
+
+                                                <!-- End Inner -->
+
+                                            </li>
+                                        }
+
+
+                                    </ul>
+                                }
+
+                            </li>
+                        }
+                    }
+                    @if (Permission.Can(UserCan.View_Setting))
+                    {
+                        string tenant = "";
+                        string tenant_identifier = utils.GetTenantFromSession();
+                        if (!string.IsNullOrEmpty(tenant_identifier))
+                        {
+                            tenant = tenant_identifier + "/";
+                        }
+                        <li class="menu-divider"></li>
+                        <li class="menu-item">
+                            <a class="menu-link" href="@Url.Content("~/admin/"+tenant+"setting.html")">
+                                <i class="ri-settings-2-line"></i> <span>Settings</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+        <div class="sidebar__footer">
+            Copyright &copy; @DateTime.Now.Year Vesuvio Labs. All rights reserved.
+        </div>
+    </aside>
+</div>
+<!-- aside navigation ends -->

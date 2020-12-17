@@ -1,0 +1,16 @@
+﻿@using Cicero.Service.Services;
+@using Cicero.Service.Helpers;
+@inject IArticleService Article
+@inject AppSetting Setting
+@{ 
+    Theme theme = ViewData["theme"] as Theme;
+}
+    <footer class="mt-4">
+        <div class="container footer-container">
+            <div class="copyright-section">
+                <small>©copyright Fast Track Money Transfer Limited 2020</small>
+            </div>
+        </div>
+    </footer>
+    
+

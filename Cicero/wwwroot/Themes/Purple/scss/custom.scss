@@ -1,0 +1,377 @@
+//Custom theme variable overridden for Bootstrap
+@import "components/variables";
+
+//Configured all Bootstrap and theme scss files are located here.
+@import "config";
+
+.swiper-container {
+    padding-bottom: 3.5rem!important;
+}
+.swiper-pagination-bullet-active {
+    background: $primary!important;
+}
+
+// Media Manager
+
+.fileuploader {
+    display: flex;
+    flex-direction: column;
+    &__wrapper {
+        display: flex;
+        width: 90px;
+        height: 90px;
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    &__list {
+        flex: 1;
+    }
+    &__items {
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        li {
+            list-style: none;
+        }
+    }
+    &__item {
+        padding-bottom: 20%;
+        width: calc(25% - 15px);
+        margin-bottom: 1rem;
+        margin-right: 1rem;
+
+        list-style: none;
+        position: relative;
+        &:hover {
+            .fileuploader__action {
+                transform: scale(1);
+            }
+        }
+    }
+    &__item-image {
+        display: flex;
+        position: relative;
+        overflow: hidden;
+        border-radius: .25rem;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: .25rem;
+        background: #eee;
+        img {
+            max-width: initial;
+            max-height: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 250ms ease-in-out;
+        }
+        &:hover {
+            &::after {
+                opacity: 1;
+            }
+        }
+    }
+    &__action {
+        color: var(--danger);
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        transform: scale(0);
+        transition: $transition-base;
+        border: 1px solid white;
+        border-radius: 50%;
+        background: white;
+    }
+    &__action-remove {
+        color: var(--danger);
+        padding: 0;
+        line-height: 1;
+    }
+    &__icon-remove {
+        font-size: 1.28rem; 
+    }
+}
+.actions-holder {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    z-index: 2;
+}
+.fileuploader--theme-avatar {
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    .fileuploader__item-image {
+        border-radius: 50%;
+    }
+    .fileuploader__items {
+        height: 100%;
+    }
+    .fileuploader__item {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+}
+
+// Media Manager Iframe
+#media .modal-body {
+    overflow: hidden;
+}
+#media .modal-body iframe {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+#media .iframe-container {
+    padding-bottom: calc(100% - 4rem);
+}
+
+.loading {
+    padding: 1.5rem;
+    display: none;
+    background: rgba(255, 255, 255, 0.5);
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    &--absolute {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        justify-content: center;
+        align-items: center;
+    }
+}
+.disabled-action {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+// Lightbox
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: $zindex-modal;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    &.show {
+        display: block;
+    }
+    &__open {
+        overflow: hidden;
+    }
+    &__dialog {
+        display: flex;
+        height: 100%;
+    }
+    &__content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    &__backdrop {
+        display: none;
+        background: #000;
+        opacity: 0.95;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: $zindex-modal-backdrop;
+        &.show {
+            display: block;
+        }
+    }
+    &__icon {
+        color: $gray-600;
+        font-family: 'remixicon' !important;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        text-decoration: none!important;
+        &:hover {
+            color: #fff;
+        }
+    }
+    &__close {
+        &::before {
+            content: "\eb49";
+        }
+    }
+    &__prev, &__next {
+        position: fixed;
+        top: 50%;
+        background: rgba(0,0,0,.5);
+        padding: 1rem;
+        border-radius: 0.25rem;
+        display: block;
+    }
+    &__prev {
+        left: 1.4rem;
+        &::before {
+            content: "\ea53";
+        }
+    }
+    &__next {
+        right: 1.4rem;
+        &::before {
+            content: "\ea5d";
+        }
+    }
+    &__toolbar {
+        background: rgba( 0, 0, 0, 0.8);
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        width: 100%;
+    }
+    &__title {
+        color:$gray-600;
+        margin: 0;
+    }
+    &__close {
+        padding: 1rem;
+    }
+    &__items {
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        flex-grow: 1;
+        align-items: center;
+    }
+    &__img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Media */
+// .media-list a {
+//     position: relative;
+// }
+
+//     .media-list a i {
+//         position: absolute;
+//         right: 3px;
+//         top: 3px;
+//         color: #ff0000;
+//     }
+
+/* Article */
+// .media-list {
+//     padding: 0px;
+// }
+
+//     .media-list, .media-list li {
+//         list-style: none
+//     }
+
+//         .media-list li.thumbs {
+//             width: 50px;
+//             height: 50px;
+//             float: left;
+//             background-color: #ebebeb;
+//             margin-right: 2px;
+//         }
+
+//             .media-list li.thumbs img {
+//                 object-fit: cover;
+//                 width: 100%;
+//                 height: 100%;
+//             }
+
+//         .media-list li.add button, .media-list li a {
+//             margin: 15px;
+//             height: 20px;
+//             width: 20px;
+//             display: block;
+//             text-align: center;
+//             background-color: #fff;
+//             border-radius: 10px;
+//             padding: 0px;
+//             position: relative;
+//             float: left;
+//             border: 0;
+//             cursor: pointer;
+//         }
+
+//         .media-list li a {
+//             width: 100%;
+//             height: 100%;
+//             margin: 0px;
+//             padding: 5px;
+//             border-radius: 0px;
+//             background-color: #ebebeb;
+//             position: relative;
+//         }
+
+//         .media-list li i {
+//             position: absolute;
+//             color: #ff0000;
+//             position: absolute;
+//             color: #ff0000;
+//             right: 5px;
+//             top: 6px;
+//             opacity: 0;
+//         }
+
+//         .media-list li a:hover i {
+//             opacity: 1;
+//         }
+
+//         .media-list li a:hover {
+//             background-color: #666666;
+//         }
+
+//         .media-list li.add button:before {
+//             content: "+";
+//             position: absolute;
+//             top: -2px;
+//             width: 21px;
+//             height: 21px;
+//             left: 0px;
+//             cursor: pointer;
+//         }
+
+//         .media-list li.add button:focus {
+//             outline: 0;
+//         }
+
+// #media .modal-body iframe {
+//     width: 100%;
+//     height: 100%;
+//     min-height: 430px;
+// }

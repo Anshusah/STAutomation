@@ -1,0 +1,33 @@
+﻿@using Cicero.Service.Models.Core
+@{
+    ViewData["body"] = "landing-page";
+    Theme theme = ViewData["theme"] as Theme;
+}
+@inject Utils _utils
+@await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+@await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+<div class="main-container">
+    <div class="hero-landing-page section-grid">
+        <div class="hero-landing-page__wrapper grid">
+            <div class="hero-landing-page__content-wrapper">
+                <h1>Welcome to Cicero!</h1>
+                <h6>We're super excited to have you onboard!</h6>
+                <p>Claims management software so flexible that you will reach your business goals in no time.</p>
+                <div class="hero-landing-page__actions">
+                    <a href="@Url.Content("~/user/userdashboard.html")" class="btn btn-primary">Track your Claim</a>
+                    <a href="@Url.Content("~/admin/form/changecaseform.html")" class="btn btn-dark">New Claim</a>
+                </div>
+            </div>
+            <div class="hero-landing-page__image-wrapper">
+                <div class="image hero-landing-page__image">
+                    <img src="~/Themes/@theme.GetName(false)/img/woman-with-mobile.png" alt="Woman with mobile">
+                </div>
+                <div class="background-shapes">
+                    <div class="background-shapes__circle background-shapes__circle--red"></div>
+                    <div class="background-shapes__circle background-shapes__circle--yellow"></div>
+                    <div class="background-shapes__circle background-shapes__circle--blue"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

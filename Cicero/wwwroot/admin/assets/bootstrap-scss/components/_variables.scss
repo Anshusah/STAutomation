@@ -1,0 +1,67 @@
+// Color system
+
+// $gray-100:      #f4f4f4 !default;
+// $gray-400:      #E6E6E6 !default;
+// $gray-600:      #666666 !default;
+// $gray-900:      #1C1839 !default;
+//simple transfer theme-colors
+$gray-100:      #f4f4f4 !default;
+$gray-400:      #CED4DA !default;
+$gray-600:      #555555 !default;
+$gray-900:      #1C1839 !default;
+
+//Simple Transfer theme - 
+$dark-blue:     #0050A0 !default;
+$blue:          #00A4E2!default;
+$red:           #FF6C5B !default;
+$green:         #7DD59D !default;
+$yellow:        #F2D025 !default;
+$cyan:          #81D6E4 !default;
+
+$primary:        $blue!default;
+// $blue:          #2994FF !default;
+// $red:           #FF6C5B !default;
+// $green:         #7DD59D !default;
+// $yellow:        #F2D025 !default;
+// $cyan:          #81D6E4 !default;
+
+$primary:       $blue !default;
+
+// $body-color:    #333 !default;
+$body-color: $gray-600 !default;
+$body-bg:       #F8F8F8 !default;
+
+$pagination-color: $gray-600 !default;
+$font-family-base:  'Heebo', sans-serif !default;
+// $font-family-sans-serif: 'Heebo' sans-serif !default;
+// $font-family-sans-serif: 'Roboto', sans-serif !default;
+
+$yiq-contrasted-threshold:  190 !default;
+$modal-backdrop-bg: #FFF !default;
+$modal-content-border-width: 0;
+
+
+//simple -transfer link color
+
+$link-color:       $dark-blue !default;
+$font-size-base:   1rem;
+
+//heading tags for simple transfer
+// $h1-font-size:                $font-size-base * 2.5 !default;
+// $h2-font-size:                $font-size-base * 2 !default;
+// $h3-font-size:                $font-size-base * 1.75 !default;
+// $h4-font-size:                $font-size-base * 1.5 !default;
+// $h5-font-size:                $font-size-base * 1.25 !default;
+// $h6-font-size:                $font-size-base !default;
+
+$h1-font-size:                $font-size-base * 3.25 !default;
+$h2-font-size:                $font-size-base * 2.75 !default;
+$h3-font-size:                $font-size-base * 2.25 !default;
+$h4-font-size:                $font-size-base * 1.75 !default;
+$h5-font-size:                $font-size-base * 1.25 !default;
+$h6-font-size:                $font-size-base !default;
+$headings-font-weight:        600 !default;
+
+
+//checkbox radius set to 0
+$custom-checkbox-indicator-border-radius: 0;

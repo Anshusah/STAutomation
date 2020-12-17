@@ -1,0 +1,7 @@
+.empty-state {
+    padding: 0 16px;
+    @include media('>phone') {
+        width: 570px;
+        margin: auto;
+    }
+}

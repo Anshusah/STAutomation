@@ -1,0 +1,191 @@
+﻿<!-- Hidden Fields : Start -->
+@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Heading
+@using Cicero.Service.Services
+@inject ICommonService commonService
+
+@{
+    Heading hd = Model as Heading;
+    var xx = hd;
+}
+<div class="modal-header flex-column">
+    <h5 class="modal-title">Heading Setting</h5>
+    <p class="mb-0">This settings helps you to customize Heading</p>
+</div>
+<div class="modal-body">
+    <div class="status"></div>
+    <ul class="fb-card">
+        <li class="active">
+            <header>Name</header>
+            <section>
+                <div class="form-row">
+                    <div class="col-lg-6">
+                        <label for="elementName_@hd.ElementId">Element Name</label>
+                        <input type="text" class="form-control" id="elementName_@hd.ElementId" @hd.GetName("Name") value="@hd.Name" data-name="elmName" />
+                        <small class="form-text text-muted">Input a unique name for this element.</small>
+                        <span class="field-validation-valid" data-valmsg-for="ElementName_@hd.ElementId" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>General Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-2">
+                        <label for="headerType_@hd.ElementId">Header Type</label>
+                        <select id="headerType_@hd.ElementId" class="custom-select" @hd.GetName("HeaderType") value="@hd.HeaderType">
+                            <option value="">Choose...</option>
+                            <option value="h1" @(hd.HeaderType == "h1" ? "selected" : "")>h1</option>
+                            <option value="h2" @(hd.HeaderType == "h2" ? "selected" : "")>h2</option>
+                            <option value="h3" @(hd.HeaderType == "h3" ? "selected" : "")>h3</option>
+                            <option value="h4" @(hd.HeaderType == "h4" ? "selected" : "")>h4</option>
+                            <option value="h5" @(hd.HeaderType == "h5" ? "selected" : "")>h5</option>
+                            <option value="h6" @(hd.HeaderType == "h6" ? "selected" : "")>h6</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-10">
+                        <label for="headingHeaderText_@hd.ElementId">Header Text</label>
+                        <textarea type="text" id="headingHeaderText_@hd.ElementId" class="form-control" rows="2" @hd.GetName("HeaderText") value="@hd.HeaderText">@hd.HeaderText </textarea>
+                    </div>
+
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Frontend Setting</header>
+            <section>
+                <input type="hidden" @hd.GetName("ElementId") value="@hd.ElementId">
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="headingFrontendId_@hd.FrontendId">Id</label>
+                        <input type="text" id="headingFrontendId_@hd.FrontendId" class="form-control" @hd.GetName("FrontendId") value="@hd.FrontendId">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="headingFrontendClass_@hd.FrontendId">Class</label>
+                        <input type="text" id="headingFrontendClass_@hd.FrontendId" class="form-control" @hd.GetName("FrontendClass") value="@hd.FrontendClass">
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="headingFrontendVisible_@hd.FrontendId" class="switch">
+                        <input class="switch__input" id="headingFrontendVisible_@hd.FrontendId" @hd.GetName("FrontendVisible") type="checkbox" value="true" @hd.GetChecked(hd.FrontendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+                <div class="switch-control">
+                    <label for="headingVisibleinFooter_@hd.FrontendId" class="switch">
+                        <input class="switch__input" id="headingVisibleinFooter_@hd.FrontendId" @hd.GetName("VisibleinFooter") type="checkbox" value="true" @hd.GetChecked(hd.VisibleinFooter)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Visible In Footer</span>
+                    </label>
+                </div>
+
+            </section>
+        </li>
+        <li>
+            <header>Backend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="headingBackendId_@hd.BackendId">Id</label>
+                        <input type="text" class="form-control" id="headingBackendId_@hd.BackendId" @hd.GetName("BackendId") value="@hd.BackendId">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="headingBackendClass_@hd.BackendId">Class</label>
+                        <input type="text" class="form-control" id="headingBackendClass_@hd.BackendId" @hd.GetName("BackendClass") value="@hd.BackendClass">
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="headingBackendVisible_@hd.BackendId" class="switch">
+                        <input class="switch__input" id="headingBackendVisible_@hd.BackendId" @hd.GetName("BackendVisible") type="checkbox" value="true" @hd.GetChecked(hd.BackendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Permission</header>
+            <section>
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+                                <th>Read</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int index = 0;
+                                foreach (var role in commonService.GetRoleList())
+                                {
+                                    var Roledata = hd?.Permissions?.Where(p => p.RoleId == role.Value).FirstOrDefault();
+                                    if (Roledata != null)
+                                    {
+
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input class="form-control" type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Read]" type="checkbox" value="true" checked="@Roledata.Read" id="Permissions_@(index + "_Read_" + hd.ElementId)">
+                                                    <label class="custom-control-label" for="Permissions_@(index + "_Read_" + hd.ElementId)"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input class="form-control" type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Read]" type="checkbox" value="true" checked id="Permissions_@(index + "_Read_" + hd.ElementId)">
+                                                    <label class="custom-control-label" for="Permissions_@(index + "_Read_" + hd.ElementId)"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    index++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Developer Options</header>
+            <section>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="TableName_@hd.ElementId">Table Name</label>
+                        <select value="@hd.TableName" id="TableName_@hd.ElementId" class="tableMap custom-select"></select>
+                        <input type="text" value="@hd.TableName" @hd.GetName("TableName") hidden>
+                        @*<input type="text" class="form-control" id="">*@
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="FieldName_@hd.ElementId">Field Name</label>
+                        <select value="@hd.FieldName" id="FieldName_@hd.ElementId" class="fieldMap custom-select"></select>
+                        <input type="text" class="form-control" value="@hd.FieldName" @hd.GetName("FieldName") hidden>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="Attribute_@hd.ElementId">Heading Html Attrubute </label>
+                        <input type="text" class="form-control" value="@hd.Attribute" @hd.GetName("Attribute") >
+                    </div>
+                </div>
+            </section>
+        </li>
+    </ul>
+</div>

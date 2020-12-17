@@ -1,0 +1,94 @@
+.permission-role-card {
+    .card-header {
+        &:hover {
+            background: $light-blue;
+        }
+
+        &.highlighted {
+            background: $light-blue;
+        }
+
+        &.selected {
+            background: #F3F5F6;
+        }
+
+        >.collapsed {
+            // background: $white;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+
+            a {
+                color: inherit;
+            }
+        }
+    }
+
+    .card-body {
+        border-left: 2px solid theme(button, primary);
+    }
+
+    .accordion>.card .card-header {
+        margin-bottom: -1px;
+    }
+}
+
+.accordion-toggle {
+    width: 3.2rem;
+    height: 3.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .fa-sort-down {
+        display: none;
+    }
+}
+
+.collapsed {
+    .accordion-toggle {
+        .fa-sort-up {
+            display: none;
+        }
+
+        .fa-sort-down {
+            display: block;
+        }
+    }
+}
+
+.manage-permission-header {
+    h4 {
+        font-size: 1.4rem;
+        font-family: $font-body;
+
+        &:after {
+            content: "|";
+            margin-left: 1.3rem;
+            opacity: .45;
+        }
+    }
+}
+
+.group-selectall,
+.group-selectallhide,
+#fet-opt {
+    display: none;
+}
+
+.card-selector {
+    width: 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .group-select {
+        margin-left: 2rem;
+    }
+}
+
+.card-action {
+    position: absolute;
+    right: 50px;
+}

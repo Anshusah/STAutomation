@@ -1,0 +1,87 @@
+.nav-tabs-custom {
+    border-bottom: 0!important;
+    .nav-count {
+        i {
+            display: none;
+        }
+        &::after, &::before  {
+            content: "";
+            width: .5rem;
+            height: .5rem;
+            display: block;
+            border-radius: 10em;
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            transition: transform 250ms ease;
+        }
+        &::after {
+            background-color: $danger;
+        }
+        &::before {
+            background-color: $success;
+        }
+
+    }
+    .nav-link {
+        padding: 1.038rem 2rem;
+        color: $gray-600;
+        border: 0;
+        position: relative;
+        white-space: nowrap;
+        &.active {
+            position: relative;
+            background: none;
+            color: $primary;
+            &::after {
+                content: "";
+                height: 0.14rem;
+                width: calc(100% - 4rem);
+                background-color: $primary;
+                position: absolute;
+                bottom: 0;
+                left: 2rem;
+                // border-radius: 0.2857142857142857rem 0.2857142857142857rem 0 0;
+            }
+            .nav-count {
+                &::after, &::before {
+                    transform: translateX(-50%) scale(0);
+                    transition: transform 250ms ease;
+                    opacity: 1 !important;
+                    visibility: hidden !important;
+                } 
+            }
+        }
+        &.false {
+            .nav-count {
+                &::after {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateX(-50%) scale(1);
+                }
+            }
+        }
+        &.true {
+            .nav-count {
+                &::before {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateX(-50%) scale(1);
+                }
+            }
+        }
+    }
+}
+.nav-tabs-custom {
+    border-top: 1px solid #E6E6E6;
+    flex-grow: 1;
+    padding: 0!important;
+}
+.nav-tab-controls {
+    > :not(:last-child) {
+        margin-right: 0.25rem;
+    }
+}

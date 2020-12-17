@@ -1,0 +1,128 @@
+// Lightbox
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    //z-index: $zindex-modal;
+    z-index: 1050;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    &.show {
+        display: block;
+    }
+    &__open {
+        overflow: hidden;
+    }
+    &__dialog {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        height: 100%;
+    }
+    &__content {
+        padding: 2rem;
+    }
+    &__backdrop {
+        display: none;
+        background: #000;
+        opacity: 0.9;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        // z-index: $zindex-modal-backdrop;
+        z-index: 1040;
+        &.show {
+            display: block;
+        }
+    }
+    &__icon {
+        color: #fff;
+        font-family: 'remixicon' !important;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        text-decoration: none!important;
+        &:hover {
+            color: #fff;
+            background-color: var(--primary);
+        }
+    }
+    &__close {
+        padding: 1rem;
+        border-radius: 0.25rem;
+        display: block;
+        &::before {
+            content: "\EB51";
+        }
+    }
+    &__prev, &__next {
+        position: fixed;
+        top: 50%;
+        background: rgba(0,0,0,.5);
+        padding: 1rem;
+        border-radius: 0.25rem;
+        display: block;
+    }
+    &__prev {
+        left: 1.4rem;
+        &::before {
+            content: "\EA55";
+        }
+    }
+    &__next {
+        right: 1.4rem;
+        &::before {
+            content: "\EA5F";
+        }
+    }
+    &__toolbar {
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        top: 0;
+        left: 0;
+        position: fixed;
+        width: 100%;
+    }
+    // &__title {
+    //     color:$gray-600;
+    //     margin: 0;
+    // }
+    &__item {
+        padding: 2rem 0;
+        flex-grow: 1;
+        animation: lightboxSlide 0.3s;
+    }
+    &__img {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        display: block;
+        line-height: 0;
+        margin: 0 auto;
+    }
+    .slide-caption, .slide-counter {
+        color: #fff;
+        font-weight: bold;
+    }
+}
+@keyframes lightboxSlide {
+    from {
+      opacity: 0.5;
+      transform: translate3d(0, -1em, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+}

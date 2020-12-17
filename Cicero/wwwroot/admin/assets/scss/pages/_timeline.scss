@@ -1,0 +1,100 @@
+.timeline {
+    // Y-axis
+    &-y {
+        position: relative;
+        min-height: 60vh;
+        @include media('<tablet') {
+            padding: 1rem 0;
+        }
+        &:before {
+            content: '';
+            width: 4px;
+            height: 100%;
+            background: #ccc;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: calc(50% - 2px);
+            border-radius: 25px;
+        }
+        &-item {
+            position: relative;
+            margin: 2px 0;
+        }
+        &-anchor {
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            left: calc(50% - 6px);
+            top: 4px;
+            @include media('>tablet') {
+                top: 20px;
+            }
+            display: block;
+            background: theme(accent, primary);
+            border: 2px solid theme(bg, bodybg);
+            border-radius: 50%;
+        }
+        &-databox {
+            padding: 2rem 0;
+            position: relative;
+            @include media('>tablet') {
+                padding: 1rem 0;
+                width: 30%;
+            }
+            &.left {
+                @include media('>tablet') {
+                    float: left;
+                    margin-left: 10%;                    
+                }
+                .box {
+                    @include media('>tablet') {
+                        &:after {
+                            content: '';
+                            position: absolute;
+                            top: 20px;
+                            right: -14px;
+                            width: 0;
+                            height: 0;
+                            border-style: solid;
+                            border-width: 8px 0 8px 13.9px;
+                            border-color: transparent transparent transparent #fff;
+                        }
+                    }
+                }
+            }
+            &.right {
+                @include media('>tablet') {
+                    float: right;
+                    margin-right: 10%;
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        top: 20px;
+                        left: -14px;
+                        width: 0;
+                        height: 0;
+                        border-style: solid;
+                        border-width: 8px 13.9px 8px 0;
+                        border-color: transparent #fff transparent transparent;
+                    }
+                }
+                .box {
+                    @include media('>tablet') {
+                        &:after {
+                            content: '';
+                            position: absolute;
+                            top: 20px;
+                            left: -14px;
+                            width: 0;
+                            height: 0;
+                            border-style: solid;
+                            border-width: 8px 13.9px 8px 0;
+                            border-color: transparent #fff transparent transparent;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

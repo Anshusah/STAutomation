@@ -1,0 +1,133 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@model DashboardViewModel
+@inject IArticleService _articleService
+@inject IUserService _userService
+@inject IActivityLogService _activityLog
+@inject Utils  _utils
+@inject Permission permission
+
+
+@{
+    Layout = ViewBag.ThemeView;
+    string tenant_identifier = _utils.GetTenantFromSession();
+    string fromname = "";
+}
+@{
+    ViewData["body"] = "full-layout";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+
+<style>
+    .module-layout-controller {
+        padding: 2.5rem;
+        display: flex;
+        height: 100%;
+        flex-grow: 1;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .module-layout-controller .module-container {
+        flex: 1;
+        max-width: 560px;
+        margin: auto;
+    }
+    .module-layout-controller .module-container .module-header {
+        border-bottom: 1px solid #E6E6E6;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    .module-layout-controller .module-tab {
+        border: 0!important;
+        background: none!important;
+    }
+    .module-layout-controller .module-tab:hover {
+        box-shadow: none;
+    }
+    .module-layout-controller .module-tab:hover .module-type {
+        background: var(--primary)!important;
+        color: #fff;
+        transition: all 250ms ease;
+    }
+    .module-layout-controller .module-type {
+        width: 100px;
+        height: 100px;
+        background: #fff;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+    }
+    .module-layout-controller .module-type--icon {
+        font-size: 2.285rem;
+    }
+    .module-layout-controller .module-header {
+        text-align: center;
+    }
+    .module-layout-controller .module-selector {
+        
+    }
+    .module-layout-controller .module-selector-type .form-row {
+        justify-content: center;
+    }
+    /* .module-layout-controller .module-selector-type h6 {
+        font-weight: bold;
+        margin-top: 1rem;
+    } */
+</style>
+
+<script src="~/js/changecaseform.js"></script>
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+            @await Html.PartialAsync("~/Themes/" + theme.GetName(false) + "/Shared/_SideMenu.cshtml")
+            <div class="main-content" role="main">
+                <div class="absolute-fill">
+                    <div class="main-content-area">
+                        <div class="container module-layout-controller">
+                            <div class="module-container">
+                                <div class="module-header">
+                                    <h2>File a Claim</h2>
+                                    <!-- <h6>Select your insurance type</h6> -->
+                                    <p class="text-muted">We'll just want to know what happened and when, plus what you're claiming for.</p>
+                                </div>
+                                <div class="module-selector">
+                                    <div class="module-selector-wrapper">
+                                        <div class="module-selector-type">
+                                            <div class="form-row">
+                                                <div class="align-items-center d-flex flex-grow-1 justify-content-center p-5">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!--//.module-selector-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    @* new dashboard scripts *@
+    <script>
+
+        var tenant_identifier = '@tenant_identifier';
+         var urlEdit = "@Url.Content("~/admin/form / "+_utils.GetTenantForUrl(true) + _utils.GetParams("form") + " / " + _utils.EncryptId(0) +" / edit.html")";
+
+
+
+    </script>
+
+
+}

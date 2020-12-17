@@ -1,0 +1,172 @@
+//jazzcash user dashboard
+.title{
+    color:$black;
+}
+
+.user-info {
+    &-item {
+        display: inline-flex;
+        border-top: 1px solid rgba(255,255,255,0.3);
+        padding: 0.5rem 0;
+    }
+
+    &-l {
+        text-align: center;
+
+        @include media-breakpoint-up(sm) {
+            text-align: left;
+        }
+    }
+
+    &-r {
+        font-weight:300;
+        text-align: center;
+
+        @include media-breakpoint-up(sm) {
+            text-align: right;
+        }
+
+     
+    }
+}
+.status-bar {
+    padding: 3rem;
+    border-bottom: 1px solid #DFDFDF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:last-child{
+        border:0;
+    }
+    &.has-icon {
+        justify-content: flex-start;
+
+        &:before {
+            content: url(/Themes/JazzCash/img/img-sent.png);
+            margin-right:2rem;
+        }
+        .status-bar-l{
+            flex-grow:1;
+        }
+    }
+
+    &-l {
+        text-align: left;
+    }
+
+    &-r {
+        text-align: right;
+    }
+}
+.notification {
+    &-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor:pointer;
+
+        @include media-breakpoint-up(sm) {
+            justify-content: flex-end;
+        }
+    }
+
+    &-icon {
+        position: relative;
+        margin-left: 0.5rem;
+    }
+
+    &-value {
+        display: flex;
+        position: absolute;
+        border: 2px solid var(--secondary);
+        background-color: #fff;
+        color: var(--secondary);
+        font-weight: 500;
+        border-radius: 50px;
+        padding: 0px 5px;
+        top: -5px;
+        right: -5px;
+    }
+}
+
+.widget {
+    &-box {
+        min-height: 150px;
+        border: 0;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 20px rgba(#ccc,0.3);
+        border-bottom: 2px solid var(--primary);
+        background-color: var(--white);
+    }
+
+    &-header {
+        background-color: transparent;
+        display: flex;
+        padding: 1.25rem 2rem 0.5rem;
+
+        &.bordered {
+            border: 1px solid #DFDFDF;
+            border-top-left-radius:0.5rem;
+            border-top-right-radius:0.5rem;
+        }
+    }
+
+    &-content {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        padding: 0;
+        border: none;
+        border-radius: 0.5rem;
+    }
+
+    &-inner {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        justify-content: space-between;
+        padding: 1rem 1.5rem 0.5rem;
+    }
+
+    &-info {
+        text-align: left;
+        display: flex;
+        flex-flow: row;
+        align-items: flex-end;
+    }
+
+    &-link {
+        display: flex;
+        border-top: 1px solid rgba(115,115,115,0.3);
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        border-top: 1px solid rgba(115,115,115, 0.3);
+    }
+}
+
+.grid-container {
+    display: grid !important;
+    grid-template-columns: auto auto;
+    grid-gap: 0.5rem;
+
+    &.grid-col {
+        grid-auto-flow: column;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,82 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Models.Core;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout ="~/Themes/"+ theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@*@await Html.PartialAsync("../Shared/_Header.cshtml")*@
+
+<div class="account-access signin--mod">
+    <div class="container">
+        <div class="account-access__wrapper">
+            <div class="text-center p-5 brand-logo">
+                <a href="/">
+                    <img src="/Themes/@theme.GetName(false)/img/cicero-logo-black.png">
+                </a>
+            </div>
+            <div class="card border-0 account-access--card">
+                <div class="card-body p-md-5">
+                    <h3 class="text-center mb-5">Sign in to your account</h3>
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="status"></div>
+                        <div asp-validation-summary="All"></div>
+                        <!-- Display all errors -->
+                        <div class="form-group">
+                            <label for="Email">Username</label>
+                            <input type="text" asp-for="Email" class="form-control" placeholder="">
+                            <span asp-validation-for="Email"></span>
+                        </div>
+
+                        <div class="form-group toggle-password-group">
+                            <label for="Password">Password</label>
+                            <input type="password" asp-for="Password" class="form-control" placeholder="">
+                            <span toggle="#Password" class="toggle-password"><i class="remixicon-eye-line"></i></span>
+                            <span asp-validation-for="Password"></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-top">
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" value="true" asp-for="RememberMe" class="custom-control-input" id="rememberMe">
+                                    <label class="custom-control-label" for="rememberMe">Remember me</label>
+                                </div>
+                                 
+                            </div>
+                        
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </form>
+                    <p class="mt-4 mb-0 text-center">
+                        <a href="/user/forgot.html">Forgot your password?</a>
+                    </p>
+                </div>
+            </div>
+            <p class="mt-5 text-center signup-text">Don't have an account? <a href="/user/register.html">Create one!</a></p>
+        </div>
+    </div>
+</div>
+<footer class="footer footer-alt text-center text-muted small">
+    Copyright &copy; @DateTime.Now.Year Cicero. All rights reserved.
+</footer>
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+@section Scripts{}
+<script>
+    $(".toggle-password").click(function() {
+        //$(this).find('i').toggleClass("remixicon-eye-off-line");
+        var input = $($(this).attr("toggle"));
+        if (input.attr("type") == "password") {
+            input.attr("type", "text");
+            $(this).addClass('text-primary');
+            $(this).find('i').removeClass("remixicon-eye-line").addClass("remixicon-eye-off-line");
+        } else {
+            input.attr("type", "password");
+            $(this).removeClass('text-primary');
+            $(this).find('i').removeClass("remixicon-eye-off-line").addClass("remixicon-eye-line");
+
+        }
+    });
+</script>

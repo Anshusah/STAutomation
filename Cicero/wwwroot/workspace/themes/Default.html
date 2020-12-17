@@ -1,0 +1,19 @@
+﻿@await Html.PartialAsync("/Views/Shared/_Header.cshtml")
+<!-- nav e -->
+<div class="jumbotron p-0 mt-7">
+    <div class="rounded-0 inner-promo py-5">
+        <div class="position-relative z-index-2 container">
+            <h3 class="display-4 main-promo-caption heading">@Model.Title</h3>
+
+        </div>
+    </div>
+</div>
+<main role="main" class="container">
+    <div class="row mt-7 mb-7">
+        @Html.Raw(@Model.Content)
+
+    </div>
+</main>
+<div class="Cicero-illustration">
+    <img src="@Url.Content("~/frontend/img/Cicero-illustration.svg")" class="img-fluid">
+</div>

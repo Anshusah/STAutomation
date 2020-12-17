@@ -1,0 +1,162 @@
+﻿@using Themes.Core.Widgets
+
+@{
+    Social social = Model as Social;
+    string bRadius = social.BorderRadius + "px";
+}
+
+<style>
+    .widget-social{
+    list-style-type:none;
+    }
+    ul.widget-social li{
+    display:inline-block;
+    }
+
+    .socialbtn {
+        height:48px;
+        width:48px;
+        background-color:@social.ButtonBGColor;
+        border-radius:@bRadius;
+
+
+    }
+    .socialbtn:hover{
+    color:@social.ButtonHoverColor;
+    background-color:@social.ButtonBGHoverColor;
+    }
+
+    .socialico{
+    color:@social.ButtonColor;
+    }
+    .socialbtn:hover .socialico{
+    color:@social.ButtonHoverColor;
+    }
+   .sociallnk:hover{
+    color:transparent;
+    }
+
+</style>
+<div class="widget-wrap @social.WidgetLocation widget-social">
+
+
+    @if (social.LayoutType == "With-Title")
+    {
+        string lt = social.LayoutType;
+        <h6>@social.Title</h6>
+    }
+
+    
+    @if (social.Icon != null && social.Icon.Count() > 0)
+    {
+        int index = 0;
+        string link = string.Empty;
+        <ul class="widget-social">
+            @foreach (var item in social.Icon)
+            {
+                if (item!="undefined")
+                {
+
+                    link = $"https://www.{social.Url[index]}";
+                @if (social.Target == "_blank")
+                {
+                    <li>
+                        <a href="@link" target="@social.Target" class="sociallnk" style="display:block;">
+
+                            <div role="button" class="socialbtn d-flex align-items-center justify-content-around cur">
+                                <i class="@item socialico"></i>
+                            </div>
+                        </a>
+                    </li>
+                }
+
+                else
+                {
+
+                    <li>
+                        <a href="@link" class="sociallnk" style="display:block;">
+
+                            <div role="button" class="socialbtn d-flex align-items-center justify-content-around cur">
+                                <i class="@item socialico"></i>
+                            </div>
+                        </a>
+                    </li>
+
+
+                }
+                }
+                index++;
+            }
+
+        </ul>
+    }
+
+    
+        @if (social.Url != null && social.Url.Count() > 0)
+        {
+            int index = 0;
+            string link = string.Empty;
+            <ul class="widget-social-b">
+                @foreach (var item in social.Url)
+                {
+                    if (social.Icon[index] == "undefined")
+                    {
+                    @if (social.Target == "_blank")
+                    {
+                        link = $"https://www.{item}";
+                        <li><a href="@link" target="@social.Target">@item</a></li>
+
+                        @*<li>    <a href="#" onclick="window.open('https://www.facebook.com','newwindow','width=300,height=250');return false;">@item</a></li>*@
+                    }
+                    else
+                    {
+                        link = $"https://www.{item}";
+                        <li><a href="@link">@item</a></li>
+                    }
+                    }
+                    index++;
+
+                }
+            </ul>
+        }
+
+    <!--commented
+        @if (social.Icon != null && social.Icon.Count() > 0)
+        {
+            int index = 0;
+            string link = string.Empty;
+            <ul class="widget-social">
+                @foreach (var item in social.Icon)
+                {
+
+                    //{
+                    //    //index = item.IndexOf(item);
+                    //    index = item.IndexOf(item);
+                    //}
+                    @if (social.Target == "_blank")
+                    {
+                        link = $"https://www.{social.Url[index]}";
+                        <li>
+
+                            <a href="@link" target="@social.Target"><i class="@item"></i></a>
+
+                        </li>
+                        index++;
+                    }
+
+                    else
+                    {
+                        link = $"https://www.{social.Url[index]}";
+                        <li><a href="@link"><i class="@item" data-bg-color="@social.ButtonBGColor" data-bghover-color="@social.ButtonBGHoverColor" data-color="@social.ButtonColor" data-hover-color="@social.ButtonHoverColor" data-border-radius="@social.BorderRadius"></i></a></li>
+                        @*<li><a href="@link"><i class="@item"  style="background-color:@social.ButtonBGColor ;" ></i></a></li>*@
+
+                        index++;
+                    }
+                }
+
+            </ul>
+        }
+
+
+        -->
+</div>

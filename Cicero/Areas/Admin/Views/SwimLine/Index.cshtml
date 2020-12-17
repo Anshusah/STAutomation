@@ -1,0 +1,552 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model DashboardViewModel
+@inject IArticleService _articleService
+@inject IUserService _userService
+@inject IActivityLogService _activityLog
+@inject Utils  _utils
+@inject Permission permission
+@{
+    Layout = null;
+    string tenant_identifier = _utils.GetTenantFromSession();
+    bool can_create = permission.Can(UserCan.Create_Claim);
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Swimline Dashboard</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <!--<link rel="stylesheet" href="~/css/site.css" />-->
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+    </environment>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <link rel="stylesheet" href="~/admin/assets/css/main-backend.css" />
+
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.standalone.min.css"
+          rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" type="text/css" />
+    @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>*@
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   
+    <style>
+        body {
+            height:100%;
+            overflow-x:hidden;
+        }
+        .text-right{
+            text-align:right;
+        }
+        h1 {
+            font-weight: normal;
+        }
+        #loading {
+            width: 100%;
+            z-index: 9;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(255,255,255,0.8);
+            display: none;
+        }
+
+            #loading .inside-loading {
+                width: 20%;
+                margin: auto;
+                margin-top: 25%;
+                /* height: 100%; */
+                text-align: center;
+                font-size: 15px;
+            }
+        .canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(100% - 60px);
+            background: #334055;
+            padding: 10px;
+        }
+        .task-board {
+            padding-bottom:20px;
+            border-radius: 3px;
+            width: 100%;
+            height:100%;
+            white-space: nowrap;
+            overflow-x: scroll;
+            min-height: 300px;
+        }
+
+        .status-card {
+            width: 250px;
+            margin-right: 8px;
+            background: #f1f1f1;
+            border-radius: 3px;
+            display: inline-block;
+            vertical-align: top;
+            font-size: 1em;
+            position:relative;
+            padding-bottom: 5px;
+        }
+        .status-card .add-new{
+            position:absolute;
+            padding-top:10px;
+        }
+
+            .status-card:last-child {
+                margin-right: 0px;
+            }
+
+        .card-header {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 3px;
+            display: block;
+            font-weight: bold;
+        }
+
+        .card-header-text {
+            display: block;
+            color: rgba(51, 64, 85, 0.7);
+        }   
+
+        div.sortable {
+            padding-bottom: 5px;
+            max-height: 530px;
+            overflow: auto;
+        }
+
+            ul.sortable li:last-child {
+                margin-bottom: 0px;
+            }
+
+        ul {
+            list-style: none!important;
+            margin: 0;
+            padding: 0px;
+        }
+
+        .ondrag{
+            list-style:none;
+          
+        }
+        .text-row {
+            padding: 8px 10px;
+            margin: 10px 10px 10px 10px;
+            background: #fff;
+            box-sizing: border-box;
+            border-radius: 3px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+            font-size: 0.9em;
+            white-space: normal;
+            line-height: 20px;
+            min-height: 75px;
+            box-shadow: 1px 1px 2px rgba(128, 128, 128,0.2);
+            display: block;
+        }
+
+        .ui-sortable-placeholder {
+            visibility: inherit !important;
+            background: transparent;
+            border: #666 1px dashed;
+        }
+        .startMessage {
+            width:400px;
+            margin:auto;
+            padding:50px;
+            text-align:center;
+            font-size:1.5em;
+            color:white;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+</head>
+<body>
+    @if (permission.Can(UserCan.Worker_Layout))
+
+    {<div id="loading">
+            <div class="inside-loading">
+                <i class="fas fa-spin fa-cog"></i> Loading... please wait
+            </div>
+        </div>
+        <div>
+            <div class="box p-4" id="canvas-header">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group" id="selectForm">
+                                    <select class="form-control" id="formList">
+                                        <option>Select Form</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="search-text" id="search-text"/>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <button type="button" class="form-control btn btn-primary" onclick="searchProcess()">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+                <div class="canvas">
+                    <div class="task-board" id="swimscroll">
+
+                    <div class="startMessage">Please select Form to start.</div>
+                    </div>
+                </div>
+           
+        </div>
+        
+    }
+
+    <script>
+        var tenant_identifier = '@tenant_identifier';
+        var can_create = '@can_create';
+
+        //#region Initialize
+        var lists = [];
+        var newposition;
+        var oldposition;
+        var source;
+        var target;
+        var card;
+        var connect;
+        var reset = function () {
+            lists = [];
+            newPosition = undefined;
+            oldposition = undefined;
+            source = undefined;
+            target = undefined;
+            card = undefined;
+        }
+
+        //#endregion
+
+        //#region loading
+        var showLoading = function (data,callback) {
+            $("#loading").fadeIn("10");
+            return callback(data);
+        }
+
+        var hideLoading = function (callback) {
+            $("#loading").fadeOut("400");
+            return callback();
+        }
+        //#endregion
+
+        //#region Navigate to Case
+        var navigateClaim = function (claimId) {
+            var url = "/admin/" + tenant_identifier + "/case/" + claimId + "/edit.html";
+            window.open(url);
+        }
+        var checkPermission = function (claimid) {
+            showLoading(claimid, function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/" + tenant_identifier + "/swimline/checkpermission.html",
+                    dataType: "json",
+                    data: { claimId: claimid },
+                    success: function (response) {
+                        if (response == true) {
+                            navigateClaim(claimid);
+                            hideLoading(function () { reset() });
+                        
+                        }
+                        else {
+                            toastr.warning("You dont have permission to view.");
+                            hideLoading(function () { reset() });
+                        }
+                    },
+                    error: function (response) {
+                        toastr.warning("You dont have permission to view.");
+                        hideLoading(function () { reset() });
+                    }
+                });
+            })
+           
+         
+                   
+        }
+        //#endregion
+
+        //#region Case Load and Update
+        var getTenantForms = function () {
+            $.ajax({
+                type: "POST",
+                url: '/admin/' + tenant_identifier + '/getlatestforms.html',
+                dataType: "json",
+                success: function (response) {
+                    JSON.stringify(response);
+                    $("#selectForm").html();
+                    if (response.length >= 1) {
+                        $("#selectForm").html("<select class='form-control' id='formList' name='formList'></select>");
+                        $("#formList").append("<option value='0'>Select Form</option>");
+                        //selectChange();
+                        for (i = 0; i < response.length; i++) {
+                            var c = (response[i].name).split(',');
+                            $("#formList").append("<option value='" + c[0] + "'>" + c[1] + "</option>");
+                        }
+                        $("#formList").val('0');
+                        selectchange();
+                    }
+                    else {
+                        $("#selectForm").html("<select class='form-control' id ='formList' name = 'formList'><option>No data Availabled</select>");
+                    }
+                },
+                error: function (response) {
+                }
+            });
+        }
+
+        var showMessage = function () {
+            $("#swimscroll").html("<div class='startMessage'>Please select Form to start.</div>");
+        }
+
+        var selectchange = function () {
+            $("#formList").on("change", function () {
+                var selected = $(this).val();
+                var searchtext = null;
+                if (selected != '0') {
+                    showLoading(selected, function () {
+                        getclaims(selected, searchtext, function () {
+                            hideLoading(function () { });
+                        });
+                    });
+                }
+                else {
+                    showMessage();
+                }
+
+            });
+        }
+        var getclaims = function (data,searchtext,callback) {
+            var selected = data;
+            if (selected != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/" + tenant_identifier + "/getcasesbyformid.html",
+                    dataType: "json",
+                    data: { encryptedId: selected, searchText: searchtext },
+                    success: function (response) {
+                        //JSON.stringify(response);
+                        console.log(JSON.stringify(response));
+                        lists = response;
+                        $("#swimscroll").html("");
+                        for (i = 0; i < response.length; i++) {
+                            $("#swimscroll").append("<div class='status-card' id='card_"+ JSON.parse(response[i].state).Id + "'>"
+                                + "<div class='card-header'>"
+                                + "<span class='card-header-text'>" + JSON.parse(response[i].state).NameBackend + "</span>"
+                                + "</div>"
+                                + "<div id='sortable_" + JSON.parse(response[i].state).Id + "' class='sortable ui-sortable connectedSortable'></div></div>");
+                            if (i == 0) {
+                                connect = "#sortable_" + JSON.parse(response[i].state).Id;
+                                if (can_create == 'True') {
+                                    $("#card_" + JSON.parse(response[i].state).Id).append("<div class='pull-left add-new'>"
+                                        + "<a role='button' class='btn btn-primary' href='/admin/home-claim/case/ADA=/edit.html'>Add new Case</a> </div>");}
+                                
+                            }
+                            else {
+                                connect = connect + " ,#sortable_" + JSON.parse(response[i].state).Id; //connect all pillars for drag and drop
+                            }
+                            if (response[i].cases.length != 0) {
+                                for (j = 0; j < response[i].cases.length; j++) {
+                                    var caseId = JSON.stringify(JSON.parse(response[i].cases[j]).FirstName.split(',')[0]);
+                                    $("#sortable_" + JSON.parse(response[i].state).Id).append(
+                                        "<a class='text-row ui-sortable-handler' id='card_" + JSON.parse(response[i].cases[j]).Id + "' onclick = 'checkPermission(" + caseId + ")'>"
+                                        + "<div>" + JSON.parse(response[i].cases[j]).CaseGeneratedId + "</div>" + "<div>" + JSON.parse(response[i].cases[j]).FullName + "</div>"
+                                        +"<div class='text-right'>"+JSON.parse(response[i].cases[j]).UpdatedAt+"</div></a > ");
+                                }
+                            }
+                        }
+                    
+                        $(function () {
+                             $(connect).sortable({
+                                connectWith: '.sortable',
+                                appendTo: '.task-board',
+                                helper: 'clone',
+                               
+                                scrollSensitivity: 60,
+                                 start: function (event, ui) {
+                                     console.log("old position: " + ui.item.index());
+                                    oldposition = ui.item.index();
+                                    card = ui.item.attr("id");
+                                    $('html').bind('mousemove', function (e) {
+                                        var $helper, $parent, $placeholder, top;
+                                        $placeholder = $('.ui-sortable-placeholder');
+                                        $parent = $placeholder.parent();
+                                        $parent.stop();
+                                        $helper = $('.ui-sortable-helper');
+                                        top = $helper.offset().top - $parent.position().top;
+                                        if (top + 80 > $parent.height()) {
+                                            return $parent.animate({
+                                                scrollTop: $parent.scrollTop() + 360
+                                            }, 1000, 'linear');
+                                        } else if (top < 40) {
+                                            return $parent.animate({
+                                                scrollTop: $parent.scrollTop() - 360
+                                            }, 1000, 'linear');
+                                        }
+                                    });
+                                 },
+                                 update: function (e, ui) {
+                                       target = $(this).attr("id");
+                                       source = ui.item.data("prev");
+                                       card = ui.item.attr("id");
+                                      ui.item.data("prev", target);
+                                      console.log("Item '" + card + "', was moved from '" + source + "' to '" + target + "'");
+                                  },
+                                stop: function (e,ui) {
+                                     $('html').unbind();
+                                      if (target == undefined) {
+                                          reset();
+                                      } else {
+                                          console.log("new position: " + ui.item.index());
+                                          newposition = ui.item.index();
+                                          showLoading("load", function () {
+                                              getPositionData(function () {
+                                                  hideLoading(function () { reset();  });
+                                              });
+                                          });
+                                      }
+                                  }
+                            });
+                        })
+                        return callback();
+                    },
+                    error: function (a) {
+                        return callback(0)
+                    }
+
+                });
+            }
+            else {
+                $("#swimscroll").html("");
+                return callback();
+            }
+        }
+
+        var updatePosition = function (source_id, target_id, card_id, callback) {
+            var formid = $("#formList").val();
+            $.ajax({
+                 type: "POST",
+                 url: "/admin/" + tenant_identifier + "/swimline/updateposition.html",
+                dataType: "json",
+                data: { newPosition: newposition, oldPosition: oldposition, sourceId: source_id, targetId: target_id, claimId: card_id, formId: formid },
+                success: function (response) {
+                    if (response == true) {
+                            return callback();
+                    }
+                    else {
+                        toastr.warning("Cannot be updated.");
+                        $(connect).sortable("cancel");
+                        return callback();
+                    }
+                },
+                error: function () {
+                    return callback();
+                }
+            });
+        }
+
+        var getPositionData = function (callback) {
+            var card_id = card.split("_")[1];
+            var source_id, target_id;
+            if (target == undefined) { return callback(); }
+            target_id = target.split("_")[1];
+            if (source != undefined && source !=target)
+            {
+                //dosomething
+                source_id = source.split("_")[1];
+                updatePosition(source_id, target_id, card_id, function () { return callback();})
+
+            }
+            else {
+                if (newposition != oldposition) {
+                    //dosomething
+                    console.log("position only changed");
+                    source_id = target_id;
+                    updatePosition(source_id, target_id, card_id, function () { return callback(); })
+                }
+                else {
+                    return callback();
+                }
+            }
+        }
+        //#endregion
+
+        //#region search Case
+        
+        var searchProcess = function () {
+            searchtext = $("#search-text").val();
+            var selected = $("#formList").val();
+            if (selected != '0') {
+                showLoading(selected, function () {
+                    getclaims(selected, searchtext, function () {
+                        hideLoading(function () { });
+                    });
+                });
+            }
+          
+            else {
+                toastr.warning("Please select Case form first.")
+                showMessage();
+            }
+
+        }
+         
+        var timeout = null;
+
+        $('#search-text').keyup(function () {
+            clearTimeout(timeout);
+
+            timeout = setTimeout(function () {
+                searchProcess();
+            }, 500);
+        });
+    //#endregion
+
+        //#region OnLoad Event
+        $(function () {
+            getTenantForms();
+        });
+        //#endregion
+
+
+    </script>
+</body>
+</html>

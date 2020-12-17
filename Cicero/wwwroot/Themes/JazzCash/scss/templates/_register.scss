@@ -1,0 +1,190 @@
+.form-layout {
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background-color: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 20px rgba(0,0,0,0.04);
+        margin: 6rem auto;
+        font-weight:300;
+
+        &.content-bordered {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: 5px solid var(--primary);
+        }
+
+        @include media-breakpoint-up(lg) {
+            max-width: 750px;
+        }
+
+
+        .title {
+            color: $black;
+        }
+    }
+
+    &__header {
+        padding: 1.25rem 2.5rem 0.5rem;
+        border-bottom: 1px solid $gray-200;
+        .form-group{
+            margin-bottom:0;
+        }
+    }
+
+    &__content {
+        padding: 2rem 2.5rem;
+    }
+
+    &__footer {
+        padding: 1.25rem 2.5rem;
+        border-top: 1px solid $gray-200;
+    }
+
+    &__tabs-custom {
+        flex-wrap: nowrap;
+        margin: auto;
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem;
+            font-weight: 500;
+            font-size: 0.625rem;
+            color: $black;
+            text-align: center;
+
+            @include media-breakpoint-up(sm) {
+                font-size: 1rem;
+                padding: 1rem;
+            }
+
+            &.active, &:hover {
+                &::before {
+                    height: 24px;
+                    width: 24px;
+                    background-color: var(--primary);
+                    transition: all 0.3s ease;
+
+                    @include media-breakpoint-up(sm) {
+                        height: 40px;
+                        width: 40px;
+                        top: -35px;
+                    }
+                }
+            }
+
+            &.complete {
+                &::before {
+                    background-color: var(--primary);
+                    content: "\eb63";
+                    font-family: "remixicon";
+                    font-size: 1rem;
+                    height: 24px;
+                    width: 24px;
+                    background-color: var(--primary);
+                    transition: all 0.3s ease;
+
+                    @include media-breakpoint-up(sm) {
+                        font-size: 1.25rem;
+                        height: 40px;
+                        width: 40px;
+                        top: -35px;
+                    }
+                }
+            }
+
+            &::before {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                content: '';
+                position: absolute;
+                background-color: $gray-400;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                top: -24px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1;
+                color: $white;
+                transition: all 0.3s ease;
+
+                @include media-breakpoint-up(sm) {
+                    top: -30px;
+                    height: 30px;
+                    width: 30px;
+                }
+            }
+
+            &:last-child {
+                &:after {
+                    content: unset;
+                }
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 1px;
+                background-color: $gray-400;
+                top: -14px;
+                left: 2rem;
+
+                @include media-breakpoint-up(sm) {
+                    left: 4rem;
+                }
+            }
+        }
+    }
+}
+.tab-content{
+    .form-layout__wrapper{
+        margin:auto;
+    }
+}
+
+.form-control {
+    background-color: transparent;
+    background-position: 95% center;
+    background-size: 16px;
+    background-repeat: no-repeat;
+
+    &.from-control-complex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        input {
+            border: none;
+            width: 100%;
+
+            &:focus, &:active, &:hover {
+                border: none;
+                outline: none;
+                box-shadow: none;
+            }
+        }
+        span{
+            white-space:nowrap;
+        }
+    }
+
+    &:focus {
+        box-shadow: none;
+        border-color: $blue;
+        background-image: none;
+    }
+
+
+    &.date {
+        background-image: url(../../JazzCash/img/date.png);
+    }
+
+    &.jazzCashAccount {
+        background-image: url(../../JazzCash/img/jazzCashAccount.png);
+        background-size: 50px;
+    }
+}

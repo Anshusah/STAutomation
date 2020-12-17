@@ -1,0 +1,14 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: $zindex-sticky;
+    background-color: var(--white);
+
+    &.scrolled-header {
+        box-shadow: 1px 1px 8px rgba(0,0,0,0.5);
+
+        .navbar {
+            padding: 0.5rem 0;
+        }
+    }
+}

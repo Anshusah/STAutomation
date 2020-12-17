@@ -1,0 +1,84 @@
+// Color system
+
+
+/*$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: 9f9f9f !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;*/
+
+   
+
+
+$white:         #fff;
+$gray-100:      #f4f4f4 !default;
+$gray-300:      #949494 !default;
+$gray-400:      #9f9f9f !default;
+$gray-500:      #989898 !default;
+$gray-600:      #444444 !default;
+$gray-800:      #747474;
+$gray-900:      #1C1839 !default;
+$black:         #000;
+
+//Simple Transfer theme - blue color
+$blue:          #00B4F1 !default;
+$red:           #FF6C5B !default;
+$green:         #7DD59D !default;
+$yellow:        #F2D025 !default;
+$cyan:          #81D6E4 !default;
+$dark-blue:     #005FAE !default;
+$light-blue:    #AFE3F5 !default;
+$primary: $blue;
+$secondary:     $dark-blue;
+
+$body-color:            $gray-500;
+$border-color-light: rgba(112,112,112,0.3);
+
+$body-bg:               #F4F5FA !default;
+$body-color--light:     $gray-300 !default;
+
+
+$input-color: $gray-400;
+
+/*$font-family-sans-serif: 'Roboto', sans-serif !default;*/
+$font-family-sans-serif: Poppins !default;
+
+/*check-box/radio button
+$component-active-bg: $secondary !default;
+border-color:#7070707;*/
+
+
+//checkbox filled with secondary color
+$custom-checkbox-indicator-icon-checked: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'><path fill='#{white}' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/></svg>") !default;
+$custom-checkbox-indicator-indeterminate-bg: $secondary;
+$component-active-bg: $secondary !default;
+//checkbox primary tick white background
+/*$custom-checkbox-indicator-icon-checked: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'><path fill='#{$primary}' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/></svg>") !default;
+$custom-checkbox-indicator-indeterminate-bg: white;
+$component-active-bg: $white !default;*/
+
+$custom-checkbox-indicator-indeterminate-border-color: #C2C2C2 ;
+$custom-radio-indicator-icon-checked: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'><circle r='3.45' fill='#{$primary}'/></svg>") !default;
+$custom-control-indicator-border-color: rgba(112,112,112,0.85);
+
+$custom-checkbox-indicator-indeterminate-box-shadow: 0 0 1px #C2C2C2 !default;
+$custom-checkbox-indicator-indeterminate-border-color: #C2C2C2 ;
+
+
+
+/*$modal-backdrop-bg: #FFF !default;*/
+$modal-backdrop-opacity:0.75;
+$modal-content-border-width: 0;
+
+$form-group-margin-bottom: 1.5rem;
+$input-border-color: #707070;
+$input-placeholder-color: $gray-400;
+$input-btn-padding-y: .725rem !default;
+
+$yiq-contrasted-threshold: 190 !default;

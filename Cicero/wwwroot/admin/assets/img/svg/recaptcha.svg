@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+  <g id="recaptcha" transform="translate(13590 7624)">
+    <g id="Rectangle_709" data-name="Rectangle 709" transform="translate(-13590 -7624)" fill="#fff" stroke="#707070" stroke-width="1" opacity="0">
+      <rect width="38" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="37" height="37" fill="none"/>
+    </g>
+    <g id="Group_1268" data-name="Group 1268" transform="translate(-14649.434 -7909.651)">
+      <path id="Path_764" data-name="Path 764" d="M1087.077,412.409a10.369,10.369,0,0,1-16.36.235l-2.22,2.218-.062-8.707h8.771l-2.648,2.648a5,5,0,0,0,8.7-.362Z" transform="translate(-0.001 -101.013)" fill="#ababab"/>
+      <path id="Path_765" data-name="Path 765" d="M1076.156,300.774l2.647,2.648v-8.77l-8.707.062,2.218,2.219a10.349,10.349,0,0,0-3.881,8.088c0,.04,0,.081,0,.121h5.363c0-.04,0-.08,0-.121A5.007,5.007,0,0,1,1076.156,300.774Z" transform="translate(0 0)" fill="#818181"/>
+      <path id="Path_766" data-name="Path 766" d="M1189.283,305.021l-.062-8.707-2.22,2.218a10.348,10.348,0,0,0-8.088-3.881c-.086,0-.172,0-.258,0v5.366c.085,0,.171-.007.258-.007a5.008,5.008,0,0,1,4.247,2.36l-2.647,2.648Z" transform="translate(-99.851 0)" fill="#666"/>
+    </g>
+  </g>
+</svg>

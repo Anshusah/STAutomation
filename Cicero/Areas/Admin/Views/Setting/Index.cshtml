@@ -1,0 +1,212 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Newtonsoft.Json.Linq
+@model IEnumerable<SettingViewModel>
+@inject IRoleService roleService
+@inject IQueueService queueService
+@inject Permission Permission
+@inject ICommonService CommonService
+@inject Utils utils
+@{
+    ViewBag.Title = "General Settings";
+}
+<div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin"+utils.GetTenantForUrl(false)+".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active">
+                General Setting
+            </li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">General Setting</h3>
+    </div>
+    <!-- Main content -->
+    <section class="page-body">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-8 ">
+                <!-- general form elements -->
+                <div class="box p-5 mb-5">
+                    <div class="status"></div>
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form action="@Url.Content("~/admin"+utils.GetTenantForUrl(false)+"/setting.html")" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="box-body">
+                            @*@{
+                                if (ViewBag.Message != null)
+                                {
+                                <div class="alert alert-success">
+                                    @ViewBag.Message
+                                </div>
+                                }
+                                }*@
+                            <div class="row">
+                                @foreach (var _setting in Model)
+                                {
+                                    if (_setting.FieldVisiblity == 1)
+                                    {
+                                        if (_setting.FieldType == "IMAGE")
+                                        {
+                                            /*
+                                            ?>
+                                            <div class="form-group">
+                                                <label for="<?php echo $item->field_key; ?>"><?php echo $item->field_display; ?></label>
+                                                <input type="file" id="<?php echo $item->field_key; ?>" name="<?php echo $item->field_key; ?>">
+                                                <p class="help-block">Please upload Logo.</p>
+                                            </div>
+                                            <?php
+                                            */
+                                        }
+                                        else if (_setting.FieldType == "TEXTAREA")
+                                        {
+                                            <div class="col-lg-@_setting.FieldGridSize">
+                                                <div class="form-group">
+                                                    @Html.Label(_setting.FieldDisplay)
+                                                    @Html.TextArea(_setting.FieldKey, _setting.FieldValue, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (_setting.FieldType == "SELECT")
+                                        {
+                                            <div class="col-lg-@_setting.FieldGridSize">
+                                                <div class="form-group">
+                                                    @Html.Label(_setting.FieldDisplay)
+                                                    <select name="@_setting.FieldKey" id="@_setting.FieldKey" class="form-control custom"></select>
+                                                    <script>
+$(document).ready(function() {
+                                            var jsonfile = JSON.parse(@Json.Serialize(_setting.FieldOptions));
+$("#@_setting.FieldKey").empty();
+$(jsonfile).each(function(iIndex, data) {
+                                            $("#@_setting.FieldKey").append('<option value="' + data.Value + '">' + data.Text + '</option>');
+});
+$("#@_setting.FieldKey").val("@_setting.FieldValue")
+
+                                                                                        });</script>
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (_setting.FieldType == "TENANTCLAIM")
+                                        {
+                                            <div class="col-lg-@_setting.FieldGridSize">
+                                                <div class="form-group">
+                                                    @Html.Label(_setting.FieldDisplay)
+                                                    <select name="@_setting.FieldKey" id="@_setting.FieldKey" class="form-control custom">
+                                                        @foreach (var item in queueService.GetStateSelectList())
+                                                        {
+                                                            if (item.Text == _setting.FieldValue)
+                                                            {
+                                                                <option selected="selected" value="@item.Text">@item.Text</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.Text">@item.Text</option>
+                                                            }
+
+                                                        }
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (_setting.FieldType == "USERROLE")
+                                        {
+                                            <div class="col-lg-@_setting.FieldGridSize">
+                                                <div class="form-group">
+                                                    @Html.Label(_setting.FieldDisplay)
+                                                    <select name="@_setting.FieldKey" id="@_setting.FieldKey" class="form-control custom">
+                                                        @foreach (var item in roleService.GetRoleList())
+                                                        {
+                                                            if (item.Text == _setting.FieldValue)
+                                                            {
+                                                                <option selected="selected" value="@item.Text">@item.Text</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.Text">@item.Text</option>
+                                                            }
+
+                                                        }
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (_setting.FieldType == "TENANTTHEME")
+                                        {
+                                            <div class="col-lg-@_setting.FieldGridSize">
+                                                <div class="form-group">
+                                                    @Html.Label(_setting.FieldDisplay)
+                                                    <select name="@_setting.FieldKey" id="@_setting.FieldKey" class="form-control custom">
+                                                        @{
+
+                                                            List<string> themeName = new List<string>();
+
+                                                            JArray getThemesSetting = JArray.Parse(Model.Where(x => x.FieldKey.Equals("app_themes", StringComparison.OrdinalIgnoreCase)).Select(y => y.FieldValue).FirstOrDefault());
+
+                                                            var obj = getThemesSetting.ToObject<List<JObject>>().ToList();
+
+                                                            foreach (var theme in obj)
+                                                            {
+                                                                foreach (var themeitem in theme)
+                                                                {
+                                                                    if (themeitem.Key == "Name")
+                                                                    {
+                                                                        themeName.Add(themeitem.Value.ToString());
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        }
+                                                        @foreach (var item in themeName)
+                                                        {
+                                                            if (item == _setting.FieldValue)
+                                                            {
+                                                                <option selected="selected" value="@item">@item</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item">@item</option>
+                                                            }
+
+                                                        }
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (_setting.FieldType == "TEXTBOX")
+                                        {
+                                            <div class="col-lg-@_setting.FieldGridSize">
+                                                <div class="form-group">
+                                                    @Html.Label(_setting.FieldDisplay)
+                                                    @Html.TextBox(_setting.FieldKey, _setting.FieldValue, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            @if (Permission.Can(UserCan.Update_Setting))
+                            {
+                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                            }
+                        </div>
+                    </form>
+                </div>
+                <!-- /.box -->
+            </div>
+            <!--/.col (left) -->
+        </div>
+        <!-- /.row -->
+    </section>
+</div>

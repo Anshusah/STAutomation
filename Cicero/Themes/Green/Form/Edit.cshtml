@@ -1,0 +1,151 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model CaseViewModel
+@inject ICaseService caseService
+@inject Permission Permission
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["body"] = "inner-pg";
+    ViewData["Title"] = "Claim";
+    dynamic data = new object();
+    if (Model.Id != 0)
+    {
+        data = Json.Serialize((dynamic)ViewBag.formData);
+    }
+    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+
+    Cicero.Service.Models.Core.FormBuilder FB = new Cicero.Service.Models.Core.FormBuilder() { FormData = fbvm, Side = "frontend", HttpContext = HttpContextAccessor.HttpContext };
+
+}
+@await Html.PartialAsync("../Shared/_Header.cshtml")
+<script src="~/js/inputmask.js"></script>
+<script src="~/js/jquery.inputmask.bundle.js"></script>
+<!-- container s -->
+<main role="main" class="main">
+    <form id="caseform" action="@Url.Content("~/admin/form/"+ _utils.GetTenantForUrl(true) + _utils.GetParams("form") + "/" + _utils.EncryptId(Model.Id) +"/edit.html")" method="post" class="position-relative" enctype="multipart/form-data">
+        @*<label class="version-top font-weight-bold">Version: @Model.Version</label>*@
+        <input type="hidden" asp-for="Id" id="case_id" />
+        @*<input type="hidden" asp-for="StateName" />*@
+
+
+        <!-- <h3 class="">Home and Contents Claim Form</h3> -->
+        @Html.Raw(FB.Render())
+
+
+        <div class="card-footer">
+            <div class="nav-tab-link">
+                <button type="button" class="btn btn-link px-0">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+            </div>
+            <div class="nav-tab-controls">
+                @*@if ((Model.Id == 0 && Permission.Can(UserCan.Create_Claim) || Model.Id != 0 && Permission.Can(UserCan.Update_Claim))  )
+                    {*@
+                <button type="button" class="btn btn-outline-secondary btn-save" id="save-btn">Save</button>
+                <button type="button" class="btn btn-primary btn-send" id="send-btn">Send</button>
+                @*}*@
+                <button class="btn btn-primary btn-continue" type="button" id="next-btn">Continue</button>
+            </div>
+
+        </div>
+
+
+
+    </form>
+
+    <!-- process e -->
+
+</main>
+<!-- container e -->
+<script src="~/js/render_form_data.js"></script>
+@await Html.PartialAsync("../Shared/_Footer.cshtml")
+@if (Model.Id != 0)
+{
+
+    <script>
+            $(function () {
+        var allValues = JSON.parse('@data');
+                renderData(allValues);
+        });
+    </script>
+}
+@section Scripts{
+
+    <script src="~/js/form_builder_render_frontendtab.js"></script>
+    <script src="~/js/form_builder_form_validation.js"></script>
+    <script type="text/javascript">
+
+
+        jQuery(document).ready(function () {
+
+            getcountrylist("");
+            function getcountrylist(thisdata) {
+                let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin"+_utils.GetTenantForUrl(false) + "/country-list")",
+                    //data: ,
+                    success: function (d) {
+                        if (d != null) {
+                            $.each(d, function (k, l) {
+                                //console.log($(thisdata).attr("id"));
+                                //  if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                $("#" + $(".country").attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                //  }
+                            })
+                        }
+                    }
+                });
+            }
+
+        });
+
+
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+
+         //save to draft
+        $(document).on("click", "#save-btn", function (e) {
+            $("#StateName").val("@_appSetting.Get("app_claim_front")");
+            $("#caseform").validate().settings.ignore = "*";
+            onSendButtonClick("caseform");
+        });
+        //send claim
+        $(document).on("click", "#send-btn", function (e) {
+            $("#StateName").val("@_appSetting.Get("app_claim_back")");
+         //   $("#caseform").submit();
+            var formstring = '@_utils.GetParams("Form")';
+            checkValidation("caseform", formstring);
+        });
+    </script>
+}

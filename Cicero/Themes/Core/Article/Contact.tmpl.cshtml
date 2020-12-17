@@ -1,0 +1,54 @@
+﻿@using Cicero.Service.Services
+@inject IArticleService _articleService
+@await Html.PartialAsync("/Views/Shared/_Header.cshtml")
+<!-- Main jumbotron s-->
+<div class="jumbotron p-0 mt-7">
+    <div class="rounded-0 inner-promo contact py-5" style="background-image:url('/frontend/img/img1.jpg')">
+        <div class="position-relative z-index-2 container">
+            <h3 class="display-4 main-promo-caption heading">@Model.Title</h3>
+        </div>
+    </div>
+</div>
+<!-- Main jumbotron e-->
+<main role="main" class="container">
+    <div class="row mt-7 mb-7">
+        <div class="col-lg-8">
+            <address>
+                @Html.Raw(Model.Content)
+            </address>
+            <div class="map d-flex flex-column flex-xl-row position-relative mt-5 mb-5">
+                <div>
+                    <img src="/uploads/@await  _articleService.GetDefaultOrFirstImagesByArticleId(Model.Id, "placeholder.png")" alt="Contact" class="img-fluid">
+                </div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1241.6444808815652!2d-0.08882199211384208!3d51.50791445830447!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4876035159bb13c5%3A0xa61e28267c3563ac!2sLondon+Bridge!5e0!3m2!1sen!2snp!4v1537341367148" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="status"></div>
+            <div class="clearfix"></div>
+            <h4>Feedback</h4>
+            <p class="mb-5">Let me know if you have any queries, we'll be in another side to help it out.</p>
+            <form action="~/home/send-email.html" id="contact-form">
+                <div class="form-group">
+                    <label class="sr-only">Name</label>
+                    <input type="text" class="form-control" placeholder="Name" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only">Email</label>
+                    <input type="email" class="form-control" placeholder="Email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only">Phone</label>
+                    <input type="tel" pattern="[1-9]{1}[0-9]{9}" class="form-control" placeholder="Phone" id="phone" required>
+                </div>
+                <div class="form-group mt-4">
+                    <label class="sr-only">Message</label>
+                    <textarea class="form-control" name="" cols="30" rows="5" placeholder="Message" id="message" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-rounded btn-lg" id="send-email">Send</button>
+            </form>
+        </div>
+    </div>
+</main>
+<!-- container e -->

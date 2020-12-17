@@ -1,0 +1,313 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@inject AppSetting Setting
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    @{
+        string ex = "";
+        if (ViewData["Title"] != null && ViewData["Title"].ToString() != "")
+        {
+            ex = ViewData["Title"] + " - " as string;
+        }
+        Theme theme = ViewData["theme"] as Theme;
+
+    }
+    <title>@ex @Setting.Get("app_name_frontend")</title>
+    @Html.Raw(theme.GetCssUrl())
+    @Html.Raw(theme.GetJsUrl())
+    <!-- CSS is not registered yet -->
+    <link rel="stylesheet" href="/Themes/@theme.GetName(false)/css/custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/css/perfect-scrollbar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/css/swiper.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.css">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap">
+    <!-- JS is not registered yet -->
+    <script defer src="https://use.fontawesome.com/releases/v5.9.0/js/all.js" integrity="sha384-7Gk1S6elg570RSJJxILsRiq8o0CO99g1zjfOISrqjFUCjxHDn3TmaWoWOqt6eswF" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/js/swiper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit"></script>
+
+    <script type="text/javascript"> var CiceroVars = { "base_url": "@Url.Content("/")" }; </script>
+</head>
+
+<body class="fluid-layout @ViewData["body"]">
+    <div class="wrapper">
+        <h1 class="sr-only">@Setting.Get("app_name_frontend")</h1>
+        @RenderBody()
+    </div>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary confirm">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="media" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body py-0"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Insert Media</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- picture modal -->
+    <!-- <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg image-flybox">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title image-flybox-hd titlePic" id="exampleModalCenterTitle"></h5>
+                    <button type="button" class="image-flybox-close close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="javascript:void(0)" class="image-flybox-nav picPrev"></a>
+                    <a href="javascript:void(0)" class="image-flybox-nav picNext"></a>
+                    <img src="" class="imagepreview">
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="lightbox fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="lightboxModalTitle" aria-hidden="true">
+        <div class="lightbox__dialog">
+            <div class="lightbox__content">
+                <div class="lightbox__toolbar">
+                    <h5 class="lightbox__title titlePic" id="lightboxModalTitle"></h5>
+                    <span class="lightbox__icon lightbox__close" data-dismiss="modal" aria-label="Close">
+                        <span class="sr-only">Close</span>
+                    </span>
+                </div>
+                <div class="lightbox__items">
+                    <div class="lightbox__item">
+                        <img src="" class="lightbox__img imagepreview">
+                    </div>
+                    <div class="lightbox__action">
+                        <a href="javascript:void(0)" class="lightbox__icon lightbox__prev picPrev"></a>
+                        <a href="javascript:void(0)" class="lightbox__icon lightbox__next picNext"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lightbox__backdrop"></div>
+    <!-- slick slider js -->
+    <script type="text/javascript" src="@Url.Content("~/frontend/js/slick.js")"></script>
+
+    <script src="~/js/toastr.js"></script>
+    <script>
+        $(window).scroll(function () {
+            var scroll = $(window).scrollTop();
+
+            if (scroll >= 10) {
+                $(".masthead").addClass("sticky");
+            } else {
+                $(".masthead").removeClass("sticky");
+            }
+            if (scroll >= 600) {
+                $(".masthead").addClass("small-hd");
+            } else {
+                $(".masthead").removeClass("small-hd");
+            }
+        });
+
+        $(document).ready(function () {
+            var lightbox = $('.lightbox');
+            var lightboxBackdrop = $('.lightbox__backdrop');
+            $(document).on('click', ".pop", function () {
+                $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+                $('.imagepreview').attr('data-imgRaw', $(this).find('img').attr('src'));
+                //$('#imagemodal').modal('show');
+                let title = $(this).find('img').data('imgtitle');
+                $('.titlePic').text(title);
+                openLightbox();
+            });
+            function openLightbox() {
+                $(lightbox).addClass('show');
+                $(lightboxBackdrop).addClass('show');
+                $('body').addClass('lightbox__open');
+            }
+            function closeLightbox() {
+                $(lightbox).removeClass('show');
+                $(lightboxBackdrop).removeClass('show');
+                $('body').removeClass('lightbox__open');
+            }
+            function nextImage() {
+                var gg = $('.imagepreview').attr('src');
+                var picTitle = $('.imagepreview').data('imgtitle');
+                var nextImgUrl = $($('.fileuploader').find('.pop .fileuploader__item-image img[src$="' + gg + '"]').parent().next('li').find('.pop .fileuploader__item-image img')[0]).attr('src');
+                var nextImgTitle = $($('.fileuploader').find('.pop .fileuploader__item-image img[src$="' + gg + '"]').parent().next('li').find('.pop .fileuploader__item-image img')[0]).data('imgtitle');
+                $('.imagepreview').attr('src', nextImgUrl);
+                //console.log(nextImgTitle)
+                $('.titlePic').text(nextImgTitle);
+            }
+            function prevImage() {
+                var gg = $('.imagepreview').attr('src');
+                var picTitle = $('.imagepreview').data('imgtitle');
+                var nextImgUrl = $($('.fileuploader').find('.pop .fileuploader__item-image img[src$="' + gg + '"]').parent().prev('li').find('.pop .fileuploader__item-image img')[0]).attr('src');
+                var nextImgTitle = $($('.fileuploader').find('.pop .fileuploader__item-image img[src$="' + gg + '"]').parent().prev('li').find('.pop .fileuploader__item-image img')[0]).data('imgtitle');
+                //console.log(nextImgTitle);
+                $('.imagepreview').attr('src', nextImgUrl);
+                $('.titlePic').text(nextImgTitle);
+            }
+            $('.picNext').on('click', function () {
+                nextImage();
+            });
+            $('.picPrev').on('click', function () {
+                prevImage();
+            })
+            $('.lightbox__close').click(function () {
+                closeLightbox();
+            });
+            $(document).keydown(function (event) {
+                //console.log(event.keyCode)
+                if (event.keyCode === 37) {
+                    prevImage();
+                }
+                if (event.keyCode === 39) {
+                    nextImage();
+                }
+                if (event.keyCode === 27) {
+                    closeLightbox()
+                }
+            });
+        });
+
+
+    </script>
+    <script>
+
+
+        $(document).ready(function () {
+            $("body").tooltip({
+                selector: '[data-toggle="tooltip"]'
+            });
+
+            $('.notification').on('click', function (event) {
+                // The event won't be propagated up to the document NODE and
+                // therefore delegated events won't be fired
+                event.stopPropagation();
+            });
+
+            $(".card-header[aria-expanded='true']").parent().addClass("active");
+            $(".card-header").on("click", function () {
+                if ($(this).attr("aria-expanded") == "true") {
+                    $(".card").removeClass("active");
+                    $(this).parent().removeClass("active");
+                } else {
+                    $(".card").removeClass("active");
+                    $(this).parent().addClass("active");
+                }
+            })
+
+            // var s = $(".nav-tabs-bg");
+            // var pos = s.position();
+            // var windowpos = $(window).scrollTop();
+            // if (windowpos >= pos.top & windowpos <= 0) {
+            //     $('.header').css('position', 'sticky');
+            // }
+            // if (windowpos >= pos.top & windowpos >= 61) {
+            //     s.addClass("sticky-top shadow-sm");
+            // }
+            // $(window).scroll(function () {
+            //     if (windowpos >= pos.top & windowpos <= 0) {
+            //         $('.header').css('position', 'sticky');
+            //     } else {
+            //         $('.header').css('position', 'static');
+            //     }
+            //     if (windowpos >= pos.top & windowpos >= 61) {
+            //         s.addClass("sticky-top shadow-sm");
+            //     } else {
+            //         s.removeClass('sticky-top shadow-sm');
+            //     }
+            // });
+
+        });
+
+        // function navControl() {
+        //     var navWrapper = document.querySelector('.nav-tabs-bg');
+        //     var navItem = document.querySelector('.nav-tabs-custom');
+        //     var navList = document.querySelectorAll('.nav-tabs-custom .nav-item');
+        //     navItem.style.flexWrap = 'nowrap';
+        //     var totalWidth = 0;
+        //     for (var i = 0; i < navList.length; i++) {
+        //         totalWidth += navList[i].offsetWidth;
+        //     }
+        //     if (navWrapper.offsetWidth > totalWidth) {
+        //         navWrapper.style.justifyContent = 'center';
+        //         navWrapper.style.overflow = 'initial';
+        //     } else {
+        //         navWrapper.style.justifyContent = 'flex-start';
+        //         navWrapper.style.overflow = 'auto hidden';
+        //     }
+        // }
+        // window.addEventListener('load', navControl);
+        // window.addEventListener('resize', navControl);
+
+        // const message = new PerfectScrollbar('.ps-message');
+        // const notification = new PerfectScrollbar('.ps-notification');
+
+        document.querySelector('.toggle-menu').addEventListener('click', function () {
+            if (!this.classList.contains('menu-switch')) {
+                this.classList.add('menu-switch');
+                document.querySelector('body').classList.add('sidebar--minimize');
+                var backdrop = document.createElement('div');
+                backdrop.classList.add('nav-backdrop');
+                document.querySelector('.main-container').appendChild(backdrop);
+                backdrop.onclick = hideNavBackdrop;
+            } else {
+                this.classList.remove('menu-switch');
+                document.querySelector('body').classList.remove('sidebar--minimize');
+                document.querySelector('.nav-backdrop').remove();
+            }
+        });
+        document.querySelector('.toggle-menu').addEventListener('keyup', function (e) {
+            if (e.keyCode === 27) {
+                e.preventDefault();
+                hideNavBackdrop();
+            }
+        });
+        function hideNavBackdrop() {
+            document.querySelector('.toggle-menu').classList.remove('menu-switch');
+            document.querySelector('body').classList.remove('sidebar--minimize');
+            document.querySelector('.nav-backdrop').remove();
+        }
+    </script>
+
+    @RenderSection("Scripts", required: false)
+    @await Component.InvokeAsync("NToastNotify")
+</body>
+</html>
+

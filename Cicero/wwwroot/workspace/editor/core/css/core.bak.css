@@ -1,0 +1,573 @@
+/* ***************************************************************************************************
+
+	Description:	ScriptsConnect Code Editor: core styles
+
+	TABLE OF CONTENTS:
+	------------------
+		    I. Browser Resets
+		   II. Import Fonts
+		  III. Template Frame Styles
+		   IV. Header
+		    V. Navigation
+		   VI. Editor Region
+		  VII. Footer Region
+
+   *************************************************************************************************** */
+
+/* *************************************************************************************************** */
+/* I. Browser Resets ********************************************************************************* */
+/* *************************************************************************************************** */
+html, body {
+	width: 100%;
+	height: 100%;
+	}
+	body {
+		display: block;
+		min-width: 1px;
+		max-width: 10000px;
+		min-height: 1px;
+		max-height: 10000px;
+		color: #555;
+		font-family: Tahoma, Arial, Helvetica, Sans-serif;
+		font-size: 12px;
+		line-height: 1;
+		background-color: #000;
+		}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4,
+h5, h6, p, blockquote, pre, a, abbr, acronym, address, big,
+cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small,
+strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt,
+dd, ol, ul, li, fieldset, form, label, legend, table, caption,
+tbody, tfoot, thead, tr, th, td, article, aside, canvas,
+details, embed, figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary, time, mark,
+audio, video {
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	border: 0;
+	}
+
+html, html a {
+	-webkit-font-smoothing: antialiased;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+	}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+    }
+
+ul, ol {
+	list-style: none;
+	}
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+	}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	}
+
+a {
+	text-decoration: none;
+	}
+
+sup {
+	margin: 0;
+	padding: 0;
+	font-size: 10px;
+	line-height: 0;
+	}
+
+/* .clearfix, */
+.clear {
+	clear: both;
+	*zoom: 1;
+	margin: 0;
+	padding: 0;
+	display: block;
+	width: 0;
+	height: 0;
+	font-size: 0;
+	line-height: 0;
+	overflow: hidden;
+	outline: 0 none;
+	border: 0 none;
+	}
+
+
+
+/* *************************************************************************************************** */
+/* II. Import Fonts ********************************************************************************** */
+/* *************************************************************************************************** */
+
+
+
+
+/* *************************************************************************************************** */
+/* III. Template Frame Styles ************************************************************************ */
+/* *************************************************************************************************** */
+div.wrapper {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	display: -webkit-box;
+	min-width: 0;
+	max-width: 10000px;
+	min-height: 0;
+	max-height: 10000px;
+	}
+	div.headertoolbar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 10 !important;
+		min-width: 900px;
+		height: 31px;
+		min-height: 1px;
+		max-height: 10000px;
+		overflow: visible !important;
+		border-top: 1px solid #000;
+		border-bottom: 1px solid #000;
+		background-color: #303030;
+		
+		-webkit-transition: all cubic-bezier(0.1, 0.1, 0.25, 0.9) 0ms;
+		-webkit-transition: all cubic-bezier(0.1, 0.1, 0.25, 0.9) 0ms;
+		-ms-transition: 	all cubic-bezier(0.1, 0.1, 0.25, 0.9) 0ms;
+		-o-transition: 		all cubic-bezier(0.1, 0.1, 0.25, 0.9) 0ms;
+		transition: 		all cubic-bezier(0.1, 0.1, 0.25, 0.9) 0ms;
+		}
+	div.footertoolbar {
+		/*
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 50px;
+		*/
+		
+		background-color: #2c2c2c;
+		}
+
+
+
+/* *************************************************************************************************** */
+/* IV. Header **************************************************************************************** */
+/* *************************************************************************************************** */
+div.headertoolbar_inside {
+	border-top: 4px solid #49a8fa;
+	}
+
+
+
+/* *************************************************************************************************** */
+/* V. Navigation ************************************************************************************* */
+/* *************************************************************************************************** */
+ul.sitenavigation {
+	margin-left: 15px;
+	}
+	
+	ul.sitenavigation li {
+		position: relative;
+		}
+	
+	ul.sitenavigation li.parent {
+		display: block;
+		float: left;
+		color: #cecece;
+		font-size: 12px;
+		}
+		ul.sitenavigation a {
+			color: #cecece;
+			white-space: nowrap;
+			}
+		
+		/* Parent Items */
+		ul.sitenavigation a.parent.link {
+			display: block;
+			height: 24px;
+			border-top: 1px solid #353535;
+			border-right: 1px solid transparent;
+			border-left: 1px solid transparent;
+			}
+			ul.sitenavigation li.parent:hover a.parent.link {
+				border-top: 1px solid #515151;
+				border-right: 1px solid #000;
+				border-left: 1px solid #000;
+				background-color: #262626;
+				}
+			
+			ul.sitenavigation a.parent.link span {
+				padding: 0 7px;
+				display: block;
+				line-height: 23px;
+				}
+		
+		/* Submenu */
+		ul.sitenavdropdown {
+			position: absolute;
+			display: none;
+			top: 25px;
+			left: 0;
+			z-index: 20;
+			border: 1px solid #000;
+			background: #c3c3c3;
+			background: rgba(75, 75, 75, 0.99);
+			}
+			ul.sitenavigation li:hover > ul.sitenavdropdown { display: block; }
+			
+			ul.sitenavdropdown li.first { padding-top: 3px; }
+			ul.sitenavdropdown li.last 	{ padding-bottom: 3px; }
+			
+			ul.sitenavdropdown li.navsep {
+				margin: 2px 3px;
+				height: 1px;
+				border-top: 1px solid #353535;
+				background-color: #565656;
+				}
+				ul.sitenavdropdown li.navsep span {}
+			
+			ul.sitenavdropdown li.child {
+				position: relative;
+				}
+				ul.sitenavdropdown li.child a {
+					padding: 5px 15px;
+					display: block;
+					color: #f1f1f1;
+					
+					-webkit-transition: color 0.1s ease-in-out,
+										background-color 0.1s ease-in-out;
+					-moz-transition: 	color 0.1s ease-in-out,
+										background-color 0.1s ease-in-out;
+					-ms-transition: 	color 0.1s ease-in-out,
+										background-color 0.1s ease-in-out;
+					-o-transition: 		color 0.1s ease-in-out,
+										background-color 0.1s ease-in-out;
+					transition: 		color 0.1s ease-in-out,
+										background-color 0.1s ease-in-out;
+					}
+					ul.sitenavdropdown li.child:hover > a {
+						color: #f5b53c;
+						background-color: #262626;
+						}
+						
+					li.child a.subnav {
+						background-image: url("../images/subnav_arrow_right.png");
+						background-position: 92% 50%;
+						background-repeat: no-repeat;
+						}
+					
+					ul.sitenavdropdown li.child span.label_wo_key {}
+					
+					ul.sitenavdropdown li.child span.label_w_key {
+						display: block;
+						float: left;
+						}
+					ul.sitenavdropdown li.child span.label_key {
+						display: block;
+						float: right;
+						}
+				
+				ul.sitenavdropdown li.child ul.sitenavdropdown {
+					top: 0;
+					left: 99.8%;
+					z-index: 999;
+					}
+				
+				/* Dropdown Widths */
+				/* Main Level */
+				ul.sitenavdropdown.dropdownfile 			{ width: 200px; }
+				ul.sitenavdropdown.dropdownedit 			{ width: 220px; }
+				ul.sitenavdropdown.dropdownselection 	{ width: 155px; }
+				ul.sitenavdropdown.dropdownfind 			{ width: 190px; }
+				ul.sitenavdropdown.dropdownview 			{}
+				ul.sitenavdropdown.dropdowngoto 			{ width: 155px; }
+				ul.sitenavdropdown.dropdowntools 		{ width: 205px; }
+				ul.sitenavdropdown.dropdownhelp 			{}
+					
+					/* Additional Levels */
+					ul.sitenavdropdown.dropdownrecent 	{}
+					ul.sitenavdropdown.dropdownline 		{ width: 140px; }
+					ul.sitenavdropdown.dropdowncomment 	{ width: 165px; }
+					ul.sitenavdropdown.dropdownconvert 	{ width: 165px; }
+					ul.sitenavdropdown.dropdownthemes 	{}
+					ul.sitenavdropdown.dropdownfont 		{ width: 205px; }
+					ul.sitenavdropdown.dropdownwrap 		{}
+
+
+
+/* *************************************************************************************************** */
+/* VI. Editor Region ********************************************************************************* */
+/* *************************************************************************************************** */
+
+/* File Manager */
+div.filemanager_holder {
+	position: relative;
+	float: left;
+	width: 15%;
+	height: 100%;
+	
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: 	border-box;
+	box-sizing: 		border-box;
+	}
+	div.filemanager_inside {
+		height: 100%;
+		overflow: hidden;
+		}
+		div.filemanager_toolbar {
+			height: 25px;
+			border-top: 1px solid #353535;
+			border-bottom: 1px solid #000;
+			background-color: #2c2c2c;
+			}
+		div.filemanager_tooltitle {
+			position: relative;
+			padding: 0 0 0 10px;
+			height: 25px;
+			color: #595959;
+			font-size: 11.5px;
+			line-height: 25px;
+			text-transform: uppercase;
+			overflow: hidden;
+			border-top: 1px solid #fbfbfb;
+			border-right: 1px solid #f9f9f9;
+			border-bottom: 1px solid #c7c7c8;
+			background-color: #e4e4e4;
+			
+			text-shadow: 0 1px 0 rgba(255, 255, 255, 0.40);
+			}
+		div.filemanager_titlesep {
+			border-right: 1px solid #f9f9f9;
+			border-bottom: 1px solid #bfbfbf;
+			background-color: #e3e3e3;
+			}
+			div.filemanager_titlesep span {
+				display: block;
+				height: 3px;
+				border-top: 1px solid #efefef;
+				}
+		div.filemanager_main {
+			height: 100%;
+			overflow: auto;
+			overflow-x: hidden;
+			border-right: 1px solid #f9f9f9;
+			background: #d3d3d3 url("../images/pattern_bkg_noise.png");
+			}
+
+/* Editor */
+div.editor_holder {
+	position: relative;
+	float: left;
+	width: 85%;
+	height: 100%;
+	overflow: hidden;
+	/* border-left: 1px solid #a0a0a0; */
+	/* background-color: #f0f0f0; */
+	
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: 	border-box;
+	box-sizing: 		border-box;
+	}
+	div.editor_inside {
+		position: relative;
+		height: 100%;
+		}
+		
+		/* Editor File Tab List */
+		div.editortabbar {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 25px;
+			border-top: 1px solid #353535;
+			border-bottom: 1px solid #000;
+			background-color: #2c2c2c;
+			}
+			ul#editorfilelist {
+				margin: 0;
+				padding: 0 0 0 13px;
+				width: 10000px;
+				}
+				ul#editorfilelist li {
+					position: relative;
+					margin: 0 2px 0 0;
+					display: block;
+					float: left;
+					height: 25px;
+					}
+					
+					li.filelistborder.left 	{ display: none !important; width: 1px; border-right: 1px solid #111; }
+					li.filelistborder.right 	{ display: none !important; width: 1px; border-left: 1px solid #454545; }
+					
+					ul#editorfilelist li.selected {}
+					ul#editorfilelist li.unselected {}
+					
+					ul#editorfilelist li.first {}
+					ul#editorfilelist li.last {}
+					
+					ul#editorfilelist li.saved {}
+					ul#editorfilelist li.unsaved {}
+					
+					ul#editorfilelist div.tabbttn {
+						margin: 0;
+						padding: 0 30px 0 10px;
+						display: block;
+						height: 25px;
+						color: #fff;
+						font-size: 12px;
+						line-height: 23px;
+						cursor: pointer;
+						border-right: 1px solid #454545;
+						border-left: 1px solid #454545;
+						
+						text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.60);
+						-webkit-transition: color 0.3s ease-in-out,
+											background-color 0.3s ease-in-out;
+						-moz-transition: 	color 0.3s ease-in-out,
+											background-color 0.3s ease-in-out;
+						-ms-transition: 	color 0.3s ease-in-out,
+											background-color 0.3s ease-in-out;
+						-o-transition: 		color 0.3s ease-in-out,
+											background-color 0.3s ease-in-out;
+						transition: 		color 0.3s ease-in-out,
+											background-color 0.3s ease-in-out;
+						}
+						ul#editorfilelist li.first div.tabbttn {} 
+						
+						ul#editorfilelist li:hover div.tabbttn,
+						ul#editorfilelist li.selected div.tabbttn {
+							color: #f5b53c;
+							background-color: #0f0f0f;
+							}
+							ul#editorfilelist li.selected div.tabbttn {
+								-webkit-box-shadow: 0 5px 15px rgba(222, 222, 222, 0.15) inset;
+								-moz-box-shadow: 	0 5px 15px rgba(222, 222, 222, 0.15) inset;
+								box-shadow: 		0 5px 15px rgba(222, 222, 222, 0.15) inset;
+								}
+						
+						ul#editorfilelist span.name {
+							display: block;
+							}
+						ul#editorfilelist a.close {
+							position: absolute;
+							top: 50%;
+							right: 5px;
+							margin: -8px 0 0;
+							display: block;
+							width: 16px;
+							height: 16px;
+							background: url("../images/nav_close.png") center center no-repeat;
+							
+							-webkit-border-radius: 	10px;
+							-moz-border-radius: 	10px;
+							border-radius: 			10px;
+							-webkit-transition: background-color 0.3s ease-in-out;
+							-moz-transition: 	background-color 0.3s ease-in-out;
+							-ms-transition: 	background-color 0.3s ease-in-out;
+							-o-transition: 		background-color 0.3s ease-in-out;
+							transition: 		background-color 0.3s ease-in-out;
+							}
+							ul#editorfilelist a.close:hover {
+								background-color: #2d2d2d;
+								}
+					
+					/* New Tab Button */
+					li.newtabitem {
+						margin: 2px 12px 2px 0 !important;
+						height: auto !important;
+						text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.50);
+						}
+						li.newtabitem span {
+							margin: 0;
+							padding: 0 6px;
+							display: block;
+							height: 18px;
+							color: #cbcbcb;
+							font-size: 13px;
+							line-height: 17px;
+							cursor: pointer;
+							border: 1px solid #000;
+							border-color: #303030 #484848 #484848 #2e2e2e;
+							background-color: #1c1c1c;
+							background-color: rgba(0, 0, 0, 0.30);
+							
+							-webkit-border-radius: 	1px;
+							-moz-border-radius: 	1px;
+							border-radius: 			1px;
+							-webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15) inset;
+							-moz-box-shadow: 	0 3px 5px rgba(0, 0, 0, 0.15) inset;
+							box-shadow: 		0 3px 5px rgba(0, 0, 0, 0.15) inset;
+							-webkit-transition: color 0.3s ease-in-out,
+												background-color 0.3s ease-in-out;
+							-moz-transition: 	color 0.3s ease-in-out,
+												background-color 0.3s ease-in-out;
+							-ms-transition: 	color 0.3s ease-in-out,
+												background-color 0.3s ease-in-out;
+							-o-transition: 		color 0.3s ease-in-out,
+												background-color 0.3s ease-in-out;
+							transition: 		color 0.3s ease-in-out,
+												background-color 0.3s ease-in-out;
+							}
+							li.newtabitem:hover span {
+								color: #fff;
+								background-color: #000;
+								background-color: rgba(0, 0, 0, 0.95);
+								}
+			
+		.editorcoder {
+			position: absolute;
+			top: 27px;
+			left: 0;
+			right: 0;
+			height: 100%;
+			}
+
+/* Right Sidebar */
+div.sidetools_holder {
+	position: absolute;
+	top: 0;
+	right: 0;
+	float: right;
+	width: 45px;
+	height: 100%;
+	background-color: #2c2c2c;
+	
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: 	border-box;
+	box-sizing: 		border-box;
+	}
+	div.sidetools_inside {}
+
+
+
+/* *************************************************************************************************** */
+/* VII. Footer Region ******************************************************************************** */
+/* *************************************************************************************************** */
+div.footertoolbar_inside {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,94 @@
+﻿@using Themes.Core.Components
+@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+@inject IRoleService roleService
+
+@inject Permission Permission
+@inject IFormBuilderService formBuilderService
+@inject ICommonService commonService
+@inject ITemplateService templateService
+@inject Utils utils
+
+@{
+    MailMergeObjectViewModel mailMerge = Model as MailMergeObjectViewModel;
+
+    var loggedUser = commonService.getLoggedInUserId();
+    string roleId = commonService.GetRoleIdByUserId(loggedUser);
+    string GetChecked(bool? checkValue)
+    {
+        if (checkValue == true)
+            return " checked=" + checkValue;
+        return "";
+    }
+}
+<style>
+    .hidePart {
+        display: none;
+    }
+</style>
+<form class="widgets-body sync-wrap">
+    <div class="row mb-2">
+        <div class="form-group col-lg-6">
+            <label>Title</label>
+            <input type="text" name="Title" class="form-control" value="@mailMerge.Title" disabled>
+            <input type="hidden" name="Id" value="@mailMerge.Id" />
+            <input type="hidden" name="IsDeleted" value="@mailMerge.IsDeleted"/>
+            <input type="hidden" name="TenantId" value="@mailMerge.TenantId"/>
+            <input type="hidden" name="CreatedDate" value="@mailMerge.CreatedDate"/>
+            
+        </div>
+        <div class="form-group col-lg-6">
+            <label>Form</label>
+            <select class="form-control custom-select" name="FormId" value="@mailMerge.FormId" disabled>
+                <option value="">Choose Form</option>
+                @foreach (var item in formBuilderService.FormList("" + utils.GetTenantFromSession() + ""))
+                {
+                    if (mailMerge.FormId == Convert.ToInt16(item.Value))
+                    {
+                        <option selected="selected" value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+
+                }
+            </select>
+        </div>
+
+    </div>
+    <div class="row mb-2">
+        <div class="form-group col-lg-6">
+            <label>Mail Template</label>
+            <select class="form-control custom-select" name="FormId" value="@mailMerge.TemplateId" disabled>
+                <option value="">Choose Form</option>
+                @foreach (var item in templateService.GetTemplateListForWorkflow(mailMerge.FormId))
+                {
+                    if (mailMerge.TemplateId == Convert.ToInt16(item.Value))
+                    {
+                        <option selected="selected" value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+
+                }
+            </select>
+        </div>
+        
+            <div class="form-group align-items-end col-lg-4">
+                <label for="IsActive" class="switch">
+                    <input class="switch__input" id="IsActive" name="IsActive"  type="checkbox" value="true" @GetChecked(mailMerge.IsActive)/>
+                    <span class="switch__state"></span>
+                    <span class="switch__label">Is Active</span>
+                </label>
+         
+        </div>
+    </div>
+
+
+
+</form>

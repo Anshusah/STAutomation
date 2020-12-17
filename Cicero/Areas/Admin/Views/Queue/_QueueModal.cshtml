@@ -1,0 +1,1065 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Services
+@model QueueViewModel
+
+@inject Utils  _utils
+@inject IMediaService  _mediaService
+
+@{
+    var queueIconListData = _mediaService.GetQueueIconMedia();
+
+    //IEnumerable<List<T>> splitList<T>(List<T> locations, int nSize = 8)
+    //{
+    //    for (int i = 0; i < locations.Count; i += nSize)
+    //    {
+    //        yield return locations.GetRange(i, Math.Min(nSize, locations.Count - i));
+    //    }
+    //}
+
+    //var queueIconList = splitList(queueIconListData);
+    // var divCount = 1;
+}
+<style>
+    .hideOption {
+        display: none;
+    }
+</style>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<form action="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/savequeue")" id="queue-form" method="post">
+    <div class="modal-body">
+        @if (Model.Id == 0)
+        {
+            <div class="row">
+                <div class="col-xl-7 col-lg-6">
+                    <div class="form-group">
+                        <label asp-for="Name">Queue Name</label>
+                        <div class="input-group color-picker">
+                            <input type="text" class="form-control name" placeholder="" asp-for="Name">
+                            <div class="input-group-append dropdown">
+                                <input id="input-color-picker" type="text" asp-for="Color" class="form-control" hidden>
+                                <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button" id="button-addon1" data-placement="top" title="Choose color"><i class="ri-paint-fill"></i></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="color-tiles-group">
+                                        <div class="color-tile">
+                                            <span class="color berryred" id="#EF3A53"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color blue" id="#44A4F8"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color neon" id="#3BD593"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color dullpurple" id="#CF92DE"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color brightred" id="#FF6D4F"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color yellow" id="#FFB636"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color gold" id="#A88240"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color pink" id="#F66DAD"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color darkblue" id="#0C9CBA"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color green" id="#93D549"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color purlple" id="#9869E8"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color grey" id="#68655F"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color darkestblue" id="#3C598B"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color darkgreen" id="#5E8B3C"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color lightpink" id="#FB85F7"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color black" id="#000000"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color satpurple" id="#5D44C2"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color lightblue" id="#13BDF2"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color dullgreen" id="#9AA591"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color orange" id="#F97F22"></span>
+                                        </div>
+                                    </div>
+                                </div> <!--//dropdown-menu-->
+                            </div>
+
+                        </div>
+                        <div class="d-flex">
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <small class="form-text text-muted color-help">Note: Color will be used in Frontend</small>
+                    </div> <!--//.form-group-->
+                    @*<div class="form-group">
+                            <label asp-for="Name">Queue Name</label>
+                            <input type="text" class="form-control" asp-for="Name" placeholder="Enter Queue Name">
+                            <div class="d-flex">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                        </div>*@
+                    <div class="form-group">
+                        <label asp-for="UrlIdentifier">Queue Url</label>
+                        <input type="text" class="form-control" asp-for="UrlIdentifier" placeholder="Enter Queue Name">
+                        <div class="d-flex">
+                            <span asp-validation-for="UrlIdentifier" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="from-group">
+                        <div class="alert alert-info">
+                            Queue Permission options will be avaible once saved and dragged to the queue configuration flow.
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            <div class="border-bottom">
+                                <label class="font-weight-bold"> </label>
+                                <input type="number" name="QueueForForm[0].CaseFormId" id="caseFormId-queue" class="form-control" placeholder="" hidden>
+                            </div>
+                        </div>*@
+                    @*<div class="form-group state-icon-group">
+                            <label>Queue's icon</label>
+                            <button type="button" id="uploadIcon" class="btn btn-link" data-toggle="modal" data-target="#uploadIconModal">+ Upload Icons</button>
+                            @if (queueIconListData.Count > 8)
+                            {
+                                <button type="button" id="allIcon" class="btn btn-link" data-toggle="modal" data-target="#moreQueueIconModal">All Icons</button>
+                            }
+                            <input type="text" asp-for="Icon" state-icon hidden />
+                            <div class="state-icon-list">
+                                @for (int i = 0; i < queueIconListData.Take(8).ToList().Count; i++)
+                                {
+                                    if (i != 0)
+                                    {
+                                        <div class="state-icon-item">
+                                            <span class="actions-holder">
+                                                <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                <button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button>
+                                            </span>
+                                            <div class="thumbnail-holder">
+                                                <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="state-icon-item">
+                                            <span class="actions-holder">
+                                                <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                <button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button>
+                                            </span>
+                                            <div class="thumbnail-holder">
+                                                <img id="#default-img" src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                            </div>
+                                        </div>
+
+                                    }
+                                }
+                            </div>
+                        </div>*@
+                    @*<div class="form-group">
+                            <label for="orderPosition">Order Position</label>
+                            <input type="number" id="orderPosition" class="form-control w-auto" placeholder="" data-val="true" data-val-remote="Order Position Already Exists. Please Change the previous one if you want this position." data-val-remote-additionalfields="*.Order,*.Id,*.CaseFormId" data-val-remote-type="Post" data-val-remote-url="/Admin/Queue/CheckQueueOrderDuplication" data-val-required="The Order Position field is required." id="QueueForForm[0].Order" name="QueueForForm[0].Order" value="0">
+
+                            <div class="d-flex">
+                                <span class="field-validation-valid" data-valmsg-for="QueueForForm[0].Order" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="display-name-settings">
+                            <div class="display-name-settings__wrapper">
+                                <div class="display-name-settings__header">
+                                    <h5>Display name settings</h5>
+                                    <p class="text-muted mb-0">Same Permissions for all roles.</p>
+                                </div>
+                                <div class="display-name-settings__toolbar">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-3" id="clone-queue-btn"><i class="ri-add-fill"></i> Add more</button>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" name="QueueForForm[0].AllUser" id="QueueForForm[0].AllUser" data-val-regex="Whole Numbers only" data-val-regex-pattern="^[0-9]*$" value="true" class="custom-control-input" permission-queue-target>
+                                        <label class="custom-control-label" for="QueueForForm[0].AllUser"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="queue-permission" id="queue-permissions-0" data-index="0">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Display Name</label>
+                                        <input type="text" name="QueueForForm[0].QueuePermissions[0].DisplayName" class="form-control dname-queue" placeholder="Enter Queue Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <select class="custom-select role-queue" name="QueueForForm[0].QueuePermissions[0].RoleId" asp-items="Model.RoleList">
+                                            <option value="">Choose an option</option>
+                                        </select>
+                                    </div>
+                                    <div class="actions-holder">
+                                        <button class="queue-permission-action queue-permission--remove" title="Remove" remove-queue-permission><i class="ri-close-fill"></i><span class="sr-only">Remove</span></button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+
+                <div class="col-xl-5 col-lg-6">
+                    <div class="card queue-uploader">
+                        <h5 class="card-header">Queue icons</h5>
+                        <div class="card-body">
+                            <div class="fileuploader fileuploader--theme-dragdrop">
+                                <div class="fileuploader__input">
+                                    <div class="fileuploader__icon-main"></div>
+                                    <h3 class="fileuploader__input-caption">Drag and drop to upload</h3>
+                                    <p>or <a href="#" id="browseSpan">Browse</a><input class="form-control" type="file" id="browseFile" multiple="" hidden=""> to choose file</p>
+                                    <span class="file-extension">jpg, jpeg ,png, gif (optimal resolution (85) x (85))</span>
+                                </div>
+                            </div>
+
+                            <div class="state-icon-group">
+                                @*@if (queueIconListData.Count > 8)
+                                    {
+                                        <button type="button" id="allIcon" class="btn btn-link" data-toggle="modal" data-target="#moreQueueIconModal">All Icons</button>
+                                    }*@
+                                <input type="text" asp-for="Icon" state-icon hidden /> @*value="/images/state/ic-draft.png"/>*@
+                                <div class="state-icon-list">
+                                    @for (int i = 0; i < queueIconListData.ToList().Count; i++)
+                                    {
+                                        if (i != 0)
+                                        {
+                                            <div class="state-icon-item">
+                                                <span class="actions-holder">
+                                                    <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                    <button type="button" class="state-icon-action state-icon--checked" title="Selected">
+                                                        <i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span>
+                                                    </button>
+                                                </span>
+                                                <div class="thumbnail-holder">
+                                                    <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="state-icon-item">
+                                                <span class="actions-holder">
+                                                    <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                    <button type="button" class="state-icon-action state-icon--checked" title="Selected">
+                                                        <i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span>
+                                                    </button>
+                                                </span>
+                                                <div class="thumbnail-holder">
+                                                    <img id="#default-img" src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                                </div>
+                                            </div>
+
+                                        }
+                                    }
+                                </div>
+                                @*<div align="right">
+                                        <button type="button" class="btn btn-light toggle__div btn__left" disabled>«</button>
+                                        <button type="button" class="btn btn-light toggle__div btn__right">
+                                            »
+                                        </button>
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-xl-7 col-lg-6">
+                    <input asp-for="Id" hidden />
+                    <input asp-for="TenantId" hidden />
+                    <input id="fromEdit" hidden />
+
+                    <div class="form-group">
+                        <label for="stateActionName">Queue Name</label>
+                        <div class="input-group color-picker">
+                            <input type="text" class="form-control actionname" asp-for="Name" id="stateActionName">
+
+                            <div class="input-group-append dropdown">
+                                <input id="input-color-picker" type="text" asp-for="Color" class="form-control" hidden>
+                                <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button" id="button-addon1" data-placement="top" title="Choose color"><i class="ri-paint-fill"></i></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="color-tiles-group">
+                                        <div class="color-tile">
+                                            <span class="color berryred" id="#EF3A53"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color blue" id="#44A4F8"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color neon" id="#3BD593"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color dullpurple" id="#CF92DE"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color brightred" id="#FF6D4F"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color yellow" id="#FFB636"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color gold" id="#A88240"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color pink" id="#F66DAD"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color darkblue" id="#0C9CBA"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color green" id="#93D549"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color purlple" id="#9869E8"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color grey" id="#68655F"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color darkestblue" id="#3C598B"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color darkgreen" id="#5E8B3C"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color lightpink" id="#FB85F7"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color black" id="#000000"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color satpurple" id="#5D44C2"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color lightblue" id="#13BDF2"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color dullgreen" id="#9AA591"></span>
+                                        </div>
+                                        <div class="color-tile">
+                                            <span class="color orange" id="#F97F22"></span>
+                                        </div>
+                                    </div>
+                                </div> <!--//dropdown-menu-->
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <span asp-validation-for="Name"></span>
+                        </div>
+
+                        <small class="form-text text-muted color-help">Note: Color will be used in Frontend</small>
+                    </div>
+
+                    @*<div class="form-group">
+                            <label asp-for="Name">Queue Name</label>
+                            <input type="text" class="form-control" asp-for="Name" placeholder="Enter Queue Name">
+                            <div class="d-flex">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>*@
+                    <div class="form-group">
+                        <label asp-for="UrlIdentifier">Queue Url</label>
+                        <input type="text" class="form-control" asp-for="UrlIdentifier" placeholder="Enter Queue Name">
+                        <div class="d-flex">
+                            <span asp-validation-for="UrlIdentifier" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    @if (Model.QueueForForm != null)
+                    {
+                        if (Model.QueueForForm.Count() > 0)
+                        {
+                            int j = 0;
+                            foreach (var item in Model.QueueForForm)
+                            {
+                                <div class="queueFormId-@item.CaseFormId" style="display:none;">
+                                    <input asp-for="QueueForForm[j].Id" hidden />
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" asp-for="RemoveRelation" id="RemoveRelation" value="true" class="custom-control-input">
+                                            <label class="custom-control-label" for="RemoveRelation">Remove Relation With Case Form</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="border-bottom">
+                                            <label class="font-weight-bold"> </label>
+                                            <input type="number" asp-for="QueueForForm[j].CaseFormId" id="caseFormId-queue" class="form-control" placeholder="" hidden>
+                                        </div>
+                                    </div>
+
+                                    @*<div class="form-group state-icon-group">
+                                            <label>Queue's icon</label>
+                                            <input type="text" asp-for="Icon" state-icon hidden />
+                                            <button type="button" id="uploadIcon" class="btn btn-link" data-toggle="modal" data-target="#uploadIconModal">+ Upload Icons</button>
+                                            @if (queueIconListData.Count > 8)
+                                            {
+                                                <button type="button" id="allIcon" class="btn btn-link" data-toggle="modal" data-target="#moreQueueIconModal">All Icons</button>
+                                            }
+                                            <div class="state-icon-list">
+                                                @for (int i = 0; i < queueIconListData.Take(8).ToList().Count; i++)
+                                                {
+                                                    var url = "/images/state/" + queueIconListData[i].Url;
+
+                                                    if (url == Model.Icon)
+                                                    {
+                                                        <div class="state-icon-item selected">
+                                                            <span class="actions-holder">
+                                                                <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                                <button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button>
+                                                            </span>
+                                                            <div class="thumbnail-holder">
+                                                                <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="state-icon-item">
+                                                            <span class="actions-holder">
+                                                                <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                                <button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button>
+                                                            </span>
+                                                            <div class="thumbnail-holder">
+                                                                <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>*@
+
+                                    <div class="form-group">
+                                        <label asp-for="QueueForForm[j].Order">Order Position</label>
+                                        <input type="number" class="form-control w-auto" asp-for="QueueForForm[j].Order" placeholder="">
+                                        <div class="d-flex">
+                                            <span asp-validation-for="QueueForForm[j].Order"></span>
+                                        </div>
+
+                                    </div>
+                                    <div class="display-name-settings">
+                                        <div class="display-name-settings__wrapper">
+                                            <div class="display-name-settings__header">
+                                                <h5>Display name settings</h5>
+                                                <p class="text-muted mb-0">Same Permissions for all roles.</p>
+                                            </div>
+                                            <div class="display-name-settings__toolbar">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm mr-3" id="clone-queue-btn"><i class="ri-add-fill"></i> Add more</button>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" asp-for="QueueForForm[j].AllUser" id="QueueForForm[0].AllUser" value="true" class="custom-control-input" permission-queue-target>
+                                                    <label class="custom-control-label" for="QueueForForm[0].AllUser"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (item.QueuePermissions.Count() > 0)
+                                    {
+                                        @for (int i = 0; i < item.QueuePermissions.Count(); i++)
+                                        {
+                                            <div class="queue-permission" id="queue-permissions-@i" data-index="@i">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            <label>Display Name</label>
+                                                            <input type="text" asp-for="QueueForForm[j].QueuePermissions[i].DisplayName" class="form-control dname-queue" placeholder="Enter Queue Name">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Role</label>
+                                                            <select class="custom-select role-queue" asp-for="QueueForForm[j].QueuePermissions[i].RoleId" asp-items="Model.RoleList">
+                                                                <option value="">Choose an option</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="actions-holder">
+                                                            <button class="queue-permission-action queue-permission--remove" title="Remove" remove-queue-permission><i class="ri-close-fill"></i><span class="sr-only">Remove</span></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+
+                                        <div class="queue-permission" id="queue-permissions-0" data-index="0">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label>Display Name</label>
+                                                        <input type="text" name="QueueForForm[@j].QueuePermissions[0].DisplayName" class="form-control dname-queue" placeholder="Enter Queue Name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Role</label>
+                                                        <select class="custom-select role-queue" name="QueueForForm[@j].QueuePermissions[0].RoleId" asp-items="Model.RoleList">
+                                                            <option value="">Choose an option</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="actions-holder">
+                                                        <button class="queue-permission-action queue-permission--remove" title="Remove" remove-queue-permission><i class="ri-close-fill"></i><span class="sr-only">Remove</span></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                j++;
+
+                            }
+
+                        }
+                    }
+
+                    <div id="queueFormIdNew" style="display:none;">
+                        <div class="form-group ">
+                            <div class="border-bottom">
+                                <label class="font-weight-bold"> </label>
+                                <input type="number" name="QueueForForm[0].CaseFormId" id="caseFormId-queue" hidden>
+                            </div>
+                        </div>
+
+                        @*<div class="form-group state-icon-group">
+                                <label>Queue's icon</label>
+                                <input type="text" asp-for="Icon" state-icon hidden />
+                                <div class="state-icon-list">
+                                    <div class="state-icon-item">
+                                        <div class="thumbnail-holder">
+                                            <img id="#default-img" src="~/images/state/ic-draft.png" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="state-icon-item">
+                                        <div class="thumbnail-holder">
+                                            <img src="~/images/state/ic-assign.png" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="state-icon-item">
+                                        <div class="thumbnail-holder">
+                                            <img src="~/images/state/ic-evaluated.png" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="state-icon-item">
+                                        <div class="thumbnail-holder">
+                                            <img src="~/images/state/ic-verified.png" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="state-icon-item">
+                                        <div class="thumbnail-holder">
+                                            <img src="~/images/state/ic-settled.png" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="form-group">
+                            <label for="QueueForForm[0].Order">Order Position</label>
+                            <input type="number" class="form-control w-auto" placeholder="" data-val="true" data-val-regex="Whole Numbers only" data-val-regex-pattern="^[0-9]*$" data-val-remote="Order Position Already Exists. Please Change the previous one if you want this position." data-val-remote-additionalfields="*.Order,*.Id,*.CaseFormId" data-val-remote-type="Post" data-val-remote-url="/Admin/Queue/CheckQueueOrderDuplication" data-val-required="The Order Position field is required." id="QueueForForm[0].Order" name="QueueForForm[0].Order" value="0">
+                            <div class="d-flex">
+                                <span class="field-validation-valid" data-valmsg-for="QueueForForm[0].Order" data-valmsg-replace="true"></span>
+                                <input type="number" asp-for="QueueForForm[0].CaseFormId" id="caseFormId-queue" class="form-control" placeholder="" hidden>
+                            </div>
+
+                        </div>
+                        <div class="display-name-settings">
+                            <div class="display-name-settings__wrapper">
+                                <div class="display-name-settings__header">
+                                    <h5>Display name settings</h5>
+                                    <p class="text-muted mb-0">Same Permissions for all roles.</p>
+                                </div>
+                                <div class="display-name-settings__toolbar">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-3" id="clone-queue-btn"><i class="ri-add-fill"></i> Add more</button>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" name="QueueForForm[0].AllUser" id="QueueForForm[0].AllUser" value="true" class="custom-control-input" permission-queue-target>
+                                        <label class="custom-control-label" for="QueueForForm[0].AllUser"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="queue-permission" id="queue-permissions-0" data-index="0">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Display Name</label>
+                                        <input type="text" name="QueueForForm[0].QueuePermissions[0].DisplayName" class="form-control dname-queue" placeholder="Enter Queue Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <select class="custom-select role-queue" name="QueueForForm[0].QueuePermissions[0].RoleId" asp-items="Model.RoleList">
+                                            <option value="">Choose an option</option>
+                                        </select>
+                                    </div>
+                                    <div class="actions-holder">
+                                        <button class="queue-permission-action queue-permission--remove" title="Remove" remove-queue-permission><i class="ri-close-fill"></i><span class="sr-only">Remove</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-5 col-lg-6">
+                    <div class="card queue-uploader">
+                        <h5 class="card-header">Queue icons</h5>
+                        <div class="card-body">
+                            <div class="fileuploader fileuploader--theme-dragdrop">
+                                <div class="fileuploader__input">
+                                    <div class="fileuploader__icon-main"></div>
+                                    <h3 class="fileuploader__input-caption">Drag and drop to upload</h3>
+                                    <p>or <a href="#" id="browseSpan">Browse</a><input class="form-control" type="file" id="browseFile" multiple="" hidden=""> to choose file</p>
+                                    <span class="file-extension">jpg, jpeg ,png, gif (optimal resolution (85) x (85))</span>
+                                </div>
+                            </div>
+
+                            <div class="state-icon-group">
+                                @*@if (queueIconListData.Count > 8)
+                                    {
+                                        <button type="button" id="allIcon" class="btn btn-link" data-toggle="modal" data-target="#moreQueueIconModal">All Icons</button>
+                                    }*@
+                                <input type="text" asp-for="Icon" state-icon hidden /> @*value="/images/state/ic-draft.png"/>*@
+                                <div class="state-icon-list">
+                                    @for (int i = 0; i < queueIconListData.ToList().Count; i++)
+                                    {
+                                        var url = "/images/state/" + queueIconListData[i].Url;
+
+                                        if (url == Model.Icon)
+                                        {
+                                            <div class="state-icon-item selected">
+                                                <span class="actions-holder">
+                                                    <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                    <button type="button" class="state-icon-action state-icon--checked" title="Selected">
+                                                        <i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span>
+                                                    </button>
+                                                </span>
+                                                <div class="thumbnail-holder">
+                                                    <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="state-icon-item">
+                                                <span class="actions-holder">
+                                                    <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                                    <button type="button" class="state-icon-action state-icon--checked" title="Selected">
+                                                        <i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span>
+                                                    </button>
+                                                </span>
+                                                <div class="thumbnail-holder">
+                                                    <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                                </div>
+                                            </div>
+
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="queue-save" class="btn btn-primary">Save</button>
+    </div>
+
+
+</form>
+
+
+@*<div class="modal fade" id="moreQueueIconModal" tabindex="-1" role="dialog" aria-labelledby="moreIcon" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>All Icons</h6>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-wrap">
+                        @for (int i = 0; i < queueIconListData.ToList().Count; i++)
+                        {
+                            var url = "/images/state/" + queueIconListData[i].Url;
+
+                            if (url == Model.Icon)
+                            {
+                                <div class="state-icon-item selected">
+                                    <span class="actions-holder">
+                                        <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                        <button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button>
+                                    </span>
+                                    <div class="thumbnail-holder">
+                                        <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="state-icon-item">
+                                    <span class="actions-holder">
+                                        <button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="@queueIconListData[i].Id"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button>
+                                        <button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button>
+                                    </span>
+                                    <div class="thumbnail-holder">
+                                        <img src="@("/images/state/" + queueIconListData[i].Url)" alt="">
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+<script>
+
+    $(document).ready(function () {
+        //$(document).on('hidden.bs.modal', '#uploadIconModal', function () {
+        //    if (!($('body').hasClass('modal-open'))) {
+        //        $('body').addClass('modal-open');
+        //    }
+        //});
+
+        $(document).on('hidden.bs.modal', '#moreQueueIconModal', function () {
+            if (!($('body').hasClass('modal-open'))) {
+                $('body').addClass('modal-open');
+            }
+        });
+
+        $('#browseSpan').click(function () {
+            $('#browseFile').trigger("click");
+        })
+
+        $(".fileuploader__input").bind("dragenter", function () {
+            $(this).addClass('fileuploader-dragging');
+            return false;
+        });
+
+        $(".fileuploader__input").bind("dragleave", function () {
+            $(this).removeClass('fileuploader-dragging');
+            return false;
+        });
+
+        $(".fileuploader__input").bind("drop", function (e) {
+            $(this).removeClass('fileuploader-dragging');
+            var files = event.dataTransfer.files;
+            var filesLength = files.length;
+            console.log("drop");
+            $.each(files, function (index, img) {
+                var result = checkExtension(img.name);
+                if (!result) {
+                    toastr.warning("Please select jpg, jpeg, png, gif file only");
+                    return false;
+                }
+                else {
+                    checkHeightAndWidth(img).then(function (e) {
+                        filesLength--;
+                        if (e) {
+                            if (filesLength == 0) {
+                              //  $('#uploadIconModal').modal("toggle");
+                                insertDropImage(files);
+                            }
+                        }
+                    });
+                }
+            })
+
+            return false;
+        });
+        $(".fileuploader__input").bind('dragover', function () {
+            $(this).addClass('fileuploader-dragging')
+            return false;
+        });
+
+        $("input:file").change(function (e) {
+            console.log("browse");
+            var files = e.target.files;
+            var filesLength = files.length;
+            console.log("drop");
+            $.each(files, function (index, img) {
+                var result = checkExtension(img.name);
+                if (!result) {
+                    toastr.warning("Please select jpg, jpeg, png, gif file only");
+                    return false;
+                }
+                else {
+                    checkHeightAndWidth(img).then(function (e) {
+                        filesLength--;
+                        if (e) {
+                            if (filesLength == 0) {
+                            //    $('#uploadIconModal').modal("toggle");
+                                insertDropImage(files);
+                            }
+                        }
+                        else {
+                            return false;
+                        }
+                    });
+                }
+            });
+
+        });
+
+        function insertDropImage(e) {
+
+            var formData = new FormData();
+
+            for (var i = 0; i != e.length; i++) {
+                formData.append("files", e[i]);
+            }
+
+            $.ajax(
+                {
+                    url: "@Url.Content("/admin/uploadFiles.html")",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: "POST",
+                    success: function (data) {
+                        console.log("files");
+                        $('input:file').val(null);
+                        $.each(data, function (i, v) {
+                            var extension = v.url.substr((v.url.lastIndexOf('.') + 1));
+                            if (extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif") {
+                                var buttonSpan = '<span class="actions-holder"><button type="button" class="state-icon-action state-icon--remove" title="Remove" data-id="' + v.id + '"><i class="ri-close-circle-fill"></i><span class="sr-only">Remove</span></button><button type="button" class="state-icon-action state-icon--checked" title="Selected"><i class="ri-checkbox-circle-fill"></i><span class="sr-only">Selected</span></button></span>';
+                                var span = '<div class="state-icon-item">' + buttonSpan + '<img  src="/images/state/' + v.url + '" alt=""></div>';
+
+                              //  if ($('.state-icon-group .actions-holder').length < 8) {
+                                    jQuery(span).prependTo(".state-icon-group .state-icon-list");
+                                //};
+
+                              //  jQuery(span).appendTo("#moreQueueIconModal .state-icon-list");
+                            }
+                        });
+
+                        //if ($('#moreQueueIconModal .state-icon-item').length > 8) {
+                        //    var allIconBtn = '<button type="button" id="allIcon" class="btn btn-link" data-toggle="modal" data-target="#moreQueueIconModal">All Icons</button>';
+                        //    if ($('#allIcon').length == 0) {
+                        //        $('.state-icon-group #Icon').after(allIconBtn);
+                        //    }
+                        //}
+                    }
+                }
+            );
+        };
+
+        function checkExtension(fileName) {
+            var extension = fileName.substr((fileName.lastIndexOf('.') + 1)).toLowerCase();
+            if (extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif") {
+                return true;
+            }
+            return false;
+        }
+
+        async function checkHeightAndWidth(file) {
+
+            return new Promise((resolve, reject) => {
+                var _URL = window.URL || window.webkitURL;
+                let img = new Image();
+                img.onload = function (e) {
+                    if (this.width <= 85 && this.height <= 85) {
+                        resolve(true);
+                    }
+                    else {
+                        toastr.warning("Image size must be less than 85 x 85 pixels");
+                        resolve(false);
+                    }
+
+                };
+                img.src = _URL.createObjectURL(file);
+            });
+        };
+    });
+
+</script>
+
+<script type="text/javascript">
+
+    //var divIndex = 1;
+
+    $(document).ready(function () {
+    var icon = '@Model.Icon';
+        var id = '@Model.Id';
+        //debugger;
+        if (@Model.Id == 0) {
+            //defaults color and icon
+            $(".color").first().click();
+            $(".state-icon-item").first().find('img').click();
+        }
+        else {
+            if ($("#input-color-picker").val() != "" && $("#input-color-picker").val() != " ") {
+
+                let aa = $(".color");
+                $.each(aa, function (x, z) {
+                    if ($(z).attr("id") == $("#input-color-picker").val()) {
+                        $(z).click();
+                    }
+                });
+            }
+            else {
+                $(".color").first().click();
+
+            }
+        }
+        //$.each($(".state-icon-item").find('img'), function (i, v) {
+        //    if ($(v).attr('src') == icon) {
+        //        $(v).closest(".state-icon-item").find('img').click();
+        //    }
+        //})
+
+        //set caseformid
+        if ($("#form_id").val() != " " && $("#form_id").val() != "") {
+
+           // debugger;
+            var all = $("[class^='queueFormId']");
+            for (i = 0; i < all.length; i++) {
+                if ($(all[i]).attr("class").split("-")[1] != $("#form_id").val()) {
+                    $(all[i]).remove();
+                }
+
+            }
+            all = $("[class^='queueFormId']");
+            if (all.length == 1) {
+                $(all).removeAttr("style");
+                $("#queueFormIdNew").remove();
+            }
+            else {
+                $("#queueFormIdNew").removeAttr("style");
+            }
+            $("#caseFormId-queue").val($("#form_id").val());
+            $("#caseFormId-queue").siblings("label").text($("#form_id option:selected").text());
+
+        }
+
+
+        //$('.toggle__div').on('click', function (e) {
+        //    debugger
+        //    if ($(this).hasClass('btn__right')) {
+        //        divIndex++;
+        //        if ($('#div' + divIndex).length > 0) {
+        //            $('.btn__left').removeAttr('disabled');
+        //            if ($('#div' + (divIndex + 1)).length == 0) {
+        //                $('.btn__right').attr('disabled', 'disabled');
+        //            }
+        //            $(".state-icon-group .flex-wrap:not(#div" + divIndex + ")").attr("style", "display: none !important");
+        //            $('#div' + divIndex).show();
+        //        }
+        //        else {
+        //            divIndex--;
+        //        }
+        //    }
+        //    else {
+        //        divIndex--;
+        //        if ($('#div' + divIndex).length > 0) {
+        //            $('.btn__right').removeAttr('disabled');
+        //            if ($('#div' + (divIndex - 1)).length == 0) {
+        //                $('.btn__left').attr('disabled', 'disabled');
+        //            }
+        //            $(".state-icon-group .flex-wrap:not(#div" + divIndex + ")").attr("style", "display: none !important");
+        //            $('#div' + divIndex).show();
+        //        }
+        //        else {
+        //            divIndex++;
+        //        }
+        //    }
+
+        //})
+
+        //$(".state-icon-group .flex-wrap:not(#div" + 1 + ")").attr("style", "display: none !important");
+    });
+</script>
+
+<script>
+
+    function initSelect1() {
+
+        $("select[name^='QueueForForm']").on("change", function () {
+            //  debugger;
+            setRoles1();
+        });
+    }
+
+
+    $(function () {
+        setRoles1();
+        initSelect1();
+
+       
+        $("#clone-queue-btn").on("click", function () {
+            setTimeout(function () {
+                $("select[name^='QueueForForm']").unbind("change");
+                initSelect1();
+                delValPermission1();
+            }, 1500);
+        });
+        delValPermission1();
+    });
+
+
+    function delValPermission1() {
+        $("button[class^='btn btn-danger']").on("click", function () {
+            setTimeout(function () {
+                setRoles1();
+            }, 1000);
+        });
+    }
+
+    function setRoles1() {
+        //debugger;
+       // var alloptions = $("select[name='QueueForForm[0].QueuePermissions[0].RoleId']").find("option");
+        var alloptions = $(".role-queue").first().find("option");
+        var optionVal = [];
+        var disabled = [];
+        for (i = 0; i < alloptions.length; i++) {
+            optionVal.push($(alloptions[i]).attr("value"));
+        }
+        var allSelect = $("select[name^='QueueForForm']");
+        var allOptions = $("select[name^='QueueForForm']").find("option");
+        for (i = 0; i < allSelect.length; i++) {
+
+            for (j = 0; j < optionVal.length; j++) {
+                if ((optionVal[j]) != "") {
+                    if ((optionVal[j]) == $(allSelect[i]).val()) {
+                        disabled.push(optionVal[j]);
+                    }
+                }
+            }
+        }
+        $(allOptions).removeClass("hideOption");
+        for (i = 0; i < allOptions.length; i++) {
+            for (j = 0; j < disabled.length; j++) {
+                if (disabled[j] == $(allOptions[i]).val()) {
+                    $(allOptions[i]).addClass("hideOption");
+                }
+            }
+        }
+    }
+</script>

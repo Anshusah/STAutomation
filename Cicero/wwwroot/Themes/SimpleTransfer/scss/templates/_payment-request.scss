@@ -1,0 +1,154 @@
+.payer-details{
+    position:relative;
+    .icon-edit{
+        position:absolute;
+        top:0;
+        right:0;
+    }
+}
+
+
+$icon-success: #16D800 ;
+.icon {
+    height: 3.5rem;
+    width: 3.5rem;
+    border-width: 2px;
+    border-style: solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border-color: $border-color;
+    a{
+        color:inherit;
+    }
+
+    &.icon-check {
+        border-color: $icon-success;
+        color: $icon-success;
+    }
+
+    &-bell {
+        color: $primary;
+    }
+
+    &-whatsapp {
+        color: #25D366;
+    }
+
+    &-skype {
+        color: #00AFF0
+    }
+
+    &-messenger {
+        color: #006AFF;
+    }
+    &-file-copy{
+        color: $body-color;
+    }
+
+
+    &.active {
+        background-color: $primary;
+        border-color: $primary;
+        color: $white;
+        @extend .shadow;
+    }
+}
+
+.payment-remainder-type {
+    padding: 2rem 0;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+
+    @include media-breakpoint-up(md) {
+        flex-flow: row;
+    }
+
+    .remainder-option {
+        width: 250px;
+        height: 115px;
+        display: flex;
+        flex-flow: row;
+        position: relative;
+        align-items: center;
+
+        @include media-breakpoint-up(md) {
+            display: block;
+            width: 150px;
+        }
+
+        &:not(:first-child):after {
+            content: '';
+            background: #ccc;
+            height: 44%;
+            position: absolute;
+            top: -1.625rem;
+            left: 4.625rem;
+            width: 1px;
+            z-index: 1;
+
+            @include media-breakpoint-up(md) {
+                height: 1px;
+                position: absolute;
+                top: calc( 1.75rem);
+                right: 6.75rem;
+                left:unset;
+                width: 56%;
+            }
+        }
+    }
+}
+/*.payment-remainder-type {
+    padding-top: 5rem;
+
+    .custom-control {
+        width: 150px;
+        height: 50px;
+
+        &:not(:first-child):after {
+            content: '';
+            background: #ccc;
+            height: 1px;
+            position: absolute;
+            top: calc( -15px - 50%);
+            left: -50%;
+            width: 100%;
+            z-index: 1;
+        }
+
+        &-label {
+            width: 100%;
+
+            &:before {
+                position: absolute;
+                top: -4rem;
+                left: calc(50% - 25px);
+                display: block;
+                width: 50px;
+                height: 50px;
+                pointer-events: visible;
+                border-radius: 50%;
+            }
+
+            &:after {
+                border: 1px solid $border-color;
+                border-radius:50%;
+                background-color: #fff;
+                top: -3.25rem;
+                left: calc(50% - 12px);
+                display: block;
+                width: 25px;
+                height: 25px;
+                display: block;
+                width: 25px;
+                height: 25px;
+                background-image: url(/Themes/SimpleTransfer/img/bell-icon.png);
+            }
+        }
+    }
+}*/
+
+

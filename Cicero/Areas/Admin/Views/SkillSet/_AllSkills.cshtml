@@ -1,0 +1,156 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Services
+
+
+@model IEnumerable<SkillSetViewModel>
+@inject ISkillSetService SkillSetService
+
+<div class="form-group group-add__form">
+    <label for="inputGroupName">Add new Skill</label>
+    <div class="input-group">
+        <input type="text" class="form-control" name="inputSkillName" id="inputSkillName" onkeydown="return (event.keyCode!=13);" placeholder="Skill Title">
+        <input type="number" class="form-control" name="inputCaseLimit" id="inputCaseLimit" placeholder="Case Limit">
+        <div class="input-group-append">
+            <button type="button" id="addSkillBtn" data-action="addSkill" class="btn btn-outline-secondary">Add</button>
+        </div>
+    </div>
+    <span id="inputGroupNameSpan" class="invalid-feedback"></span>
+</div>
+
+<div class="form-row">
+    <div class="col-lg-12">
+       <hr />
+        <h5>All Skills</h5>
+    </div>
+    <div class="col-lg-12">
+
+
+
+        <ul class="list-group">
+            @foreach (var item in Model)
+            {
+            <li class="list-group-item" aria-disabled="true">
+                @item.Title
+                <span class="fa-pull-right">
+                    @*<span class="field-icon exchange-field" title="Exchange/Swap" data-toggle="collapse" data-target="#collapse-swap-@item.Id" aria-expanded="false" aria-controls="collapseExample">
+                        <i class="ri-swap-box-line"></i>
+                    </span>*@
+                    <span class='field-icon edit-field' title='Edit' data-toggle="collapse" data-target="#collapse-edit-@item.Id"><i class='ri-edit-2-line'></i></span>
+                    <span class='field-icon delete-field' title='Delete' data-toggle="collapse" data-target="#collapse-delete-@item.Id"><i class='ri-delete-bin-line'></i></span>
+                </span>
+                @*<div class="collapse" id="collapse-swap-@item.Id" style="width:100%;">
+                    <div class="well">
+                        <hr />
+
+                        <div class="form-row">
+                            <div class="col-lg-3 text-center" style="padding:5px;">
+                                <span class="text-center">Swap with </span>
+                            </div>
+                            <div class="col-lg-5">
+
+                                <select class="form-control" name="swap-with-@item.Id">
+                                    @foreach (var option in SkillSetService.GetAllSkillSetForTenant())
+                                    {
+                                        if (option.Value != item.Id.ToString())
+                                        {
+                                            <option value="@option.Value">@option.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-lg-4">
+                                <button class="form-control btn btn-outline-primary" data-action="exchangeSkill" data-val="@item.Id">Exchange</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+
+                <div class="collapse" id="collapse-delete-@item.Id" style="width:100%;">
+                    <div class="well">
+                        <hr />
+
+                        <div class="form-row">
+                            <div class="col-lg-12">
+                                <p class="text-center">Are you sure you want to delete?</p>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-lg-12 text-center">
+                                <button class="btn btn-outline-primary" data-action="deleteSkill" data-val="@item.Id">Confirm</button> 
+                                <button class="btn btn-outline-danger" data-toggle="collapse" data-target="#collapse-delete-@item.Id">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapse" id="collapse-edit-@item.Id" style="width:100%;">
+                    <div class="well">
+                        <hr />
+                        <div class="form-row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input type="text" name="title-@item.Id" class="form-control" value="@item.Title" />
+                                    <input type="text" name="createdAt-@item.Id" value="@item.CreatedAt" hidden />
+                                    <input type="text" name="createdBy-@item.Id" value="@item.CreatedBy" hidden />
+                                    <input type="text" name="id-@item.Id" value="@item.Id" hidden />
+
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                @*<div class="form-group">*@
+                                <div class="switch-control">
+                                    @*<label>Status</label>*@
+                                    <label for="isActive-@item.Id" class="switch">
+                                        <input class="switch__input" id="isActive-@item.Id" name="isActive-@item.Id" type="checkbox" value="true" @(item.IsActive == true ? "checked" : "")>
+                                        <span class="switch__state"></span>
+                                        <span class="switch__label">Is Active</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    @*<label>Case Limit</label>*@
+                                    <input type="number" name="caseLimit-@item.Id" class="form-control" value="@item.CaseLimit" />
+
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label style="visibility:hidden">Title</label>
+                                <button class="btn btn-outline-primary" data-action="editSkill" data-val="@item.Id">Save Changes</button>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </li>
+            }
+        </ul>
+
+    </div>
+
+
+</div>
+
+@if (ViewBag.status != "")
+{
+    <script>
+            var status = '@ViewBag.status';
+            var message = '@ViewBag.message';
+            switch (status) {
+                case "success":
+                    toastr.success(message, "Success");
+                    break;
+                case "error":
+                    toastr.error(message, "Error");
+                    break;
+                case "info":
+                    toastr.error(message, "Info");
+
+            }
+    </script>
+}
+
+

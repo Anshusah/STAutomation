@@ -1,0 +1,30 @@
+.dropdown-menu-lg {
+   min-width:275px;
+}
+@include media-breakpoint-down(sm) {
+    .nav-item--message, .nav-item--notification {
+        position: static;
+        .nav-link {
+            position: relative;
+        }
+    }
+    .dropdown-menu-lg {
+        width: auto;
+        right: 1rem;
+        left: 1rem;
+    }
+}
+.dropdown {
+
+    &-toggle::after {
+        margin-left:0.5rem;
+    }
+
+    &:active, &:focus, &.active {
+        outline-color: $component-active-bg;
+        color: var(--white) !important;
+    }
+    &-item{
+        display:flex;
+    }
+}

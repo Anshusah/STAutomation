@@ -1,0 +1,744 @@
+﻿@using Cicero.Service.Helpers
+@inject Permission Permission
+@inject Utils utils
+@model Cicero.Service.Models.SimpleTransfer.TransactionMgmtViewModel
+@inject Utils utils
+@inject Cicero.Service.Services.SimpleTransfer.ITransactionMgmtService ITransactionMgmtService
+
+@{
+    ViewBag.Title = "Manage Transaction Management";
+    var transactionQueueModel = await ITransactionMgmtService.GetTransactionMgmtListQueue();
+    var baseApiUrl = ITransactionMgmtService.GetBaseUrl();
+}
+@*<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>*@
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css" />
+<style>
+    .dataTables_wrapper .dataTables_filter {
+        float: right;
+        text-align: right;
+        visibility: hidden;
+    }
+</style>
+<div class="page-wrapper page-transactionmgnt">
+    @*<div class="page-header">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page"> Transaction Management</li>
+                </ol>
+            </nav>
+            <div class="page-header__main">
+                <h3 class="page-title">Transaction Management</h3>
+            </div>
+        </div>*@
+    <div class="page-content">
+        <div class="page-main-section d-flex flex-grow-1">
+            <div class="page-content-area page-content-area--aside">
+                <div class="status"></div>
+                <form id="TransactionMgmt-form" method="post" class="wrapper">
+                    <div class="page-aside page-aside--left">
+                        <div class="page-aside-header">
+                            <div class="datatable__filter border-0 pb-4">
+                                <div class="datatable__filter-main">
+                                    <div class="datatable__filter-search w-100">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <a class="py-2 float-right dropdown-toggle" data-toggle="collapse" data-target="#CollapseFilterOptions" href="#CollapseFilterOptions" role="button" aria-expanded="false" aria-controls="CollapseFilterOptions"> More Options @*<i class="ri-arrow-down-s-fill"></i>*@</a>
+                                <div class="clearfix"></div>
+                                <div id="CollapseFilterOptions" class="collapse" aria-labelledby="headingFilterOptions">
+                                    <ul class="list-unstyled">
+                                        @*<li class="py-1">
+                                                <input type="datetime" class="form-control datetime" id="CreatedDate" value="" placeholder="From Date">
+                                            </li>
+                                            <li class="py-1">
+                                                <input type="datetime" class="form-control datetime" id="CreatedDate" value="" placeholder="To Date">
+                                            </li>*@
+                                        <li class="py-1">
+                                            <select asp-for="@Model.TransactionSearchCriterias.SenderCountryList" class="custom-select">
+                                                <option value="">Sender Country</option>
+                                                @{
+                                                    foreach (var ls in @Model.TransactionSearchCriterias.SenderCountryList)
+                                                    {
+                                                        <option value="@ls.Value">@ls.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </li>
+                                        @*<li class="py-1">
+                                                <select asp-for="@Model.TransactionSearchCriterias.SenderCurrencyList" class="custom-select">
+                                                    <option value="">Sender Currency</option>
+                                                    @{
+                                                        foreach (var ls in @Model.TransactionSearchCriterias.SenderCurrencyList)
+                                                        {
+                                                            <option value="@ls.Value">@ls.Text</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </li>*@
+                                        <li class="py-1">
+                                            <select asp-for="@Model.TransactionSearchCriterias.RecieverCountryList" class="custom-select">
+                                                <option value="">Receiver Country</option>
+                                                @{
+                                                    foreach (var ls in @Model.TransactionSearchCriterias.RecieverCountryList)
+                                                    {
+                                                        <option value="@ls.Value">@ls.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </li>
+                                        <li class="text-right">
+                                            <button type="button" onclick="filterByCountry('filter')" class="btn btn-sm btn-outline-primary">Go</button>
+                                        </li>
+                                        @*<li class="py-1">
+                                                <select asp-for="@Model.TransactionSearchCriterias.RecieverCurrencyList" class="custom-select">
+                                                    <option value="">Receiver Currency</option>
+                                                    @{
+                                                        foreach (var ls in @Model.TransactionSearchCriterias.RecieverCurrencyList)
+                                                        {
+                                                            <option value="@ls.Value">@ls.Text</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </li>*@
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-aside-body">
+                            <h6 class="">Notification</h6>
+                            <ul class="list-group list-group-flush list-notificationQueue">
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Today’s Payment Requests</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'paymentRequest')">@transactionQueueModel.TodaysPaymentRequest</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Expired Payment Requests</span> <a href="javascript:void(0)" class="value small pr-2 queue">@transactionQueueModel.ExpiredPaymentRequest</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Today's TRX</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'today')">@transactionQueueModel.TodaysTRX</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Unsettled TRX</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'unsettled')">@transactionQueueModel.UnsettledTRX</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Payment Held</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'payment')">@transactionQueueModel.PaymentHeldTRX</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Compliance Held</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'compliance')">@transactionQueueModel.ComplianceHeldTRX</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Unauthorised</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'unauthorised')">@transactionQueueModel.UnauthorisedTRX</a></li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center"><span class="text">Rejected TRX for limit breach</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, '')">@transactionQueueModel.RejectedTRXForLimitBreach</a></li>
+                                <li class="list-group-item px-0 d-flex flex-column ">
+                                    <span class="text">Cancelled TRX pending refund </span>
+                                    
+                                    <div class=" sub-list d-flex justify-content-between align-items-start"><span>- Card Payment</span> <a href=" javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'card')">@transactionQueueModel.CancelledTRXPendingRefundCardPayment</a></div>
+                                    <div class=" sub-list  d-flex justify-content-between align-items-start"><span>- Bank Transfer</span> <a href="javascript:void(0)" class="value small pr-2 queue" onclick="getTransactionData(this, 'bank')">@transactionQueueModel.CancelledTRXPendingRefundBankTransfer</a></div>
+                                    
+                                </li>
+                            
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="page-body position-relative">
+                        <div class="absolute-fill">
+                            <div class="page-body-inner">
+                                <h4 class=" form-title font-weight-normal">Transaction Summary</h4>
+
+                                <div class="dataTable-scrollable">
+                                    @*datatable="" width="100%" cellspacing="0"
+                                        data-page-length="33"
+                                        data-scroll-x="true"
+                                        scroll-collapse="false"*@
+                                    <table id="TransactionMgmt" class="table table-hover table-responsive-sm table-custom table-selectable mb-0 table-stickyhead"></table>
+                                </div>
+
+                                <div class="transaction-detail__wrapper">
+                                    <div class="transaction-detail__header sticky-top">
+                                        <h6 class="mb-0">Transactions status TRX ID</h6>
+                                        <div class="transaction__actions">
+                                            <ul class="nav navbar">
+                                                <li class="nav-item"><a class="nav-link nav-link--icon" href="javascript:" id="transactionDetails"><i class="ri-information-line"></i> Details</a></li>
+                                                <li class="nav-item"><a class="nav-link nav-link--icon"><i class="ri-sticky-note-line"></i> Add note</a></li>
+                                                <li class="nav-item"><a class="nav-link nav-link--icon"><i class="ri-attachment-2"></i> Attach document</a></li>
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link nav-link--icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent"><i class="ri-questionnaire-line"></i> comment</a>
+                                                    <div class="dropdown-menu dropdown-menu--custom dropdown-menu-right">
+                                                        <span class="dropdown-header font-weight-bold">Comment to:</span>
+                                                        <button class="dropdown-item" type="button">Provider</button>
+                                                        <button class="dropdown-item" type="button">Sender</button>
+                                                        <button class="dropdown-item" type="button">Customer</button>
+                                                    </div>
+                                                </li>
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ri-more-line"></i></a>
+                                                    <div class="dropdown-menu dropdown-menu--custom dropdown-menu-right">
+                                                        <span class="dropdown-header font-weight-bold">TRX Management</span>
+                                                        <button class="dropdown-item" onclick="authorizeTransaction()" type="button">Authorise TRX</button>
+                                                        @*<button class="dropdown-item" onclick="creditTransaction()" type="button">Credit TRX</button>*@
+                                                        <button class="dropdown-item" onclick="confirmPaymentReceipt()" type="button">Confirm Payment Receipt</button>
+                                                        <button class="dropdown-item" onclick="initiateTransaction()" type="button">Initiate Trx</button>
+                                                        <button class="dropdown-item" onclick="declineTransaction()" type="button">Decline Trx</button>
+                                                        <button class="dropdown-item" onclick="kycFailedDeclineTransaction()" type="button">KYC Failed Decline</button>
+                                                        <button class="dropdown-item" type="button">Void TRX/Undo Void</button>
+                                                        <button class="dropdown-item" type="button">Resend TRX to provider</button>
+                                                        <button class="dropdown-item" type="button">Cancel request to supplier/Undo Cancel request</button>
+                                                        <button class="dropdown-item" type="button" id="refundBtn">Refund Process</button>
+                                                        <button class="dropdown-item" type="button">Hold TRX</button>
+                                                        <button class="dropdown-item" type="button">Resend TRX to provider</button>
+                                                        @*<button class="dropdown-item" type="button">Manually edit transaction</button>*@
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters transaction-detail__body">
+                                        <div class="col-lg-4 timeline__wrapper">
+                                            <div class="timeline">
+                                                @*<div class="timeline__container success">
+                                                        <div class="timeline__content ">
+                                                            <span class="timeline__time">13:00</span>
+                                                            <p class="timeline__data">Transaction Placed</p>
+                                                        </div>
+                                                    </div>*@
+
+                                                @*<div class="timeline__container failure">
+                                                        <div class="timeline__content ">
+                                                            <span class="timeline__time">13:00</span>
+                                                            <p class="timeline__data"> Onfido Hold - ID Expired - TRX on hold</p>
+                                                        </div>
+                                                    </div>*@
+
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-lg-8 transaction-detail__info">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <ul class="list-unstyled">
+                                                        <li>
+                                                            <h6 class="mb-1">RefNo</h6>
+                                                            <label class="value" id="refNo"></label>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Send Amount</h6>
+                                                            <label class="value" id="baseAmount"></label>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Provider</h6>
+                                                            <span class="value" id="provider"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Source Country/Currency</h6>
+                                                            <span class="value" id="scc"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Payment Status</h6>
+                                                            <span class="value" id="paymentStatus"></span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <ul class="list-unstyled">
+                                                        <li>
+                                                            <h6 class="mb-1">Date</h6>
+                                                            <span class="value" id="date"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Receive Amount</h6>
+                                                            <label class="value" id="receiveAmount"></label>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">OFAC</h6>
+                                                            <span class="value" id="ofac"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Onfido</h6>
+                                                            <span class="value" id="onfido"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Destination Country/Currency</h6>
+                                                            <span class="value" id="dcc"></span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <ul class="list-unstyled">
+                                                        <li>
+                                                            <h6 class="mb-1">Lexis Nexis</h6>
+                                                            <span class="value" id="lexisNexis"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Black List</h6>
+                                                            <span class="value" id="blackList"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Rules</h6>
+                                                            <span class="value" id="rules"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Sanction Pep</h6>
+                                                            <span class="value" id="sanctionPep"></span>
+                                                        </li>
+                                                        <li>
+                                                            <h6 class="mb-1">Transaction Type</h6>
+                                                            <span class="value" id="transactionType"></span>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="text" hidden id="type" value="normal" />
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.colVis.min.js"></script>
+
+    <script src="~/js/simpleTransfer.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var table = jQuery("#TransactionMgmt");
+        var customCheckbox = '<div class="selected-icon"><i class="ri-radio-button-fill"></i></div>';
+        table.dataTable({
+            "processing": true,
+            "serverSide": true,
+            "dom": 'r<"clear">t',
+            'searching': true,
+            "ajax": { "url": "@Url.Content("~/admin" + "/TransactionMgmt.html")", "type": "POST", "data": { type:  function() { return $('#type').val() }, senderCountry:  function() { return $('#TransactionSearchCriterias_SenderCountryList').val() }, receiverCountry:  function() { return $('#TransactionSearchCriterias_RecieverCountryList').val() } } },
+            "oLanguage": { sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>" },
+
+            'stateSave': false,
+            'select': {
+                info: false,
+                style: 'os'
+            },
+            'columnDefs': [
+                {
+                    'targets': 0,
+                     className: 'noVis',
+                    'render': function (data, type, row, meta) {
+                        if (type === 'display') {
+                            data = customCheckbox;
+                        }
+                        return data;
+                    },
+                    'checkboxes': {
+                        'selectRow': false,
+                        'selectAll': false,
+                        'selectAllRender': customCheckbox
+                    }
+                }, {
+                    "targets": 1,
+                     className: 'noVis',
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": 2,
+                     className: 'noVis',
+                    "visible": false,
+                    "searchable": false
+                },
+                  {
+                    "targets": 3,
+                     className: 'noVis',
+                    "visible": false,
+                    "searchable": false
+                },
+                   {
+                    "targets": 4,
+                     className: 'noVis',
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            "rowCallback": function (row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "TransactionId": "Ids", "TransactionId": "Ids", "value": data.TransactionId });
+            },
+            "columns": [
+                { "title": "", "data": "action", "orderable": false, "class": "datatable__actions" },
+                { "title": "", "data": "type", "orderable": false },
+                { "title": "", "data": "transactionId", "orderable": false },
+                { "title": "", "data": "requestReference", "orderable": false },
+                { "title": "", "data": "requestReferenceTransfast", "orderable": false },
+                { "title": "Trade Date", "data": "tradeDate", "orderable": true },
+                { "title": "Time", "data": "tradeTime", "orderable": true },
+                { "title": "Settlement Date", "data": "tradeDate", "orderable": true },
+                { "title": "Provider", "data": "provider", "orderable": true },
+                { "title": "Sender Account", "data": "senderAccount", "orderable": true },
+                { "title": "Sender Name", "data": "senderName", "orderable": true },
+                { "title": "Send Currency", "data": "sendCurrency", "orderable": true },
+                { "title": "Send Amount", "data": "sendAmount", "orderable": true },
+                { "title": "Receiver Name", "data": "receiverName", "orderable": true },
+                { "title": "Receiver Currency", "data": "receiverCurrency", "orderable": true },
+                { "title": "Receiver Amount", "data": "payoutAmount", "orderable": true },
+                { "title": "Payment Method", "data": "paymentMethod", "orderable": true },
+                { "title": "Transfer Fee", "data": "transferFee", "orderable": true },
+                { "title": "Payment Status", "data": "paymentStatus", "orderable": true },
+                { "title": "Onfido", "data": "onfido", "orderable": true },
+                { "title": "OFAC", "data": "ofac", "orderable": true },
+                { "title": "Black List", "data": "blackList", "orderable": true },
+                { "title": "Rules", "data": "rules", "orderable": true },
+                { "title": "Sanction PEP", "data": "sanctionPep", "orderable": true },
+                { "title": "Authorisation Status", "data": "authorisationStatus", "orderable": true },
+                { "title": "Provider Status", "data": "providerStatus", "orderable": true },
+                { "title": "Transaction Type", "data": "transactionType", "orderable": true },
+          //      { "title": "Created Date", "data": "createdDate", "orderable": true },
+            //    { "title": "Updated Date", "data": "updatedDate", "orderable": true }
+            ],
+            order: [
+                [1, "asc"]
+            ],
+            "paging": true,
+            "pageLength": 10,
+            lengthMenu: [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            dom: 'Bfrtip',
+            stateSave: true,
+             "stateSaveParams": function (settings, data) {
+                 data.search.search = "";
+                 data.start = 0;
+            },
+            buttons: [
+                {
+                    extend: 'colvis',
+                     collectionLayout: 'fixed two-column',
+                    text: 'Change Column',
+                    columns: ':not(.noVis)'
+                }
+            ],
+            "fnInitComplete": function (oSettings, json) {
+                jQuery("#TransactionMgmt").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+            },
+        });
+        jQuery(document).on("keyup", "#gridsearch", function () {
+            $(".transaction-detail__wrapper").removeClass("show");
+            table.fnFilter(this.value);
+        });
+        $("#CollapseFilterOptions").find('select').removeAttr("multiple");
+
+    });
+        $(function () {
+            $("#TransactionMgmt").on("click", "tbody tr", function () {
+                if ($(this).hasClass('selected') == true) {
+                    $('#transactionDetails').attr('href', "");
+                    $('#transactionDetails').attr('href', "javascript:");
+                    $(".transaction-detail__wrapper").removeClass("show");
+                }
+                else {
+                    var currentRow = $(this).closest("tr");
+                    var data = $('#TransactionMgmt').DataTable().row(currentRow).data();
+                    var referenceNo = data['requestReference'];
+                    var transactionId = data['transactionId'];
+                    $('#transactionDetails').attr('href', "");
+                    $('#transactionDetails').attr('href', 'transactiondetails.html?transactionId=' + transactionId);
+                    $.ajax({
+                        url: '/admin/TransactionTimeStamp.html',
+                        type: "GET",
+                        data: { referenceNo: referenceNo },
+                        success: function (response) {
+                            $('.timeline').html('');
+                            $.each(response, function (i, dataValue) {
+                                var status = dataValue.status;
+                                var statusInfo = dataValue.description;
+                                var className = dataValue.className;
+
+                                var div = '<div class="timeline__container ' + className + '"><div class="timeline__content "><div class="timeline__time"><span>' + dataValue.date + '</span><span>' + dataValue.time + '</span></div><p class="timeline__data">' + statusInfo + '</p></div></div>';
+                            $('.timeline').append(div);
+                            })
+
+                            $(".transaction-detail__wrapper").addClass("show");
+                        },
+                        error: function (error) {
+
+                        }
+                    });
+
+                    $("#refNo").text(referenceNo);
+                    $("#baseAmount").text(data['sendAmount']);
+                    $("#provider").text(data['provider']);
+                    $("#scc").text(data['sendCurrency']);
+                    $("#date").text(data['tradeDate']);
+                    $("#ofac").text(data['ofac']);
+                    $("#receiveAmount").text(data['payoutAmount']);
+                    $("#onfido").text(data['onfido']);
+                    $("#lexisNexis").text(data['lexisNexis']);
+                    $("#dcc").text(data['receiverCurrency']);
+                    $("#paymentStatus").text(data['paymentStatus']);
+                    $("#blackList").text(data['blackList']);
+                    $("#rules").text(data['rules']);
+                    $("#sanctionPep").text(data['sanctionPep']);
+                    $("#transactionType").text(data['transactionType']);
+
+                }
+            });
+        });
+        $(function () {
+            $("#refundBtn").on("click", function () {
+                $.ajax({
+                    url: '/admin/securetrading/refund',
+                    data: {
+                        parenttransactionreference: $("#refNo").text()
+                    },
+                    error: function () {
+                        toastr.error('An error has occurred.');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        toastr.success('Refund processed.');
+                    },
+                    type: 'GET'
+                });
+            })
+        });
+
+        function getTransactionData(e, type) {
+            $('li.active').removeClass("active");
+            $('.sub-list.active').removeClass("active");
+            if ($(e.closest('.sub-list')).length == 0) {
+                $(e.closest('li')).addClass("active");
+            }
+            else {
+                $(e.closest('.sub-list')).addClass("active");
+            }
+            $(".transaction-detail__wrapper").removeClass("show");
+              $('#type').val(type);
+            $("#TransactionMgmt").DataTable().ajax.url("@Url.Content("~/admin" + "/TransactionMgmt.html")").load();
+        }
+
+        function authorizeTransaction() {
+            var selected = $('tr.selected');
+            var datas = $('#TransactionMgmt').DataTable().row(selected).data();
+            var transfastReferenceNo = datas['requestReferenceTransfast'];
+            var baseApiUrl = '@baseApiUrl';
+            var url = baseApiUrl + "api/transfast/releasetransaction";
+            var data = {
+                TfPin: transfastReferenceNo
+            }
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response) {
+                        $(".transaction-detail__wrapper").removeClass("show");
+                        $("#TransactionMgmt").DataTable().ajax.reload();
+                        getTransactionMgmtListQueue();
+                        toastr.success('Authorized Successfully.');
+                    }
+                    else {
+                        toastr.error('Authorization Failed');
+                    }
+
+                },
+                error: function (error) {
+                    toastr.error('Authorization Failed');
+                }
+            });
+        }
+
+         function creditTransaction() {
+            var selected = $('tr.selected');
+            var datas = $('#TransactionMgmt').DataTable().row(selected).data();
+            var transfastReferenceNo = datas['requestReference'];
+            var baseApiUrl = '@baseApiUrl';
+            var url = baseApiUrl + "api/transfast/credittransaction";
+            var data = {
+                ReferenceNo: transfastReferenceNo
+            }
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        $(".transaction-detail__wrapper").removeClass("show");
+                        $("#TransactionMgmt").DataTable().ajax.reload();
+                        getTransactionMgmtListQueue();
+                        toastr.success('Credited Successfully.');
+                    }
+                    else {
+                        toastr.error('Credit Failed');
+                    }
+
+                },
+                error: function (error) {
+                    toastr.error('Credit Failed');
+                }
+            });
+        }
+
+        function confirmPaymentReceipt() {
+            var selected = $('tr.selected');
+            var datas = $('#TransactionMgmt').DataTable().row(selected).data();
+            var caseId = datas['caseId'];
+            var type = datas['type'];
+            var url = "/admin/confirmpaymentreceipt.html";
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: { caseId: caseId, type: type },
+                success: function (response) {
+                    if (response == "success") {
+                        $(".transaction-detail__wrapper").removeClass("show");
+                        $("#TransactionMgmt").DataTable().ajax.reload();
+                        getTransactionMgmtListQueue();
+                        toastr.success('Payment Received Confirmed Successfully.');
+                    }
+                    else {
+                        toastr.error('Confirmation Failed');
+                    }
+
+                },
+                error: function (error) {
+                    toastr.error('Confirmation Failed');
+                }
+            });
+        }
+
+         function initiateTransaction() {
+            var selected = $('tr.selected');
+            var datas = $('#TransactionMgmt').DataTable().row(selected).data();
+            var caseId = datas['caseId'];
+            var type = datas['type'];
+            var url = "/admin/initiatetransaction.html";
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: { caseId: caseId, type: type },
+                success: function (response) {
+                    if (response == "success") {
+                        $(".transaction-detail__wrapper").removeClass("show");
+                        $("#TransactionMgmt").DataTable().ajax.reload();
+                        getTransactionMgmtListQueue();
+                        toastr.success('Transaction Initiated Successfully.');
+                    }
+                    else {
+                        toastr.error('Transaction Initiation Failed');
+                    }
+
+                },
+                error: function (error) {
+                    toastr.error('Transaction Initiation Failed');
+                }
+            });
+        }
+
+        function declineTransaction() {
+            var selected = $('tr.selected');
+            var datas = $('#TransactionMgmt').DataTable().row(selected).data();
+            var caseId = datas['caseId'];
+            var referenceNo = datas['requestReference'];
+              var baseApiUrl = '@baseApiUrl';
+            var url = baseApiUrl + "api/transfast/declinetransaction";
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: { caseId: caseId, referenceNo: referenceNo },
+                success: function (response) {
+                    if (response == "success") {
+                        $(".transaction-detail__wrapper").removeClass("show");
+                        $("#TransactionMgmt").DataTable().ajax.reload();
+                        getTransactionMgmtListQueue();
+                        toastr.success('Transaction Declined Successfully.');
+                    }
+                    else {
+                        toastr.error('Transaction Declined Failed');
+                    }
+
+                },
+                error: function (error) {
+                    toastr.error('Transaction Declined Failed');
+                }
+            });
+        }
+
+         function kycFailedDeclineTransaction() {
+            var selected = $('tr.selected');
+            var datas = $('#TransactionMgmt').DataTable().row(selected).data();
+            var caseId = datas['caseId'];
+            var referenceNo = datas['requestReference'];
+              var baseApiUrl = '@baseApiUrl';
+            var url = baseApiUrl + "api/transfast/kycfaileddeclinetransaction";
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: { caseId: caseId, referenceNo: referenceNo },
+                success: function (response) {
+                    if (response == "success") {
+                        $(".transaction-detail__wrapper").removeClass("show");
+                        $("#TransactionMgmt").DataTable().ajax.reload();
+                        getTransactionMgmtListQueue();
+                        toastr.success('KYC Failed Declined Successfully.');
+                    }
+                    else {
+                        toastr.error('KYC Declined Failed');
+                    }
+
+                },
+                error: function (error) {
+                    toastr.error('KYC Declined Failed');
+                }
+            });
+        }
+
+        function filterByCountry(type) {
+            $(".transaction-detail__wrapper").removeClass("show");
+            $('#type').val(type);
+            $("#TransactionMgmt").DataTable().ajax.url("@Url.Content("~/admin" + "/TransactionMgmt.html")").load();
+        }
+
+        function getTransactionMgmtListQueue() {
+            $.ajax({
+                url: '/admin/TransactionMgmtListQueue.html',
+                type: 'get',
+                success: function (response) {
+                    var datas = [];
+                    datas.push(response.todaysPaymentRequest);
+                    datas.push(response.expiredPaymentRequest);
+                    datas.push(response.todaysTRX);
+                    datas.push(response.unsettledTRX);
+                    datas.push(response.paymentHeldTRX);
+                    datas.push(response.complianceHeldTRX);
+                    datas.push(response.unauthorisedTRX);
+                    datas.push(response.rejectedTRXForLimitBreach);
+                    datas.push(response.cancelledTRXPendingRefundCardPayment);
+                    datas.push(response.cancelledTRXPendingRefundBankTransfer);
+
+                    if (response != null) {
+                        $.each($('.queue'), function (index, queue) {
+                            queue.text = datas[index];
+                        })
+                    }
+
+                },
+                error: function (error) {
+                    
+                }
+            });
+        }
+
+    </script>
+}

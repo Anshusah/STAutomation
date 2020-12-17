@@ -1,0 +1,174 @@
+﻿@using Cicero.Service.Models;
+@using Cicero.Service.Helpers;
+@model Cicero.Service.Models.SimpleTransfer.BankMapper.BankMapperViewModel
+@inject Utils utils
+@inject Cicero.Service.Services.SimpleTransfer.IBankMapperService IBankMapperService
+@{
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Bank Mapper";
+    var countryList = IBankMapperService.GetCountryList().Result;
+}
+<style>
+    #loading {
+        width: 100%;
+        z-index: 9;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+</style>
+<div id="loading" style="display:none;">
+    <div class="spinner">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+
+        </div>
+        <div class="text-center">Loading data please wait.</div>
+    </div>
+</div>
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + "/bankmapper.html")">Bank Mappers</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Bank Mapper</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Bank Mapper</h3>
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="@Url.Content("~/admin" + "/bankmapper/mapbanks.html")" method="post" class="page-container grid-horizontal-viewport ">
+                <div class="page-body">
+                    <div class="form-wrapper ">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-body">
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <select asp-for="CountryCode" class="custom-select countryList">
+                                        <option value="">Select Country</option>
+                                        @{
+                                            foreach (var ls in countryList)
+                                            {
+                                                <option value="@ls.Value">@ls.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CountryCode" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col ">
+                                    <button type="button" class="btn btn-primary update-change">Save</button>
+                                    <a class="btn btn-secondary btn-back pl-1" href="@Url.Content("/admin" +  "/bankmapper.html")">Cancel</a>
+                                </div>
+                            </div>
+                            @*<hr class=" mb-5" />
+                            <p> Map the bank which are  with the one other</p>*@
+
+                            <div id="banklistId" class="position-relative" >
+
+
+                            </div>
+
+                            <div class="form-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $('.update-change').on("click", function (e) {
+        saveValues();
+    })
+
+    $('.countryList').on("change", function (e) {
+        getDatas(e.currentTarget.value);
+    })
+
+    function getDatas(countryCode) {
+        $('#loading').show();
+        $("#banklistId").load("/bankmapper/getbanklist.html?countryCode=" + countryCode, function () {
+            $('#loading').hide();
+        });
+    }
+
+    function saveValues() {
+        var necMoneyBankCount = $("#sortable2 li.ui-state-default").length;
+        var transfastBankCount = $("#sortable1 li.ui-state-default").length;
+        var statusCount = $("#sortable3 input[type=checkbox]:checked").length;
+
+        var countryCode = $('#CountryCode').val();
+
+        if (countryCode == "") {
+            toastr.warning("Select Any Country");
+            return false;
+        }
+
+        if (statusCount == 0) {
+            toastr.warning("Status Not Available");
+            return false;
+        }
+
+        var isMore = necMoneyBankCount - transfastBankCount;
+        sliceElements(isMore);
+
+        var necMoneyBankList = $("#sortable2 li.ui-state-default").map(function () {
+            return $(this).data("value");
+        }).get();
+
+        var transfastBankList = $("#sortable1 li.ui-state-default").map(function () {
+            return $(this).data("value");
+        }).get();
+
+        var status = $("#sortable3 input[type=checkbox]").map(function () {
+            return $(this).is(":checked");
+        }).get();
+
+
+        $.ajax({
+            url: "/admin/bankmapper/mapbanks.html",
+            type: "post",
+            data: { necMoneyBankList: necMoneyBankList, transfastBankList: transfastBankList, status: status, countryCode: countryCode },
+            success: function (response) {
+                if (response) {
+                    toastr.success("Saved Sucessfully");
+                    setTimeout(function () {
+                        location.reload();
+                    }, 500);
+                }
+                else {
+                    toastr.error("Internal Server Error");
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+
+    function sliceElements(e) {
+        if (e > 0) {
+            $("#sortable2 li.ui-state-default").slice(-e).remove();
+        }
+        else {
+            if (e !== 0) {
+                $("#sortable2 li.ui-state-default").slice(e).remove();
+                $("#sortable3 li.li-checkbox").slice(e).remove();
+            }
+        }
+    }
+</script>

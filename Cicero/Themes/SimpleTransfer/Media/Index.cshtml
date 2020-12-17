@@ -1,0 +1,378 @@
+﻿@using Cicero.Service.Models
+@model IEnumerable<MediaByParentId>
+@inject IMediaService mediaService
+@inject Permission Permission
+@{
+    ViewBag.Title = "Manage Media";
+    ViewData["body"] = "full-layout";
+    Theme theme = ViewData["theme"] as Theme;
+    string from = ViewBag.From;
+    var mediaDatas = Model.Where(x => x.Parent == from).FirstOrDefault();
+    var groupName = mediaDatas != null ? mediaDatas.Parent.ToLower() : "";
+    //foreach (var item in Model)
+    //{
+    //    item.Media = item.Media.Where(x => x.Type == 2).ToList();
+    //}
+}
+
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <main class="main-content" role="main">
+                <div class="absolute-fill">
+                    <div class="main-content-area">
+                        <div class="section-main section-media-file section-media-file--@groupName">
+                            @using (Html.BeginForm("Index", "Media", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @*<h3>@ViewBag.From</h3>*@
+
+                                <div class="section-content">
+                                    @if (mediaDatas != null && mediaDatas.Media.Count > 0)
+                                    {
+                                        <div class="media-file-page">
+                                            <div class="media-file-header">
+                                                <h2 class="media-file-title">@mediaDatas.Parent</h2>
+                                            </div>
+                                            <div class="media-file-content">
+                                                <ul class="media-file-list list-unstyled">
+                                                    @foreach (var id in mediaDatas.Media)
+                                                    {
+                                                        var fileSize = mediaService.GetFileSize(id.Url);
+                                                        @if (System.IO.Path.GetExtension(id.Url).ToLower() == ".pdf")
+                                                        {
+                                                            <li class="media-file-item file-document file-type-pdf">
+                                                                <a href="javascript:void(0)" data-json='@id.Id' class="media-file-item__inner">
+                                                                    <div class="thumbnail-holder">
+                                                                        <div class="media-file-item__image">
+                                                                            <img src="@Url.Content("/images/pdf.png")" alt="@id.Id">
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (Permission.Can(UserCan.Delete_Media))
+                                                                    {
+                                                                        <div class="actions-holder">
+                                                                            <div class="media-file-item__download" onclick="location.href='@Url.Content("/admin/" + id.Url + "/media/download.html")';" title="Download pdf">
+                                                                                <i class="ri-download-2-line"></i>
+                                                                            </div>
+                                                                            <div class="media-file-item__remove" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}'>
+                                                                                <i class="ri-close-circle-fill"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    <div class="content-holder">
+                                                                        <h5 title="@id.Title">@id.Title</h5>
+                                                                        <span title="@fileSize">@fileSize</span>
+                                                                    </div>
+                                                                </a>
+
+                                                            </li>
+                                                        }
+                                                        else if (System.IO.Path.GetExtension(id.Url).ToLower() == ".doc" || System.IO.Path.GetExtension(id.Url).ToLower() == ".docx" || System.IO.Path.GetExtension(id.Url).ToLower() == ".txt")
+                                                        {
+                                                            <li class="media-file-item file-document file-type-doc">
+                                                                <a href="javascript:void(0)" data-json='@id.Id' class="media-file-item__inner">
+                                                                    <div class="thumbnail-holder">
+                                                                        <div class="media-file-item__image">
+                                                                            <img src="@Url.Content("/images/doc.png")" alt="@id.Id">
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (Permission.Can(UserCan.Delete_Media))
+                                                                    {
+                                                                        <div class="actions-holder">
+                                                                            <div class="media-file-item__download" onclick="location.href='@Url.Content("/admin/" + id.Url + "/media/download.html")';" title="Download doc">
+                                                                                <i class="ri-download-2-line"></i>
+                                                                            </div>
+                                                                            <div class="media-file-item__remove" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}' title="Delete">
+                                                                                <i class="ri-close-circle-fill"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    <div class="content-holder">
+                                                                        <h5 title="@id.Title">@id.Title</h5>
+                                                                        <span title="@fileSize">@fileSize</span>
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li class="media-file-item file-type-image">
+                                                                <a href="javascript:void(0)" data-json='@id.Id' class="media-file-item__inner">
+                                                                    <div class="thumbnail-holder">
+                                                                        <div class="media-file-item__image">
+                                                                            <img src="@Url.Content("/uploads/" + id.Url)" alt="@id.Id">
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (Permission.Can(UserCan.Delete_Media))
+                                                                    {
+                                                                        <div class="actions-holder">
+                                                                            <div class="media-file-item__download" onclick="location.href='@Url.Content("/admin/" + id.Url + "/media/download.html")';" title="Download image">
+                                                                                <i class="ri-download-2-line"></i>
+                                                                            </div>
+                                                                            <div class="media-file-item__remove" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){Cicero.Media.Remove(@id.Id)},OnCancelled:function(){this.close();}}' title="Delete">
+                                                                                <i class="ri-close-circle-fill"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    <div class="content-holder">
+                                                                        <h5 title="@id.Title">@id.Title</h5>
+                                                                        <span title="@fileSize">@fileSize</span>
+                                                                    </div>
+                                                                </a>
+
+                                                            </li>
+                                                        }
+
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        @*@foreach (var item in Model.Where(x => x.Media.Count > 0))
+                                            {
+                                                <div class="">
+                                                    <div class="">
+                                                        <h2>@item.Parent</h2>
+                                                    </div>
+                                                    <ul class="">
+                                                        @foreach (var id in item.Media)
+                                                        {
+                                                            if (ViewBag.From == "Images")
+                                                            {
+                                                                if (!(System.IO.Path.GetExtension(id.Url).ToLower() == ".jpg" || System.IO.Path.GetExtension(id.Url).ToLower() == ".jpeg" || System.IO.Path.GetExtension(id.Url).ToLower() == ".png" || System.IO.Path.GetExtension(id.Url).ToLower() == ".gif"))
+                                                                {
+                                                                    continue;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (System.IO.Path.GetExtension(id.Url).ToLower() == ".jpg" || System.IO.Path.GetExtension(id.Url).ToLower() == ".jpeg" || System.IO.Path.GetExtension(id.Url).ToLower() == ".png" || System.IO.Path.GetExtension(id.Url).ToLower() == ".gif")
+                                                                {
+                                                                    continue;
+                                                                }
+                                                            }
+                                                            <li>
+                                                                @if (System.IO.Path.GetExtension(id.Url).ToLower() == ".pdf")
+                                                                {
+                                                                    <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/images/pdf.png"));">
+                                                                        @if (Permission.Can(UserCan.Delete_Media))
+                                                                        {
+                                                                            <i class="ri-close-circle-fill" onclick="Cicero.Media.Delete(this)"></i>
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else if (System.IO.Path.GetExtension(id.Url).ToLower() == ".doc" || System.IO.Path.GetExtension(id.Url).ToLower() == ".docx" || System.IO.Path.GetExtension(id.Url).ToLower() == ".txt")
+                                                                {
+                                                                    <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/images/doc.png"));">
+                                                                        @if (Permission.Can(UserCan.Delete_Media))
+                                                                        {
+                                                                            <i class="ri-close-circle-fill" onclick="Cicero.Media.Delete(this)"></i>
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/uploads/" + id.Url));">
+                                                                        @if (Permission.Can(UserCan.Delete_Media))
+                                                                        {
+                                                                            <i class="ri-close-circle-fill" onclick="Cicero.Media.Delete(this)"></i>
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                            </li>
+                                                        }
+
+
+                                                    </ul>
+                                                </div>
+                                            }*@
+
+                                        @*<ul class="media-list">
+                                                @foreach (var id in Model)
+                                                {
+                                                    <li>
+                                                        @if (System.IO.Path.GetExtension(id.Url).ToLower() == ".pdf")
+                                                        {
+                                                            <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/images/pdf-icon.png"));">
+                                                                @if (Permission.Can(UserCan.Delete_Media))
+                                                                {
+                                                                    <i class="ri-close-circle-fill" onclick="Cicero.Media.Delete(this)"></i>
+                                                                }
+                                                            </a>
+                                                        }
+                                                        else if (System.IO.Path.GetExtension(id.Url).ToLower() == ".doc" || System.IO.Path.GetExtension(id.Url).ToLower() == ".docx" || System.IO.Path.GetExtension(id.Url).ToLower() == ".txt")
+                                                        {
+                                                            <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/images/doc-icon.png"));">
+                                                                @if (Permission.Can(UserCan.Delete_Media))
+                                                                {
+                                                                    <i class="ri-close-circle-fill" onclick="Cicero.Media.Delete(this)"></i>
+                                                                }
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="javascript:void(0)" data-json='@id.Id' style="background-image:url(@Url.Content("/uploads/" + id.Url));">
+                                                                @if (Permission.Can(UserCan.Delete_Media))
+                                                                {
+                                                                    <i class="ri-close-circle-fill" onclick="Cicero.Media.Delete(this)"></i>
+                                                                }
+                                                            </a>
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>*@
+                                    }
+                                    else
+                                    {
+                                        <div class="no-media media-zero-data zero-data-item">
+                                            <figure class="zero-data-item__image">
+                                                <img src="/Themes/Blue/img/no-media.png" alt="No Media">
+                                            </figure>
+                                            <div class="zero-data-item__header">
+                                                <!--<h5 class="zero-data-item__title">No Images and Videos are uploaded in System</h5>-->
+                                                <p class="zero-data-item__text">No Images and Videos are uploaded in System</p>
+                                            </div>
+                                            <!--<div class="zero-data-item__buttons">
+                                                <a class="btn btn-primary border-light" href="#">Contact Admin</a>
+                                            </div>-->
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<!-- <script>
+    $.each($('.card-body .media-list'), function (i, v) {
+        if ($(this).find("li").length == 0) {
+            $(this).parents("div.card").remove();
+        }
+    })
+</script> -->
+
+<script>
+    $(document).ready(function () {
+        $('.thumbnail-holder').addClass("img__pop");
+        $.each($('.thumbnail-holder'), function (i, v) {
+            $(this).attr("data-slide", (i + 1));
+        })
+        createLightBox();
+    })
+
+
+    function createLightBox() {
+        var slides = '';
+        // var thumbnail = '';
+        var length = 0;
+        var i = 1;
+        $.each($('.media-file-item img'), function (index, value) {
+            var imgsrc = $(this).attr("src");
+            if (imgsrc.toLowerCase().indexOf("uploads") >= 0) {
+                length++;
+            }
+        })
+        $.each($('.media-file-item img'), function (index, value) {
+            var imgsrc = $(this).attr("src");
+            var imgTitle = $(this).attr('data-imgtitle');
+            if (imgsrc.toLowerCase().indexOf("uploads") >= 0) {
+                var currentIndex = i++;
+                //imgsrc = 'https://www.w3schools.com/howto/img_nature_wide.jpg';
+                slides += '<div class="lightbox__item mySlides"> <div class="numbertext">' + (currentIndex) + '/ ' + length + '</div> <img src="' + imgsrc + '" class="lightbox__img"> </div>';
+                //  thumbnail += '<div class="column"> <img class="demo" src="' + imgsrc + '" onclick="currentSlide(' + (currentIndex) + ')" alt="' + imgTitle + '"> </div>';
+            }
+        });
+
+        var buttons = '<a href="#" class="prev lightbox__prev lightbox__icon" onclick="plusSlides(-1)"><span class="sr-only">Previous</span></a> <a href="#" class="next lightbox__next lightbox__icon" onclick="plusSlides(1)"><span class="sr-only">Next</span></a> <!-- Caption text -->';
+        var caption = '<div class="slide-caption"><div id="caption"></div></div>';
+        var count = '<div class="slide-counter"><span id="currentNumber"></span>/' + length + '</div>';;
+        var modal = '<div id="lightBoxModal" class="lightbox"><div class="lightbox__dialog"><div class="lightbox__toolbar">' + count + caption + '<a href="#" class="lightbox__close lightbox__icon" onclick="closeModal()"><i class="sr-only">Close</i></a></div><div class="lightbox__content">' + slides + buttons + '' + '</div></div></div>';
+
+        $('body').append(modal);
+        //  showSlides(slideIndex);
+    }
+    // Open the Modal
+    function openModal() {
+        $("#lightBoxModal").css("display", "block");
+    }
+
+    // Close the Modal
+    function closeModal() {
+        $("#lightBoxModal").css("display", "none");
+        $('.lightbox__backdrop').remove();
+    }
+
+    $(document).on('keyup', function (e) {
+        if (e.keyCode === 27) {
+            e.preventDefault();
+            closeModal()
+        }
+        if (e.keyCode == 37) {
+            if ($('#lightBoxModal').css('display') == "block") {
+                plusSlides(-1)
+            }
+        }
+        if (e.keyCode == 39) {
+            if ($('#lightBoxModal').css('display') == "block") {
+                plusSlides(1);
+            }
+        }
+    });
+
+    var slideIndex = 1;
+
+    // Next/previous controls
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    // Thumbnail image controls
+    function currentSlide(n) {
+        slideIndex = n;
+        showSlides(slideIndex);
+    }
+    function showSlides(n) {
+        debugger
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        //  var dots = document.getElementsByClassName("demo");
+        var captionText = document.getElementById("caption");
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+        $('#currentNumber').text(slideIndex);
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        //for (i = 0; i < dots.length; i++) {
+        //    dots[i].className = dots[i].className.replace(" active", "");
+        //}
+        slides[slideIndex - 1].style.display = "block";
+        var windowInnerHeight = window.innerHeight;
+        var imgHeight = $(slides[slideIndex - 1]).find('img').height();
+        if (imgHeight > windowInnerHeight) {
+            $('.lightbox__img').css('max-height', (windowInnerHeight * 0.9) + 'px');
+        }
+
+        // dots[slideIndex - 1].className += " active";
+        // captionText.innerHTML = dots[slideIndex - 1].alt;
+    }
+    $(document).on("click", '.img__pop', function (e) {
+        var slide = $(e.currentTarget).attr("data-slide");
+        currentSlide(parseInt(slide));
+        openModal();
+        var slidess = document.getElementsByClassName("mySlides");
+        var _windowInnerHeight = window.innerHeight;
+        var _imgHeight = $(slidess[parseInt(slide) - 1]).find('img').height();
+        if (_imgHeight > _windowInnerHeight) {
+            $('.lightbox__img').css('max-height', (_windowInnerHeight * 0.9) + 'px');
+        }
+        $('body').append('<div class="lightbox__backdrop show"></div>');
+    })
+
+</script>

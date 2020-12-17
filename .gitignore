@@ -1,0 +1,34 @@
+*.lock
+.vs/*
+.csproj.cs/*
+bin
+obj
+Ccl/wwwroot/uploads
+wwwroot/uploads
+/Ccl/wwwroot/uploads
+Cicero/Areas/Admin/Views/CaseForm/Edit1 (copy).cshtml
+Cicero/Areas/Admin/Views/CaseForm/Edit1 (copy).cshtml
+
+Cicero/wwwroot/Themes/Test/css/dark.css
+Cicero/wwwroot/Themes/Test/css/dark.css.map
+Cicero/wwwroot/Themes/Test/css/default.css
+Cicero/wwwroot/Themes/Test/css/default.css.map
+Cicero/wwwroot/Themes/Test/css/main-frontend.css
+Cicero/wwwroot/Themes/Test/css/main-frontend.css.map
+Cicero/wwwroot/Themes/Test/css/plugin.css
+Cicero/wwwroot/Themes/Test/css/plugin.css.map
+
+Cicero/wwwroot/Themes/Test/css/dark.css
+Cicero/wwwroot/Themes/Test/css/dark.css.map
+Cicero/wwwroot/Themes/Test/css/default.css
+Cicero/wwwroot/Themes/Test/css/default.css.map
+Cicero/wwwroot/Themes/Test/css/main-frontend.css
+Cicero/wwwroot/Themes/Test/css/main-frontend.css.map
+Cicero/wwwroot/Themes/Test/css/plugin.css
+Cicero/wwwroot/Themes/Test/css/plugin.css.map
+
+Cicero/wwwroot/uploads/*
+
+Cicero/appsettings.json
+/SimpleTransferDB/SimpleTransferDB.dbmdl
+/SimpleTransferDB/SimpleTransferDB.jfm

@@ -1,0 +1,196 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@inject AppSetting Setting
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    @{
+        string ex = "";
+        if (ViewData["Title"] != null && ViewData["Title"].ToString() != "")
+        {
+            ex = ViewData["Title"] + " - " as string;
+        }
+        Theme theme = ViewData["theme"] as Theme;
+
+    }
+    <title>@ex @Setting.Get("app_name_frontend")</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    @Html.Raw(theme.GetCssUrl())
+    @Html.Raw(theme.GetJsUrl())
+    <!-- CSS is not registered yet -->
+    <link rel="stylesheet" href="/Themes/@theme.GetName(false)/css/custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/css/perfect-scrollbar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/css/swiper.min.css">
+    <link href="https://cdn.remixicon.com/releases/v2.0.0/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.css">
+    <!-- JS is not registered yet -->
+    <script defer src="https://use.fontawesome.com/releases/v5.9.0/js/all.js" integrity="sha384-7Gk1S6elg570RSJJxILsRiq8o0CO99g1zjfOISrqjFUCjxHDn3TmaWoWOqt6eswF" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.5.0/js/swiper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.js"></script>
+
+    <script type="text/javascript"> var CiceroVars = { "base_url": "@Url.Content("/")" }; </script>
+</head>
+
+<body class="fluid-layout @ViewData["body"]">
+    <h1 class="sr-only">@Setting.Get("app_name_frontend")</h1>
+    @RenderBody()
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- Modal -->
+    <div class="modal fade" id="media" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body py-0"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Insert Media</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- picture modal -->
+
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg image-flybox">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 class="image-flybox-hd titlePic">Title goes here</h6>
+                    <a href="javascript:void(0)" class="image-flybox-nav picPrev"></a>
+                    <a href="javascript:void(0)" class="image-flybox-nav picNext"></a>
+                    <button type="button" class="image-flybox-close close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <img src="" class="imagepreview" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- slick slider js -->
+    <script type="text/javascript" src="@Url.Content("~/frontend/js/slick.js")"></script>
+    <script src="~/js/toastr.js"></script>
+    <script>
+        $(window).scroll(function () {
+            var scroll = $(window).scrollTop();
+
+            if (scroll >= 10) {
+                $(".masthead").addClass("sticky");
+            } else {
+                $(".masthead").removeClass("sticky");
+            }
+            if (scroll >= 600) {
+                $(".masthead").addClass("small-hd");
+            } else {
+                $(".masthead").removeClass("small-hd");
+            }
+        });
+
+        $(document).ready(function () {
+
+            $(document).on('click', ".pop", function () {
+                $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+                $('.imagepreview').attr('data-imgRaw', $(this).find('img').attr('src'));
+                $('#imagemodal').modal('show');
+                let title = $(this).find('img').data('imgtitle');
+                $('.titlePic').text(title);
+            });
+
+            function nextImage() {
+                var gg = $('.imagepreview').attr('src');
+                var picTitle = $('.imagepreview').data('imgtitle');
+                var nextImgUrl = $($('.media-list').find('.pop > img[src$="' + gg + '"]').parent().parent().next('li').find('.pop > img')[0]).attr('src');
+                var nextImgTitle = $($('.media-list').find('.pop > img[src$="' + gg + '"]').parent().parent().next('li').find('.pop > img')[0]).data('imgtitle');
+                $('.imagepreview').attr('src', nextImgUrl);
+                console.log(nextImgTitle)
+                $('.titlePic').text(nextImgTitle);
+            }
+            function prevImage() {
+                var gg = $('.imagepreview').attr('src');
+                var picTitle = $('.imagepreview').data('imgtitle');
+                var nextImgUrl = $($('.media-list').find('.pop > img[src$="' + gg + '"]').parent().parent().prev('li').find('.pop > img')[0]).attr('src');
+                var nextImgTitle = $($('.media-list').find('.pop > img[src$="' + gg + '"]').parent().parent().prev('li').find('.pop > img')[0]).data('imgtitle');
+                console.log(nextImgTitle);
+                $('.imagepreview').attr('src', nextImgUrl);
+                $('.titlePic').text(nextImgTitle);
+            }
+            $('.picNext').on('click', function () {
+                nextImage();
+            });
+            $('.picPrev').on('click', function () {
+                prevImage();
+            })
+
+            $(document).keydown(function (event) {
+                //console.log(event.keyCode)
+                if (event.keyCode === 37) {
+                    prevImage();
+                }
+                if (event.keyCode === 39) {
+
+                    nextImage()
+                }
+            });
+        });
+
+
+    </script>
+    <script>
+        const demo = document.querySelector('.notification__body');
+        const ps = new PerfectScrollbar(demo);
+
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('.notification').on('click', function (event) {
+                // The event won't be propagated up to the document NODE and
+                // therefore delegated events won't be fired
+                event.stopPropagation();
+            });
+
+            $(".card-header[aria-expanded='true']").parent().removeClass("bg-light").addClass("shadow-lg bg-white");
+            $(".card-header").on("click", function () {
+                if ($(this).parent().hasClass("shadow-lg")) {
+                    $(".card").removeClass("shadow-lg").removeClass("bg-white").addClass("bg-light");
+                    $(this).parent().removeClass("shadow-lg").removeClass("bg-white").addClass("bg-light");
+                } else {
+                    $(".card").removeClass("shadow-lg").removeClass("bg-white").addClass("bg-light");
+                    $(this).parent().addClass("shadow-lg").addClass("bg-white").removeClass("bg-light");
+                }
+            })
+
+            var s = $(".nav-tabs-bg");
+            var pos = s.position();
+            $(window).scroll(function () {
+                var windowpos = $(window).scrollTop();
+                if (windowpos >= pos.top & windowpos <= 0) {
+                    $('.header').css('position', 'sticky');
+                } else {
+                    $('.header').css('position', 'static');
+                }
+                if (windowpos >= pos.top & windowpos >= 61) {
+                    s.addClass("sticky-top shadow-sm");
+                } else {
+                    s.removeClass('sticky-top shadow-sm');
+                }
+            });
+
+
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+    @await Component.InvokeAsync("NToastNotify")
+</body>
+</html>
+

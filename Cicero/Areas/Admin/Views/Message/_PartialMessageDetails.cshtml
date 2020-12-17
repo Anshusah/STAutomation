@@ -1,0 +1,260 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Services
+@model MessageViewModel
+@inject Permission Permission
+@inject IUserService _userService
+@inject IMessageService _messageService
+@inject ICaseService _caseService
+@inject IUserService _UserService
+@inject Utils _utils
+@inject IMediaService _mediaService
+
+@{
+    var claimUserList = _userService.GetUserList();
+    string userImage = await _UserService.GetDefaultOrFirstImagesByUserId(_UserService.getLoggedInUserId(), "");
+    string userId = _userService.getLoggedInUserId();
+    var childMessages = await _messageService.GetMessagesByParentId(Model.Id, userId);
+    var user = (userId == Model.From ? Model.To.FirstOrDefault() : Model.From);
+    var attachments = new List<string>();
+    var medias = new List<MediaViewModel>();
+}
+
+<div class="main-content-area">
+    <form action="@Url.Content("/user/markMessageAsRead.html")" id="users-form" method="post">
+        <div class="case__top">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Message Detail</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5><a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(0) + "/messages.html")"><i class="ri-arrow-left-line"></i></a>  @Model.Subject</h5>
+                </div>
+                @if (Permission.Can(UserCan.Create_Message))
+                {
+                    <div class="page-actionbtns d-flex justify-content-center align-content-center">
+                        <select class="custom-select" name="action" id="action">
+                            <option value="">Select Action</option>
+                            <option value="delete">Delete</option>
+                        </select>
+                        <div class="col-sm-2 my-1" hidden>
+                            <button name="apply" id="apply" type="button" class="btn btn-secondary" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#users-form").submit()},OnCancelled:function(){this.close();}}'>Apply</button>
+                        </div>
+                        <input type="text" id="Ids" name="Ids" value="@Model.Id" hidden>
+                        <a href="#" id="reply-message" class="btn btn-outline-secondary ml-1"><i class="ri-arrow-go-back-line"></i> Reply</a>
+                    </div>
+                }
+            </div>
+            <div>
+                ClaimId: @Model.ClaimId
+            </div>
+
+        </div>
+    </form>
+    <div class="message">
+        <div class="message-header">
+            <div class="message-user">
+                <figure class="figure-img">
+                    <img class="rounded-circle" src="@("/uploads/" + Model.SenderImage)" width="40" height="40">
+                </figure>
+                <h5 class="message-user__title">@Model.NameSender</h5>
+            </div>
+            <div class="message-time">
+                <span class="text-muted">@Model.CreatedAt.ToString("dd MMMM, yyyy")</span>
+            </div>
+        </div>
+        <div class="message-content">@Model.Content</div>
+
+        @if (Model.Attachment != "[]")
+        {
+            attachments = Model.Attachment.Trim('[').Trim(']').Split(',').ToList();
+            if (attachments.Count > 0)
+            {
+                medias = _mediaService.GetImagesByIds(attachments.Select(x => int.Parse(x)).ToList());
+            }
+            <div class="attachment">
+                <h6>Attachments</h6>
+                <ul class='fileuploader__items'>
+                    @foreach (var item in medias)
+                    {
+                        var li = string.Empty;
+                        var extension = System.IO.Path.GetExtension(item.Url).ToLower();
+                        var imgSrc = string.Empty;
+                        imgSrc = "/uploads/" + item.Url;
+
+                        if (extension == ".pdf")
+                        {
+                            li = "<li class='thumbs fileuploader__item file-type file-type--pdf'><a class='fileuploader-item-inner' target='_blank' href='" + imgSrc + "'><div class='thumbnail-holder'><div class='fileuploader__item-image'><img src='/images/pdf.png' data-imgtitle='" + item.Title + "'></div></div><div class='actions-holder'><button class='btn fileuploader__action fileuploader__action-remove' type='button' title='Remove'><i class='fileuploader__icon-remove remixicon-close-circle-fill' aria-hidden='true'></i></button></div></a><input type='hidden' name='images[]' value='80'></li>";
+                        }
+                        else if (extension == ".doc" || extension == ".docx" || extension == ".txt")
+                        {
+                            li = "<li class='thumbs fileuploader__item file-type file-type--doc'><a class='fileuploader-item-inner' target='_blank' href='" + imgSrc + "'><div class='thumbnail-holder'><div class='fileuploader__item-image'><img src='/images/doc.png' data-imgtitle='" + item.Title + "'></div></div></li>";
+                        }
+                        else
+                        {
+                            li = "<li class='thumbs fileuploader__item file-type file-type--image'><a class='pop fileuploader-item-inner' href='javascript:void(0)'><div class=''><div class='fileuploader__item-image'><img src='" + imgSrc + "' data-imgtitle='" + item.Title + "'></div></div></a></li>";
+
+                        }
+
+
+                        @Html.Raw(li)
+                    }
+                </ul>
+            </div>
+        }
+        </div>
+
+    <div>
+        @foreach (var item in childMessages.Where(x => x.ParentId != 0))
+        {
+           var childAttachments = new List<string>();
+            var childMedias = new List<MediaViewModel>();
+            if (item.From == userId)
+            {
+                if (item.SenderDelete)
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                if (item.ReceiverDelete)
+                {
+                    continue;
+                }
+            }
+        <div style="border: 1px solid gray; background-color: #fff; margin:0rem 2rem;">
+            <div class="message-header">
+                <div class="message-user">
+                    <figure class="figure-img">
+                        <img class="rounded-circle" src=@("/uploads/" + item.SenderImage) width="40" height="40">
+                    </figure>
+                    <h5 class="message-user__title">@item.NameSender</h5>
+                    &nbsp;
+                    <span class="text-muted">@item.CreatedAt.ToString("dd MMMM, yyyy")</span>
+                </div>
+            </div>
+
+            <div class="message-content">@item.Content</div>
+
+            @if (item.Attachment != "[]")
+            {
+                childAttachments = item.Attachment.Trim('[').Trim(']').Split(',').ToList();
+                if (childAttachments.Count > 0)
+                {
+                    childMedias = _mediaService.GetImagesByIds(childAttachments.Select(x => int.Parse(x)).ToList());
+                }
+                <div class="child--attachment">
+                    <h6>Attachments</h6>
+                    <ul class='fileuploader__items'>
+                        @foreach (var media in childMedias)
+                        {
+                            var childLi = string.Empty;
+                            var extension = System.IO.Path.GetExtension(media.Url).ToLower();
+                            var imgSrc = string.Empty;
+                            imgSrc = "/uploads/" + media.Url;
+
+                            if (extension == ".pdf")
+                            {
+                                childLi = "<li class='thumbs fileuploader__item file-type file-type--pdf'><a class='fileuploader-item-inner' target='_blank' href='" + imgSrc + "'><div class='thumbnail-holder'><div class='fileuploader__item-image'><img src='/images/pdf.png' data-imgtitle='" + media.Title + "'></div></div><div class='actions-holder'><button class='btn fileuploader__action fileuploader__action-remove' type='button' title='Remove'><i class='fileuploader__icon-remove remixicon-close-circle-fill' aria-hidden='true'></i></button></div></a><input type='hidden' name='images[]' value='80'></li>";
+                            }
+                            else if (extension == ".doc" || extension == ".docx" || extension == ".txt")
+                            {
+                                childLi = "<li class='thumbs fileuploader__item file-type file-type--doc'><a class='fileuploader-item-inner' target='_blank' href='" + imgSrc + "'><div class='thumbnail-holder'><div class='fileuploader__item-image'><img src='/images/doc.png' data-imgtitle='" + media.Title + "'></div></div></li>";
+                            }
+                            else
+                            {
+                                childLi = "<li class='thumbs fileuploader__item file-type file-type--image'><a class='pop fileuploader-item-inner' href='javascript:void(0)'><div class=''><div class='fileuploader__item-image'><img src='" + imgSrc + "' data-imgtitle='" + media.Title + "'></div></div></a></li>";
+
+                            }
+
+
+                            @Html.Raw(childLi)
+                        }
+                    </ul>
+                </div>
+            }
+            </div>
+        }
+    </div>
+
+
+    <div id="replyDiv" class="message-reply" style="display:none;">
+        <div class="message-reply__header">
+            <h5 class="message-reply__title">Reply</h5>
+        </div>
+        <div class="message-reply__content">
+            <div class="message-reply__user">
+                <img class="rounded-circle" src=@("/uploads/" + userImage) width="40" height="40" />
+            </div>
+            <div class="message-reply__form">
+                <form id="message-form" action="@Url.Content("~/user"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(0) +"/messages.html")" method="post" enctype="multipart/form-data">
+                    <input asp-for="Id" type="text" class="form-control" hidden>
+                    <input asp-for="ParentId" type="text" class="form-control" hidden>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group mb-2" hidden>
+                                <select id="select-state" name="recipients[]" multiple class="demo-default" placeholder="Select a Claimant...">
+                                    @foreach (var itm in claimUserList)
+                                    {
+                                        if (itm.Id == user)
+                                        {
+                                            <option value="@itm.Id" selected>@itm.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@itm.Id">@itm.Name</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only">Message</label>
+                                <textarea id="content" name="content" class="form-control px-3 py-2" rows="3" placeholder="Message"></textarea>
+                            </div>
+                            <div class="uploaded-files"></div>
+                            <div class="d-flex justify-content-between align-content-center">
+                                <div class="mr-3">
+                                    <button type="submit" id="send-message" class="btn btn-primary">Send</button>
+                                    <button type="button" class="custom-upload-visual btn btn-outline-secondary" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.Message.InsertImages(e)},OnCancelled:function(){this.close();}}'>
+                                        <!-- <img src="~/frontend/img/attachment.svg" alt="" style="width:18px;"> -->
+                                        <i class="ri-attachment-line"></i>
+                                        <span>Add files</span>
+                                    </button>
+                                </div>
+                                <input type="button" class="btn btn-outline-secondary" id="cancel-btn" value="Cancel">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on("click", "#reply-message", function (e) {
+        $('#replyDiv').show();
+        $('#content').focus();
+    })
+
+    $(document).on("click", "#cancel-btn", function (e) {
+        $('#replyDiv').hide();
+
+        $('#message-form').trigger("reset");
+        $('#select-state').val(null).change();
+        $('#claimid').val("").change();
+
+        var control = $select[0].selectize;
+        control.clear();
+    })
+
+    $('#action').change(function (e) {
+        if (e.currentTarget.value != "") {
+            $('#apply').click();
+        }
+    })
+
+</script>

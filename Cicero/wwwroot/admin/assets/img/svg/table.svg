@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+  <g id="table" transform="translate(13590 7669)">
+    <g id="Rectangle_709" data-name="Rectangle 709" transform="translate(-13590 -7669)" fill="#fff" stroke="#707070" stroke-width="1" opacity="0">
+      <rect width="38" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="37" height="37" fill="none"/>
+    </g>
+    <g id="table-line" transform="translate(-13583 -7662)">
+      <path id="Path_769" data-name="Path 769" d="M0,0H24V24H0Z" fill="none"/>
+      <path id="Path_770" data-name="Path 770" d="M4,8H20V5H4ZM14,19V10H10v9Zm2,0h4V10H16ZM8,19V10H4v9ZM3,3H21a1,1,0,0,1,1,1V20a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V4A1,1,0,0,1,3,3Z" fill="#666"/>
+    </g>
+  </g>
+</svg>

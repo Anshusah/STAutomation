@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Sign up Complete";
+    ViewData["body"] = "";
+}
+<link rel="stylesheet" href="/Themes/Blue/querybuilder/node_modules/bootstrap-select/dist/css/bootstrap-select.css">
+<link href="~/scrollable-tab plugin/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+<link href="~/flag-icon/css/flag-icon.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<style>
+    .case__top {
+        padding: 2rem;
+        background: #fff;
+        z-index: 1;
+    }
+
+        .case__top .breadcrumb {
+            padding: 0;
+            background: transparent;
+        }
+
+    .case__header-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .case__action {
+        text-align: right;
+    }
+
+    .case__title-text {
+        display: inline;
+        vertical-align: middle;
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .case__meta {
+        margin-top: 0.5rem;
+    }
+
+    .case__type-name {
+        display: inline;
+    }
+
+    .case__created-time {
+        display: inline;
+        margin-left: 0.5rem;
+    }
+
+    .scrtabs-tab-container {
+        display: flex;
+        flex-grow: 1;
+        overflow: hidden;
+        height: auto;
+    }
+
+        .scrtabs-tab-container .nav-tabs {
+            border: 0;
+        }
+
+    .scrtabs-tabs-fixed-container {
+        height: auto;
+    }
+
+        .scrtabs-tabs-fixed-container .nav-tabs .nav-link {
+            border-top-width: 0;
+            border-left-width: 0;
+            border-right-width: 0;
+        }
+
+        .scrtabs-tabs-fixed-container ul.nav-tabs > li {
+            margin-bottom: 0;
+        }
+
+    .scrtabs-tab-scroll-arrow {
+        border: 0;
+        padding-top: 0;
+        width: 2.5rem;
+        height: 100%;
+        color: var(--gray);
+        font-size: 1rem;
+        border-radius: 50%;
+    }
+
+        .scrtabs-tab-scroll-arrow:hover {
+            background: #fff;
+            ;
+        }
+
+        .scrtabs-tab-scroll-arrow span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+    #loading {
+        width: 100%;
+        z-index: 9;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .spinner-border {
+        margin-left: 40%;
+    }
+
+    .repeat-item-body .repeatItem {
+        display: block !important;
+    }
+
+    .repeatItem {
+        display: none;
+    }
+</style>
+<div>
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header.cshtml")
+        <main class="main-content" role="main">
+            <div class="container">
+                <div class="page-container py-5 my-5 ">
+                    <div class="st__modal-confirm">
+                        <div class="icon-success mb-3"><div class="label-icon"><i class="ri-check-line ri-2x"></i></div></div>
+                        <h6 class="mb-3 font-weight-normal"> Sign-up complete.</h6>
+                        <p class="small text-black-50 mb-4">
+                            Please check your email and activate your account using provided link to log in. Please check the bulk or junk folder in case you cannot find it in the inbox.
+                            @*To make your first transfer, please check your email and verify your email using the link provided. Please check your bulk folder in case you can't find an email from us in the inbox.*@
+                        </p>
+                        <button onclick="window.location.href = '@Url.Content("/")'" class="btn btn-block btn-secondary w-75 mx-auto">OK</button>
+                    </div>
+                </div>
+            </div>
+            
+
+        </main>
+
+        @await Html.PartialAsync("../Shared/_Footer.cshtml")
+
+    </div>
+</div>

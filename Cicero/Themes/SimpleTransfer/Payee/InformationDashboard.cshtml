@@ -1,0 +1,275 @@
+﻿
+
+@{
+    ViewData["Title"] = "Transactions";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+
+}
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        @*<input type="hidden" id="elmloggedinuser" name="elmloggedinuser" elm-name="elmloggedinuser" value="@_commonService.getLoggedInUserId()" />*@
+        <div class="container main-content-inner">
+
+
+
+
+            <div class="widget-box  border-bottom-0 mb-5">
+                <div class="widget-header flex-row justify-content-center bordered">
+                    <h5 class="title">Needs your attention</h5>
+
+
+                </div>
+                <div class="widget-content">
+                    <div class="status-bar">
+                        <div class="status-bar-l">
+                            <h5 class="d-inline-block ">To:</h5>
+                            <h5 class=" title d-inline-block"> Adil Ahmed</h5>
+                            <span class="status d-block">Sending</span>
+                        </div>
+                        <div class="status-bar-r">
+                            <h5 class="title"> 23.00 GBP</h5>
+                            <span class="status">500 GBP</span>
+                        </div>
+                    </div>
+                    <div class="status-bar">
+                        <div class="status-bar-l">
+                            <h5 class=" title">Ready to Pay?</h5>
+                            <p>
+                                Next, send your money to our GBP account. We'll get started on your transfer the moment <br />
+                                we receive the money.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-5 mb-4">
+                        <div class="btn-grp">
+                            <button class="btn btn-primary mr-2 btn__has-icon">
+                                Choose How to Pay
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="8.5" height="8.5" viewBox="0 0 12.204 12.608">
+                                    <g id="arrow" transform="translate(-4.57)">
+                                        <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                            <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" />
+                                            <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                            <button class="btn btn-outline-primary btn__has-icon">
+                                I've now Paid
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="8.5" height="8.5" viewBox="0 0 12.204 12.608">
+                                    <g id="arrow" transform="translate(-4.57)">
+                                        <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                            <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" />
+                                            <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="btn-grp">
+                            <button class="btn btn-outline-primary btn__has-icon">
+                                Cancel Transfer
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="8.5" height="8.5" viewBox="0 0 12.204 12.608">
+                                    <g id="arrow" transform="translate(-4.57)">
+                                        <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                            <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" />
+                                            <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="widget-box  border-bottom-0">
+                <div class="widget-header flex-row justify-content-center bordered">
+                    <h5 class="title">Tuesday 7th</h5>
+
+
+                </div>
+                <div class="widget-content">
+                    <div class="status-bar has-icon">
+                       
+                        <div class="status-bar-l">
+                            <h5 class="d-inline-block">To:</h5>
+                            <h5 class="title d-inline-block"> Jhon Doe</h5>
+                            <span class="status d-block">Sent</span>
+                        </div>
+                        <div class="status-bar-r">
+                            <h5 class="title"> 83,763.80 PKR</h5>
+                            <span class="status">500 GBP</span>
+                        </div>
+                    </div>
+                    <div class="status-bar has-icon">
+                       
+                        <div class="status-bar-l">
+                            <h5 class="d-inline-block">To:</h5>
+                            <h5 class="title d-inline-block"> Jhon Doe</h5>
+                            <span class="status d-block">Sent</span>
+                        </div>
+                        <div class="status-bar-r">
+                            <h5 class="title"> 83,763.80 PKR</h5>
+                            <span class="status">500 GBP</span>
+                        </div>
+                    </div>
+                    <div class="status-bar has-icon">
+                       
+                        <div class="status-bar-l">
+                            <h5 class="d-inline-block">To:</h5>
+                            <h5 class="title d-inline-block"> Jhon Doe</h5>
+                            <span class="status d-block">Sent</span>
+                        </div>
+                        <div class="status-bar-r">
+                            <h5 class="title"> 83,763.80 PKR</h5>
+                            <span class="status">500 GBP</span>
+                        </div>
+                    </div>
+                    <div class="status-bar has-icon">
+                       
+                        <div class="status-bar-l">
+                            <h5 class="d-inline-block">To:</h5>
+                            <h5 class="title d-inline-block"> Jhon Doe</h5>
+                            <span class="status d-block">Sent</span>
+                        </div>
+                        <div class="status-bar-r">
+                            <h5 class="title"> 83,763.80 PKR</h5>
+                            <span class="status">500 GBP</span>
+                        </div>
+                    </div>
+                    
+                  
+
+                </div>
+            </div>
+        </div>
+
+        
+       
+    </main>
+</div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="transaction-details" tabindex="-1" role="dialog" aria-labelledby="recipientDetails" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title title" id="exampleModalLongTitle">Payment Request Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="recipient-detail__about">
+                        <div class="profile">
+                            <div class="icon-wrapper"><i class="ri-building-line ri-3x"></i></div>
+                        </div>
+                        <div class="details d-flex flex-column">
+                            <span class="name">Adil Ahmed ABC Company</span>
+                            <h5 class="amount">20.00 GBP</h5>
+                            <h6 class="Status title mb-0">Payment Request Pending</h6>
+                            <span class="small ">Due by 13th March 2020</span>
+
+                        </div>
+                    </div>
+
+                </div>
+                <nav>
+                    <div class="nav nav-tabs nav-tabs-grid" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Timeline</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Details</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="timeline__wrapper">
+                            <div class="timeline">
+                                <div class="timeline__container success succeed">
+                                    <div class="timeline__content ">
+
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container success ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="p-4">
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Name</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>Jhon Doe</h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Address</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>
+                                        Park Avenue, STOKE-ON-TRENT
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Date</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>
+                                        April 4, 2020
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+

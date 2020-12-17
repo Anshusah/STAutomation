@@ -1,0 +1,761 @@
+﻿@model Cicero.Service.Models.SimpleTransfer.Transaction.TransactionDetailsViewModel
+@inject Permission Permission
+@inject Cicero.Service.Services.SimpleTransfer.ITransactionMgmtService ITransactionMgmtService
+@inject Utils utils
+
+@{
+    ViewBag.Title = "Transaction Details";
+    var baseApiUrl = ITransactionMgmtService.GetBaseUrl();
+}
+@*
+    <style>
+        .header-text {
+            background: #00B4F1;
+            color: white;
+            padding: 10px;
+            font-weight: 500;
+            text-align: center;
+        }
+    </style>
+
+    <h3 class="header-text">
+        TRANSACTION DETAILS
+    </h3>*@
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("/admin/transactionmgmt.html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Transactions</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Transactions</h3>
+            <div class="page-toolbar">
+                <a href="@Url.Content(" ~/admin/TransactionMgmt.html")" class=" btn btn-outline-secondary">Edit Transactions</a>
+                <a href="javascript:" class=" btn btn-secondary"><i class="ri-printer-line mr-2"></i> Print</a>
+
+            </div>
+            @*@if (Permission.Can(UserCan.Create_User))
+                {
+                <div class="page-toolbar">
+                    <a href="@Url.Content(" ~/st/admin" + utils.GetTenantForUrl(false) + "/customers/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-circle-line"></i><span class="btn__label">Add new record</span></a>
+                </div>
+                }*@
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="" method="post" class="page-container grid-horizontal-viewport">
+                <div class="page-aside">
+                    <div class="aside-wrapper">
+                        <div class="aside-header">
+                            <h5>Actions</h5>
+                        </div>
+                        <div class="aside-body">
+                            <ul class="list-unstyled">
+                                <li class="py-3"><a href="javascript:" class="text-dark">Authorise TRX</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Void TRX for General issue</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Void TRX for Compliance Issue</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Undo Void</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Re-send Transaction to Supplier</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Cancel Request to Supplier</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Undo Cancel Request</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Hold Transaction</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Comments for Supplier</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Comments for Customer</a></li>
+                                <li class="py-2"><a href="javascript:" class="text-dark">Internal Comments/Notes</a></li>
+                                <li class="py-3"><a href="javascript:" class="text-dark">Upload Additional Documents</a></li>
+                                <li class="py-3">Void TRX for General issue</li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Transaction Number: @Model.TransactionNumber</h5>
+                        </div>
+                        <div class="row card-body py-0">
+                            <div class="col-sm-6 p-4">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <h6 class="mb-1">Transaction PIN</h6>
+                                        <label class="value" id="txnPin">@Model.TransactionPin</label>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+                            <div class="col-sm-6 border-left-0 border-sm-left p-4">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <h6 class="mb-1">Transfer Status</h6>
+                                        <label class="value  badge badge-success" id="txnStatus">@Model.TransactionStatus</label>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Correspondent refrence number</h5>
+                        </div>
+                        <div class=" card-body py-0">
+                            <div class="row border-bottom">
+                                <div class="col-sm-6  p-4 d-flex align-items-center justify-content-between">
+                                    <h5 class="mb-0 text-primary">Sender</h5>
+                                    <a href="javascript:" class="btn btn-sm btn-outline-secondary"><i class="ri-user-add-line mr-1"></i>Add to blacklist</a>
+                                </div>
+                                <div class="col-sm-6  p-4 d-flex align-items-center justify-content-between border-left">
+                                    <h5 class="mb-0 text-primary">Receiver</h5>
+                                    <a href="javascript:" class="btn btn-sm btn-outline-secondary"><i class="ri-user-add-line mr-1"></i>Add to blacklist</a>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 p-4">
+                                    <ul class="list-unstyled mb-0 list-transaction-details border-0">
+                                        <li>
+                                            <h6 class="mb-1">Membership Card</h6>
+                                            <label class="value" id="member-card">30774144</label>
+                                        </li>
+                                        <li></li>
+                                        <li>
+                                            <h6 class="mb-1">First Name</h6>
+                                            <label class="value" id="first-name">@Model.Sender.FirstName</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Middle name</h6>
+                                            <label class="value" id="middle-name">@Model.Sender.MiddleName</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Surname</h6>
+                                            <label class="value" id="sur-name">@Model.Sender.LastName</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Address Line 1</h6>
+                                            <label class="value" id="address-line-1">@Model.Sender.AddressLine1</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Address Line 2</h6>
+                                            <label class="value" id="address-line-2">@Model.Sender.AddressLine2</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Post Code</h6>
+                                            <label class="value" id="post-code">@Model.Sender.PostCode</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Mobile Number</h6>
+                                            <label class="value" id="mobile-number">@Model.Sender.MobileNumber</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1"> Country</h6>
+                                            <label class="value" id="country">@Model.Sender.Country</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Document Expiration Dater</h6>
+                                            <label class="value" id="expire-date">@Model.Sender.DocumentExpirationDate</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Email Address </h6>
+                                            <label class="value" id="email-address">@Model.Sender.EmailAddress</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Job Title</h6>
+                                            <label class="value" id="job-title">XXXXXXX</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Date of Birth</h6>
+                                            <label class="value" id="dob">@(Model.Sender.DateOfBirth == null ? "" : Convert.ToDateTime(Model.Sender.DateOfBirth).ToString("yyyy/MM/dd"))</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Marital status</h6>
+                                            <label class="value" id="marital-status">Married</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Gender</h6>
+                                            <label class="value" id="gender">Male</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Legal Identification Number</h6>
+                                            <label class="value" id="legal-identification-number">XXXXXX</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Legal Identification Type</h6>
+                                            <label class="value" id="legal-identification-type">XXXXXX</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Place of issue of the identification</h6>
+                                            <label class="value" id="issue-type">Federal Government</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Passport</h6>
+                                            <label class="value" id="passport">XXX899966</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Sending Reason</h6>
+                                            <label class="value" id="passport">@Model.Sender.SendingReason</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Funds' Origin</h6>
+                                            <label class="value" id="passport">@Model.Sender.FundsOrigin</label>
+                                        </li>
+
+
+                                    </ul>
+
+                                </div>
+                                <div class="col-sm-6 border-left p-4">
+                                    <ul class="list-unstyled mb-0 list-transaction-details">
+                                        <li>
+                                            <h6 class="mb-1">First Name</h6>
+                                            <label class="value" id="first-name">@Model.Receiver.FirstName</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Middle name</h6>
+                                            <label class="value" id="middle-name">@Model.Receiver.MiddleName</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Surname</h6>
+                                            <label class="value" id="sur-name">@Model.Receiver.LastName</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Address Line 1</h6>
+                                            <label class="value" id="address-line-1">@Model.Receiver.AddressLine1</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Address Line 2</h6>
+                                            <label class="value" id="address-line-2">@Model.Receiver.AddressLine2</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Post Code</h6>
+                                            <label class="value" id="post-code">@Model.Receiver.PostCode</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1"> City</h6>
+                                            <label class="value" id="city">@Model.Receiver.City</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1"> Country</h6>
+                                            <label class="value" id="country">@Model.Receiver.Country</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Mobile Number</h6>
+                                            <label class="value" id="mobile-number">@Model.Receiver.MobileNumber</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Email Address </h6>
+                                            <label class="value" id="email-address">@Model.Receiver.EmailAddress</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Legal Identification Type</h6>
+                                            <label class="value" id="legal-identification-type">XXXXXX</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Date of Birth</h6>
+                                            <label class="value" id="dob">@(Model.Sender.DateOfBirth == null ? "" : Convert.ToDateTime(Model.Sender.DateOfBirth).ToString("yyyy/MM/dd"))</label>
+                                        </li>
+                                        <li>
+                                            <h6 class="mb-1">Relationship To Beneficiaryh</h6>
+                                            <label class="value" id="beneficiaryRelationship">Brother</label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Complaince</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="form-row">
+                                <div class="form-group col-sm-6 mb-3">
+                                    <label for="flag-hold-date">Flag hold date</label>
+                                    <input type="date" name="flag-hold-date" class="form-control" id="flag-hold-date" value="" />
+                                </div>
+                                <div class="form-group col-sm-6 mb-3">
+                                    <label for="flag-hold-user">Flag hold user</label>
+                                    <input type="text" name="flag-hold-user" class="form-control" id="flag-hold-user" value="" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col mb-3">
+                                    <button class="btn btn-primary">Flag hold</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col mb-3">
+                                    <label for="additional-notes">Additional Notes</label>
+                                    <textarea class="form-control" id="additional-notes"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col mb-3">
+                                    <button class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6 mb-3">
+                                    <label for="limit-hold-user">Limit hold user</label>
+                                    <input type="text" name="flag-hold-date" class="form-control" id="limit-hold-user" value="" />
+                                </div>
+                                <div class="form-group col-sm-6 mb-3">
+                                    <label for="reason">Reason</label>
+                                    <input type="text" name="reason" class="form-control" id="reason" value="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Payment Information</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush mb-0 border-0">
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Origin Currency</h6>
+                                            <label class="value" id="origin-currency">@Model.PaymentInformation.OriginCurrency</label>
+                                        </li>
+                                        <li class="list-group-item  px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Amount Sent</h6>
+                                            <label class="value" id="member-card">@Model.PaymentInformation.AmountSent</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Exchange Rate</h6>
+                                            <label class="value" id="exchange-rate">@Model.PaymentInformation.ExchangeRate</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Correspondent Exchange Rate</h6>
+                                            <label class="value" id="correspondent-exchange-rate">90.5</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Fees</h6>
+                                            <label class="value" id="fees">@Model.PaymentInformation.Fees</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Additional Charges</h6>
+                                            <label class="value" id="exchange-rate">£5.00</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Total Additional Charges</h6>
+                                            <label class="value" id="total-additional-charges">£0.00</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Total Paid</h6>
+                                            <label class="value" id="total-additional-charges">£11.00</label>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush mb-0 border-0">
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Commission Correspondent</h6>
+                                            <label class="value" id="commission-correspondent">British Pound Sterling - 144.00</label>
+                                        </li>
+                                        <li class="list-group-item  px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Destination Currency</h6>
+                                            <label class="value" id="destination-currency">@Model.PaymentInformation.DestinationCurrency</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Amount to Receive</h6>
+                                            <label class="value" id="exchange-rate">@Model.PaymentInformation.AmountToReceive</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Additional Charges(Payment)</h6>
+                                            <label class="value" id="payment-charges">-</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Total Additional Charges(Payment)</h6>
+                                            <label class="value" id="total-payment-charges">00.00</label>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">Amount To Receive</h6>
+                                            <label class="value" id="amount-to-receive">551.00</label>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Sanction Pep</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            @if (Model.CustomerLexisNexisReports.Count == 0 && Model.BeneficiaryLexisNexisReports.Count == 0)
+                            {
+                                <label class="value">No data</label>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Sender</h5>
+                                        <h6>Lexis Nexis Reports</h6>
+                                        <ul>
+                                            @if (Model.CustomerLexisNexisReports.Count == 0)
+                                            {
+                                                <li>
+                                                    <label class="value">No data</label>
+                                                </li>
+                                            }
+                                            @foreach (var item in Model.CustomerLexisNexisReports)
+                                            {
+                                                <li>
+                                                    <a href="#" class="lexisnexis-report" data-value="@item.Value">@item.Text</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h5>Receiver</h5>
+                                        <h6>Lexis Nexis Reports</h6>
+                                        <ul>
+                                            @if (Model.BeneficiaryLexisNexisReports.Count == 0)
+                                            {
+                                                <li>
+                                                    <label class="value">No data</label>
+                                                </li>
+                                            }
+                                            @foreach (var item in Model.BeneficiaryLexisNexisReports)
+                                            {
+                                                <li>
+                                                    <a href="#" class="lexisnexis-report" data-value="@item.Value">@item.Text</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Information For Payer</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <ul class="list-unstyled mb-0 list-transaction-details fr-4 border-0 ">
+                                <li>
+                                    <h6 class="mb-1">Payment Type</h6>
+                                    <label class="value" id="payment-type">@Model.informationForPayer.PaymentType</label>
+                                </li>
+
+                                <li>
+                                    <h6 class="mb-1">Correspondent</h6>
+                                    <label class="value" id="correspondent">FTP</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Office</h6>
+                                    <label class="value" id="office">HSBC Dhaka</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Payment Office</h6>
+                                    <label class="value" id="payment-office">HA</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Office Address</h6>
+                                    <label class="value" id="office-address">15 School Street</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Telephone</h6>
+                                    <label class="value" id="telephone">545454655</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Contact</h6>
+                                    <label class="value" id="contact">XXXXXX</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Schedule</h6>
+                                    <label class="value" id="Schedule">7828333980</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1"> Bank</h6>
+                                    <label class="value" id="Bank">HSBC</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Account</h6>
+                                    <label class="value" id="Account">Current Account</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Delegation</h6>
+                                    <label class="value" id="Delegation">Bangladesh All Bank</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Bank Branch</h6>
+                                    <label class="value" id="job-title">BANANI</label>
+                                </li>
+                                <li>
+                                    <h6 class="mb-1">Bank Address</h6>
+                                    <label class="value" id="dob">Road 12, BD</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Transaction Events</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table id="transaction-event" class="table table-hover table-custom thead-border-0"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">Beneficiary Change Request</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table id="beneficiary-change-request" class="table table-hover table-custom thead-border-0"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-white">
+                            <h5 class="mb-0">SMS</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table id="transaction-sms" class="table table-hover table-custom thead-border-0"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="lexisNexisReportModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body pt-0">
+                <iframe id="iframeView"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+@*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+            //var selected = [];
+
+        var tableTransactionEvent = jQuery("#transaction-event");
+        var tableSms = jQuery("#transaction-sms");
+        var tableBeneficiaryChangeRequest = jQuery("#beneficiary-change-request");
+            tableTransactionEvent.dataTable({
+                fixedHeader: true,
+                "processing": true,
+                "serverSide": true,
+                //"dom": 'r<"clear">t<"row"<"col-sm-3"l><"col-sm-3"i><"col-sm-6"p>><"clear">',
+                "dom": 'r<"clear">t',
+                'searching': true,
+                "ajax": { "url": "@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/transactionevents.html")", "type": "POST" },
+                "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+                'stateSave': false,
+                'select': {
+                    info: false,
+                    style: 'multi'
+                },
+
+            'select': {
+                style: 'multi'
+            },
+            "rowCallback": function(row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+            },
+            "columns": [
+                { "title":"Date","data": "", "orderable": true },
+                { "title":"Real Date","data": "", "orderable": true },
+                { "title":"Username","data": "", "orderable": true },
+                { "title":"Events","data": "", "orderable": true },
+                { "title":"Comments","data": "", "orderable": true },
+                {
+                    "title": "Transmitted", "data": "", "orderable": false,
+                    "render": function () {
+                        return '<div class="custom-control custom-switch">'
+                                  +'  <input asp-for="Status" type="checkbox" class="custom-control-input"' +'id="customSwitchstatus" value="">'
+                                 +'   <label class="custom-control-label" for="customSwitchstatus"></label>'
+                                +'</div>'
+                    }
+                },
+                {
+                    "title": "", "data": "id", "orderable": false,
+                    "render": function () {
+                          return "<span class='badge badge-warning badge-pill'>Retransmitted</span>";
+
+                    }
+                }
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function(oSettings, json) {
+                    jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+                },
+            });
+            tableBeneficiaryChangeRequest.dataTable({
+                fixedHeader: true,
+                "processing": true,
+                "serverSide": true,
+                //"dom": 'r<"clear">t<"row"<"col-sm-3"l><"col-sm-3"i><"col-sm-6"p>><"clear">',
+                "dom": 'r<"clear">t',
+                //'searching': true,
+                "ajax": { "url": "@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/beneficiarychangerequest.html")", "type": "POST" },
+                "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+                'stateSave': false,
+                'select': {
+                    info: false,
+                    style: 'multi'
+               },
+            'select': {
+                style: 'multi'
+            },
+            "rowCallback": function(row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+            },
+                "columns": [
+                {"title": "First Name", "data": "", "orderable": true},
+                {"title": "Last Name", "data": "", "orderable": true},
+                {"title": "Legal Identification", "data": "", "orderable": true},
+                {"title": "Account", "data": "", "orderable": true},
+                { "title": "Date", "data": "", "orderable": true }
+
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function(oSettings, json) {
+                    jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+                },
+            });
+            tableSms.dataTable({
+                fixedHeader: true,
+                "processing": true,
+                "serverSide": true,
+                //"dom": 'r<"clear">t<"row"<"col-sm-3"l><"col-sm-3"i><"col-sm-6"p>><"clear">',
+                "dom": 'r<"clear">t',
+                'searching': true,
+                "ajax": { "url": "@Url.Content("~/admin" + utils.GetTenantForUrl(false) + "/sms.html")", "type": "POST" },
+                "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+                'stateSave': false,
+                'select': {
+                    info: false,
+                    style: 'multi'
+                },
+
+            'select': {
+                style: 'multi'
+            },
+            "rowCallback": function(row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+            },
+            "columns": [
+                { "title":"Date","data": "", "orderable": false },
+                { "title": "Telephone", "data": "", "orderable": true },
+                { "title": "Text", "data": "", "": false },
+                { "title": "Status", "data": null, "orderable": false ,
+                'render': function (data) {
+                    if (data.status == null) {
+                        data.status = "";
+                    }
+                    //var content = data.content.length > 100 ? data.content.substr(0, data.content.lastIndexOf(' ', 100)) : data.content;
+                    var content= data.status;
+                    if(content == "Active") {
+                        return "<span class='badge badge-success badge-pill'>SMS sent Successfully</span>";
+                    } else {
+                        return "<span class='badge badge-secondary badge-pill'>SMS unsent</span>"
+                    }
+                    //return "<div>" + content + "</div>";
+                }
+                },
+
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function(oSettings, json) {
+                    jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+                },
+            });
+
+            jQuery(document).on("keyup","#gridsearch",function(){
+                console.log(this.value);
+                table.fnFilter(this.value);
+            });
+    });
+
+    $(".lexisnexis-report").click(function (e) {
+        var baseapiUrl = "@baseApiUrl";
+        var url = $(this).attr("data-value");
+        $.ajax({
+            url: baseapiUrl + '/api/lexisnexis/retrievereport',
+            type: 'GET',
+            data: {
+                url: url
+            },
+            success: function (response) {
+                $("#iframeView").contents().find('html').html("");
+                const getBlobURL = (code, type) => {
+                    const blob = new Blob([code], { type })
+                    return URL.createObjectURL(blob)
+                }
+
+                var url = getBlobURL(response, 'text/html');
+                const iframe = document.querySelector('#iframeView')
+                iframe.src = url
+                $('#lexisNexisReportModal').modal("toggle");
+            },
+            error: function () {
+                toastr.error('An error has occurred');
+            }
+        });
+    });
+</script>

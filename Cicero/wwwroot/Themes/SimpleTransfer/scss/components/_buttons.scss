@@ -1,0 +1,62 @@
+.btn-outline-secondary {
+    border-color: $gray-400;
+}
+
+.btn-icon {
+    width: 2.357142857142857rem;
+    height: 2.357142857142857rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-next, .btn-prev {
+    background-color: #fff;
+    box-shadow: 0 .5rem 1rem -2px rgba(0,0,0,.1);
+    color: $primary;
+    &:hover {
+        background-color: #fff;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+    &[disabled] {
+        color: $secondary;
+        box-shadow: 0 .5rem 1rem -2px rgba(0,0,0,.1);
+    }
+}
+
+.btn {
+    &__has-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-flow: row-reverse;
+
+        i {
+            margin: 0 0.25rem;
+        }
+    }
+}
+
+.btn-edit {
+    color: var(--white);
+    text-decoration: none;
+
+    svg path {
+        fill: var(--white);
+    }
+
+    &:hover {
+        text-decoration: none;
+        color: rgba($white,0.85);
+
+        svg path {
+            fill: rgba($white,0.85);
+        }
+    }
+}
+
+.btn{
+    &-fixed-width{
+        min-width:160px;
+    }
+}

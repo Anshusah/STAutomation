@@ -1,0 +1,2632 @@
+﻿<!-- Hidden Fields : Start -->
+@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Table;
+@using Cicero.Service.Services
+@using Cicero.Service.Models.Core;
+@using System.Text.RegularExpressions;
+@using Cicero.Service.Models.General;
+@using static Cicero.Service.Extensions.Extensions;
+@inject ICommonService commonService
+@inject ISynchronizeService SynchronizeService
+@inject IQueueService QueueService
+@inject IFormBuilderService FormBuilderService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    Table tb = Model as Table;
+    int formId = Convert.ToInt32(tb.Data);
+    List<SelectListItem> dbTables = SynchronizeService.getSyncSourceTable();
+    string loggeduser = commonService.getLoggedInUserId();
+    string roleId = commonService.GetRoleIdByUserId(loggeduser);
+    List<SelectListItem> stateList = QueueService.GetStateSelectListByFormId(formId, roleId);
+    List<SelectListItem> formElements = FormBuilderService.GetFormFields(formId, true);
+    Theme theme = tb.Theme as Theme;
+    List<EnumViewModel> tableType = (List<EnumViewModel>)EnumModel<Cicero.Service.Models.Core.Elements.Table.TableType>.List();
+}
+<style>
+    /*.tab-content {
+        border: 1px solid #c7c7c7;
+    }*/
+
+    .background-grey {
+        background-color: #f8f8f8;
+    }
+</style>
+<div class="modal-header flex-column">
+    <h5 class="modal-title">Table Setting</h5>
+    <p class="mb-0">This settings helps you to customize Table</p>
+</div>
+<div class="status px-4 pb-4"></div>
+<div class="modal-body">
+    <ul class="fb-card">
+        <li class="active">
+            <header>Name</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <input name="ElementTable" type="hidden" value="True" />
+                        <label for="ElementName_@tb.ElementId">Element Name</label>
+                        <input type="text" class="form-control" id="ElementName_@tb.ElementId" @tb.GetName("Name") data-name="elmName" value="@tb.Name" />
+                        <small class="form-text text-muted">Input a Unique Name for this Element.</small>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="ElementName_@tb.ElementId" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Frontend Setting</header>
+            <section>
+                <input type="hidden" @tb.GetName("ElementId") value="@tb.ElementId" />
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="buttonFrontendId_@tb.FrontendId">Id</label>
+                        <input type="text" id="buttonFrontendId_@tb.FrontendId" class="form-control" @tb.GetName("FrontendId") value="@tb.FrontendId" />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="buttonFrontendClass_@tb.FrontendId">Class</label>
+                        <input type="text" id="buttonFrontendClass_@tb.FrontendId" class="form-control" @tb.GetName("FrontendClass") value="@tb.FrontendClass" />
+
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="buttonFrontendLabel_@tb.FrontendId">Label</label>
+                        <input type="text" class="form-control" id="buttonFrontendLabel_@tb.FrontendId" @tb.GetName("FrontendLabel") value="@tb.FrontendLabel" />
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="frontendIcon_@tb.FrontendId">Icon</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" @tb.GetName("FrontendIcon") id="frontendIcon_@tb.FrontendId" value="@tb.FrontendIcon">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" id="selectIconFrontend" type="button" onclick="showIcons('frontend')">Select Icon</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="switch-control switch-control--inline">
+                    <label for="buttonFrontendVisible_@tb.FrontendId" class="switch">
+                        <input class="switch__input" id="buttonFrontendVisible_@tb.FrontendId" @tb.GetName("FrontendVisible") type="checkbox" value="true" @tb.GetChecked(tb.FrontendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+
+                <div class="switch-control switch-control--inline">
+                    <label for="iconFrontendVisibility_@tb.FrontendId" class="switch">
+                        <input class="switch__input" id="iconFrontendVisibility_@tb.FrontendId" @tb.GetName("FrontendIconVisibility") type="checkbox" value="true" @tb.GetChecked(tb.FrontendIconVisibility)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Icon Visibility</span>
+                    </label>
+                </div>
+
+                <div class="switch-control switch-control--inline">
+                    <label for="buttonVisibleinFooter_@tb.FrontendId" class="switch">
+                        <input class="switch__input" id="buttonVisibleinFooter_@tb.FrontendId" @tb.GetName("VisibleinFooter") type="checkbox" value="true" @tb.GetChecked(tb.VisibleinFooter)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Visible In Footer</span>
+                    </label>
+                </div>
+
+            </section>
+        </li>
+        <li>
+            <header>Backend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="buttonBackendId_@tb.BackendId">Id</label>
+                        <input type="text" class="form-control" id="buttonBackendId_@tb.BackendId" @tb.GetName("BackendId") value="@tb.BackendId" />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="buttonBackendClass_@tb.BackendId">Class</label>
+                        <input type="text" class="form-control" id="buttonBackendClass_@tb.BackendId" @tb.GetName("BackendClass") value="@tb.BackendClass" />
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="buttonBackendLabel_@tb.BackendId">Label</label>
+                        <input type="text" class="form-control" id="buttonBackendLabel_@tb.BackendId" @tb.GetName("BackendLabel") value="@tb.BackendLabel" />
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="backendIcon_@tb.BackendId">Icon</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" @tb.GetName("BackendIcon") id="backendIcon_@tb.BackendId" value="@tb.BackendIcon">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" id="selectIconBackend" type="button" onclick="showIcons('backend')">Select Icon</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="switch-control switch-control--inline">
+                    <label for="buttonBackendVisible_@tb.BackendId" class="switch">
+                        <input class="switch__input" id="buttonBackendVisible_@tb.BackendId" @tb.GetName("BackendVisible") type="checkbox" value="true" @tb.GetChecked(tb.BackendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+
+                <div class="switch-control switch-control--inline">
+                    <label for="iconBackendVisibility_@tb.BackendId" class="switch">
+                        <input class="switch__input" id="iconBackendVisibility_@tb.BackendId" @tb.GetName("BackendIconVisibility") type="checkbox" value="true" @tb.GetChecked(tb.BackendIconVisibility)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Icon Visibility</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+
+        <li>
+            <header>Table Display Type</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-3">
+                        <label for="tableType_@tb.ElementId">
+                            Table Display Type
+                        </label>
+                        <select id="tableType_@tb.ElementId" @tb.GetName("TType") class="custom-select">
+                            @{
+                                foreach (var ls in tableType)
+                                {
+                                    int ttype = tb.TType;
+                                    <option selected="@(ttype == ls.Id)" value="@ls.Id">@ls.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Table Column Setting</header>
+            <section>
+                @if (tb.Column != null && tb.Column.Count() > 0)
+                {
+                    <div class="tab-wrapper">
+                        <div class="tabs">
+                            <ul class="nav nav-tabs nav-tabs-custom" data-type="table" style="position: relative;">
+                                @{int i = 0;
+                                }
+                                @foreach (var item in tb.Column)
+                                {
+                                    string title = "Column" + i;
+                                    <li class="nav-item">
+                                        @if (item.Caption != null)
+                                        {
+                                            title = Regex.Replace(item.Caption, @"[^0-9a-zA-Z\._]", "");
+
+                                            <a class="nav-link" data-toggle="tab" href="#col_@title">
+                                                @item.Caption
+                                                <div class="tabClose">
+                                                    <span class="ri-close-circle-line" title="Delete Column" aria-hidden="true" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){removeTableColumn("col_@title")},OnCancelled:function(){this.close();}}'></span>
+                                                </div>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="nav-link" data-toggle="tab" href="#col_@title">
+                                                @title
+                                                <div class="tabClose">
+                                                    <span class="ri-close-circle-line" title="Delete Column" aria-hidden="true" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){removeTableColumn("col_@title")},OnCancelled:function(){this.close();}}'></span>
+                                                </div>
+                                            </a>
+                                        }
+
+                                    </li>
+                                    i++;
+                                }
+                            </ul>
+
+                            <a class="prev" href="javacript:void(0)" role="button" data-slide="prev" title="Previous">
+                                <i class="ri-arrow-left-s-fill"></i>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="next" href="javacript:void(0)" role="button" data-slide="next" title="Next">
+                                <i class="ri-arrow-right-s-fill"></i>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                        <div class="add-table-tab">
+                            <button type="button" class="btn btn-outline-secondary" data-action="form-column-clone" value="Add Column">
+                                <i class="ri-add-line btn-icon__icon"></i> <span>Add Column</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-content" style="border:0px;">
+                        @{
+                            int k = 0;
+                        }
+                        @foreach (var col in tb.Column)
+                        {
+                            string title = "Column" + k;
+                            <div id="col_@(col.Caption != null? Regex.Replace(col.Caption, @"[^0-9a-zA-Z\._]", "") : title )" class="tab-pane fade in">
+                                <div class="form-row">
+                                    <div class="form-group col-lg-6">
+                                        <label>Name</label>
+                                        <input type="text" class="form-control" name="Column[@k][Caption]" value="@col.Caption" placeholder="Column Name">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <div class="switch-control">
+                                            <label class="switch" @*for="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+
+                                                <input type="checkbox" class="switch__input" name="Column[@k][Setting][IsVisible]" data-name="Column[{0}][Setting][IsVisible]" @(col.Setting != null ? tb.GetChecked(col.Setting.IsVisible) : "") value="True" @*id="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+                                                <span class="switch__state"></span>
+                                                <span class="switch__label">Is Visible</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-lg-6">
+                                        <label>Frontend Class</label>
+                                        <input type="text" class="form-control" name="Column[@k][Setting][FrontendClass]" data-fb-name="Column[{0}][Setting][FrontendClass]" value="@(col.Setting!=null?col.Setting.FrontendClass:"")" placeholder="Frontend Class">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label>Backend Class</label>
+                                        <input type="text" class="form-control" name="Column[@k][Setting][BackendClass]" data-fb-name="Column[{0}][Setting][BackendClass]" value="@(col.Setting!=null?col.Setting.BackendClass:"")" placeholder="Backend Class">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label>Style Attribute</label>
+                                        <textarea class="form-control" name="Column[@k][Setting][Style]" data-fb-name="Column[{0}][Setting][Style]" value="" placeholder="Style">@(col.Setting!=null?col.Setting.Style:"")</textarea>
+                                    </div>
+
+                                </div>
+
+
+                                @if (col.ColumnElement != null)
+                                {
+                                    <div class="form-row" data-element-id="@col.ColumnElement.ElementId" data-type="tableElement">
+                                        <div class="form-group col-lg-6">
+                                            <label>Column Element</label>
+                                            @{
+                                                var all = col.ColumnElement.Type.Split(".");
+                                                string value = all[all.Length - 1];
+                                            }
+
+                                            <div class="input-group mb-3">
+                                                <input disabled type="text" class="form-control" value="@value" />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-primary" type="button" data-type="editElement">Edit Setting</button>
+                                                </div>
+                                            </div>
+
+                                            @*<input disabled type="text" class="form-control" value="@value" />
+                                                <button class="btn btn-outline-primary" type="button" data-type="editElement">Edit Setting</button>*@
+                                        </div>
+                                        <div id="popupspace_@col.ColumnElement.ElementId">
+                                            <div class="fb-popup modal fade" id="popup_@col.ColumnElement.ElementId" data-parent="table" data-parentid="@Model.ElementId">
+                                                <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+                                                    @*<a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)"></a>*@
+                                                    <div class="modal-content setting-wrap">
+                                                        <div class="fb-popup-toolbar">
+                                                            <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                <i class="ri-fullscreen-fill"></i>
+                                                                <span class="sr-only">Fullscreen Mode</span>
+                                                            </a>
+                                                            <a href="#" class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close" onclick="clearSetting(this)">
+                                                                <i class="ri-close-line"></i>
+                                                            </a>
+                                                        </div>
+                                                        <form method="post">
+                                                            <input type="hidden" data-fbb-name="ElementId" value="@col.ColumnElement.ElementId" />
+                                                            <input type="hidden" data-fbb-name="Type" value="@col.ColumnElement.Type" />
+                                                            @{
+
+                                                            }
+                                                            <div class="setting-body">
+                                                                @*Html.Raw(element.RenderSetting(element).Content)*@
+                                                            </div>
+
+                                                            <div class="modal-footer setting-footer">
+                                                                <button type="button" class="btn btn-primary saveElement">Save</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+
+                                    </div>
+                                }
+
+                                else
+                                {
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6">
+                                            <label>Add Element</label>
+
+                                            <div class="input-group">
+                                                <select class="custom-select" name="Column[@k][ElementClass]">
+                                                    @foreach (var item in theme.Elements)
+                                                    {
+                                                        var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                                        dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                        var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                                        var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                                        var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                                        var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                                        //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                                        _class.HttpContext = HttpContextAccessor.HttpContext;
+                                                        var _type_name = _class.GetType().Name;
+                                                        var _type_full_name = _class.GetType().FullName;
+                                                        string RemoveClosest = ".fb-element-wrap";
+                                                        var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                        var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                                        if (_type_name == "Row")
+                                                        {
+                                                            RemoveClosest = "li";
+                                                        }
+                                                        else if (_type_name == "Column")
+                                                        {
+                                                            RemoveClosest = ".column-border";
+                                                        }
+                                                        if (_visiblity.ToString() == "visible" && name.ToString() != "Table")
+                                                        {
+                                                            <option value=@_class>@name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-primary" type="button" data-type="addNewElement">Add Element</button>
+                                                </div>
+                                            </div>
+
+                                            @*<select class="form-control" name="Column[@k][ElementClass]">
+                                                    @foreach (var item in theme.Elements)
+                                                    {
+                                                        var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                                        dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                        var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                                        var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                                        var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                                        var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                                        //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                                        _class.HttpContext = HttpContextAccessor.HttpContext;
+                                                        var _type_name = _class.GetType().Name;
+                                                        var _type_full_name = _class.GetType().FullName;
+                                                        string RemoveClosest = ".fb-element-wrap";
+                                                        var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                        var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                                        if (_type_name == "Row")
+                                                        {
+                                                            RemoveClosest = "li";
+                                                        }
+                                                        else if (_type_name == "Column")
+                                                        {
+                                                            RemoveClosest = ".column-border";
+                                                        }
+                                                        <option value=@_class>@name</option>
+                                                    }
+                                                </select>
+                                                <button class="btn btn-outline-primary" type="button" data-type="addNewElement">Add Element</button>*@
+                                            <p class="mb-4">Select the element to add on the table</p>
+
+
+                                        </div>
+                                    </div>
+
+                                }
+
+                            </div>
+                            k++;
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="tab-wrapper">
+                        <div class="tabs">
+                            <ul class="nav nav-tabs nav-tabs-custom" data-type="table" style="position: relative;">
+
+                                <li class="active nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#col_Column">
+                                        Column*
+                                        <div class="tabClose">
+                                            <div class="tabClose">
+                                                <span class="ri-close-circle-line" title="Delete Column" aria-hidden="true" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){removeTableColumn("col_Column")},OnCancelled:function(){this.close();}}'></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                            <a class="prev" href="javacript:void(0)" role="button" data-slide="prev" title="Previous">
+                                <i class="ri-arrow-left-s-fill"></i>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="next" href="javacript:void(0)" role="button" data-slide="next" title="Next">
+                                <i class="ri-arrow-right-s-fill"></i>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                        <div class="add-table-tab">
+                            <button type="button" class="btn btn-outline-secondary" data-action="form-column-clone" value="Add Column">
+                                <i class="ri-add-line btn-icon__icon"></i> <span>Add Column</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-content" style="border:0px;">
+                        <div id="col_Column" class="tab-pane fade in active">
+                            <div class="form-row">
+                                <div class="form-group col-lg-6">
+                                    <label>Name</label>
+                                    <input type="text" class="form-control" name="Column[0][Caption]" value="" placeholder="Column Name">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <div class="switch-control">
+                                        <label class="switch" @*for="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+                                            <input type="checkbox" class="switch__input" data-name="Column[{0}][Setting][IsVisible]" value="True" @*id="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+                                            <span class="switch__state"></span>
+                                            <span class="switch__label">Is Visible</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-6">
+                                    <label>Frontend Class</label>
+                                    <input type="text" class="form-control" name="Column[0][Setting][FrontendClass]" data-fb-name="Column[{0}][Setting][FrontendClass]" value="" placeholder="Frontend Class">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label>Backend Class</label>
+                                    <input type="text" class="form-control" name="Column[0][Setting][BackendClass]" data-fb-name="Column[{0}][Setting][BackendClass]" value="" placeholder="Backend Class">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label>Style Attribute</label>
+                                    <textarea class="form-control" name="Column[0][Setting][Style]" data-fb-name="Column[{0}][Setting][Style]" value="" placeholder="Style"></textarea>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-row">
+                                <div class="form-group col-lg-6">
+                                    <label>Add Element</label>
+                                    <div class="input-group">
+                                        <select class="custom-select" name="Column[0][ElementClass]">
+                                            @if (theme != null && theme.Elements != null)
+                                            {
+                                                @foreach (var item in theme.Elements)
+                                                {
+                                                    var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                                    dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                    var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                                    var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                                    var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                                    var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                                    //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                                    _class.HttpContext = HttpContextAccessor.HttpContext;
+                                                    var _type_name = _class.GetType().Name;
+                                                    var _type_full_name = _class.GetType().FullName;
+                                                    string RemoveClosest = ".fb-element-wrap";
+                                                    var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                    var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                                    if (_type_name == "Row")
+                                                    {
+                                                        RemoveClosest = "li";
+                                                    }
+                                                    else if (_type_name == "Column")
+                                                    {
+                                                        RemoveClosest = ".column-border";
+                                                    }
+                                                    if (_visiblity.ToString() == "visible" && name.ToString() != "Table")
+                                                    {
+                                                        <option value=@_class>@name</option>
+                                                    }
+                                                }
+                                            }
+
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-primary" type="button" data-type="addNewElement">Add Element</button>
+                                        </div>
+                                    </div>
+
+
+                                    @*<select class="form-control" name="Column[0][ElementClass]">
+                                            @foreach (var item in theme.Elements)
+                                            {
+                                                var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                                dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                                var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                                var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                                var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                                //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                                _class.HttpContext = HttpContextAccessor.HttpContext;
+                                                var _type_name = _class.GetType().Name;
+                                                var _type_full_name = _class.GetType().FullName;
+                                                string RemoveClosest = ".fb-element-wrap";
+                                                var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                                if (_type_name == "Row")
+                                                {
+                                                    RemoveClosest = "li";
+                                                }
+                                                else if (_type_name == "Column")
+                                                {
+                                                    RemoveClosest = ".column-border";
+                                                }
+                                                <option value=@_class>@name</option>
+                                            }
+                                        </select>
+                                        <button class="btn btn-outline-primary" type="button" data-type="addNewElement">Add Element</button>*@
+                                    <p class="mb-4">Select the element to add on the table</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                }
+                <div hidden class=" tab-pane fade tab-content-clone-table" id="Column1">
+                    <div class="form-row">
+                        <div class="form-group col-lg-6">
+                            <label>Name</label>
+                            <input type="text" class="form-control" data-fb-name="Column[{0}][Caption]" value="" placeholder="Column Name">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <div class="switch-control">
+                                <label class="switch" @*for="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+                                    <input type="checkbox" class="switch__input" data-name="Column[{0}][Setting][IsVisible]" value="True" checked @*id="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+                                    <span class="switch__state"></span>
+                                    <span class="switch__label">Is Visible</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-lg-6">
+                            <label>Frontend Class</label>
+                            <input type="text" class="form-control" data-fb-name="Column[{0}][Setting][FrontendClass]" value="" placeholder="Frontend Class">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>Backend Class</label>
+                            <input type="text" class="form-control" data-fb-name="Column[{0}][Setting][BackendClass]" value="" placeholder="Backend Class">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label>Style Attribute</label>
+                            <textarea class="form-control" data-fb-name="Column[{0}][Setting][Style]" value="" placeholder="Style"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+
+
+                        <div class="form-group col-lg-6">
+                            <label>Add Element</label>
+
+                            <div class="input-group">
+                                <select class="custom-select" data-fb-name="Column[{0}][ElementClass]">
+                                    @if (theme != null && theme.Elements != null)
+                                    {
+                                        @foreach (var item in theme.Elements)
+                                        {
+                                            var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                            dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                            var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                            var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                            var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                            var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                            //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                            _class.HttpContext = HttpContextAccessor.HttpContext;
+                                            var _type_name = _class.GetType().Name;
+                                            var _type_full_name = _class.GetType().FullName;
+                                            string RemoveClosest = ".fb-element-wrap";
+                                            var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                            var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                            if (_type_name == "Row")
+                                            {
+                                                RemoveClosest = "li";
+                                            }
+                                            else if (_type_name == "Column")
+                                            {
+                                                RemoveClosest = ".column-border";
+                                            }
+                                            if (_visiblity.ToString() == "visible" && name.ToString() != "Table")
+                                            {
+                                                <option value=@_class>@name</option>
+                                            }
+
+                                        }
+                                    }
+
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary" type="button" data-type="addNewElement">Add Element</button>
+                                </div>
+                            </div>
+                            @*<select class="form-control" data-fb-name="Column[{0}][ElementClass]">
+                                    @foreach (var item in theme.Elements)
+                                    {
+                                        var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                        dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                        var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                        var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                        var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                        var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                        //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                        _class.HttpContext = HttpContextAccessor.HttpContext;
+                                        var _type_name = _class.GetType().Name;
+                                        var _type_full_name = _class.GetType().FullName;
+                                        string RemoveClosest = ".fb-element-wrap";
+                                        var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                        var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                        if (_type_name == "Row")
+                                        {
+                                            RemoveClosest = "li";
+                                        }
+                                        else if (_type_name == "Column")
+                                        {
+                                            RemoveClosest = ".column-border";
+                                        }
+                                        <option value=@_class>@name</option>
+                                    }
+                                </select>
+                                <button class="btn btn-outline-primary" type="button" data-type="addNewElement">Add Element</button>*@
+                            <p class="mb-4">Select the element to add on the table</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Table Header Setting</header>
+            <section>
+                <div class="validation-rule mb-4">
+                    <div class="validation-rule-table">
+                        <div class="validation-rule-head select-option-head">
+                            <div class="form-row">
+                                <div class="col-lg-3">
+                                    <label>Header Value</label>
+                                </div>
+                                <div class="col-lg-2">
+                                    <label>Colspan</label>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <label> Attribute</label>
+                                </div>
+                                <div class="col-lg-2">
+                                    <label>Select Parent</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="validation-rule-body validation_rule_wrapper">
+                            @{
+                                int index3 = 0;
+                                if (tb.Header != null && tb.Header.Count > 0)
+                                {
+
+
+
+                                    foreach (var so in tb.Header)
+                                    {
+                                        <div class="field-validation-wrapper">
+                                            <div class="field-controller">
+                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                    <i class="ri-file-copy-line"></i>
+                                                    <span class="sr-only">Copy</span>
+                                                </a>
+                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                    <i class="ri-close-line"></i>
+                                                    <span class="sr-only">Delete</span>
+                                                </a>
+                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-lg-3">
+                                                    <input type="text" name="Header[@index3][HeaderTitle]" data-name="Header[{0}][HeaderTitle]" class="form-control" id="" placeholder="HeaderTitle" value="@tb.Header[index3].HeaderTitle">
+                                                    <input type="hidden" value="@tb.Header[index3].HeaderId" name="Header[@index3][HeaderId]" data-name="Header[{0}][HeaderId]" data-value="header_{0}" />
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <input type="number" name="Header[@index3][Colspan]" data-name="Header[{0}][Colspan]" class="form-control" min="0" value="@tb.Header[index3].Colspan" />
+                                                </div>
+
+                                                <div class="col-lg-3">
+                                                    <textarea name="Header[@index3][Attribute]" data-name="Header[{0}][Attribute]" class="form-control">@tb.Header[index3].Attribute</textarea>
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <select name="Header[@index3][ParentId]" data-name="Header[{0}][ParentId]" class="form-control">
+                                                        <option value="0">Parent</option>
+                                                        @foreach (var hd in tb.Header.Where(x => x.ParentId == "0").ToList())
+                                                        {
+                                                            <option value="@hd.HeaderId" @(so.ParentId == hd.HeaderId ? "selected" : "")>@hd.HeaderTitle</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {
+                                            index3++;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="field-validation-wrapper">
+                                        <div class="field-controller">
+                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                <i class="ri-file-copy-line"></i>
+                                                <span class="sr-only">Copy</span>
+                                            </a>
+                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                <i class="ri-close-line"></i>
+                                                <span class="sr-only">Delete</span>
+                                            </a>
+
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-lg-3">
+                                                <input class="form-control" type="text" name="Header[0][HeaderTitle]" data-name="Header[{0}][HeaderTitle]" />
+                                                <input type="hidden" value="header_@index3" name="Header[0][HeaderId]" data-name="Header[{0}][HeaderId]" data-value="header_{0}" />
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input class="form-control" min="0" type="number" name="Header[0][Colspan]" data-name="Header[{0}][Colspan]" />
+                                            </div>
+
+                                            <div class="col-lg-3">
+                                                <textarea class="form-control" name="Header[0][Attribute]" data-name="Header[{0}][Attribute]"></textarea>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <select class="form-control" name="Header[0][ParentId]" data-name="Header[{0}][ParentId]">
+                                                    <option value="0">Parent</option>
+                                                    @if (tb.Header != null && tb.Header.Count > 0)
+                                                    {
+
+                                                        foreach (var hh in tb.Header.Where(x => x.ParentId == "0").ToList())
+                                                        {
+                                                            <option value="@hh.HeaderId">@hh.HeaderTitle</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </li>
+
+        <!--
+        <li>
+            <header>Events Setting</header>
+            <section>
+                <div id="Events" class="events-setting">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#onClick" data-toggle="tab" class="nav-link active">On Click Event</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" style="border:0px;">
+                        <div class="tab-pane pt-4 pb-3 active" id="onClick">
+                            <div class="row">
+                                <div class="form-group col-md-6 mb-4">
+                                    <div class="switch-control">
+                                        <label for="IsOnChangeEvent_@tb.ElementId" class="switch">
+                                            <input class="switch__input" id="IsOnChangeEvent_@tb.ElementId" @tb.GetName("IsOnClickEvent") type="checkbox" value="true" @tb.GetChecked(tb.IsOnClickEvent)>
+                                            <span class="switch__state"></span>
+                                            <span class="switch__label">Enable On Click Event</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6 mb-4">
+                                    <div class="switch-control">
+                                        <label for="IsOnSaveFormEvent_@tb.ElementId" class="switch">
+                                            <input class="switch__input" id="IsOnSaveFormEvent_@tb.ElementId" @tb.GetName("IsOnSaveFormEvent") type="checkbox" value="true" @tb.GetChecked(tb.IsOnSaveFormEvent)>
+                                            <span class="switch__state"></span>
+                                            <span class="switch__label">Enable On Save Form Event</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6 mb-4">
+                                    <div class="switch-control">
+                                        <label for="IsOnSwitchTabEvent_@tb.ElementId" class="switch">
+                                            <input class="switch__input" id="IsOnSwitchTabEvent_@tb.ElementId" @tb.GetName("IsOnSwitchTabEvent") type="checkbox" value="true" @tb.GetChecked(tb.IsOnSwitchTabEvent)>
+                                            <span class="switch__state"></span>
+                                            <span class="switch__label">Switch Tab</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6 mb-4">
+                                    <div class="target_option_wrapper">
+                                        @{
+
+                                            if (tb.TabId != null || tb.TabId != "")
+                                            {
+                                                <div class="field-validation-wrapper">
+                                                    <div class="form-row">
+                                                        @{
+                                                            Cicero.Service.Models.Core.FormBuilderViewModel fbvm = tb.ModelData as Cicero.Service.Models.Core.FormBuilderViewModel;
+                                                            var abc = fbvm;
+                                                            List<SelectListItem>
+                                                                SelectedElement = new List<SelectListItem>
+                                                                    ();
+                                                            if (fbvm != null)
+                                                            {
+                                                                int TabIndex = Convert.ToInt32(tb.TabIndex);
+
+                                                                foreach (var tabVal in fbvm.Tab)
+                                                                {
+                                                                    if (Convert.ToInt32(tabVal.TabIndex) != TabIndex)
+                                                                    {
+                                                                        SelectListItem sli = new SelectListItem();
+                                                                        sli.Text = tabVal.BackendLabel;
+                                                                        sli.Value = tabVal.ElementId;
+                                                                        SelectedElement.Add(sli);
+                                                                    }
+
+
+                                                                }
+                                                            }
+
+                                                        }
+                                                        <div class="col-lg-6">
+                                                            <select name="TabId" class="custom-select" data-name="TabId">
+                                                                @{
+                                                                    <option value="0">Please Select</option>
+                                                                    if (SelectedElement != null)
+                                                                    {
+                                                                        foreach (SelectListItem si in SelectedElement)
+                                                                        {
+                                                                            <option selected="@(tb.TabId==si.Value)" value="@si.Value">@si.Text</option>
+                                                                        }
+                                                                    }
+
+                                                                }
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            }
+                                            else
+                                            {
+                                                <div class="field-validation-wrapper">
+                                                    <div class="form-row">
+                                                        @{
+                                                            Cicero.Service.Models.Core.FormBuilderViewModel fbvm = tb.ModelData as Cicero.Service.Models.Core.FormBuilderViewModel;
+                                                            var abc = fbvm;
+                                                            List<SelectListItem>
+                                                                SelectedElement = new List<SelectListItem>
+                                                                    ();
+                                                            if (fbvm != null)
+                                                            {
+                                                                int TabIndex = Convert.ToInt32(tb.TabIndex);
+
+                                                                foreach (var tabVal in fbvm.Tab)
+                                                                {
+                                                                    if (Convert.ToInt32(tabVal.TabIndex) != TabIndex)
+                                                                    {
+                                                                        SelectListItem sli = new SelectListItem();
+                                                                        sli.Text = tabVal.BackendLabel;
+                                                                        sli.Value = tabVal.ElementId;
+                                                                        SelectedElement.Add(sli);
+                                                                    }
+
+
+                                                                }
+                                                            }
+
+                                                        }
+                                                        <div class="col-lg-6">
+                                                            <select name="TabId" class="custom-select" data-name="TabId">
+                                                                @{
+                                                                    <option value="0">Please Select</option>
+
+                                                                    if (SelectedElement != null)
+                                                                    {
+                                                                        foreach (SelectListItem si in SelectedElement)
+                                                                        {
+                                                                            <option value="@si.Value">@si.Text</option>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="#setValueSetting" data-toggle="tab" class="nav-link active">Set Value on Setting</a>
+                                </li>
+                                <li class="">
+                                    <a href="#targetOptionSetting" data-toggle="tab" class="nav-link">Target Option Setting</a>
+                                </li>
+                            </ul>
+
+
+                            <div class="tab-content p-lg-4">
+                                <div class="tab-pane pt-4 pb-3 active" id="setValueSetting">
+                                    <p class="mb-4">Choose states from the options available options to run workflow.</p>
+                                    <div class="form-row mb-4">
+                                        <div class="col-lg-6 form-group">
+                                            <label for="hdStartState_@tb.ElementId">Select Start State</label>
+                                            <select class="custom-select startState" id="hdStartState_@tb.ElementId" name="OnClickEvent[StartState]">
+                                                <option value="" selected>Please Select</option>
+                                                @foreach (var state in stateList)
+                                                {
+                                                    if (tb.OnClickEvent != null)
+                                                    {
+                                                        if (tb.OnClickEvent.StartState == state.Value)
+                                                        {
+                                                            <option value="@state.Value" selected>@state.Text</option>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@state.Value">@state.Text</option>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@state.Value">@state.Text</option>
+                                                    }
+
+                                                }
+
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            <label for="hdEndState_@tb.ElementId">Select End State</label>
+                                            <select class="custom-select endState" id="hdEndState_@tb.ElementId" name="OnClickEvent[EndState]">
+                                                <option value="" selected>Please Select</option>
+                                                @foreach (var state in stateList)
+                                                {
+                                                    if (tb.OnClickEvent != null)
+                                                    {
+                                                        if (tb.OnClickEvent.EndState == state.Value)
+                                                        {
+                                                            <option value="@state.Value" selected>@state.Text</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@state.Value">@state.Text</option>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@state.Value">@state.Text</option>
+                                                    }
+
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <p>Choose the Elements from which you want to take value from </p>
+                                    <div class="validation-rule mb-4">
+                                        <div class="validation-rule-table">
+                                            <div class="validation-rule-head select-option-head">
+                                                <div class="form-row">
+                                                    <div class="col-lg-4">
+                                                        <label>Value Field</label>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Select Element</label>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <label>Enable Validation</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="validation-rule-body validation_rule_wrapper">
+                                                @{
+                                                    if (tb.OnClickEvent != null)
+                                                    {
+                                                        if (tb.OnClickEvent.TakeValueFromName != null && tb.OnClickEvent.TakeValueFromName.Count > 0)
+                                                        {
+
+                                                            int index1 = 0;
+                                                            foreach (var so in tb.OnClickEvent.TakeValueFromName)
+                                                            {
+                                                                <div class="field-validation-wrapper">
+                                                                    <div class="field-controller">
+                                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                            <i class="ri-file-copy-line"></i>
+                                                                            <span class="sr-only">Copy</span>
+                                                                        </a>
+                                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                            <i class="ri-close-line"></i>
+                                                                            <span class="sr-only">Delete</span>
+                                                                        </a>
+                                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                    </div>
+                                                                    <div class="form-row">
+                                                                        <div class="col-lg-4">
+                                                                            <input type="text" name="OnClickEvent[TakeValueFromName][@index1]" data-name="OnClickEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Field" value="@tb.OnClickEvent.TakeValueFromName[index1]">
+
+                                                                        </div>
+                                                                        <div class="col-lg-4">
+                                                                            <select type="text" name="OnClickEvent[TakeValueFromElement][@index1]" data-name="OnClickEvent[TakeValueFromElement][{0}]" class="custom-select" id="" placeholder="Text Field">
+                                                                                <option value="">Please Select</option>
+                                                                                @foreach (var item in formElements)
+                                                                                {
+                                                                                    if (tb.OnClickEvent.TakeValueFromElement[index1] != null)
+                                                                                    {
+                                                                                        if (item.Value == tb.OnClickEvent.TakeValueFromElement[index1].ToString())
+                                                                                        {
+                                                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <option value="@item.Value">@item.Text</option>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <option value="@item.Value">@item.Text</option>
+                                                                                    }
+
+
+                                                                                }
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-lg-3">
+                                                                            <select type="text" name="OnClickEvent[TakeValueFromElementValidation][@index1]" data-name="OnClickEvent[TakeValueFromElementValidation][{0}]" class="custom-select" id="">
+
+
+
+
+                                                                                @if (tb.OnClickEvent.TakeValueFromElementValidation != null && tb.OnClickEvent.TakeValueFromElementValidation[index1] != null)
+                                                                                {
+                                                                                    if ("False" == tb.OnClickEvent.TakeValueFromElementValidation[index1].ToString())
+                                                                                    {
+                                                                                        <option value="False" selected>False</option>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <option value="False">False</option>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="False">False</option>
+                                                                                }
+
+                                                                                @if (tb.OnClickEvent.TakeValueFromElementValidation != null && tb.OnClickEvent.TakeValueFromElementValidation[index1] != null)
+                                                                                {
+                                                                                    if ("True" == tb.OnClickEvent.TakeValueFromElementValidation[index1].ToString())
+                                                                                    {
+                                                                                        <option value="True" selected>True</option>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <option value="True">True</option>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="True">True</option>
+                                                                                }
+
+
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                {
+                                                                    index1++;
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="field-validation-wrapper">
+                                                                <div class="field-controller">
+                                                                    <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                        <i class="ri-file-copy-line"></i>
+                                                                        <span class="sr-only">Copy</span>
+                                                                    </a>
+                                                                    <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                        <i class="ri-close-line"></i>
+                                                                        <span class="sr-only">Delete</span>
+                                                                    </a>
+                                                                    @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                </div>
+                                                                <div class="form-row">
+
+                                                                    <div class="col-lg-4">
+                                                                        <input type="text" name="OnClickEvent[TakeValueFromName][0]" data-name="OnClickEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                                    </div>
+                                                                    <div class="col-lg-4">
+                                                                        <select type="text" name="OnClickEvent[TakeValueFromElement][0]" data-name="OnClickEvent[TakeValueFromElement][{0}]" class="custom-select" id="" placeholder="Text Field">
+                                                                            <option value="">Please Select</option>
+                                                                            @foreach (var item in formElements)
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-lg-3">
+                                                                        <select type="text" name="OnClickEvent[TakeValueFromElementValidation][0]" data-name="OnClickEvent[TakeValueFromElementValidation][{0}]" class="custom-select" id="">
+                                                                            <option value="False">False</option>
+                                                                            <option value="True">True</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="field-validation-wrapper">
+                                                            <div class="field-controller">
+                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                    <i class="ri-file-copy-line"></i>
+                                                                    <span class="sr-only">Copy</span>
+                                                                </a>
+                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                    <i class="ri-close-line"></i>
+                                                                    <span class="sr-only">Delete</span>
+                                                                </a>
+                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                            </div>
+                                                            <div class="form-row">
+
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="OnClickEvent[TakeValueFromName][0]" data-name="OnClickEvent[TakeValueFromName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                                </div>
+                                                                <div class="col-lg-4">
+                                                                    <select type="text" name="OnClickEvent[TakeValueFromElement][0]" data-name="OnClickEvent[TakeValueFromElement][{0}]" class="custom-select" id="" placeholder="Text Field">
+                                                                        <option value="">Please Select</option>
+                                                                        @foreach (var item in formElements)
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <select type="text" name="OnClickEvent[TakeValueFromElementValidation][0]" data-name="OnClickEvent[TakeValueFromElementValidation][{0}]" class="custom-select" id="">
+                                                                        <option value="False">False</option>
+                                                                        <option value="True">True</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p>Choose the Elements from which you want to set value To </p>
+                                    <div class="validation-rule">
+                                        <div class="validation-rule-table">
+                                            <div class="validation-rule-head select-option-head">
+                                                <div class="form-row">
+                                                    <div class="col-lg-4">
+                                                        <label>Returned Field</label>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <label>Select Element</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="validation-rule-body validation_rule_wrapper">
+                                                @{
+                                                    if (tb.OnClickEvent != null)
+                                                    {
+                                                        if (tb.OnClickEvent.SetValueToName != null && tb.OnClickEvent.SetValueToName.Count > 0)
+                                                        {
+                                                            int index1 = 0;
+                                                            foreach (var so in tb.OnClickEvent.SetValueToName)
+                                                            {
+                                                                <div class="field-validation-wrapper">
+                                                                    <div class="field-controller">
+                                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                            <i class="ri-file-copy-line"></i>
+                                                                            <span class="sr-only">Copy</span>
+                                                                        </a>
+                                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                            <i class="ri-close-line"></i>
+                                                                            <span class="sr-only">Delete</span>
+                                                                        </a>
+                                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                    </div>
+                                                                    <div class="form-row">
+                                                                        <div class="col-lg-4">
+                                                                            <input type="text" name="OnClickEvent[SetValueToName][@index1]" data-name="OnClickEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Field" value="@tb.OnClickEvent.SetValueToName[index1]">
+
+                                                                        </div>
+                                                                        <div class="col-lg-4">
+                                                                            <select type="text" name="OnClickEvent[SetValueToElement][@index1]" data-name="OnClickEvent[SetValueToElement][{0}]" class="custom-select" id="" placeholder="Text Field">
+                                                                                <option>Please Select</option>
+                                                                                @foreach (var item in formElements)
+                                                                                {
+                                                                                    if (tb.OnClickEvent.SetValueToElement[index1] != null)
+                                                                                    {
+                                                                                        if (item.Value == tb.OnClickEvent.SetValueToElement[index1].ToString())
+                                                                                        {
+                                                                                            <option value="@item.Value" selected>@item.Text</option>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <option value="@item.Value">@item.Text</option>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <option value="@item.Value">@item.Text</option>
+                                                                                    }
+
+
+                                                                                }
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                                {
+                                                                    index1++;
+                                                                }
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="field-validation-wrapper">
+                                                                <div class="field-controller">
+                                                                    <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                        <i class="ri-file-copy-line"></i>
+                                                                        <span class="sr-only">Copy</span>
+                                                                    </a>
+                                                                    <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                        <i class="ri-close-line"></i>
+                                                                        <span class="sr-only">Delete</span>
+                                                                    </a>
+                                                                    @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                </div>
+                                                                <div class="form-row">
+
+                                                                    <div class="col-lg-4">
+                                                                        <input type="text" name="OnClickEvent[SetValueToName][0]" data-name="OnClickEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                                    </div>
+                                                                    <div class="col-lg-4">
+                                                                        <select type="text" name="OnClickEvent[SetValueToElement][0]" data-name="OnClickEvent[SetValueToElement][{0}]" class="custom-select" id="" placeholder="Text Field">
+                                                                            <option>Please Select</option>
+                                                                            @foreach (var item in formElements)
+                                                                            {
+                                                                                <option value="@item.Value">@item.Text</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="field-validation-wrapper">
+                                                            <div class="field-controller">
+                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                    <i class="ri-file-copy-line"></i>
+                                                                    <span class="sr-only">Copy</span>
+                                                                </a>
+                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                    <i class="ri-close-line"></i>
+                                                                    <span class="sr-only">Delete</span>
+                                                                </a>
+                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                            </div>
+                                                            <div class="form-row">
+
+                                                                <div class="col-lg-4">
+                                                                    <input type="text" name="OnClickEvent[SetValueToName][0]" data-name="OnClickEvent[SetValueToName][{0}]" class="form-control" id="" placeholder="Value Filed">
+                                                                </div>
+                                                                <div class="col-lg-4">
+                                                                    <select type="text" name="OnClickEvent[SetValueToElement][0]" data-name="OnClickEvent[SetValueToElement][{0}]" class="custom-select" id="" placeholder="Text Field">
+                                                                        <option>Please Select</option>
+                                                                        @foreach (var item in formElements)
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane pt-4 pb-3" id="targetOptionSetting">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="switch-control">
+                                                <label for="IsOnResponseTarget@tb.ElementId" class="switch">
+                                                    <input class="switch__input" id="IsOnResponseTarget@tb.ElementId" @tb.GetName("IsOnResponseTarget") type="checkbox" value="true" @tb.GetChecked(tb.IsOnResponseTarget)>
+                                                    <span class="switch__state"></span>
+                                                    <span class="switch__label">Enable Target On Response</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <p>Input the response value and select the Target Element </p>
+                                            <div class="validation-rule mb-4">
+                                                <div class="validation-rule-table">
+                                                    <div class="validation-rule-head select-option-head">
+                                                        <div class="form-row">
+                                                            <div class="col-lg-3">
+                                                                <label>Response Value</label>
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                <label>Select Element</label>
+                                                            </div>
+                                                            <div class="col-lg-5">
+
+                                                                <label>Option</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="validation-rule-body validation_rule_wrapper">
+                                                        @{
+                                                            if (tb.IsOnResponseTarget != null)
+                                                            {
+                                                                if (tb.TargetSettingsOnResponse != null && tb.TargetSettingsOnResponse.Count > 0)
+                                                                {
+
+                                                                    int index1 = 0;
+                                                                    foreach (var so in tb.TargetSettingsOnResponse)
+                                                                    {
+                                                                        <div class="field-validation-wrapper">
+                                                                            <div class="field-controller">
+                                                                                <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                                    <i class="ri-file-copy-line"></i>
+                                                                                    <span class="sr-only">Copy</span>
+                                                                                </a>
+                                                                                <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                                    <i class="ri-close-line"></i>
+                                                                                    <span class="sr-only">Delete</span>
+                                                                                </a>
+                                                                                @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                            </div>
+                                                                            <div class="form-row">
+                                                                                <div class="col-lg-3">
+                                                                                    <input type="text" name="TargetSettingsOnResponse[@index1][SelectValue]" data-name="TargetSettingsOnResponse[{0}][SelectValue]" class="form-control" id="" placeholder="Value Field" value="@tb.TargetSettingsOnResponse[index1].SelectValue">
+
+                                                                                </div>
+                                                                                <div class="col-lg-3">
+                                                                                    <select type="text" name="TargetSettingsOnResponse[@index1][TargetId]" data-name="TargetSettingsOnResponse[{0}][TargetId]" class="custom-select" id="" placeholder="Text Field">
+                                                                                        <option value="">Please Select</option>
+                                                                                        @foreach (var item in formElements)
+                                                                                        {
+                                                                                            if (tb.TargetSettingsOnResponse[index1].TargetId != null)
+                                                                                            {
+                                                                                                if (item.Value == tb.TargetSettingsOnResponse[index1].TargetId.ToString())
+                                                                                                {
+                                                                                                    <option value="@item.Value" selected>@item.Text</option>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <option value="@item.Value">@item.Text</option>
+                                                                                                }
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <option value="@item.Value">@item.Text</option>
+                                                                                            }
+
+
+                                                                                        }
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="col-lg-5">
+                                                                                    <select type="text" name="TargetSettingsOnResponse[@index1][Option]" data-name="TargetSettingsOnResponse[{0}][Option]" class="custom-select" id="">
+                                                                                        <option value="">Please Select</option>
+                                                                                        <option value="enable" @(tb.TargetSettingsOnResponse[index1].Option == "enable" ? "selected" : "")>Enable</option>
+                                                                                        <option value="disable" @(tb.TargetSettingsOnResponse[index1].Option == "disable" ? "selected" : "")>Disable</option>
+                                                                                        <option value="hide" @(tb.TargetSettingsOnResponse[index1].Option == "hide" ? "selected" : "")>Hide</option>
+                                                                                        <option value="show" @(tb.TargetSettingsOnResponse[index1].Option == "show" ? "selected" : "")>Show</option>
+                                                                                    </select>
+                                                                                    <br />
+                                                                                    <div class="switch-control">
+                                                                                        <label class="switch" @*for="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@>
+                                                                                            <input type="checkbox" name="TargetSettingsOnResponse[@index1][HasSubTarget]" class="switch__input" data-name="TargetSettingsOnResponse[{0}][HasSubTarget]" value="True" @*id="TargetOptions1_@(index1 + " _ShowHide_" +tb.ElementId)"*@ checked="@tb.TargetSettingsOnResponse[index1].HasSubTarget">
+                                                                                            <span class="switch__state"></span>
+                                                                                            <span class="switch__label">Has Sub-Target</span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <br />
+                                                                                    <div class="validation-rule-body validation_rule_wrapper">
+                                                                                        @if (tb.TargetSettingsOnResponse[index1].HasSubTarget)
+                                                                                        {
+                                                                                            int index2 = 0;
+                                                                                            if (tb.TargetSettingsOnResponse[index1].SubTarget != null)
+                                                                                            {
+
+                                                                                                foreach (var sub in tb.TargetSettingsOnResponse[index1].SubTarget)
+                                                                                                {
+                                                                                                    <div class="field-validation-wrapper">
+                                                                                                        <div class="field-controller">
+                                                                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                                                                <i class="ri-file-copy-line"></i>
+                                                                                                                <span class="sr-only">Copy</span>
+                                                                                                            </a>
+                                                                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                                                                <i class="ri-close-line"></i>
+                                                                                                                <span class="sr-only">Delete</span>
+                                                                                                            </a>
+                                                                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                                                        </div>
+                                                                                                        <div class="form-row">
+                                                                                                            <div class="col-lg-5">
+                                                                                                                <input type="text" name="TargetSettingsOnResponse[@index1][SubTarget][@index2][Value]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Value]" class="form-control" id="" placeholder="Value Field" value="@tb.TargetSettingsOnResponse[index1].SubTarget[index2].Value">
+
+                                                                                                            </div>
+                                                                                                            <div class="col-lg-5">
+                                                                                                                <select type="text" name="TargetSettingsOnResponse[@index1][SubTarget][@index2][Option]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Option]" class="custom-select" id="">
+                                                                                                                    <option value="">Please Select</option>
+                                                                                                                    <option value="enable" @(tb.TargetSettingsOnResponse[index1].SubTarget[index2].Option == "enable" ? "selected" : "")>Enable</option>
+                                                                                                                    <option value="disable" @(tb.TargetSettingsOnResponse[index1].SubTarget[index2].Option == "disable" ? "selected" : "")>Disable</option>
+                                                                                                                    <option value="hide" @(tb.TargetSettingsOnResponse[index1].SubTarget[index2].Option == "hide" ? "selected" : "")>Hide</option>
+                                                                                                                    <option value="show" @(tb.TargetSettingsOnResponse[index1].SubTarget[index2].Option == "show" ? "selected" : "")>Show</option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    index2++;
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <div class="field-validation-wrapper">
+                                                                                                <div class="field-controller">
+                                                                                                    <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                                                        <i class="ri-file-copy-line"></i>
+                                                                                                        <span class="sr-only">Copy</span>
+                                                                                                    </a>
+                                                                                                    <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                                                        <i class="ri-close-line"></i>
+                                                                                                        <span class="sr-only">Delete</span>
+                                                                                                    </a>
+                                                                                                    @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                                                </div>
+                                                                                                <div class="form-row">
+                                                                                                    <div class="col-lg-5">
+                                                                                                        <input type="text" name="TargetSettingsOnResponse[@index1][SubTarget][0][Value]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Value]" class="form-control" id="" placeholder="Value Field">
+
+                                                                                                    </div>
+                                                                                                    <div class="col-lg-5">
+                                                                                                        <select type="text" name="TargetSettingsOnResponse[@index1][SubTarget][0][Option]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Option]" class="custom-select" id="">
+                                                                                                            <option value="">Please Select</option>
+                                                                                                            <option value="enable">Enable</option>
+                                                                                                            <option value="disable">Disable</option>
+                                                                                                            <option value="hide">Hide</option>
+                                                                                                            <option value="show">Show</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                    </div>
+
+
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        {
+                                                                            index1++;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="field-validation-wrapper">
+                                                                        <div class="field-controller">
+                                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                                <i class="ri-file-copy-line"></i>
+                                                                                <span class="sr-only">Copy</span>
+                                                                            </a>
+                                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                                <i class="ri-close-line"></i>
+                                                                                <span class="sr-only">Delete</span>
+                                                                            </a>
+                                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                        </div>
+                                                                        <div class="form-row">
+
+                                                                            <div class="col-lg-3">
+                                                                                <input type="text" name="TargetSettingsOnResponse[0][SelectValue]" data-name="TargetSettingsOnResponse[{0}][SelectValue]" class="form-control" id="" placeholder="Value Field">
+                                                                            </div>
+                                                                            <div class="col-lg-3">
+                                                                                <select type="text" name="TargetSettingsOnResponse[0][TargetId]" data-name="TargetSettingsOnResponse[{0}][TargetId]" class="custom-select" id="" placeholder="Text Field">
+                                                                                    <option value="">Please Select</option>
+                                                                                    @foreach (var item in formElements)
+                                                                                    {
+
+                                                                                        <option value="@item.Value">@item.Text</option>
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-lg-5">
+                                                                                <select type="text" name="TargetSettingsOnResponse[0][Option]" data-name="TargetSettingsOnResponse[{0}][Option]" class="custom-select" id="">
+                                                                                    <option value="">Please Select</option>
+                                                                                    <option value="enable">Enable</option>
+                                                                                    <option value="disable">Disable</option>
+                                                                                    <option value="hide">Hide</option>
+                                                                                    <option value="show">Show</option>
+                                                                                </select>
+                                                                                <br />
+                                                                                <div class="switch-control">
+                                                                                    <label class="switch" @*for="TargetOptions1_{0}_TargetId_@tb.FrontendId" *@>
+                                                                                        <input type="checkbox" name="TargetSettingsOnResponse[0][HasSubTarget]" class="switch__input" data-name="TargetSettingsOnResponse[{0}][HasSubTarget]" value="True" @*id="TargetOptions1_{0}_TargetId_@tb.FrontendId" *@ checked="">
+                                                                                        <span class="switch__state"></span>
+                                                                                        <span class="switch__label">Has Sub-Target</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                                <br />
+                                                                                <div class="validation-rule-body validation_rule_wrapper">
+                                                                                    <div class="field-validation-wrapper">
+                                                                                        <div class="field-controller">
+                                                                                            <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                                                <i class="ri-file-copy-line"></i>
+                                                                                                <span class="sr-only">Copy</span>
+                                                                                            </a>
+                                                                                            <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                                                <i class="ri-close-line"></i>
+                                                                                                <span class="sr-only">Delete</span>
+                                                                                            </a>
+                                                                                            @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                                        </div>
+                                                                                        <div class="form-row">
+                                                                                            <div class="col-lg-5">
+                                                                                                <input type="text" name="TargetSettingsOnResponse[0][SubTarget][0][Value]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Value]" class="form-control" id="" placeholder="Value Field">
+
+                                                                                            </div>
+                                                                                            <div class="col-lg-5">
+                                                                                                <select type="text" name="TargetSettingsOnResponse[0][SubTarget][0][Option]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Option]" class="custom-select" id="">
+                                                                                                    <option value="" selected>Please Select</option>
+                                                                                                    <option value="enable">Enable</option>
+                                                                                                    <option value="disable">Disable</option>
+                                                                                                    <option value="hide">Hide</option>
+                                                                                                    <option value="show">Show</option>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="field-validation-wrapper">
+                                                                    <div class="field-controller">
+                                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                            <i class="ri-file-copy-line"></i>
+                                                                            <span class="sr-only">Copy</span>
+                                                                        </a>
+                                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                            <i class="ri-close-line"></i>
+                                                                            <span class="sr-only">Delete</span>
+                                                                        </a>
+                                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                    </div>
+                                                                    <div class="form-row">
+
+                                                                        <div class="col-lg-3">
+                                                                            <input type="text" name="TargetSettingsOnResponse[0][SelectValue]" data-name="TargetSettingsOnResponse[{0}][SelectValue]" class="form-control" id="" placeholder="Value Field">
+                                                                        </div>
+                                                                        <div class="col-lg-3">
+                                                                            <select type="text" name="TargetSettingsOnResponse[0][TargetId]" data-name="TargetSettingsOnResponse[{0}][TargetId]" class="custom-select" id="" placeholder="Text Field">
+                                                                                <option value="">Please Select</option>
+                                                                                @foreach (var item in formElements)
+                                                                                {
+
+                                                                                    <option value="@item.Value">@item.Text</option>
+                                                                                }
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-lg-5">
+                                                                            <select type="text" name="TargetSettingsOnResponse[0][Option]" data-name="TargetSettingsOnResponse[{0}][Option]" class="custom-select" id="">
+                                                                                <option value="">Please Select</option>
+                                                                                <option value="enable">Enable</option>
+                                                                                <option value="disable">Disable</option>
+                                                                                <option value="hide">Hide</option>
+                                                                                <option value="show">Show</option>
+                                                                            </select>
+                                                                            <br />
+                                                                            <div class="switch-control">
+                                                                                <label class="switch" @*for="TargetOptions1_{0}_TargetId_@tb.FrontendId" *@>
+                                                                                    <input type="checkbox" name="TargetSettingsOnResponse[0][HasSubTarget]" class="switch__input" data-name="TargetSettingsOnResponse[{0}][HasSubTarget]" value="True" @*id="TargetOptions1_{0}_TargetId_@tb.FrontendId" *@ checked="">
+                                                                                    <span class="switch__state"></span>
+                                                                                    <span class="switch__label">Has Sub-Target</span>
+                                                                                </label>
+                                                                            </div>
+                                                                            <br />
+                                                                            <div class="validation-rule-body validation_rule_wrapper">
+                                                                                <div class="field-validation-wrapper">
+                                                                                    <div class="field-controller">
+                                                                                        <a class="fc-icon icon-copy" data-action='clone-rule' title="Copy">
+                                                                                            <i class="ri-file-copy-line"></i>
+                                                                                            <span class="sr-only">Copy</span>
+                                                                                        </a>
+                                                                                        <a class="fc-icon icon-delete" data-action='remove-rule' title="Delete">
+                                                                                            <i class="ri-close-line"></i>
+                                                                                            <span class="sr-only">Delete</span>
+                                                                                        </a>
+                                                                                        @*<a class="fc-icon icon-timer" data-action='short-selectoption'><i class="ri-timer-2-line"></i></a>*@
+                                                                                    </div>
+                                                                                    <div class="form-row">
+                                                                                        <div class="col-lg-5">
+                                                                                            <input type="text" name="TargetSettingsOnResponse[0][SubTarget][0][Value]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Value]" class="form-control" id="" placeholder="Value Field">
+
+                                                                                        </div>
+                                                                                        <div class="col-lg-5">
+                                                                                            <select type="text" name="TargetSettingsOnResponse[0][SubTarget][0][Option]" data-name="TargetSettingsOnResponse[{0}][SubTarget][{1}][Option]" class="custom-select" id="">
+                                                                                                <option value="" selected>Please Select</option>
+                                                                                                <option value="enable">Enable</option>
+                                                                                                <option value="disable">Disable</option>
+                                                                                                <option value="hide">Hide</option>
+                                                                                                <option value="show">Show</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </li>
+        -->
+
+        <li>
+            <header>Permission</header>
+            <section>
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+                                <th>Write</th>
+                                <th>Read</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int index = 0;
+                                foreach (var role in commonService.GetRoleList())
+                                {
+                                    var Roledata = tb.Permissions?.Where(p => p.RoleId == role.Value).FirstOrDefault();
+                                    if (Roledata != null)
+                                    {
+
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input class="form-control" type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Write]" type="checkbox" value="true" checked="@Roledata.Write" id="Permissions_@(index + "_Write_" + tb.FrontendId)">
+                                                    <label class="custom-control-label" for="Permissions_@(index + "_Write_" + tb.FrontendId)"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Read]" type="checkbox" value="true" checked="@Roledata.Read" id="Permissions_@(index + "_Read_" + tb.FrontendId)">
+                                                    <label class="custom-control-label" for="Permissions_@(index + "_Read_" + tb.FrontendId)"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input class="form-control" type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Write]" type="checkbox" value="true" checked="checked" id="Permissions_@(index + "_Write_" + tb.FrontendId)">
+                                                    <label class="custom-control-label" for="Permissions_@(index + "_Write_" + tb.FrontendId)"></label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" name="Permissions[@index][Read]" type="checkbox" value="true" checked="checked" id="Permissions_@(index + "_Read_" + tb.FrontendId)">
+                                                    <label class="custom-control-label" for="Permissions_@(index + "_Read_" + tb.FrontendId)"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    index++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </section>
+        </li>
+
+
+
+        <!--
+        <li>
+            <header>Target Options</header>
+            <section>
+                <div class="target_option_wrapper">
+                    @{
+
+                        if (tb.TargetOptions != null && tb.TargetOptions.Count > 0)
+                        {
+                            int tgoIndex = 0;
+                            foreach (var to in tb.TargetOptions)
+                            {
+                                <div class="field-validation-wrapper">
+                                    <div class="field-controller">
+                                        <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy">
+                                            <i class="ri-file-copy-line"></i>
+                                            <span class="sr-only">Copy</span>
+                                        </a>
+                                        <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete">
+                                            <i class="ri-close-line"></i>
+                                            <span class="sr-only">Delete</span>
+                                        </a>
+                                    </div>
+                                    <div class="form-row">
+                                        @{
+                                            Cicero.Service.Models.Core.FormBuilderViewModel fbvm = tb.ModelData as Cicero.Service.Models.Core.FormBuilderViewModel;
+                                            var abc = fbvm;
+                                            List<SelectListItem>
+                                                SelectedElement = new List<SelectListItem>
+                                                    ();
+                                            if (fbvm != null)
+                                            {
+                                                int TabIndex = Convert.ToInt32(tb.TabIndex);
+                                                int RowIndex = Convert.ToInt32(tb.RowIndex);
+                                                int ColumnIndex = Convert.ToInt32(tb.ColumnIndex);
+                                                var tabvals = fbvm.Tab[TabIndex];
+                                                int TabIndx = 0;
+                                                int ColIndx = 0;
+                                                foreach (var tabVal in tabvals.Row.Skip(RowIndex))
+                                                {
+                                                    if (TabIndx == 0)
+                                                    {
+                                                        foreach (var Col in tabVal.Column.Skip(ColumnIndex))
+                                                        {
+                                                            if (ColIndx == 0)
+                                                            {
+                                                                foreach (dynamic elements in Col.Element)
+                                                                {
+                                                                    if (elements.ElementId != tb.ElementId)
+                                                                    {
+                                                                        if (elements.BackendLabel != null && elements.BackendLabel != "")
+                                                                        {
+                                                                            SelectListItem sli = new SelectListItem();
+                                                                            sli.Text = elements.BackendLabel;
+                                                                            sli.Value = elements.ElementId;
+                                                                            SelectedElement.Add(sli);
+                                                                        }
+
+                                                                    }
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                                {
+                                                                    SelectListItem sli = new SelectListItem();
+                                                                    sli.Text = Col.BackendLabel;
+                                                                    sli.Value = Col.ElementId;
+                                                                    SelectedElement.Add(sli);
+                                                                }
+                                                            }
+                                                            ColIndx++;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (tabVal.BackendLabel != null && tabVal.BackendLabel != "")
+                                                        {
+                                                            SelectListItem sli1 = new SelectListItem();
+                                                            sli1.Text = tabVal.BackendLabel;
+                                                            sli1.Value = tabVal.ElementId;
+                                                            SelectedElement.Add(sli1);
+                                                        }
+                                                        foreach (var Col in tabVal.Column)
+                                                        {
+                                                            if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                            {
+                                                                SelectListItem sli = new SelectListItem();
+                                                                sli.Text = Col.BackendLabel;
+                                                                sli.Value = Col.ElementId;
+                                                                SelectedElement.Add(sli);
+                                                            }
+                                                        }
+                                                    }
+                                                    TabIndx++;
+                                                }
+                                            }
+
+                                        }
+                                        <div class="col-lg-3">
+                                            <select name="TargetOptions[@tgoIndex][TargetId]" class="custom-select" data-name="TargetOptions[{0}][TargetId]">
+                                                @{
+                                                    <option value="0">Please Select</option>
+
+                                                    if (SelectedElement != null)
+                                                    {
+                                                        foreach (SelectListItem si in SelectedElement)
+                                                        {
+                                                            <option selected="@(to.TargetId==si.Value)" value="@si.Value">@si.Text</option>
+                                                        }
+                                                    }
+
+                                                }
+
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="switch-control">
+                                                <label class="switch" for="TargetOptions_@(tgoIndex + "_ShowHide_" +tb.ElementId)">
+                                                    <input type="checkbox" name="TargetOptions[@tgoIndex][ShowHide]" class="switch__input" data-name="TargetOptions[{0}][ShowHide]" value="True" id="TargetOptions_@(tgoIndex + "_ShowHide_" +tb.ElementId)" checked="@to.ShowHide">
+                                                    <span class="switch__state"></span>
+                                                    <span class="switch__label"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                { tgoIndex++; }
+                            }
+
+                        }
+                        else
+                        {
+                            <div class="field-validation-wrapper">
+                                <div class="field-controller">
+                                    <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy">
+                                        <i class="ri-file-copy-line"></i>
+                                        <span class="sr-only">Copy</span>
+                                    </a>
+                                    <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete">
+                                        <i class="ri-close-line"></i>
+                                        <span class="sr-only">Delete</span>
+                                    </a>
+                                </div>
+                                <div class="form-row">
+                                    @{
+                                        Cicero.Service.Models.Core.FormBuilderViewModel fbvm = tb.ModelData as Cicero.Service.Models.Core.FormBuilderViewModel;
+                                        var abc = fbvm;
+                                        List<SelectListItem>
+                                            SelectedElement = new List<SelectListItem>
+                                                ();
+                                        if (fbvm != null)
+                                        {
+                                            int TabIndex = Convert.ToInt32(tb.TabIndex);
+                                            int RowIndex = Convert.ToInt32(tb.RowIndex);
+                                            int ColumnIndex = Convert.ToInt32(tb.ColumnIndex);
+                                            var tabvals = fbvm.Tab[TabIndex];
+                                            int TabIndx = 0;
+                                            int ColIndx = 0;
+                                            foreach (var tabVal in tabvals.Row.Skip(RowIndex))
+                                            {
+                                                if (TabIndx == 0)
+                                                {
+                                                    foreach (var Col in tabVal.Column.Skip(ColumnIndex))
+                                                    {
+                                                        if (ColIndx == 0)
+                                                        {
+                                                            foreach (dynamic elements in Col.Element)
+                                                            {
+                                                                if (elements.ElementId != tb.ElementId)
+                                                                {
+                                                                    if (elements.BackendLabel != null && elements.BackendLabel != "")
+                                                                    {
+                                                                        SelectListItem sli = new SelectListItem();
+                                                                        sli.Text = elements.BackendLabel;
+                                                                        sli.Value = elements.ElementId;
+                                                                        SelectedElement.Add(sli);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                            {
+                                                                SelectListItem sli = new SelectListItem();
+                                                                sli.Text = Col.BackendLabel;
+                                                                sli.Value = Col.ElementId;
+                                                                SelectedElement.Add(sli);
+                                                            }
+                                                        }
+                                                        ColIndx++;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (tabVal.BackendLabel != null && tabVal.BackendLabel != "")
+                                                    {
+                                                        SelectListItem sli1 = new SelectListItem();
+                                                        sli1.Text = tabVal.BackendLabel;
+                                                        sli1.Value = tabVal.ElementId;
+                                                        SelectedElement.Add(sli1);
+                                                    }
+                                                    foreach (var Col in tabVal.Column)
+                                                    {
+                                                        if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                        {
+                                                            SelectListItem sli = new SelectListItem();
+                                                            sli.Text = Col.BackendLabel;
+                                                            sli.Value = Col.ElementId;
+                                                            SelectedElement.Add(sli);
+                                                        }
+                                                    }
+                                                }
+                                                TabIndx++;
+                                            }
+                                        }
+
+                                    }
+                                    <div class="col-lg-3">
+                                        <select name="TargetOptions[0][TargetId]" class="custom-select" data-name="TargetOptions[{0}][TargetId]">
+                                            @{
+
+                                                <option value="0">Please Select</option>
+
+                                                if (SelectedElement != null)
+                                                {
+                                                    foreach (SelectListItem si in SelectedElement)
+                                                    {
+                                                        <option value="@si.Value">@si.Text</option>
+                                                    }
+                                                }
+
+                                            }
+
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="switch-control">
+                                            <label class="switch" for="TargetOptions_{0}_TargetId_@tb.FrontendId">
+                                                <input type="checkbox" name="TargetOptions[0][TargetId]" class="switch__input" data-name="TargetOptions[{0}][TargetId]" value="True" id="TargetOptions_{0}_TargetId_@tb.FrontendId" checked="">
+                                                <span class="switch__state"></span>
+                                                <span class="switch__label"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+            </section>
+        </li>
+
+        -->
+        @*<li>
+                <header>PopUp Target</header>
+                <section>
+                    <span class="text">Select Element to show on popup</span>
+                    <div class="form-row">
+                        <div class="form-group col-lg-6">
+                            <div class="switch-control switch-control--inline">
+                                <label for="hyperLinkPopUp-@tb.FrontendId" class="switch">
+                                    <input class="switch__input" id="hyperLinkPopUp-@tb.FrontendId" @tb.GetName("EnablePopup") type="checkbox" value="true" @tb.GetChecked(tb.EnablePopup)>
+                                    <span class="switch__state"></span>
+                                    <span class="switch__label">Enable Pop Up</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div><div class="form-row">
+                        <div class="col-lg-6 form-group">
+                            <label>Popup Title</label>
+                            <input type="text" value="@tb.PopUpTitle" class="form-control" name="PopUpTitle" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-lg-12">
+                            <div class="target_option_wrapper">
+                                @{
+                                    if (tb.PopUpTarget != null && tb.PopUpTarget.Count > 0)
+                                    {
+                                        int tgoIndex = 0;
+                                        foreach (var to in tb.PopUpTarget)
+                                        {
+                                            <div class="field-validation-wrapper">
+                                                <div class="field-controller">
+                                                    <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy">
+                                                        <i class="ri-file-copy-line"></i>
+                                                        <span class="sr-only">Copy</span>
+                                                    </a>
+                                                    <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete">
+                                                        <i class="ri-close-line"></i>
+                                                        <span class="sr-only">Delete</span>
+                                                    </a>
+                                                </div>
+                                                <div class="form-row">
+                                                    @{
+                                                        Cicero.Service.Models.Core.FormBuilderViewModel fbvm = tb.ModelData as Cicero.Service.Models.Core.FormBuilderViewModel;
+                                                        var abc = fbvm;
+                                                        List<SelectListItem>
+                                                            SelectedElement = new List<SelectListItem>
+                                                                ();
+                                                        if (fbvm != null)
+                                                        {
+                                                            int TabIndex = Convert.ToInt32(tb.TabIndex);
+                                                            int RowIndex = Convert.ToInt32(tb.RowIndex);
+                                                            int ColumnIndex = Convert.ToInt32(tb.ColumnIndex);
+                                                            var tabvals = fbvm.Tab[TabIndex];
+                                                            int TabIndx = 0;
+                                                            int ColIndx = 0;
+                                                            foreach (var tabVal in tabvals.Row.Skip(RowIndex))
+                                                            {
+                                                                if (TabIndx == 0)
+                                                                {
+                                                                    foreach (var Col in tabVal.Column.Skip(ColumnIndex))
+                                                                    {
+                                                                        if (ColIndx == 0)
+                                                                        {
+                                                                            foreach (dynamic elements in Col.Element)
+                                                                            {
+                                                                                if (elements.ElementId != tb.ElementId)
+                                                                                {
+                                                                                    if (elements.BackendLabel != null && elements.BackendLabel != "")
+                                                                                    {
+                                                                                        SelectListItem sli = new SelectListItem();
+                                                                                        sli.Text = elements.BackendLabel;
+                                                                                        sli.Value = elements.ElementId;
+                                                                                        SelectedElement.Add(sli);
+                                                                                    }
+
+                                                                                }
+                                                                            }
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                                            {
+                                                                                SelectListItem sli = new SelectListItem();
+                                                                                sli.Text = Col.BackendLabel;
+                                                                                sli.Value = Col.ElementId;
+                                                                                SelectedElement.Add(sli);
+                                                                            }
+                                                                        }
+                                                                        ColIndx++;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (tabVal.BackendLabel != null && tabVal.BackendLabel != "")
+                                                                    {
+                                                                        SelectListItem sli1 = new SelectListItem();
+                                                                        sli1.Text = tabVal.BackendLabel;
+                                                                        sli1.Value = tabVal.ElementId;
+                                                                        SelectedElement.Add(sli1);
+                                                                    }
+                                                                    foreach (var Col in tabVal.Column)
+                                                                    {
+                                                                        if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                                        {
+                                                                            SelectListItem sli = new SelectListItem();
+                                                                            sli.Text = Col.BackendLabel;
+                                                                            sli.Value = Col.ElementId;
+                                                                            SelectedElement.Add(sli);
+                                                                        }
+                                                                    }
+                                                                }
+                                                                TabIndx++;
+                                                            }
+                                                        }
+
+                                                    }
+                                                    <div class="col-lg-3">
+                                                        <select name="PopUpTarget[@tgoIndex]" class="custom-select" data-name="PopUpTarget[{0}]">
+                                                            @{
+                                                                <option value="">Please Select</option>
+
+                                                                if (formElements != null)
+                                                                {
+                                                                    foreach (SelectListItem si in SelectedElement)
+                                                                    {
+                                                                        <option selected="@(tb.PopUpTarget[tgoIndex]==si.Value)" value="@si.Value">@si.Text</option>
+                                                                    }
+                                                                }
+
+                                                            }
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            { tgoIndex++; }
+                                        }
+
+                                    }
+                                    else
+                                    {
+
+
+                                        <div class="field-validation-wrapper">
+                                            <div class="field-controller">
+                                                <a class="fc-icon icon-copy" data-action='clone-TargetingOption' title="Copy">
+                                                    <i class="ri-file-copy-line"></i>
+                                                    <span class="sr-only">Copy</span>
+                                                </a>
+                                                <a class="fc-icon icon-delete" data-action='remove-TargetingOption' title="Delete">
+                                                    <i class="ri-close-line"></i>
+                                                    <span class="sr-only">Delete</span>
+                                                </a>
+                                            </div>
+                                            <div class="form-row">
+                                                @{
+                                                    Cicero.Service.Models.Core.FormBuilderViewModel fbvm = tb.ModelData as Cicero.Service.Models.Core.FormBuilderViewModel;
+                                                    var abc = fbvm;
+                                                    List<SelectListItem>
+                                                        SelectedElement = new List<SelectListItem>
+                                                            ();
+                                                    if (fbvm != null)
+                                                    {
+                                                        int TabIndex = Convert.ToInt32(tb.TabIndex);
+                                                        int RowIndex = Convert.ToInt32(tb.RowIndex);
+                                                        int ColumnIndex = Convert.ToInt32(tb.ColumnIndex);
+                                                        var tabvals = fbvm.Tab[TabIndex];
+                                                        int TabIndx = 0;
+                                                        int ColIndx = 0;
+                                                        foreach (var tabVal in tabvals.Row.Skip(RowIndex))
+                                                        {
+                                                            if (TabIndx == 0)
+                                                            {
+                                                                foreach (var Col in tabVal.Column.Skip(ColumnIndex))
+                                                                {
+                                                                    if (ColIndx == 0)
+                                                                    {
+                                                                        foreach (dynamic elements in Col.Element)
+                                                                        {
+                                                                            if (elements.ElementId != tb.ElementId)
+                                                                            {
+                                                                                if (elements.BackendLabel != null && elements.BackendLabel != "")
+                                                                                {
+                                                                                    SelectListItem sli = new SelectListItem();
+                                                                                    sli.Text = elements.BackendLabel;
+                                                                                    sli.Value = elements.ElementId;
+                                                                                    SelectedElement.Add(sli);
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                                        {
+                                                                            SelectListItem sli = new SelectListItem();
+                                                                            sli.Text = Col.BackendLabel;
+                                                                            sli.Value = Col.ElementId;
+                                                                            SelectedElement.Add(sli);
+                                                                        }
+                                                                    }
+                                                                    ColIndx++;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (tabVal.BackendLabel != null && tabVal.BackendLabel != "")
+                                                                {
+                                                                    SelectListItem sli1 = new SelectListItem();
+                                                                    sli1.Text = tabVal.BackendLabel;
+                                                                    sli1.Value = tabVal.ElementId;
+                                                                    SelectedElement.Add(sli1);
+                                                                }
+                                                                foreach (var Col in tabVal.Column)
+                                                                {
+                                                                    if (Col.BackendLabel != null && Col.BackendLabel != "")
+                                                                    {
+                                                                        SelectListItem sli = new SelectListItem();
+                                                                        sli.Text = Col.BackendLabel;
+                                                                        sli.Value = Col.ElementId;
+                                                                        SelectedElement.Add(sli);
+                                                                    }
+                                                                }
+                                                            }
+                                                            TabIndx++;
+                                                        }
+                                                    }
+
+                                                }
+                                                <div class="col-lg-3">
+                                                    <select name="PopUpTarget[0]" class="custom-select" data-name="PopUpTarget[{0}]">
+                                                        @{
+
+                                                            <option value="">Please Select</option>
+
+                                                            if (formElements != null)
+                                                            {
+                                                                foreach (SelectListItem si in SelectedElement)
+                                                                {
+                                                                    <option value="@si.Value">@si.Text</option>
+                                                                }
+                                                            }
+
+                                                        }
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+            </li>*@
+        <li>
+            <header>Developer Options</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="sbTemplate">Template</label>
+                        <input type="text" class="form-control" id="sbTemplate" @tb.GetName("Template") value="@tb.Template">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="buttonWrapperTemplate_@tb.ElementId">WrapperTemplate</label>
+                        <input type="text" class="form-control" id="buttonWrapperTemplate_@tb.ElementId" @tb.GetName("WrapperTemplate") value="@tb.WrapperTemplate" />
+                    </div>
+
+                </div>
+            </section>
+        </li>
+    </ul>
+</div>
+
+<script>
+    var selectedIcon = "";
+    $(function () {
+
+        $(".icon-item").on('click', function () {
+            $(".icon-item").removeClass('active');
+            selectedIcon = $(this).find(".icon-info").find("i").attr("class")
+            $(this).addClass('active');
+        });
+    });
+
+    function showIcons(e) {
+        $("#modal-select-icon").modal("show");
+        selectedIcon = "";
+        $(".icon-item").removeClass('active');
+        $("#btn-select-icon").attr("onclick", "setIconOnTab('" + e + "')");
+    }
+
+
+
+    function setIconOnTab(e) {
+        console.log("here");
+        if (selectedIcon != "") {
+            if (e == "frontend") {
+                $("[name='FrontendIcon']").val(selectedIcon);
+            }
+            else {
+                $("[name='BackendIcon']").val(selectedIcon);
+            }
+        }
+        else {
+
+        }
+
+    }
+</script>
+<script>
+
+
+</script>
+<script>
+    var reinitForTableElement = function () {
+
+        $("[data-type='addNewElement']").unbind('click');
+
+        $("[data-type='addNewElement']").on("click", function () {
+
+           // debugger;
+            var wrap = $(this).closest(".fb-popup");
+            var id = wrap.attr("id").split("_")[1];
+            wrap.detach().appendTo("#popupspace_" + id); 
+            var ElmId = Elements.Core.GenerateElementId();
+            var TableColumnIndex = $(this).parents(".tab-pane").index();
+            var ParentElementId = $(this).closest("form").find("[name='ElementId']").val();
+            var ElementType = $(this).parents(".tab-content").find("select[name^='Column").val();
+            var args = { "ActionFor": "element", "TabIndex": 0, "RowIndex": 0, "ColumnIndex": 0, "ElementIndex": 0, "ElmId": ElmId, "TableColumnIndex": TableColumnIndex, "ParentElementId": ParentElementId, "ElementType": ElementType,"IsCreate": true};
+            Elements.Save(args);
+        });
+
+        $("[data-type='editElement']").unbind('click');
+
+        $("[data-type='editElement']").on("click", function () {
+
+          //  debugger;
+
+            console.log("loader");
+            $('#loading').show();
+
+            //$(this).parents(".fb-element-wrap").addClass("active");
+            $(this).parent().parent().find("form").addClass("loading").find(".setting-body").empty();
+           // $(this).parents("li").find($(this).data("fb-toggle-popup")).find("form").addClass("loading").find(".setting-body").empty();
+            $elparent = $(this).parent().parent();
+            if ($.active > 0) return false;
+            var ElmId = $(this).closest("[data-element-id]").data("element-id")
+            var ElmType = "Element";
+            $.ajax({
+                url: '/admin/ajax/render-form-builder-elements.html',
+                data: { "ElementId": ElmId, "Type": ElmType, "FormId": "@formId", "ParentElementId": @Model.ElementId },
+                error: function () {
+                    console.log('An error has occurred');
+                },
+                dataType: 'json',
+                success: function (data) {
+                    debugger;
+                    if (data.elementId == "form") {
+                        $("#ids").val(data.formId);
+                        var wrap = $("#popup_" + data.elementId);
+                        wrap.parents(".fb-popup").first().removeClass("show");
+                        wrap.find(".setting-body").append(data.content);
+                        wrap.find("form").removeClass("loading");
+                        wrap.detach().appendTo("body");
+                      
+                        $('#loading').hide();
+                        
+                        wrap.toggleClass("show");
+                        disableSortable();
+                        if (wrap.hasClass('swaping')) {
+                            wrap.swap('#swapDiv');
+                        }
+
+                        //
+                    } else {
+                        var wrap = $("#popup_" + data.elementId);
+                        //  wrap.find(">.control-tools .setting-body").empty();
+                        //wrap.find(">.control-tools .setting-body").append(data.content);
+                        wrap.parents(".fb-popup").first().removeClass("show");
+                            wrap.find(".setting-body").empty().append(data.content);
+
+                        wrap.detach().appendTo("body");
+                      
+                        $('#loading').hide();
+                        wrap.toggleClass("show");
+                        disableSortable();
+                        InitUniqueNameForElement();
+                        if (wrap.hasClass('swaping')) {
+                            wrap.swap('#swapDiv');
+                        }
+                        getTable(wrap);
+                        tableChange(wrap);
+                        fieldChange(wrap);
+                        dBTableChange(wrap);
+                        //wrap.find(">.control-tools form").removeClass("loading");
+                        permissionClickEvents();
+                    }
+                },
+                type: 'POST'
+            });
+            // }
+        });
+
+
+        $(".saveElement").unbind('click');
+        $(".saveElement").on("click", function (e) {
+            debugger;
+         
+            e.preventDefault();
+            var wrap = $(this).closest(".fb-popup");
+            var id = wrap.attr("id").split("_")[1];
+            wrap.detach().appendTo("#popupspace_" + id); ///resetting popup to its original place
+            var parentId = wrap.attr("data-parentid");
+            var parentWrap = $("#popup_" + parentId);
+            parentWrap.detach().appendTo("#popupspace_" + parentId); ///resetting parent popup to its original place
+            var obj = $(this).closest("[data-location]").data("location");
+            var self = $(this);
+            if (typeof (obj) == 'undefined') {
+                obj = "tab";
+            }
+            var elmId = self.closest("form").find("[data-fbb-name='ElementId']").val();
+            var type = self.closest("form").find("[data-fbb-name='Type']").val();
+            var args = {
+                "ActionFor": "", "TabIndex": 0, "RowIndex": 0, "ColumnIndex": 0, "ElementIndex": 0, "ElementId": elmId, "ElmId": elmId, "ElmType": type, "ParentElementId":@Model.ElementId, "IsCreate": false
+            };
+            if (obj == "tab") {
+                args.ActionFor = "tab";
+                args.TabIndex = self.closest('[data-role]').index();
+
+            }
+            if (obj == "row") {
+                args.ActionFor = "row";
+                args.RowIndex = self.closest('[data-location="row"]').index();
+                args.TabIndex = self.closest('[data-tab-index]').index();
+            }
+            if (obj == "column") {
+                args.ActionFor = "column";
+                args.RowIndex = self.closest('[data-location="row"]').index();
+                args.ColumnIndex = self.closest('.column-border').index();
+                args.TabIndex = self.closest('[data-tab-index]').index();
+            }
+            if (obj == "element") {
+                args.ActionFor = "element";
+                args.RowIndex = self.closest('[data-location="row"]').index();
+                args.ElementIndex = self.closest('.fb-element-wrap').index();
+                args.ColumnIndex = self.closest('.column-border').index();
+                args.TabIndex = self.closest('[data-tab-index]').index();
+                //alert(JSON.stringify(args));
+            }
+            $.each(self.serializeArray(), function () {
+                args[this.name] = this.value;
+            });
+            //args.Type = type;
+            return Elements.Save(args);
+
+        });
+
+        $(".fb-close").on("click", function () {
+            $(this).closest(".setting-wrap").find(".setting-body").html("");
+
+        });
+
+        var offsetVal = 100;
+        $(".next").unbind("click");
+        $(document).on("click", "[data-slide='next']", function (e) {
+            //debugger;
+            console.log("pop right");
+            let liEleRight = $(this).parent().parent().find('ul').first().find('li');
+            let ttRight = parseInt(liEleRight.first().css('width'));
+            let lastLi = parseInt(liEleRight.last().offset().left) + parseInt(liEleRight.last().css('width'));
+            let rightBot = parseInt($(this).parent().find('.prev').offset().left);
+            let rightDistance = rightBot - lastLi;
+            if (rightDistance < 0) {
+                var leftValue = $(this).parent().parent().find("[data-type='table']").css('left');
+                if (leftValue == "auto") {
+                    leftValue = "0";
+                }
+                let foset = (parseInt(leftValue) - offsetVal + 50) + 'px';
+                $(this).parent().parent().find("[data-type='table']").css('left', foset);
+
+            }
+            determineTableBottomToHide1(this);
+        });
+        //left
+        $(".prev").unbind("click");
+        $(document).on("click", "[data-slide='prev']", function (e) {
+            //debugger;
+            console.log("pop left");
+            let liEleLeft = $(this).parent().parent().find('ul').first().find('li');
+            let ttLeft = parseInt(liEleLeft.first().css('width'));
+
+            let firstLi = parseInt(liEleLeft.first().offset().left) + parseInt(liEleLeft.first().css('width'));;
+            let leftBot = parseInt($(this).parent().find('.next').offset().left);
+
+            let leftDistance = leftBot - firstLi;
+            if (leftDistance > -40) {
+                var leftValue = $(this).parent().parent().find("[data-type='table']").css('left');
+                if (leftValue == "auto") {
+                    leftValue = "0";
+                }
+                let foset = (parseInt(leftValue) + offsetVal) + 'px';
+                $(this).parent().parent().find("[data-type='table']").css('left', foset);
+            }
+            determineTableBottomToHide1(this);
+        });
+
+        function determineTableBottomToHide1(e) {
+            //debugger;
+            let tabs = $(e).parent().parent().find("[data-type='table']").first().find('li');
+            // console.log(tabs);
+
+            //left
+            let firstLi = parseInt(tabs.first().offset().left);
+            let leftBot = parseInt($(e).parent().find('.prev').parent().offset().left);
+
+            // console.log( firstLi + ' || ' + leftBot);
+            let preLeftdistance = leftBot - firstLi;
+            //console.log(preLeftdistance);
+            if (preLeftdistance <= 10) {
+                $(e).parent().find('.prev').hide();
+            } else {
+                $(e).parent().find('.prev').show();
+            }
+
+            //right
+            let lastLi = parseInt(tabs.last('li').offset().left);
+            let rightBot = parseInt($(e).parent().find('.next').parent().offset().left);
+
+            console.log(lastLi + ' || ' + rightBot);
+            let preRightdistance = rightBot - lastLi;
+            console.log(preRightdistance);
+            if (preRightdistance >= 100) {
+                $(e).parent().find('.next').hide();
+            } else {
+                $(e).parent().find('.next').show();
+            }
+        }
+
+    }
+
+
+        reinitForTableElement();
+    function clearSetting(e) {
+        $(e).closest(".setting-wrap").find(".setting-body").html("");
+    }
+    function removeTableColumn(e) {
+       // debugger;
+        var id = "";
+        try {
+            id = $(e).attr("id");
+
+        }
+        catch(a){
+            id = e;
+        }
+        if (id == undefined) {
+            id = e;
+        }
+        if ($("a[href='#" + id + "']").parent(".nav-item").parent("ul").find("li").length > 1) {
+            $("a[href='#" + id + "']").parent(".nav-item").remove();
+            $("#" + id).remove();
+        }
+        else {
+            toastr.warning("Last Column Cannot be deleted", "Table Element");
+        }
+
+    }
+</script>

@@ -1,0 +1,17 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@using Cicero.Service.Services
+@model Cicero.Service.Models.Core.Elements.Button
+@inject ICommonService commonService
+@inject IUserService UserService
+@{
+Button tb = Model as Button;
+////string role = UserService.getUserRoleIdByLoggedInUser();
+////var Roledata = tb?.Permissions?.Where(p => p.RoleId == role).FirstOrDefault();
+}
+
+    <div class="fb-element">
+        <div class="form-group px-2">
+            <button type="button" class="@tb.BackendClass"><i class="@((tb.BackendIconVisibility == true) ? tb.BackendIcon : "")"></i>@tb.BackendLabel</button>
+        </div>
+    </div>
+

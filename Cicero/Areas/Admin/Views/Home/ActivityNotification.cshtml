@@ -1,0 +1,45 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@model List<ActivityLogViewModel>
+@inject IUserService _userService
+
+@{
+    ViewData["Title"] = "ActivityNotification";
+}
+
+<h2>Activities</h2>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card px-5 py-4 mb-5">
+                <div class="card-header px-0">
+                    <h6>All Activities</h6>
+                    <p class="text-support">Total Number of activites: @Model.Count</p>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-responsive-sm table-custom">
+                        <colgroup>
+                            <col width="50">
+                        </colgroup>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="user-item">
+                                        <img src="~/uploads/@await _userService.GetDefaultOrFirstImagesByUserId(item.UserId, "default-avatar.png")" alt="Son">
+                                    </span>
+                                </td>
+                                <td>@Html.Raw(item.Details)</td>
+                                @{
+                                    int hoursPassed = (int)((DateTime.Now.AddHours(4) - item.CreatedOn).TotalHours);
+                                }
+                                <td class="text-right text-small font-italic">@item.CreatedOn</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+//Bootstrap 4 dependencies
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+//Responsive font size
+@import "../../../node_modules/bootstrap/scss/vendor/rfs";
+
+// Custom files
+
+//Vendor
+@import "vendor/_daterangepicker";
+//Components
+@import "components/default";
+@import "components/type";
+@import "components/buttons";
+@import "components/modal";
+@import "components/nav";
+@import "components/dropdown";
+@import "components/custom-form";
+@import "components/font";
+@import "components/error";
+
+//Templates
+@import "templates/dashboard";
+@import "templates/file-claim";
+@import "templates/login";
+@import "templates/signup";
+@import "templates/profile";
+
+//Segments
+@import "segments/header";
+@import "segments/footer";
+@import "segments/faqs";
+@import "segments/notification";
+@import "segments/form-builder";
+@import "segments/claim-overview";
+@import "segments/claim-list";
+@import "segments/claim-process";
+@import "segments/section";
+

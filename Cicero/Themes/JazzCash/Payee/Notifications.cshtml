@@ -1,0 +1,233 @@
+﻿@model List<Cicero.Service.Models.NotificationViewModel>
+@{
+    ViewData["Title"] = "Transactions";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+
+}
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        @*<input type="hidden" id="elmloggedinuser" name="elmloggedinuser" elm-name="elmloggedinuser" value="@_commonService.getLoggedInUserId()" />*@
+        <div class="container dashboard-container">
+
+            <div class="dashboard-content">
+                <div class="banner-hero">
+                    <div class="user-info user-info-l">
+                        <h5 class="mb-0">Good Evening</h5>
+                        @*<h3>@(Model.FirstName + " " + Model.LastName)xyx xyx</h3>*@
+                        <h3>Adil Ahmed </h3>
+
+                        <div class="user-info-item  h5"><span class="label font-weight-light">Customer ID</span><h5>@*@Model.CustomerId*@ &nbsp; 154881617</h5></div>
+                    </div>
+
+                    <div class="user-info user-info-r">
+                        <div class="notification-content">
+                            <span class="notification-text">Notification</span>  <div class="notification-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30.272" height="30.853" viewBox="0 0 48.272 48.853">
+                                    <g id="Group_2017" data-name="Group 2017" transform="translate(-1604.728 -267)">
+                                        <g id="Bell-line" transform="translate(1583.395 268)">
+                                            <path id="Path_4818" data-name="Path 4818" d="M162.145,424.972a7.485,7.485,0,0,1-7.477-7.477,1.5,1.5,0,1,1,2.991,0,4.486,4.486,0,1,0,8.972,0,1.5,1.5,0,1,1,2.991,0A7.485,7.485,0,0,1,162.145,424.972Zm0,0" transform="translate(-120.874 -377.12)" fill="#f4f5fa" />
+                                            <path id="Path_4819" data-name="Path 4819" d="M57.72,99.89h-32.9a3.49,3.49,0,0,1-2.269-6.141,13.363,13.363,0,0,0,4.761-10.232V77.957a13.957,13.957,0,0,1,27.914,0v5.559a13.359,13.359,0,0,0,4.741,10.218A3.488,3.488,0,0,1,57.72,99.89Zm-16.449-32.9A10.978,10.978,0,0,0,30.3,77.957v5.559a16.341,16.341,0,0,1-5.8,12.5.5.5,0,0,0-.18.383.5.5,0,0,0,.5.5h32.9a.5.5,0,0,0,.5-.5.491.491,0,0,0-.176-.379,16.346,16.346,0,0,1-5.806-12.505V77.957A10.978,10.978,0,0,0,41.271,66.991Zm0,0" transform="translate(0 -58.019)" fill="#f4f5fa" />
+                                            <path id="Path_4820" data-name="Path 4820" d="M220.163,8.972a1.5,1.5,0,0,1-1.5-1.5V1.5a1.5,1.5,0,1,1,2.991,0V7.477A1.5,1.5,0,0,1,220.163,8.972Zm0,0" transform="translate(-178.892)" fill="#f4f5fa" />
+                                        </g>
+
+                                    </g>
+                                </svg>
+                                <span class="notification-value">@Model.Count</span>
+                            </div>
+                        </div>
+                        <div class="my-1"><span class="label">Local Time:</span> @*@Model.LocalTime*@ <span class="value">18:52</span></div>
+                        <div class="my-1"><span class="label">Last Visit:</span> @*@Model.LocalTime*@ <span class="value">05/13/2020 12:03 EST</span></div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row pt-4">
+                @*<div class="col-lg-12 d-flex">
+                        <div class="flex-grow-1">
+                            <h5 class="mb-0 title d-block">Recipient List</h5>
+                            <p class="d-block ">Updated every several minutes</p>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+                                <i class="ri-add-circle-line mr-2"></i> Add Recepient
+
+                            </button>
+                        </div>
+                    </div>*@
+                <div class="col-md-12">
+
+
+                    <div class="widget-box  border-bottom-0 notification-lists">
+                        <div class="widget-header flex-row">
+                            <div class="flex-grow-1">
+                                <h5 class="title mb-0">Notifications</h5>
+                                <small>Updated every several minutes.</small>
+                            </div>
+                            <button class="btn btn-sm btn-link mr-3">
+                                View All   <svg xmlns="http://www.w3.org/2000/svg" class="icon-arrow" width="8.5" height="8.5" viewBox="0 0 12.204 12.608">
+                                    <g id="arrow" transform="translate(-4.57)">
+                                        <g id="Group_2030" data-name="Group 2030" transform="translate(4.57)">
+                                            <path id="Path_4827" data-name="Path 4827" d="M121.434,6.013,115.547.126a.4.4,0,0,0-.581,0l-.632.632a.4.4,0,0,0,0,.581L119.3,6.3l-4.965,4.965a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0l5.887-5.887a.4.4,0,0,0,0-.581Z" transform="translate(-109.357)" fill="#00b4f1" />
+                                            <path id="Path_4828" data-name="Path 4828" d="M11.922,6.3a.4.4,0,0,0-.126-.291L5.909.126a.4.4,0,0,0-.581,0L4.7.758a.4.4,0,0,0,0,.581L9.661,6.3,4.7,11.269a.4.4,0,0,0,0,.581l.632.631a.4.4,0,0,0,.581,0L11.8,6.595A.4.4,0,0,0,11.922,6.3Z" transform="translate(-4.57)" fill="#00b4f1" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+
+                        </div>
+                        <div class="widget-content">
+                            <ul class="list-transaction">
+                                    @foreach (var item in Model)
+                                    {
+                                    <li class="list-transaction__item" id="list_01">
+                                        <div class="notification-bell">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 39.877 47.853">
+                                                <g id="Bell-line" transform="translate(-21.332)">
+                                                    <path id="Path_4818" data-name="Path 4818" d="M162.145,424.972a7.485,7.485,0,0,1-7.477-7.477,1.5,1.5,0,1,1,2.991,0,4.486,4.486,0,1,0,8.972,0,1.5,1.5,0,1,1,2.991,0A7.485,7.485,0,0,1,162.145,424.972Zm0,0" transform="translate(-120.874 -377.12)" fill="#00b4f1" />
+                                                    <path id="Path_4819" data-name="Path 4819" d="M57.72,99.89h-32.9a3.49,3.49,0,0,1-2.269-6.141,13.363,13.363,0,0,0,4.761-10.232V77.957a13.957,13.957,0,0,1,27.914,0v5.559a13.359,13.359,0,0,0,4.741,10.218A3.488,3.488,0,0,1,57.72,99.89Zm-16.449-32.9A10.978,10.978,0,0,0,30.3,77.957v5.559a16.341,16.341,0,0,1-5.8,12.5.5.5,0,0,0-.18.383.5.5,0,0,0,.5.5h32.9a.5.5,0,0,0,.5-.5.491.491,0,0,0-.176-.379,16.346,16.346,0,0,1-5.806-12.505V77.957A10.978,10.978,0,0,0,41.271,66.991Zm0,0" transform="translate(0 -58.019)" fill="#00b4f1" />
+                                                    <path id="Path_4820" data-name="Path 4820" d="M220.163,8.972a1.5,1.5,0,0,1-1.5-1.5V1.5a1.5,1.5,0,1,1,2.991,0V7.477A1.5,1.5,0,0,1,220.163,8.972Zm0,0" transform="translate(-178.892)" fill="#00b4f1" />
+                                                </g>
+                                            </svg>
+
+                                        </div>
+                                        <div class="  flex-grow-1 px-4 text-left">
+                                            <div class="name">
+                                                @item.Title
+                                            </div>
+                                            <small>@item.Detail | @item.CreatedOn</small>
+
+                                        </div>
+                                        
+                                        <div class="icon">
+                                            <i class="ri-arrow-right-s-line "></i>
+                                        </div>
+                                    </li>
+                                    }       
+                                </ul>
+
+
+
+
+                            @*<div class="table-wapper">
+                                <table id="transactionlist" class="table table-hover table-custom table-responsive d-table w-100"></table>
+                            </div>*@
+                            <!-- Button trigger modal -->
+                            @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recipientDetails">
+                                recipient details
+                            </button>*@
+
+                        </div>
+                    </div>
+                    <div class="widget-box  border-bottom-0 notification notification-detail" hidden="hidden">
+                        <div class="widget-header flex-row justify-content-between align-items-center">
+                            <div>
+                                <h5 class="title mb-0">Notification Details</h5>
+                                <small>Updated every several minutes.</small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <a href="#">Marked as Unread </a>
+                                <span class="text-primary mx-2">|</span>
+                                <a href="#">Delete</a>
+
+                                <div class="mx-3">
+                                    <i class="ri-arrow-left-s-line"></i>
+                                    <i class="ri-arrow-right-s-line"></i>
+                                </div>
+                                <div class="close">
+                                    <i class="ri-close-line"></i>
+                                </div>
+
+                            </div>
+                          
+
+                        </div>
+                        <div class="widget-content">
+                            <ul class="list-transaction">
+
+                                <li class="list-transaction__item grid-container">
+                                    <div class="notification-bell">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 39.877 47.853">
+                                            <g id="Bell-line" transform="translate(-21.332)">
+                                                <path id="Path_4818" data-name="Path 4818" d="M162.145,424.972a7.485,7.485,0,0,1-7.477-7.477,1.5,1.5,0,1,1,2.991,0,4.486,4.486,0,1,0,8.972,0,1.5,1.5,0,1,1,2.991,0A7.485,7.485,0,0,1,162.145,424.972Zm0,0" transform="translate(-120.874 -377.12)" fill="#00b4f1" />
+                                                <path id="Path_4819" data-name="Path 4819" d="M57.72,99.89h-32.9a3.49,3.49,0,0,1-2.269-6.141,13.363,13.363,0,0,0,4.761-10.232V77.957a13.957,13.957,0,0,1,27.914,0v5.559a13.359,13.359,0,0,0,4.741,10.218A3.488,3.488,0,0,1,57.72,99.89Zm-16.449-32.9A10.978,10.978,0,0,0,30.3,77.957v5.559a16.341,16.341,0,0,1-5.8,12.5.5.5,0,0,0-.18.383.5.5,0,0,0,.5.5h32.9a.5.5,0,0,0,.5-.5.491.491,0,0,0-.176-.379,16.346,16.346,0,0,1-5.806-12.505V77.957A10.978,10.978,0,0,0,41.271,66.991Zm0,0" transform="translate(0 -58.019)" fill="#00b4f1" />
+                                                <path id="Path_4820" data-name="Path 4820" d="M220.163,8.972a1.5,1.5,0,0,1-1.5-1.5V1.5a1.5,1.5,0,1,1,2.991,0V7.477A1.5,1.5,0,0,1,220.163,8.972Zm0,0" transform="translate(-178.892)" fill="#00b4f1" />
+                                            </g>
+                                        </svg>
+
+                                    </div>
+                                    <div class="  flex-grow-1 px-4 text-left">
+                                        <div class="name">
+                                            Verification Code
+                                        </div>
+                                        <small>4 Apr 2020  |  USD XXX - 2058</small>
+
+                                    </div>
+                                    <div class="content">
+                                        <p>
+                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                                        </p>
+                                        <p>
+                                            Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.
+                                        </p>
+                                        <p>
+
+                                            Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur
+                                        </p>
+
+                                        <p class="pt-4 mb-0">
+                                            Thank you,<br />
+                                            The Simpletransfer team
+                                        </p>
+                                    </div>
+
+
+                                </li>
+                            </ul>
+                            
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+       
+        $('#list_01').on('click', function () {
+            $(this).parents('.notification-lists').hide();
+
+            $("body").find('.notification-detail').removeAttr('hidden'); 
+            
+        });
+
+        $('.notification-detail .close').on('click', function () {
+
+            $(this).parents('.notification-detail').attr('hidden','true');
+            $("body").find('.notification-lists').show(); 
+
+        });
+
+    });
+</script>

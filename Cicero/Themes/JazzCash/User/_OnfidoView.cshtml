@@ -1,0 +1,51 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model SenderDetailViewModel
+@{
+    ViewData["Title"] = "Sender Details";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+}
+<link href="~/onfido/dist/style.css" rel="stylesheet" />
+
+<div id="onfido-mount"></div>
+
+<script src="~/onfido/dist/onfido.min.js"></script>
+<script>
+    Onfido.init({
+        token: "eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjoibUpsT1lZcXROcEhkeXl4Nzk5NjJTaDB1U0VrY29rSVg4VnoxWG1RWVJqS3F5REhjd01OYUcwWXBmbjliXG5zYUg1QzJiQ2FPSzBpU3hOc1JOSkFGTGpPbFd2MGpUb3MwSVBNN0tTMWlhYzFtNnplNXBlYmg5Q01uYUJcbnJ0WjhnTHBKbzFlY012MFFaUjNUOUV5dVJ6YkJzdz09XG4iLCJ1dWlkIjoiS3dMa3AyUTVKcGEiLCJleHAiOjE1ODg2NzA3OTgsInVybHMiOnsib25maWRvX2FwaV91cmwiOiJodHRwczovL2FwaS5vbmZpZG8uY29tIiwidGVsZXBob255X3VybCI6Imh0dHBzOi8vdGVsZXBob255Lm9uZmlkby5jb20iLCJkZXRlY3RfZG9jdW1lbnRfdXJsIjoiaHR0cHM6Ly9zZGsub25maWRvLmNvbSIsInN5bmNfdXJsIjoiaHR0cHM6Ly9zeW5jLm9uZmlkby5jb20iLCJob3N0ZWRfc2RrX3VybCI6Imh0dHBzOi8vaWQub25maWRvLmNvbSJ9fQ.RmApCq_yR0eVVZDDa8v-2M77s8OFhHK71lJEqMoz_54",
+        containerId: 'onfido-mount',
+        onComplete: function (data) {
+            console.log("A completion message")
+
+            $.ajax({
+                url: "/st/user/onfidodetail.html",
+                type: "post",
+                data: data,
+                success: function (response) {
+                   //window.location.href = '@Url.Action("Login", "User", new { redirect = "onfido" })';
+                },
+                error: function (error) {
+
+                }
+            });
+        },
+        onError: function (error) {
+            console.log("A error message");
+        },
+        steps: [
+            {
+                type: 'welcome',
+                options: {
+                    title: 'Verify Your Account',
+                    descriptions: ['To send money, we will need to verify your identity.', 'It will only take a couple of minutes.'],
+                    //nextButton: 'Go Go Go'
+                }
+            },
+              'document',
+            // 'face',
+            'complete'
+        ]
+    });
+
+</script>

@@ -1,0 +1,28 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.SelectBox
+@{
+    SelectBox sb = Model as SelectBox;
+    
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @sb.BackendLabel
+        </label>
+        <select name="SelectedItem" class="custom-select">
+            @{
+                if (sb.SelectOptions != null)
+                {
+                    foreach (var si in sb.SelectOptions)
+                    {
+                        <option selected="@(si.Selected)" value="@si.Value">@si.Text</option>
+                    }
+                }
+
+            }
+
+        </select>
+
+
+    </div>
+</div>

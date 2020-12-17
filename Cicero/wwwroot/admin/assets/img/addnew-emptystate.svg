@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 565.122 383.648">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #d6dee6;
+        opacity: 0.4;
+      }
+
+      .cls-2, .cls-6, .cls-8 {
+        fill: #2994ff;
+      }
+
+      .cls-2, .cls-4 {
+        opacity: 0.3;
+      }
+
+      .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-5 {
+        fill: none;
+        stroke: #2994ff;
+        stroke-width: 2px;
+      }
+
+      .cls-6 {
+        opacity: 0.7;
+      }
+
+      .cls-7 {
+        opacity: 0.08;
+      }
+
+      .cls-8 {
+        opacity: 0.5;
+      }
+
+      .cls-9 {
+        filter: url(#Rectangle_80-3);
+      }
+
+      .cls-10 {
+        filter: url(#Rectangle_80-2);
+      }
+
+      .cls-11 {
+        filter: url(#Rectangle_80);
+      }
+    </style>
+    <filter id="Rectangle_80" x="304.173" y="133.461" width="144.4" height="167.689" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="7.5" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Rectangle_80-2" x="115.173" y="133.462" width="144.4" height="167.689" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="7.5" result="blur-2"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Rectangle_80-3" x="185.555" y="74.806" width="178" height="221" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="7.5" result="blur-3"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-3"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="addnew-emptystate" transform="translate(-652.945 -129.694)">
+    <path id="Path_21" data-name="Path 21" class="cls-1" d="M292.45,274.034c146.157,0,228.908-84.1,228.908-159.8S410.8-23.6,264.641-23.6,0,37.759,0,113.452c0,49.806,26.885,88.782,103.874,112.862C143.492,238.705,242.464,274.034,292.45,274.034Z" transform="matrix(0.985, -0.174, 0.174, 0.985, 657.043, 243.471)"/>
+    <path id="Union_2" data-name="Union 2" class="cls-2" d="M-1856.837-3034.144v-3.633h-3.633a1.53,1.53,0,0,1-1.53-1.53,1.53,1.53,0,0,1,1.53-1.529h3.633v-3.633a1.53,1.53,0,0,1,1.53-1.53,1.53,1.53,0,0,1,1.53,1.53v3.633h3.633a1.53,1.53,0,0,1,1.53,1.529,1.53,1.53,0,0,1-1.53,1.53h-3.633v3.633a1.53,1.53,0,0,1-1.53,1.53A1.53,1.53,0,0,1-1856.837-3034.144Z" transform="translate(2450.455 3532.245) rotate(8)"/>
+    <g id="Group_53" data-name="Group 53" transform="translate(129.615 -68.226) rotate(8)">
+      <g class="cls-11" transform="matrix(0.99, -0.14, 0.14, 0.99, 545.78, 123.16)">
+        <rect id="Rectangle_80-4" data-name="Rectangle 80" class="cls-3" width="84.636" height="112" rx="6" transform="translate(342.26 152.96) rotate(8)"/>
+      </g>
+      <g id="Group_51" data-name="Group 51" class="cls-4" transform="translate(922.227 290.955)">
+        <line id="Line_33" data-name="Line 33" class="cls-5" x2="52.646" transform="translate(0 0)"/>
+        <line id="Line_34" data-name="Line 34" class="cls-5" x2="52.646" transform="translate(0 10.182)"/>
+        <line id="Line_35" data-name="Line 35" class="cls-5" x2="52.646" transform="translate(0 21)"/>
+        <line id="Line_36" data-name="Line 36" class="cls-5" x2="52.646" transform="translate(0 31.818)"/>
+      </g>
+      <rect id="Rectangle_87" data-name="Rectangle 87" class="cls-2" width="52.273" height="21.273" rx="10.636" transform="translate(922.545 252.182)"/>
+    </g>
+    <g id="Group_54" data-name="Group 54" transform="translate(-138.157 195.735) rotate(-8)">
+      <g class="cls-10" transform="matrix(0.99, 0.14, -0.14, 0.99, 792.59, 44.7)">
+        <rect id="Rectangle_80-5" data-name="Rectangle 80" class="cls-3" width="84.636" height="112" rx="6" transform="translate(137.67 164.74) rotate(-8)"/>
+      </g>
+      <g id="Group_51-2" data-name="Group 51" class="cls-4" transform="translate(922.227 290.955)">
+        <line id="Line_33-2" data-name="Line 33" class="cls-5" x2="52.646" transform="translate(0 0)"/>
+        <line id="Line_34-2" data-name="Line 34" class="cls-5" x2="52.646" transform="translate(0 10.182)"/>
+        <line id="Line_35-2" data-name="Line 35" class="cls-5" x2="52.646" transform="translate(0 21)"/>
+        <line id="Line_36-2" data-name="Line 36" class="cls-5" x2="52.646" transform="translate(0 31.818)"/>
+      </g>
+      <rect id="Rectangle_87-2" data-name="Rectangle 87" class="cls-2" width="29.273" height="29.273" transform="translate(922.545 244.182)"/>
+    </g>
+    <g id="Group_52" data-name="Group 52" transform="translate(-45 -3)">
+      <g class="cls-9" transform="matrix(1, 0, 0, 1, 697.94, 132.69)">
+        <rect id="Rectangle_80-6" data-name="Rectangle 80" class="cls-3" width="133" height="176" rx="6" transform="translate(208.06 94.31)"/>
+      </g>
+      <g id="Group_51-3" data-name="Group 51" class="cls-4" transform="translate(7 12)">
+        <line id="Line_33-3" data-name="Line 33" class="cls-5" x2="82.73" transform="translate(924.5 315.5)"/>
+        <line id="Line_34-3" data-name="Line 34" class="cls-5" x2="82.73" transform="translate(924.5 331.5)"/>
+        <line id="Line_35-3" data-name="Line 35" class="cls-5" x2="82.73" transform="translate(924.5 348.5)"/>
+        <line id="Line_36-3" data-name="Line 36" class="cls-5" x2="82.73" transform="translate(924.5 365.5)"/>
+      </g>
+      <rect id="Rectangle_87-3" data-name="Rectangle 87" class="cls-2" width="46" height="46" rx="23" transform="translate(932 254)"/>
+    </g>
+    <path id="Union_3" data-name="Union 3" class="cls-6" d="M-1848.5-3015v-9.5h-9.5a4,4,0,0,1-4-4,4,4,0,0,1,4-4h9.5v-9.5a4,4,0,0,1,4-4,4,4,0,0,1,4,4v9.5h9.5a4,4,0,0,1,4,4,4,4,0,0,1-4,4h-9.5v9.5a4,4,0,0,1-4,4A4,4,0,0,1-1848.5-3015Z" transform="translate(2810.5 3248)"/>
+    <ellipse id="Ellipse_11" data-name="Ellipse 11" class="cls-7" cx="64" cy="3" rx="64" ry="3" transform="translate(864 425)"/>
+    <path id="Union_1" data-name="Union 1" class="cls-8" d="M-1853.708-3026.958v-5.835h-5.836a2.457,2.457,0,0,1-2.457-2.457,2.457,2.457,0,0,1,2.457-2.457h5.836v-5.836a2.457,2.457,0,0,1,2.457-2.457,2.458,2.458,0,0,1,2.458,2.457v5.836h5.836a2.457,2.457,0,0,1,2.457,2.457,2.457,2.457,0,0,1-2.457,2.457h-5.836v5.835a2.458,2.458,0,0,1-2.458,2.458A2.458,2.458,0,0,1-1853.708-3026.958Z" transform="translate(3102.909 3026.817) rotate(-8)"/>
+  </g>
+</svg>

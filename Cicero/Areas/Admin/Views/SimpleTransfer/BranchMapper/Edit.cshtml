@@ -1,0 +1,275 @@
+﻿@using Cicero.Service.Models;
+@using Cicero.Service.Helpers;
+@model Cicero.Service.Models.SimpleTransfer.BranchMapper.BranchMapperViewModel
+@inject Utils utils
+@inject Cicero.Service.Services.SimpleTransfer.IBranchMapperService IBranchMapperService
+@{
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Branch Mapper";
+    var countryList = IBranchMapperService.GetCountryList().Result;
+    var rateSupplierList = IBranchMapperService.GetRateSupplierList().Result;
+}
+<style>
+    #loading {
+        width: 100%;
+        z-index: 9;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    #cityList li {
+        box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, .25);
+        padding: .5rem 0.5rem;
+        list-style: none;
+        margin-bottom: 1rem;
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+     #cityList li input[type='text']{
+         padding:2px ;
+         margin-left:2px;
+         margin-right:10px;
+     }
+     #cityList li input[type='checkbox']{
+         margin-right:2px;
+     }
+</style>
+<div id="loading" style="display:none;">
+    <div class="spinner">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+
+        </div>
+        <div class="text-center">Loading data please wait.</div>
+    </div>
+</div>
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + "/branchmapper.html")">Branch Mappers</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Branch Mapper</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="@Url.Content("~/admin" + "/branchmapper/mapbranchs.html")" method="post" class="page-container grid-horizontal-viewport form-container">
+                <div class="page-body">
+                    <div class="form-wrapper w-100">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="grid-column form-overview">
+                            <div class="form-group">
+                                <select asp-for="CountryCode" class="custom-select countryList">
+                                    <option value="">Select Country</option>
+                                    @{
+                                        foreach (var ls in countryList)
+                                        {
+                                            <option value="@ls.Value">@ls.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="CountryCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <select asp-for="SupplierId" class="custom-select supplierList">
+                                    <option value="">Select Rate Supplier</option>
+                                    @{
+                                        foreach (var ls in rateSupplierList)
+                                        {
+                                            <option value="@ls.Value">@ls.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="SupplierId" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <select class="custom-select" id="bankList">
+                                    <option value="">Select Bank</option>
+                                </select>
+                                <span asp-validation-for="BankCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="city-list">
+                                <ul id="cityList" class="p-0">
+                                    @*<li>
+                                            <div>
+                                                Branch Name <input type="text" />
+                                                Branch Code <input type="text" />
+                                                <input type="checkbox" /> Kathmandu
+                                            </div>
+                                        </li>*@
+                                </ul>
+                            </div>
+
+                            <div class="form-footer">
+                                <button type="button" class="btn btn-primary update-change">Update Changes</button>
+                                <a class="btn btn-outline-secondary btn-back" href="@Url.Content("/admin" +  "/branchmapper.html")">Go back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $('.update-change').on("click", function (e) {
+        saveValues();
+    })
+
+    $('.countryList').on("change", function (e) {
+        $('[data-valmsg-for="CountryCode"]').text("");
+        var supplierId = $('.supplierList').val();
+
+        if (e.currentTarget.value !== "" && supplierId !== "")
+            getDatas(e.currentTarget.value, supplierId);
+    })
+
+    $('.supplierList').on("change", function (e) {
+        $('[data-valmsg-for="SupplierId"]').text("");
+        var countryCode = $('.countryList').val();
+
+        if (e.currentTarget.value !== "" && countryCode !== "")
+            getDatas(countryCode, e.currentTarget.value);
+    })
+
+    $('#bankList').on("change", function (e) {
+         $('[data-valmsg-for="BankCode"]').text("");
+        var countryCode = $('.countryList').val();
+        var supplierId = $('.supplierList').val();
+
+        if (e.currentTarget.value !== "" && countryCode !== "" && supplierId !== "")
+            getSavedDatas(countryCode, supplierId, e.currentTarget.value);
+    })
+
+    function getSavedDatas(countryCode, supplierId, bankCode) {
+        $("input[name='cities']").prop("checked", false);
+        $(".branch-code").val(null);
+        $(".branch-name").val(null);
+        var url = "/admin/branchmapper/getSavedDatas.html?countryCode=" + countryCode + "&supplierId=" + supplierId + "&bankCode=" + bankCode;
+        $.get(url, function (datas) {
+            $.each(datas, function (index, itemData) {
+                var city = $('[data-value=' + itemData.cityCode + ']');
+                city.prop("checked", itemData.status);
+                city.parent().find('.branch-code').val(itemData.branchCode);
+                city.parent().find('.branch-name').val(itemData.branchCode);
+            });
+        });
+    }
+
+    function getDatas(countryCode, supplierId) {
+        $('#bankList').children('option:not(:first)').remove();
+        $('#cityList li').remove();
+        var url = "/admin/branchmapper/getbanksandcities.html?countryCode=" + countryCode + "&supplierId=" + supplierId;
+        $.get(url, function (datas) {
+            $.each(datas.bankList, function (index, itemData) {
+                $("#bankList").append(new Option(itemData.text, itemData.value))
+            });
+
+            $.each(datas.cityList, function (index, itemData) {
+                var liHtml = "<li><div id='cityDiv" + index + "' >Branch Name <input type='text' class='branch-name' />Branch Code <input type='text' class='branch-code'/><input type='checkbox' name='cities' id='cityCheckbox" + index + "' data-value='" + itemData.value + "'/><label for='cityCheckbox" + index + "'>" + itemData.text + "</label></div></li>";
+                $("#cityList").append(liHtml)
+            });
+        });
+    }
+
+    function saveValues() {
+        var countryCode = $('.countryList').val();
+        var supplierId = $('.supplierList').val();
+        var bankCode = $('#bankList').val();
+
+        var cities = [];
+        var branchCode = [];
+        var branchName = [];
+
+        var valid = true;
+
+        if (countryCode == "") {
+            $('[data-valmsg-for="CountryCode"]').text("Select Any Country");
+            valid = false;
+        }
+
+        if (supplierId == "") {
+            $('[data-valmsg-for="SupplierId"]').text("Select Any Supplier");
+            valid = false;
+        }
+
+        if (bankCode == "") {
+            $('[data-valmsg-for="BankCode"]').text("Select Any Bank");
+            valid = false;
+        }
+
+        var checkBranchCodeList = branchCode.filter(x => x == "").length;
+        var checkBranchNameList = branchName.filter(x => x == "").length;
+
+        if (checkBranchCodeList > 0 || checkBranchNameList > 0) {
+            toastr.info("Branch Name and Branch Code is required for Selected City.");
+            valid = false;
+        }
+
+
+         $.each($("input[name='cities']:checked"), function () {
+            cities.push($(this).attr("data-value"));
+            branchCode.push($(this).parent().find('.branch-code').val());
+            branchName.push($(this).parent().find('.branch-name').val());
+        });
+
+
+        if (branchCode.filter(x => x.length > 5).length  || branchCode.filter(x => x.length < 2).length ) {
+             toastr.info("Branch Code  must be a string with a minimum length of 2 and maximum length of 5.");
+            valid = false;
+        }
+
+        if (branchName.filter(x => x.length > 100).length || branchName.filter(x => x.length < 2).length) {
+             toastr.info("Branch Name must be a string with a minimum length of 2 and maximum length of 100.");
+            valid = false;
+        }
+
+        if (!valid) {
+            return false;
+        }
+
+        
+        var datas = {
+            CountryCode: countryCode,
+            SupplierId: supplierId,
+            BankCode: bankCode,
+            Cities: cities,
+            BranchCode: branchCode,
+            BranchName: branchName
+        }
+
+
+        $.ajax({
+            url: "/admin/branchmapper/mapbranchs.html",
+            type: "post",
+            data: { datas: datas },
+            success: function (response) {
+                if (response) {
+                    toastr.success("Saved Sucessfully");
+                    setTimeout(function () {
+                        location.reload();
+                    }, 500);
+                }
+                else {
+                    toastr.error("Internal Server Error");
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,95 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Services
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@model UserViewModel
+@inject IUserService _iUserService
+@inject Permission Permission
+
+@{
+    ViewData["body"] = "inner-pg";
+    ViewData["Title"] = "Profile";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@await Html.PartialAsync("../Shared/_Header.cshtml")
+<main role="main" class="container">
+    <div class=" mt-7 pt-5">
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <h3>Edit Profile</h3>
+                <form action="@Url.Content("~/user/profile.html")" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="status"></div>
+                    <div asp-validation-summary="All" class="text-danger mt-2"></div>
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="form-group row mt-5">
+                        <label asp-for="FirstName" class="col-lg-3 col-form-label">First Name</label>
+                        <div class="col-lg-9">
+                            <input asp-for="FirstName" type="text" class="form-control">
+                            <span asp-validation-for="FirstName"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="LastName" class="col-lg-3 col-form-label">Last Name</label>
+                        <div class="col-lg-9">
+                            <input asp-for="LastName" type="text" class="form-control">
+                            <span asp-validation-for="LastName"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="Email" class="col-lg-3 col-form-label">Email</label>
+                        <div class="col-lg-9">
+                            <input asp-for="Email" type="text" class="form-control">
+                            <span asp-validation-for="Email"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="PhoneNumber" class="col-lg-3 col-form-label">Phone Number</label>
+                        <div class="col-lg-9">
+                            <input asp-for="PhoneNumber" type="text" class="form-control">
+                            <span asp-validation-for="PhoneNumber"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label">Upload</label>
+                        <div class="col-lg-9">
+                            <div class="form-group col p-0">
+                                <ul class="media-list">
+                                    @foreach (var item in _iUserService.GetImagesByUserId(Model.Id).Take(1))
+                                    {
+                                        @if (System.IO.Path.GetExtension(item.Url) == ".pdf")
+                                        {
+                                            <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/pdf-icon.png"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                                        }
+                                        else if (System.IO.Path.GetExtension(item.Url) == ".doc" || System.IO.Path.GetExtension(item.Url) == ".docx" || System.IO.Path.GetExtension(item.Url) == ".txt")
+                                        {
+                                            <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/doc-icon.png"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/@item.Url"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                                        }
+                                    }
+                                    <li class="thumbs add">
+                                        <button type="button" class="btn btn-outline-secondary" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.User.InsertImages(e)},OnCancelled:function(){this.close();}}'>Browse</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <small id="emailHelp" class="form-text text-muted">Note: .jpeg, .png</small>
+                        </div>
+                        <div class="col-lg-12 check-withsmalltxt mt-5">
+                            @if (Permission.Can(UserCan.Edit_Profile) && _iUserService.getLoggedInUserId() == Model.Id)
+                            {
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            }
+                            <a class="btn btn-link btn--back" href="@Url.Content("~/user/dashboard.html")">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+@await Html.PartialAsync("../Shared/_Footer.cshtml")
+@section Scripts{}

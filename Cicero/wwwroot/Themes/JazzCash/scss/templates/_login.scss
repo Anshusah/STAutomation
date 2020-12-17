@@ -1,0 +1,270 @@
+.account-access {
+    padding: 5rem 0;
+    &__wrapper {
+            max-width: 450px;
+            margin: auto;
+    }
+}
+.signin--mod {
+    margin-bottom: 4rem;
+}
+.toggle-password {
+    cursor: pointer;
+    position: absolute;
+    right: 2px;
+    top: 2.142857142857143rem;
+    width: calc(1.35em + 0.75rem);
+    height: calc(1.35em + 0.75rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: $zindex-dropdown;
+    &-group {
+        position: relative;
+
+        .form-control {
+            padding-right: calc(1.35em + 0.75rem);
+        }
+    }
+}
+
+a {
+    &.close {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        padding: 0;
+        color: var(--primary);
+        cursor: pointer;
+        background: transparent;
+        border: 0;
+        -webkit-appearance: none;
+        text-shadow:none;
+        box-shadow:none;
+
+        &:hover {
+            color: var(--secondary);
+           
+            --webkit-transition: -webkit-transform 250ms;
+            transition: -webkit-transform 250ms;
+            transition: transform 250ms;
+            transition: transform 250ms, -webkit-transform .25s;
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+
+    }
+}
+
+
+
+.side {
+    &-banner {
+        position: absolute;
+        height: 100vh;
+        background-color: var(--secondary);
+        width: 100%;
+        padding: 2rem;
+        background-color: var(--secondary);
+
+        .img {
+            &-wrapper {
+                /*position: absolute;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                left: 50%;*/
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+
+                &--login {
+                    background-image: url(../img/login-sidelayout-bg.png);
+                }
+
+                &--register {
+                    background-image: url(../img/register-sidelayout-bg.png)
+                }
+            }
+        }
+
+        &-overlay {
+            display: none;
+            position: fixed;
+            background: transparent;
+            width: 60%;
+            height: 100vh;
+            right:0;
+
+            @media (min-width: 767.99px) {
+                display: block;
+            }
+
+            .overlay {
+                top: 0;
+                left: 0;
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.25);
+                z-index: 1;
+            }
+        }
+    }
+}
+
+//autofill color 
+
+
+
+.form {
+    &--topbar {
+        margin-bottom: 4rem;
+    }
+
+    &-login {
+        &-signup {
+            color: $body-color;
+            justify-content: flex-start;
+            font-family: Muli;
+
+            @include media-breakpoint-up(xl) {
+                justify-content: center;
+            }
+
+            display: flex;
+            flex-flow: column;
+            height: auto;
+            /*margin-top:5rem;*/
+            padding: 5rem 1rem 3rem 1rem;
+
+            @include media-breakpoint-up(md) {
+                padding: 5rem 2rem 2rem 2rem;
+            }
+
+            @include media-breakpoint-up(lg) {
+                padding: 5rem 5rem 3rem 5rem;
+            }
+
+            .logo-wrapper {
+                margin-bottom: 1.75rem;
+            }
+
+            &--wrapper {
+             
+                width: 100%;
+                position: relative;
+
+                @include media-breakpoint-up(md) {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 40%;
+                }
+            }
+
+            .link {
+                text-decoration: underline;
+                /*color: lighten($color: $primary, $amount: 50);*/
+            }
+
+            .forget {
+                &-link {
+                    color: $gray-300;
+
+                    @include media-breakpoint-up(md) {
+                        display: block;
+                        text-align: right;
+                    }
+                }
+            }
+
+            .footer {
+                &-option {
+                    text-align: center;
+                    padding: 2rem 0;
+                }
+            }
+
+            .form {
+                &-header {
+                    margin-bottom: 1rem;
+                }
+
+                &-title {
+                    display: flex;
+                    align-items: flex-start;
+                    flex-flow: column;
+                    color: $black;
+                    position: relative;
+                    margin-bottom: 1.5rem;
+                    font-weight: 300;
+                    font-family: inherit;
+                    font-family: Poppins;
+
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        bottom: -7px;
+                        left: 5px;
+                        background-color: var(--secondary);
+                        height: 3px;
+                        width: 100px;
+                    }
+                }
+
+                &-fields {
+                    width: 100%;
+                    display: block;
+                    height: 40px;
+                    padding: 1.5rem 0.75rem;
+                    background-color: transparent;
+                    background-position: 95% center;
+                    background-size: 16px;
+                    background-repeat: no-repeat;
+
+                    &:focus {
+                        box-shadow: none;
+                        border-color: $blue;
+                    }
+
+                    &::placeholder {
+                        color: $gray-300;
+                    }
+
+                    &.email {
+                        background-image: url(../../SimpleTransfer/img/email.png);
+                    }
+
+                    &.phone {
+                        background-image: url(../../SimpleTransfer/img/phone.png);
+                    }
+
+                    &.password {
+                        background-image: url(../../SimpleTransfer/img/password.png);
+                    }
+
+                    &.date {
+                        background-image: url(../../SimpleTransfer/img/date.png);
+                        /*&:hover, &:active, &:focus {
+                            background-image: unset;
+                        }*/
+                    }
+
+                    &:hover, &:active, &:focus {
+                        background-image: unset;
+                    }
+                }
+
+                &-label {
+                    color: $gray-600;
+                    font-family: Poppins;
+                }
+            }
+        }
+    }
+}

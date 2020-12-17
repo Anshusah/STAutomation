@@ -1,0 +1,53 @@
+
+html{
+    font-size: 14px;
+}
+.img{
+    &-responsive
+    {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+}
+body{
+    font-weight:300;
+    font-size:1rem;
+}
+
+
+:focus {
+    outline: rgba($primary,0.25) auto 1px;
+}
+
+    .font-weight-medium {
+        font-weight: 500;
+    }
+
+    .hover-white:hover {
+        color: white;
+    }
+    //or divider
+    .divider {
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 1px;
+            background-color: rgba(112,112,112,0.3);
+            left: -76px;
+            top: 50%;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 1px;
+            background-color: rgba(112,112,112,0.3);
+            right: -76px;
+            top: 50%;
+        }
+    }

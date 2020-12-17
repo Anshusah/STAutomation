@@ -1,0 +1,97 @@
+.timeline {
+    position: relative;
+    margin: 0 4rem;
+
+    &:before {
+        content: '';
+        position: absolute;
+        width: 3px;
+        background-color: #cecece;
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        height: calc(100% - 25px);
+    }
+
+    &__wrapper {
+        text-align: left;
+        padding: 3rem 3rem 6rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    &__container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 0 1.75rem;
+        margin-bottom: 2.725rem;
+        text-align: left;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &.succeed {
+            &:before {
+                content: "\eb63";
+                font-family: remixicon !important;
+            }
+        }
+
+        &.success {
+            &::before {
+                background-color: var(--primary);
+                border: 2px solid rgba(68, 68, 68,0.25);
+            }
+        }
+
+        &.failure {
+            &::before {
+                content: "\eb81";
+                background-color: $red;
+            }
+
+            .timeline__data {
+                color: $red;
+            }
+        }
+
+        &::before {
+            text-align: center;
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            left: -13px;
+            border: 2px solid rgba($gray-400,1);
+            top: -5px;
+            border-radius: 50%;
+            z-index: 1;
+            color: #fff;
+            background-color: $gray-400;
+        }
+
+        &:last-child {
+            .timeline__content {
+                padding: 0;
+            }
+        }
+    }
+
+    &__content {
+        margin-left: 1.5rem;
+        flex-flow: column;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    &__data {
+        margin-bottom: 0;
+
+        + * {
+            margin-top: 1.5rem;
+        }
+    }
+}

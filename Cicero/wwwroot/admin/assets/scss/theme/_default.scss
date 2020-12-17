@@ -1,0 +1,74 @@
+// using Sass map and function for theming
+
+  $light: 0.6; // opacity used with lighter colors  
+  $dark: 0.4;  // opacity used with darker colors 
+
+
+
+$theme: (
+    'bg': (
+      'dark': #232C3B,
+      'light': #f1f1f1,
+      'bodybg': #f3f5f6,
+      'scrollbarbg': rgba(#000, 0.1)
+    ),  
+    'accent': (     
+      'primary': #0053A7,
+      'secondary': #2a2a2a
+    ),
+    'text': (
+      'light': #fff,
+      'dark': #000,
+      'link-dark': #000,
+      'link-light': #fff,
+      'link-color': rgb(20, 104, 189),
+      'support': rgba(#000, $light)
+    ),
+    'text-weight': (     
+      'heavy': 700,
+      'medium': 600,
+      'normal': normal
+    ),
+    'neutral-color': (
+      'superdark': #000,
+      'superlight': #fff
+    ),
+    'hover-bg': (
+      'light': #f2f2f2,
+      'dark': #ccc
+    ),
+    'border': (
+      'light': #eee,
+      'dark': #dee2e6
+    ),
+    'button': (
+      'primary': #2994FF,
+      'secondary': #222324
+    ),
+    'icon': (
+      'light': rgba(#fff, $light),
+      'light-hover': #fff,
+      'dark': rgba(#000, $light),
+      'dark-hover': #000,
+      'link': rgba(#0053A7, $light)
+    )
+
+  );
+
+
+  @function theme($key, $value) {
+
+    // getting parent key
+    $firstkey: map-get($theme, $key);
+
+    // getting child key
+    $secondkey: map-get($firstkey, $value);
+
+    @return $secondkey;
+  }
+  
+/*    Example
+  .theme-button {
+    background-color: theme(icon, link);
+    font-weight: theme(text-weight,heavy);
+  } */

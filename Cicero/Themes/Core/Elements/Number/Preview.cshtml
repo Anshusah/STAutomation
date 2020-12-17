@@ -1,0 +1,13 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Number
+@{
+    Number tb = Model as Number;
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @tb.BackendLabel
+        </label>
+        <input class="form-control" type="number">
+    </div>
+</div>

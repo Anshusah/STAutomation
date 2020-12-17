@@ -1,0 +1,60 @@
+.sticky-suppertop {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    width: 100%;
+
+    @include media('>tablet') {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+
+}
+
+.sticky-suppertop+.main-content {
+    @include media('>tablet') {
+        padding-top: 70px;
+    }
+}
+
+.sticky {
+    position: fixed;
+    background: theme(neutral-color, superlight);
+    width: 100%;
+    left: 0;
+    top: 0px;
+    padding: 10px 10px 10px 20px;
+    z-index: 2;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
+    @include media('>tablet') {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+
+    .container {
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+    }
+
+    h3.mb-5 {
+        margin-bottom: 3px !important;
+    }
+
+    &.page-head {
+        @include media('<tablet') {
+            padding: 8px 0;
+        }
+
+        h3 {
+            @include media('<tablet') {
+                margin-bottom: 0 !important;
+            }
+        }
+    }
+}
+
+.sticky+.page-body {
+    padding-top: 102px;
+}

@@ -1,0 +1,318 @@
+.transaction {
+    &-detail {
+        &__wrapper{
+            height: calc(50% - 2.5rem);
+            transform: translateY(-5%);
+            position: relative;
+            opacity: 0;
+            transition: all 0.3s ease 0s;
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            &.show{
+                transform: translateY(0%);
+                opacity: 1;
+                transition: all 0.3s ease 0s;
+                visibility: visible;
+            }
+        }
+        &__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.4rem 1rem 1.4rem 2.5rem ;
+            border-bottom: 1px solid rgba(112, 112, 112, 0.21);
+            background: var(--white);
+            .nav{
+                padding: 0;
+                &-link{
+                    color:$body-color;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.25rem 0.5rem;
+                    &.active,&:hover,&:active,&:focus {
+                        background: #BFBFBF;
+                        color: var(--white);
+                        border-radius: 0.5rem;
+                    }
+                    &--icon{
+                        i{
+                            margin-right: 0.5rem;
+                        }
+                    }
+                }
+                &-item{
+                    &.show{
+                        .nav-link{
+                            background: #BFBFBF;
+                            color: var(--white);
+                            border-radius: 0.5rem;
+                        }
+                    }
+                }
+            }
+        }
+        &__body{
+            padding: 0 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            overflow: auto;
+            flex-grow: 1;
+
+        }
+        &__info{
+            padding: 1.725rem 0;
+            border-top: 1px solid rgba(112, 112, 112, 0.21);
+            @include media-breakpoint-up(lg){
+                border-top: unset;
+                border-left: 1px solid rgba(112, 112, 112, 0.21);
+            }
+            ul{
+                margin-bottom: 0;
+            }
+            li{
+                padding: 0.875rem 0rem;
+                @include media-breakpoint-up(lg){
+                    padding: 0.875rem 2.125rem;
+                }
+                
+
+            
+            }
+        }
+    }
+
+}
+
+
+.timeline {
+    position: relative;
+    margin: 0 auto;
+
+    &:before {
+        content: '';
+        position: absolute;
+        width: 1px;
+        background-color: #cecece;
+        top: 10px;
+        bottom: 10px;
+        left: 2px;
+    }
+    &__wrapper{
+        padding: 1.875rem 0;
+    }
+    &__container{
+        
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 0 1.75rem;
+        &.success{
+            &::before{
+                background-color: $green;
+            }
+            .timeline__data{
+                color: $green;
+            }
+        }
+        &.failure{
+            &::before{
+                background-color: $red;
+            }
+            .timeline__data{
+                color: $red;
+            }
+        }
+        &::before{
+                    content: '';
+                    position: absolute;
+                    width: 12px;
+                    height: 12px;
+                    left: -3px;
+                    border: 2px solid #ffffff;
+                    top: 5px;
+                    border-radius: 50%;
+                    z-index: 1;
+        }
+        &:last-child{
+            .timeline__content {
+                padding: 0;
+            }
+        } 
+    }
+    &__content{
+        display: flex;
+        align-items: flex-start;
+        padding-bottom: 1.75rem;
+    }
+    &__time{
+        display:flex;
+        flex-flow:column;
+    }
+    &__data{
+        margin-left: 1.75rem;
+        margin-bottom: 0;
+    }
+}
+
+.table{
+    &-selectable{
+        tbody{
+            tr{
+                &:hover{
+                    cursor: pointer;
+                }
+                &.selected{
+                    td{
+                        background-color:#F9F9F9;
+                    }
+                }
+            }
+        }
+    }
+    &-stickyhead{
+        thead{
+            th{
+                background: white;
+                position: sticky;
+                top: 0;
+            }
+        }
+    }
+}
+// #TransactionMgmt_wrapper{
+//     overflow-x: auto;
+//     max-height: 200px;
+//     max-width: 1067px;
+// }
+// Table Styles
+
+// flexbox support for scroll-y
+
+@mixin dt-display-flex {
+    display: -webkit-flex; // support for responsive scroll-y
+    display: -ms-flexbox;
+    display: flex;
+  }
+  @mixin dt-flex-11a {
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+  }
+  @mixin dt-flex-100 {
+    -webkit-flex: 1 0 0px;
+    -ms-flex: 1 0 0px;
+    flex: 1 0 0px;
+  }
+  @mixin dt-flex-vertical {
+    -webkit-flex-flow: column nowrap;
+    -ms-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+  }
+  
+//   // codepen example support
+//   html, body {
+//     height:100%;
+//     width: 100%;
+//     max-width: 100%;
+//     overflow-y: hidden;
+//   }
+  
+  // core layout
+  
+  .dataTable-scrollable {
+    @include dt-display-flex;
+    @include dt-flex-11a;
+    height: calc(50% - 2.5rem); // codepen - vary to see flex rule in action
+    width: 100%;  // codepen - vary to see flex rule in action
+    //  code rules to better identify container visually
+    // background-color: #f0f0f0;
+    // border: 1px solid blue;
+    // margin-top: 1rem;
+    // padding: 1rem;
+    overflow: auto;
+  }
+  
+//   .dataTables_wrapper {
+//     width: 100%;
+//     overflow: hidden;
+//     -webkit-overflow-scrolling: touch;
+//     -ms-overflow-style: -ms-autohiding-scrollbar;
+//     @include dt-display-flex;
+//     @include dt-flex-vertical;
+//     @include dt-flex-11a;
+//   }
+  
+//   table.dataTable {
+//     background-color: #fff;
+//     width: 100%;
+//     margin: 0 auto;
+//     clear: both;
+//     border-collapse: separate;
+//     border-spacing: 0;
+//   }
+ 
+ 
+//   table.dataTable,
+//   table.dataTable th,
+//   table.dataTable td {
+//     -webkit-box-sizing: content-box;
+//     -moz-box-sizing: content-box;
+//     box-sizing: content-box;
+//   }
+//   .dataTables_wrapper .dataTables_scroll {
+//     clear: both;
+//     @include dt-display-flex;
+//     @include dt-flex-vertical;
+//     @include dt-flex-11a;
+//     // codepen rules to better identify scroll wrapper
+//     // border: 1px solid #ccc;
+  
+//   }
+  
+//   .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody {
+//     @include dt-flex-100;
+//     margin-top: -1px;
+//     -webkit-overflow-scrolling: touch;
+//   }
+  
+//   // Fixes issue with Safari width calc. under rare conditions
+//   .dataTables_scrollHeadInner {
+//     flex: 1 1 auto;
+//   }
+  
+//   .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody th > div.dataTables_sizing,
+//   .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody td > div.dataTables_sizing {
+//     height: 0;
+//     overflow: hidden;
+//     margin: 0 !important;
+//     padding: 0 !important;
+//   }
+  
+//   .dataTables_wrapper:after {
+//     visibility: hidden;
+//     display: block;
+//     content: "";
+//     clear: both;
+//     height: 0;
+//   }
+
+.list-transaction-details {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-row-gap: 0.5rem;
+    grid-column-gap: 1.5rem;
+
+    @include media-breakpoint-up(lg) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    &.fr-4 {
+        grid-template-columns: 1fr 1fr;
+
+        @include media-breakpoint-up(lg) {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+    }
+}

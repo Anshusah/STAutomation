@@ -1,0 +1,75 @@
+.module-header {
+    p {
+        font-size: 1.25rem;
+        max-width: 404px;
+        margin: auto;
+    }
+}
+.module-selector {
+    &--frontend {
+        h3 {}
+    }
+    &--backend {}
+    .card {
+        height: 100%;
+        position: relative;
+        text-decoration: none;
+        transition: $transition-base;
+        color: $body-color;
+        cursor: pointer;
+        &:hover {
+            background-color: lighten($color: $primary, $amount: 44%);
+            border-color: transparent;
+            box-shadow: 0 0 0 2px $primary;
+        }
+    }
+}
+
+.module-type {
+    margin-bottom: .5rem;
+    color: $gray-600;
+    @media (min-width: 768px) {
+        height: 80px;
+    }
+    &--icon {
+        font-size: 4rem;
+    }
+    &--img {}
+}
+
+.module-content {
+    border: 2px solid var(--primary);
+    background-color: lighten($color: $primary, $amount: 44%);
+}
+
+.card-secondary {
+    border: 1px solid #E6E6E6!important;
+    position: relative;
+    text-decoration: none!important;
+    transition: all 250ms linear;
+    color: #2b2b2b;
+}
+.card-secondary .card-text {
+    color: inherit;
+}
+.card-hover:hover, .card-secondary.show {
+    background-color: lighten($color: $primary, $amount: 44%);
+    border-color: transparent;
+    box-shadow: 0 0 0 2px $primary;
+    color: #2b2b2b;
+}
+.card-secondary .fa-check-circle {
+    position: absolute;
+    font-size: 1.142857142857143rem;
+    right: 1rem;
+    top: 1rem;
+    color: $primary;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 100ms 100ms 0 linear;
+}
+.card-secondary.show .fa-check-circle {
+    visibility: visible;
+    opacity: 1;
+    transition: all 250ms 300ms linear;
+}

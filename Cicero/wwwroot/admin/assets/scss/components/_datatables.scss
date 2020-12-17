@@ -1,0 +1,190 @@
+
+.dataTables_wrapper {
+    position: relative;
+
+    .dataTables_length {
+        label {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 0;
+
+            .custom-select {
+                margin: 0 0.5rem;
+            }
+        }
+    }
+
+    .dataTables_paginate {
+        display: inline-flex;
+        justify-content: flex-end;
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .page-item {
+            &.next, &.previous {
+                &.disabled {
+                    .page-link {
+                        background: #f4f4f4;
+                    }
+                }
+            }
+        }
+    }
+}
+.datatable {
+    &__controls {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 1px solid #E6E6E6;
+        @media (min-width: 768px) {
+            flex-direction: row;
+        }
+    }
+    &__length {
+        flex: 1;
+        @media (min-width: 768px) {}
+    }
+    &__info {
+        flex: 1;
+        @media (min-width: 768px) {
+            text-align: center;
+        }
+        @media (max-width: 767px) {
+            margin: 0.7rem 0;
+        }
+    }
+    &__numbers {
+        flex: 1;
+        @media (min-width: 768px) {
+            text-align: right;
+        }
+    }
+    &__actions {
+        white-space: nowrap;
+        .btn-icon {
+            span {
+                display: none;
+            }
+        }
+    }
+}
+.dataTables_processing {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, .8);
+    border: 0;
+}
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dataTable {
+    width: 100% !important;
+
+    tbody tr {
+        .datatable__actions {
+            opacity: 0;
+        }
+
+        &:hover, &.selected {
+            .datatable__actions {
+                opacity: 1;
+            }
+        }
+    }
+
+    .dt-checkboxes-cell {
+        padding-left: 1.5rem;
+    }
+
+    .sorting {
+        cursor: pointer;
+
+        &:after {
+            /*content: "\ee8c";
+            font-family: remixicon !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            float: right;*/
+        }
+
+        &_asc {
+            cursor: pointer;
+            color: var(--primary);
+
+            &:after {
+                content: "\ea48";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                float: right;
+            }
+        }
+
+        &_desc {
+            cursor: pointer;
+            color: var(--primary);
+
+            &:after {
+                content: "\ea42";
+                font-family: remixicon !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                float: right;
+            }
+        }
+    }
+}
+
+.datatable__filter {
+    padding: 1.5rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    border-bottom: 1px solid#e6e6e6;
+
+    &-main {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-actions {
+        display: flex;
+
+        .input-group {
+            margin-right: .5rem;
+        }
+    }
+}
+.datatable__filter-search {
+    .form-inline {
+        position: relative;
+        &:before {
+            content: "\ef4e";
+            font-family: 'remixicon' !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: absolute;
+            left: .8rem;
+            pointer-events: none;
+            opacity: .8;
+        }
+
+        .form-control {
+            padding-left: 2.4rem;
+        }
+    }
+}

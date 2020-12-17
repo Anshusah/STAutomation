@@ -1,0 +1,50 @@
+//Bootstrap 4 dependencies
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+//Responsive font size
+@import "../../../node_modules/bootstrap/scss/vendor/rfs";
+
+// Custom files
+
+//Vendor
+@import "vendor/daterangepicker";
+@import "vendor/tinymce"; // Hybrid text editor
+@import "vendor/query-builder";
+
+//Components
+@import "components/default";
+@import "components/buttons";
+@import "components/modal";
+@import "components/nav";
+@import "components/dropdown";
+@import "components/breadcrumb";
+@import "components/custom-form";
+@import "components/alert";
+@import "components/datatables";
+@import "components/media-uploader";
+@import "components/lightbox";
+@import "components/card";
+@import "components/list";
+
+
+//Templates
+@import "templates/header";
+@import "templates/footer";
+@import "templates/authentication";
+@import "templates/email-templates";
+@import "templates/messages";
+@import "templates/workflow-builder";
+@import "templates/form-builder";
+@import "templates/layout";
+@import "templates/dashboard";
+@import "templates/claim-overview";
+@import "templates/themes";
+@import "templates/role";
+@import "templates/users";
+@import "templates/media";
+@import "templates/login-admin";
+@import "templates/bank-map";
+@import "templates/transaction-management";
+@import "templates/widget-template";
+@import "templates/policy";
+
+

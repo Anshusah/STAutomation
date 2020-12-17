@@ -1,0 +1,100 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Models.Core;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@*@await Html.PartialAsync("../Shared/_Header.cshtml")*@
+
+<section class="main-content">
+    <div class="side-banner-overlay">
+        <div class="overlay"></div>
+        <div class="side-banner">
+            <div class="img-wrapper img-wrapper--login">
+                @*<img class="img-responsive" src="~/Themes/SimpleTransfer/img/Simple Transfer white Logo.png" alt="">*@
+            </div>
+        </div>
+    </div>
+    <div class="form-login-signup--wrapper ">
+        <a class="close" href="/JazzCash/Payer/LandingPage.html">
+            <i class="ri-close-fill"></i>
+        </a>
+        
+        <div class="form-login-signup">
+            <div class="logo-wrapper ">
+                <img src="~/Themes/JazzCash/img/simpleTransfer-logo-lg.png" alt="Simple Transfer" class="img-responsive" />
+            </div>
+            <div class="form-header">
+                <h1 class="sr-only">
+                    Hello,
+                    Welcome to
+                    Simple Transfer
+                </h1>
+                <h1 class="form-title title">
+                    <span>Hello,</span>
+                    <span class="text-primary">Welcome to</span>
+                    <span class="text-primary">Simple Transfer</span>
+                </h1>
+                <p>
+                    To stay in touch with us, please login to your Simple Transfer account.
+                </p>
+            </div>
+            <form method="post" autocomplete="off" action="/jazzcash/payer/login.html">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="text" class="form-fields form-control email" asp-for="Email" name="Email" id="Email" placeholder="someone@example.com" required>
+                    <span asp-validation-for="Email"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                        <input type="password" class=" form-control form-fields password" placeholder="Password" asp-for="Password" name="Password" id="Password" required>
+                        <span asp-validation-for="Password"></span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="" id="rememberme">
+                            <label for="rememberme" class="custom-control-label"> Remember me</label>
+                        </div>
+
+                    </div>
+                    <div class="form-group col-md-6">
+                        <a href="/st/user/forgot.html" class="link forget-link">Forget Password?</a>
+                    </div>
+                </div>
+                <div class="form-row mt-4">
+                    <div class="form-group col">
+                        <button type="submit" class="btn btn-block btn-primary">
+                            Login
+                        </button>
+                    </div>
+                </div>
+                <div class="footer-option">New to Simpletransfert?<a href="/jazzcash/payer/register.html" class="link ml-2">Signup</a></div>
+            </form>
+
+        </div>
+    </div>
+</section>
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+@section Scripts{}
+<script>
+    $(".toggle-password").click(function () {
+        //$(this).find('i').toggleClass("remixicon-eye-off-line");
+        var input = $($(this).attr("toggle"));
+        if (input.attr("type") == "password") {
+            input.attr("type", "text");
+            $(this).addClass('text-primary');
+            $(this).find('i').removeClass("remixicon-eye-line").addClass("remixicon-eye-off-line");
+        } else {
+            input.attr("type", "password");
+            $(this).removeClass('text-primary');
+            $(this).find('i').removeClass("remixicon-eye-off-line").addClass("remixicon-eye-line");
+
+        }
+    });
+</script>

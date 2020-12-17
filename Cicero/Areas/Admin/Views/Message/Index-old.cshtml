@@ -1,0 +1,505 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model List<MessageViewModel>
+@inject Permission Permission
+@inject IUserService _userService
+@inject IMessageService _messageService
+@inject Utils _utils
+
+@{
+    ViewData["Title"] = "Index";
+    var claimUserList = _userService.GetUserList();
+    var loggeduser = _userService.getLoggedInUserId();
+}
+<style>
+    .custom-upload-visual:hover {
+        cursor: pointer;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) +".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@*@Utils.CreateOrEdit(Model)*@ Compose Message</li>
+        </ol>
+    </nav>
+    <div class="d-flex justify-content-between align-items-center">
+        <h3>Messages</h3>
+        @if (Permission.Can(UserCan.Create_Message))
+        {
+            <div class="page-actionbtns">
+                <a href="#" id="new-message" class="btn btn-primary btn-sm px-3"><i class="fas fa-plus"></i> Compose New</a>
+            </div>
+        }
+    </div>
+    <!-- page head ends -->
+    <div class="row mb-6 mt-4">
+        <div class="col-lg-12">
+            <div class="msg-box rounded">
+                <div class="row no-gutters">
+                    <div class="col-lg-3">
+                        <!-- message list s -->
+                        <div id="msgList" class="msg-list">
+                            <ul class="p-0">
+                                @{string loggedUser = _userService.getLoggedInUserId();
+                                    DateTime dateChecker = DateTime.MinValue;
+                                    DateTime dateCheckerAgain = DateTime.MinValue;}
+                                @if (_messageService.GetAllMessages() != null && Permission.Can(UserCan.Reply_All_Message))
+                                {
+                                    @foreach (var item in await _messageService.GetAllMessages())
+                                    {
+                                        if (item.CreatedAt.Date != dateChecker)
+                                        {
+                                            <li class="msg-list-item px-4 pt-4 pb-2 date"><span class="label w-100 d-block text-truncate">@Utils.GetDefaultDateFormatToDetail(item.CreatedAt)</span></li>
+                                        }
+                                        if (item.IsRead == false)
+                                        {
+                                            if (Model != null && Model.Any(c => item.Id == c.Id))
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom active"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom msg-unread"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Model != null && Model.Any(c => item.Id == c.Id))
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom active"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                        }
+                                        { dateChecker = item.CreatedAt.Date; }
+                                    }
+                                }
+                                else if (_messageService.GetMessagesByUserIdOrMarkMessageAsRead(loggedUser, new List<int>()) != null && Permission.Can(UserCan.Reply_Message))
+                                {
+                                    @foreach (var item in await _messageService.GetMessagesByUserIdOrMarkMessageAsRead(loggedUser, new List<int>()))
+                                    {
+                                        if (item.CreatedAt.Date != dateChecker)
+                                        {
+                                            <li class="msg-list-item px-4 pt-4 pb-2 date"><span class="label w-100 d-block text-truncate">@Utils.GetDefaultDateFormatToDetail(item.CreatedAt)</span></li>
+                                        }
+                                        if (item.IsRead == false)
+                                        {
+                                            if (Model != null && Model.Any(c => item.Id == c.Id))
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom active"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom msg-unread"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Model != null && Model.Any(c => item.Id == c.Id))
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom active"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="msg-list-item px-4 py-3 border-bottom"><span class="label w-100 d-block text-truncate"><a href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(item.Id) +"/messages.html")">@item.Subject</a></span></li>
+                                            }
+                                        }
+                                        { dateChecker = item.CreatedAt.Date; }
+                                    }
+                                }
+
+                            </ul>
+                        </div>
+                        <!-- message list e  -->
+                    </div>
+                    <div class="col-lg-9">
+                        <div id="msgView" class="msg-view">
+                            <div class="msg-reply p-3 mb-5" id="msg-new-create" style="display:none">
+                                <h5>Compose New Message</h5>
+                                <form action="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(0) +"/messages.html")" method="post" enctype="multipart/form-data">
+                                    <div class="form-group clearfix mb-2">
+                                        <select id="select-state" name="recipients[]" multiple class="demo-default" placeholder="Select a User...">
+                                            @foreach (var item in claimUserList)
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label class="sr-only">Subject</label>
+                                        <input name="subject" id="new-subject" class="form-control px-3" aria-describedby="subjectHelp" placeholder="Subject">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="sr-only">Message</label>
+                                        <textarea name="content" class="form-control px-3 py-2" rows="3" placeholder="Message"></textarea>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="custom-upload mr-3">
+                                            <span class="custom-upload-visual p-1" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.Message.InsertImages(e)},OnCancelled:function(){this.close();}}'><img src="~/frontend/img/attachment.svg" alt="" style="width:18px"> <small>Add Files</small></span>
+                                        </div>
+                                        <div class="uploaded-files">
+                                        </div>
+                                        <div class="ml-auto align-self-start">
+                                            <button type="reset" class="btn btn-link text-dark">Cancel</button>
+                                            <button type="submit" id="send-message" disabled class="btn btn-outline-secondary px-3 btn-sm ">Send</button>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                            @if (Model == null || Model.Any(x => x.Id == 0))
+                            {
+                                <div id="empty-msg" class="msg-view p-4 msg-view-empty">
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="goto-msg-list btn btn-light btn-sm mb-4 px-3"><i class="fas fa-arrow-left"></i> back</span>
+
+                                <!-- message reply s -->
+                                <div class="msg-reply p-3 mb-5" id="msg-reply" style="display:none">
+                                    <h5>Reply</h5>
+                                    <form action="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false) +"/" + _utils.EncryptId(0) +"/messages.html")" method="post" enctype="multipart/form-data">
+                                        <input asp-for="FirstOrDefault().ParentId" type="text" class="form-control" hidden>
+                                        <input asp-for="FirstOrDefault().Id" type="text" class="form-control" hidden>
+                                        @*<input asp-for="FirstOrDefault().Subject" type="text" class="form-control" hidden>*@
+                                        @*<input asp-for="FirstOrDefault().To" type="text" class="form-control" hidden>*@
+                                        <div class="form-group clearfix mb-2">
+                                            <select id="select-manager" name="recipients[]" multiple class="demo-default" placeholder="Select a User...">
+                                                @{
+                                                    List<MessageViewModel> messageModel = new List<MessageViewModel>();
+
+                                                    foreach (var item in Model.GroupBy(x => x.To).Select(x => x.First()))
+                                                    {
+                                                        foreach (var itemMessageModel in messageModel)
+                                                        {
+                                                            if (messageModel.Count() == 0 || itemMessageModel.To.Any(x => x != item.From))
+                                                            {
+                                                                messageModel.Add(item);
+                                                            }
+                                                        }
+
+                                                    }
+                                                    var userlist = Model.Select(x => x.To.Distinct().First()).ToList();
+                                                    @foreach (var useritem in userlist)
+                                                    {
+                                                        if (useritem != loggeduser)
+                                                        {
+                                                            <option value="@useritem" selected="selected"> @claimUserList.Where(x => useritem == x.Id).Select(y => y.Name).FirstOrDefault() </option>
+                                                        }
+                                                    }
+                                                    foreach (var modelitem in Model)
+                                                    {
+
+                                                        foreach (var receiver in modelitem.To)
+                                                        {
+                                                            if (messageModel.Count() == 0 || receiver != modelitem.From)
+                                                            {
+                                                                messageModel.Add(modelitem);
+                                                            }
+                                                            //foreach (var itemMessageModel in messageModel)
+                                                            //{
+                                                            //    if (messageModel.Count() == 0 || itemMessageModel.To.Any(x => x != modelitem.From))
+                                                            //    {
+                                                            //        messageModel.Add(modelitem);
+                                                            //    }
+                                                            //}
+                                                        }
+
+                                                    }
+
+                                                    foreach (var item in messageModel)
+                                                    {
+                                                        if (claimUserList.Where(x => item.To.Any(a => a == x.Id) || x.Id == item.From).FirstOrDefault() != null)
+                                                        {
+                                                            <option value="@claimUserList.Where(x => item.To.Any(a => a == x.Id) || x.Id == item.From).Select(y => y.Id).FirstOrDefault()" selected="selected">@claimUserList.Where(x => item.To.Any(a => a == x.Id) || x.Id == item.From).Select(y => y.Name).FirstOrDefault()</option>
+                                                        }
+
+                                                    }
+                                                }
+
+                                                @foreach (var item in claimUserList)
+                                                {
+                                                    <option value="@item.Id">@item.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="sr-only">Message</label>
+                                            <textarea name="content" class="form-control px-3 py-2" rows="3" placeholder="Message"></textarea>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="custom-upload mr-3">
+                                                <span class="custom-upload-visual p-1" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.Message.InsertImages(e)},OnCancelled:function(){this.close();}}'><img src="~/frontend/img/attachment.svg" alt="" style="width:18px"> <small>Add Files</small></span>
+                                                @*<input type="file">*@
+                                            </div>
+                                            <div class="uploaded-files">
+                                                @if (_messageService.GetImagesByMessageId(Model.FirstOrDefault().Id).Count() > 0)
+                                                {
+                                                    @foreach (var item in _messageService.GetImagesByMessageId(Model.FirstOrDefault().Id))
+                                                    {
+                                                        <span class="msg-attachment-file px-2 py-1">
+                                                            <input type="hidden" name="images[]" value="@item.Id" />
+                                                            <i class="far fa-file-pdf"></i> @item.Title
+                                                            <button type="button" class="close ml-1" data-dismiss="msg-attachment-file" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </span>
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="ml-auto align-self-start">
+
+                                                <button type="reset" class="btn btn-link text-dark">Cancel</button>
+                                                <button type="submit" class="btn btn-outline-secondary px-3 btn-sm ">Send</button>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- message reply e -->
+                                <!-- message masthead s -->
+                                <div id="msg-details">
+
+                                    <div class="msg-masthead d-flex justify-content-between border-bottom pb-3 mb-4">
+                                        <div class="msg-subjet">
+                                            <small class="claimId">
+                                                <strong>
+                                                    Claim ID: @if (Model.Where(x => x.ClaimId != 0).FirstOrDefault() != null && Model.Where(x => x.ClaimId != 0).FirstOrDefault().ClaimId != 0)
+                                                    {
+                                                        @Model.Where(x => x.ClaimId != 0).FirstOrDefault().ClaimGeneratedId;
+                                                    }
+                                                </strong>
+                                            </small>
+                                            <h5 class="mb-0 font-weight-normal"><label>Subject:</label> @Model.Where(x => x.Subject != null).FirstOrDefault().Subject</h5>
+                                        </div>
+                                        <div class="msg-action">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm px-3" id="reply-message">Reply</button>
+                                        </div>
+                                    </div>
+                                    @foreach (var item in Model)
+                                    {
+
+                                        var xyz = item.CreatedAt.Date > dateCheckerAgain;
+                                        if (item.CreatedAt.Date > dateCheckerAgain)
+                                        {
+                                            <div class="msg-detail">
+                                                <div class="msg-header d-flex justify-content-between border-bottom pb-3 mb-4">
+                                                    <div class="msg-sr">
+                                                        <p class="msg-sender mb-0 small">
+                                                            <label class="mb-1">From: </label> <span class="data">@item.NameSender</span>
+                                                        </p>
+                                                        <div class="msg-receiver d-flex mb-0 small">
+                                                            <label class="mb-1 mr-2">To: </label> <span class="data">
+                                                                @foreach (var name in item.NameReceiver)
+                                                                {
+                                                                    <p class="nametag">
+                                                                        @name
+                                                                    </p>
+
+                                                                    if (!item.NameReceiver.Last().Equals(name, StringComparison.Ordinal))
+                                                                    {
+                                                                        <span class="nametag-item">, </span>
+                                                                    }
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="msg-body">
+                                                    <div class="msg-kicker mb-3">
+                                                        <small class="date">Date: @item.CreatedAt</small>
+                                                    </div>
+                                                    <div class="msg-detail-main">
+                                                        <p>@item.Content</p>
+                                                    </div>
+                                                </div>
+                                                <div class="msg-footer">
+                                                    <div class="msg-attachment d-flex flex-wrap align-items-center">
+                                                        <span class="px-2 mb-2"><img src="~/frontend/img/attachment.svg" style="width:18px" alt=""></span>
+                                                        @if (_messageService.GetImagesByMessageId(item.Id) != null)
+                                                        {
+                                                            @foreach (var itemMedia in _messageService.GetImagesByMessageId(item.Id))
+                                                            {
+                                                                <span class="msg-attachment-file px-2 py-1">
+                                                                    <input type="hidden" name="images[]" value="@itemMedia.Id" />
+                                                                    <i class="far fa-file-pdf"></i> @itemMedia.Title
+                                                                    <button type="button" class="close ml-1" data-dismiss="msg-attachment-file" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="javascript:void(0)" class="d-block text-center btn btn-light rounded-0 my-5 btn-sm" id="load-more-messages">load more messages</a>
+                                        }
+                                        else
+                                        {
+                                            <!-- old messages s -->
+                                            <div class="msg-old">
+
+                                                <!-- recent message detail s -->
+                                                <div class="msg-detail card p-4 mb-4">
+                                                    <div class="msg-header d-flex justify-content-between pb-3">
+                                                        <div class="msg-sr">
+                                                            <p class="msg-sender mb-0 small">
+                                                                <label class="mb-1">From:</label> <span class="data">@item.NameSender</span>
+                                                            </p>
+                                                            <div class="msg-receiver d-flex mb-0 small">
+                                                                <label class="mb-1 mr-2">To: </label> <span class="data">
+                                                                    @foreach (var name in item.NameReceiver)
+                                                                    {
+                                                                        <p class="nametag">
+                                                                            @name
+                                                                        </p>
+
+                                                                        if (!item.NameReceiver.Last().Equals(name, StringComparison.Ordinal))
+                                                                        {
+                                                                            <span class="nametag-item">, </span>
+                                                                        }
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="msg-body">
+                                                        <div class="msg-kicker mb-3">
+                                                            <small class="date">Date: @item.CreatedAt</small>
+                                                        </div>
+                                                        <div class="msg-detail-main">
+                                                            <p>@item.Content</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="msg-footer">
+                                                        <div class="msg-attachment d-flex flex-wrap align-items-center">
+                                                            <span class="px-2 mb-2"><img src="~/frontend/img/attachment.svg" style="width:18px" alt=""></span>
+                                                            @if (_messageService.GetImagesByMessageId(item.Id) != null)
+                                                            {
+                                                                @foreach (var itemMedia in _messageService.GetImagesByMessageId(item.Id))
+                                                                {
+                                                                    <span class="msg-attachment-file px-2 py-1">
+                                                                        <input type="hidden" name="images[]" value="@itemMedia.Id" />
+                                                                        <i class="far fa-file-pdf"></i> @itemMedia.Title
+                                                                        <button type="button" class="close ml-1" data-dismiss="msg-attachment-file" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- recent message detail e -->
+                                                <!-- old messages e -->
+                                            </div>
+                                        }
+                                        { dateCheckerAgain = item.CreatedAt.Date; }
+
+                                    }
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/selectize.min.js"></script>
+    <script type="text/javascript" src="~/frontend/js/jquery.slimscroll.js"></script>
+    <script>
+
+        $('#select-state').selectize({
+            maxItems: 1
+        });
+
+        $('#select-manager').selectize({
+            maxItems: 1
+        });
+           var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+            var theme = (theme_match && theme_match[1]) || 'default';
+            var themes = ['default', 'legacy', 'bootstrap2', 'bootstrap3'];
+            $('head').append('<link rel="stylesheet" href="@Url.Content("~/css/selectize.css")"' + theme + '.css">');
+
+            //var $themes = $('<div>').addClass('theme-selector').insertAfter('h1');
+            //for (var i = 0; i < themes.length; i++) {
+            //    $themes.append('<a href="?theme=' + themes[i] + '"' + (themes[i] === theme ? ' class="active"' : '') + '>' + themes[i] + '</a>');
+            //}
+
+    </script>
+    <script>
+        $(function () {
+            $('#message').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+            if ($(window).width() > 992) {
+                $('#msgList').slimScroll({
+                    height: '630px',
+                    size: '5px',
+                    alwaysVisible: false
+                });
+                $('#msgView').slimScroll({
+                    height: '630px',
+                    size: '5px',
+                    alwaysVisible: false
+                });
+            }
+
+            jQuery(document).on("click", "#reply-message", function () {
+                jQuery("#msg-new-create").hide();
+                jQuery("#empty-msg").hide();
+                jQuery("#msg-reply").show();
+            });
+
+            jQuery(document).on("click", "#new-message", function () {
+                jQuery("#msg-new-create").show();
+                jQuery("#empty-msg").hide();
+                jQuery("#msg-reply").hide();
+                jQuery("#msg-details").hide();
+
+                if ($(window).width() < 992 && !jQuery(".msg-box").hasClass("mobile")) {
+                    jQuery(".msg-box").addClass("mobile");
+                }
+            });
+
+            //jQuery(document).on("click", "#load-more-messages", function () {
+            //    jQuery("#load-more-messages").hide();
+            //    jQuery("#msg-old-view").show();
+            //});
+
+            jQuery(document).on("click", ".goto-msg-list", function () {
+                if ($(window).width() < 992) {
+                    jQuery(".msg-box").removeClass("mobile");
+                }
+            });
+
+            jQuery(document).on("change", "#new-subject", function () {
+                if ($("#new-subject").val().trim() != "") {
+                    $("#send-message").prop('disabled', false);
+                } else {
+                    $("#send-message").prop('disabled', true);
+                }
+            });
+
+            if ($(window).width() < 992 && jQuery(".msg-list-item").hasClass("active")) {
+                jQuery(".msg-box").addClass("mobile");
+            }
+        });
+    </script>
+}

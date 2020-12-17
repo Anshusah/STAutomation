@@ -1,0 +1,3320 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model WorkFlowViewModel
+@inject IUserService _userService
+@inject Permission Permission
+@inject Utils  _utils
+
+@{
+
+    ViewBag.Title = "WorkFlow";
+
+    string AeroJson = "";
+
+    string formId = ViewContext.HttpContext.Request.Query["formId"];
+}
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>*@
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<div class="absolute-fill">
+    <div class="workflow-container">
+        <div class="workflow-header">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + ".html")">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page"> Queues</li>
+                </ol>
+            </nav>
+            <div class="workflow-header__bottom">
+                <div class="workflow-title-group">
+                    <h1 class="workflow-title">Manage Queues</h1>
+                </div>
+                <div class="workflow-controls">
+                    <div class="workflow-controls__action">
+                        <a role="button" class="btn btn-outline-primary" href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false)+ "/manage/workflow.html?formId="+formId)">
+                            <i class="ri-shape-line mr-2"></i>Manage Workflow
+                        </a>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#newQueueModal" id="queue-modal">
+                            <i class="ri-share-forward-2-line mr-2"></i>New Queue
+                        </button>
+                    </div>
+                    <div class="wc-separator"></div>
+                    <button class="btn btn-light btn-icon max-min-btn" type="button" data-toggle="tooltip" data-placement="bottom" title="Fullscreen mode">
+                        <i class="ri-fullscreen-fill"></i>
+                        <span class="sr-only">Fullscreen mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <form action="@Url.Content("~/admin/manage/delQueuesState.html")" id="delStateQueue" method="post">
+            <input type="number" id="qsId" name="qsId" hidden />
+            <input type="text" id="formId" name="formId" hidden />
+            <input type="text" hidden id="isQueue" name="isQueue" />
+        </form>
+
+        <div class="workflow-viewport-container">
+            <div class="workflow-viewport-container-inner">
+                <div class="status"></div>
+                <div class="workflow-navigation-container">
+                    <div class="workflow-viewport-navigation draggable-viewport">
+                        <div class="viewport-nav">
+                            <div class="search-box">
+                                <div class="search-input">
+                                    <select class="custom-select" id="form_id" asp-items="@Model.CaseFormList">
+                                        <option value="">Select a Form</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--queues/states tabs-->
+                            @*<ul class="nav nav-tabs nav-tabs-custom " id="myTab" role="tablist">*@
+                            @*<li class="nav-item mb-0 w-50">
+                <a class="nav-link active text-center" id="states-tab" data-tab-title="state" data-toggle="tab" href="#states" role="tab" aria-controls="states" aria-selected="true">States</a>
+            </li>*@
+                            @*<li class="nav-item mb-0 w-50">
+                    <a class="nav-link active text-center" id="queues-tab" data-tab-title="queue" data-toggle="tab" href="#queues" role="tab" aria-controls="queues" aria-selected="false">Queues</a>
+                </li>
+
+            </ul>*@
+                            @*<div class="tab-content py-4" id="myTabContent">*@
+                            @*<div class="tab-pane fade show" id="states" role="tabpanel" aria-labelledby="states-tab">
+                <div class="accordion" id="accordionExample1">
+                    <ul class="list-unstyled ">
+
+                        <li class="" id="listState">
+                            <div class="state-list-group-item d-flex align-items-center justify-content-between collapsed " data-toggle="collapse" data-target="#collapseState" aria-expanded="false" aria-controls="collapseState">
+                                <span>States</span>
+                                <span class="list-item-action d-flex align-items-center">
+                                    <button type="button" class="btn btn-sm text-secondary" data-toggle="tooltip" data-placement="top" title="Expand"><i class="ri-arrow-down-s-line"></i></button>
+                                </span>
+                            </div>
+
+                            <div id="collapseState" class="collapse" aria-labelledby="listState" data-parent="#accordionExample1">
+
+                                <ul class="list-unstyled state-list-group ml-1" id="wfs-ui-dragable">
+                                    @foreach (var items in Model.StateList)
+                                    {
+                                        <li class="li-state" data-state-id="state-@items.Id" data-json='{"Id":"state-@items.Id","Name":"@items.SystemName","Title":"This is test","PosX":"0","PosY":"0","Color":"@items.Color","IsLock":true,"Type":"state"}'>
+                                            <div class="state-list-group-item d-flex align-items-center justify-content-between">
+                                                <span>@items.SystemName</span>
+                                                <span class="list-item-action d-flex align-items-center">
+                                                    <!-- <button type="button" class="btn btn-icon drag-icon" data-toggle="tooltip" data-placement="top" title="Drag"><i class="fas fa-arrows-alt"></i></button> -->
+                                                    <button type="button" class="btn btn-icon delete-icon" data-toggle="tooltip" data-placement="top" title="Delete" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delQueueState(@items.Id,"False")},OnCancelled:function(){this.close();}}'><i class="ri-close-circle-fill"></i></button>
+
+                                                </span> <!-- //.list-item-action -->
+                                            </div>
+                                        </li>
+                                        <!-- //.state-list-group-item -->
+                                    }
+                                </ul>
+
+                            </div>
+                        </li>
+                        <li class="" id="listAction">
+                            <div class="state-list-group-item d-flex align-items-center justify-content-between collapsed " data-toggle="collapse" data-target="#collapseAction" aria-expanded="false" aria-controls="collapseAction">
+                                <span>Actions</span>
+                                <span class="list-item-action d-flex align-items-center">
+                                    <button type="button" class="btn btn-sm text-secondary" data-toggle="tooltip" data-placement="top" title="Expand"><i class="ri-arrow-down-s-line"></i></button>
+                                </span>
+                            </div>
+
+                            <div id="collapseAction" class="collapse" aria-labelledby="listAction" data-parent="#accordionExample1">
+
+                                <ul class="list-unstyled state-list-group ml-1" id="wfs-ui-dragable">
+                                    @foreach (var items in Model.ActionList)
+                                    {
+                                        <li class="li-state" data-action-id="action-@items.Id" data-json='{"Id":"action-@items.Id","Name":"@items.Name","Title":"This is test","PosX":"0","PosY":"0","IsLock":true,"Type":"action"}'>
+                                            <div class="state-list-group-item d-flex align-items-center justify-content-between">
+                                                <span>@items.Name</span>
+                                                <span class="list-item-action d-flex align-items-center">
+                                                    <!-- <button type="button" class="btn btn-icon drag-icon" data-toggle="tooltip" data-placement="top" title="Drag"><i class="fas fa-arrows-alt"></i></button> -->
+                                                    <button type="button" class="btn btn-icon delete-icon" data-toggle="tooltip" data-placement="top" title="Delete" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delQueueState(@items.Id,"False")},OnCancelled:function(){this.close();}}'><i class="ri-close-circle-fill"></i></button>
+                                                </span> <!-- //.list-item-action -->
+                                            </div>
+                                        </li>
+                                        <!-- //.state-list-group-item -->
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                @*
+                    <ul class="list-unstyled state-list-group" id="wf-ui-dragable">
+                        @foreach (var items in Model.StateList)
+                        {
+
+                            <li class="li-state" data-state-id="state-@items.Id" data-json='{"Id":"state-@items.Id","Name":"@items.SystemName","Title":"This is test","PosX":"0","PosY":"0","Color":"@items.Color","IsLock":true,"Type":"state"}'>
+                                <div class="state-list-group-item d-flex align-items-center justify-content-between">
+                                    <span>@items.SystemName</span>
+                                    <span class="list-item-action d-flex align-items-center">
+                                            <button type="button" class="btn btn-sm text-secondary" data-toggle="tooltip" data-placement="top" title="Delete" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delQueueState(@items.Id,"False")},OnCancelled:function(){this.close();}}'><i class="ri-close-circle-fill"></i></button>
+
+
+                                    </span>
+                                </div>
+                            </li>
+
+                        }
+                    </ul>
+
+            </div>*@
+                            @*<div class="tab-pane fade show" id="queues" role="tabpanel" aria-labelledby="queues-tab">*@
+                            <div class="state-queue-group accordion" id="accordionExample">
+                                <ul class="state-queue-lists">
+                                    <li class="state-queue-item" id="listOne">
+                                        <div class="state-queue-header collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            <span class="state-queue-title">Queues</span>
+                                            <span class="state-queue-action" data-toggle="tooltip" data-placement="top" title="Expand">
+                                                <i class="ri-arrow-down-s-line"></i>
+                                            </span>
+                                        </div>
+
+                                        <div id="collapseOne" class="collapse" aria-labelledby="listOne" data-parent="#accordionExample">
+                                            <ul class="wf-ui-dragable" id="wf-ui-dragable">
+                                                @foreach (var items in Model.QueueList)
+                                                {
+                                                    <li class="wf-ui-item li-queue" data-state-id="queue-@items.Id" data-json='{"Id":"queue-@items.Id","Name":"@items.Name","Title":"This is test","PosX":"0","PosY":"0","Color": "#006BB4", "HoverColor": "#004C81","IsLock":true,"Type":"queue"}'>
+                                                        <div class="wf-ui-wrap">
+                                                            <span class="drag-icon"></span>
+                                                            <span class="wf-ui-title">@items.Name</span>
+                                                            <span class="wf-ui-action">
+                                                                <!-- <button type="button" class="btn btn-icon drag-icon" data-toggle="tooltip" data-placement="top" title="Drag"><i class="fas fa-arrows-alt"></i></button> -->
+                                                                <button type="button" class="btn btn-icon delete-icon" data-toggle="tooltip" data-placement="top" title="Delete" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delQueueState(@items.Id,"True")},OnCancelled:function(){this.close();}}'><i class="ri-close-circle-fill"></i></button>
+
+                                                                @*<div class="dropdown">
+                    <button type="button" class="btn btn-icon" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Rename</a>
+                        <a class="dropdown-item text-danger" href="#">Delete permanently</a>
+                    </div>
+            </div>*@ <!-- //.dropdown -->
+                                                            </span> <!-- //.list-item-action -->
+                                                        </div>
+                                                    </li>
+                                                    <!-- //.state-list-group-item -->
+                                                }
+                                            </ul>
+
+                                        </div>
+                                    </li>
+                                    <li class="state-queue-item" id="listTwo">
+                                        <div class="state-queue-header collapsed " data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            <span class="state-queue-title">States</span>
+                                            <span class="state-queue-action" data-toggle="tooltip" data-placement="top" title="Expand">
+                                                <i class="ri-arrow-down-s-line"></i>
+                                            </span>
+                                        </div>
+
+                                        <div id="collapseTwo" class="collapse" aria-labelledby="listTwo" data-parent="#accordionExample">
+
+                                            <ul class="wf-ui-dragable" id="wfs-ui-dragable">
+                                                @foreach (var items in Model.StateList)
+                                                {
+                                                    <li class="wf-ui-item li-state" data-state-id="state-@items.Id" data-json='{"Id":"state-@items.Id","Name":"@items.SystemName","Title":"This is test","PosX":"0","PosY":"0","Color":"@items.Color","IsLock":true,"Type":"state"}'>
+                                                        <div class="wf-ui-wrap">
+                                                            <span class="drag-icon"></span>
+                                                            <span class="wf-ui-title">@items.SystemName</span>
+                                                            <span class="wf-ui-action">
+                                                                <!-- <button type="button" class="btn btn-icon drag-icon" data-toggle="tooltip" data-placement="top" title="Drag"><i class="fas fa-arrows-alt"></i></button> -->
+                                                                <button type="button" class="btn btn-icon delete-icon" data-toggle="tooltip" data-placement="top" title="Delete" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delQueueState(@items.Id,"False")},OnCancelled:function(){this.close();}}'><i class="ri-close-circle-fill"></i></button>
+
+                                                                @*<div class="dropdown">
+                    <button type="button" class="btn btn-icon" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Rename</a>
+                        <a class="dropdown-item text-danger" href="#">Delete permanently</a>
+                    </div>
+            </div>*@ <!-- //.dropdown -->
+                                                            </span> <!-- //.list-item-action -->
+                                                        </div>
+                                                    </li>
+                                                    <!-- //.state-list-group-item -->
+                                                }
+                                            </ul>
+
+                                        </div>
+                                    </li>
+                                    @*<li class="" id="listThree">
+                        <div class="state-list-group-item d-flex align-items-center justify-content-between expand " data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <span>Actions</span>
+                            <span class="list-item-action d-flex align-items-center">
+                                <button type="button" class="btn btn-sm text-secondary" data-toggle="tooltip" data-placement="top" title="Expand"><i class="ri-arrow-down-s-line"></i></button>
+                            </span>
+                        </div>
+
+                        <div id="collapseThree" class="collapse" aria-labelledby="listThree" data-parent="#listThree">
+
+                            <ul class="list-unstyled state-list-group ml-1" id="wfs-ui-dragable">
+                                @foreach (var items in Model.ActionList)
+                                {
+                                    <li class="li-state" data-action-id="action-@items.Id" data-json='{"Id":"action-@items.Id","Name":"@items.Name","Title":"This is test","PosX":"0","PosY":"0","IsLock":true,"Type":"action"}'>
+                                        <div class="state-list-group-item d-flex align-items-center justify-content-between">
+                                            <span>@items.Name</span>
+                                            <span class="list-item-action d-flex align-items-center">
+                                                <!-- <button type="button" class="btn btn-icon drag-icon" data-toggle="tooltip" data-placement="top" title="Drag"><i class="fas fa-arrows-alt"></i></button> -->
+                                                <button type="button" class="btn btn-icon delete-icon" data-toggle="tooltip" data-placement="top" title="Delete" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to apply selected action?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delQueueState(@items.Id,"False")},OnCancelled:function(){this.close();}}'><i class="ri-close-circle-fill"></i></button>
+                                            </span> <!-- //.list-item-action -->
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+
+                        </div>
+                    </li>*@
+                                </ul>
+                            </div>
+
+                            @*</div>*@
+
+                            @*</div><!--#myTab-->>*@
+
+                            <!-- //.list-unstyled-->
+                            <script type="text/javascript">
+                                jQuery(function () {
+
+                                    $("#wf-ui-dragable,#wfs-ui-dragable").sortable({
+                                        revert: false
+                                    }).disableSelection();
+                                    $("#wf-ui-dragable li,#wfs-ui-dragable li").draggable({
+                                        helper: "none",
+                                        cancel: false,
+                                        connectToSortable: "#wf-ui-dragable",
+                                        handle: ".drag-icon"
+                                    }).disableSelection();
+
+
+                                })</script>
+                        </div>
+                        <div class="workflow-instruction-info text-muted">
+                            <p class="text-muted small mb-0 mr-3">Follow state Configurator's cursor guide which may helps you to configure arrow path.</p>
+                            <div class="instruction-info-icon">
+                                <i class="ri-information-line" data-toggle="tooltip" data-placement="top" title="Vivamus sagittis lacus vel augue laoreet <b>rutrum</b> faucibus."></i>
+                            </div>
+                        </div>
+                    </div> <!-- //.draggable-items -->
+                </div>
+                <div class="workflow-viewport-area">
+                    <div class="absolute-fill">
+                        <div class="workflow-viewport-canvas">
+                            <div class="draggable-content">
+                                <div class="draggable-area-header">
+                                    @*<div class="flex-grow-1">
+                                        <p class="mb-0">
+                                            Drag and Drop states from left side to right side and apply required state configuration flow as system requirement. please double click on Arrow to make single way connection.
+                                        </p>*@
+
+                                        @*<div class="add-new__action pt-4">*@
+
+                                            @*<button class="btn btn-outline-secondary" type="button" data-toggle="modal" id="state-modal" data-target="#newStateModal">
+                                        <i class="ri-stack-line mr-2"></i>New State
+                                    </button>*@
+
+                                            @*<a role="button" class="btn btn-outline-primary" href="@Url.Content("~/admin"+ _utils.GetTenantForUrl(false)+ "/manage/workflow.html?formId="+formId)">
+                                                <i class="ri-shape-line mr-2"></i>Manage Workflow
+                                            </a>
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#newQueueModal" id="queue-modal">
+                                                <i class="ri-share-forward-2-line mr-2"></i>New Queue
+                                            </button>*@
+                                            @*<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#newActionModal" id="action-modal">
+                                        <i class="ri-mail-send-line mr-2"></i>New Action
+                                    </button>*@
+
+                                        @*</div>*@
+                                    @*</div>*@
+                                    @*<div class="ml-5">
+
+                                        <button type="button" class="btn max-min-btn shadow">
+                                            <i class="ri-fullscreen-line"></i>
+                                            <span class="sr-only">Fullscreen</span>
+                                        </button>
+                                    </div>*@
+                                    <!--New state Modal-->
+                                    <div class="modal fade" id="newStateModal" tabindex="-1" role="dialog" aria-labelledby="newStateModalTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="newStateModalTitle">Create New State</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div> <!--//.modal-header-->
+                                                <div class="modal-body">
+                                                    <!--//.modal-form-load-->
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+                                                    <button type="button" id="state-save" class="btn btn-primary">Save</button>
+                                                </div> <!--//.modal-footer-->
+                                            </div> <!--//.modal-content-->
+                                        </div> <!--//.modal-dialog-->
+                                    </div>
+
+
+                                    <!--//End of New State Modal-->
+                                    <!--Queue State Modal-->
+                                    <div class="modal fade" id="newQueueModal" tabindex="-1" role="dialog" aria-labelledby="queueStateModalTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="queueStateModalTitle">Add Queue</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-form">
+                                                    <!--//.modal-form-load-->
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End of Queue state Modal-->
+                                    <!--Action  Modal-->
+                                    <div class="modal fade" id="nActionModal" tabindex="-1" role="dialog" aria-labelledby="actionModalTitle" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="actionModalTitle">Add Action</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-form">
+                                                    <!--//.modal-form-load-->
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="newActionModal" tabindex="-1" role="dialog" aria-labelledby="actionModalTitle" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="loading p-5 d-none justify-content-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-form">
+                                                    <!--//.modal-form-load-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End of Action Modal-->
+                                    <div class="d-flex mt-4 sr-only">
+                                        <!--// REMOVE .sr-only CLASS NAME IF YOU WANT TO USE THIS BUTTONS -->
+                                        <a href="#" class="btn btn-outline-light text-secondary"><i class="fas fa-code-branch"></i> New Relation</a>
+                                        <a href="#" class="btn btn-outline-light text-secondary"><i class="fas fa-pen"></i> Edit Workflow</a>
+                                        <a href="#" class="btn btn-outline-light text-secondary"><i class="far fa-trash-alt"></i> Remove</a>
+                                        <div class="flex-grow-1"></div>
+                                        <a href="#" class="btn btn-outline-primary disabled">Save Workflow</a>
+                                    </div>
+                                </div>
+                                <div class="draggable-area">
+                                    <style type="text/css">
+                                                .canvas-element-wrap {
+                                                    overflow: auto;
+                                                    text-align: left;
+                                                    position: relative;
+                                                    /* scrollbar-color: #c1c1c1 #fbfbfb;
+                                        scrollbar-width: thin; */
+                                                }
+
+                                                    .canvas-element-wrap::-webkit-scrollbar {
+                                                        width: 6px;
+                                                    }
+
+                                                    .canvas-element-wrap::-webkit-scrollbar-track {
+                                                        background: #fbfbfb;
+                                                    }
+
+                                                    .canvas-element-wrap::-webkit-scrollbar-thumb {
+                                                        background-color: #c1c1c1;
+                                                    }
+
+                                                    .canvas-element-wrap::-webkit-scrollbar:horizontal {
+                                                        height: 6px;
+                                                    }
+
+                                                .wfb-edit {
+                                                    position: absolute;
+                                                    z-index: 1;
+                                                    display: none;
+                                                    width: 30px !important;
+                                                    text-align: center !important;
+                                                    height: 30px;
+                                                    background-color: #FFF;
+                                                }
+                                                .wfb-edit i {
+                                                    height: 28px;
+                                                    width: 28px;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    line-height: 1;
+                                                    font-size: 1rem;
+                                                }
+                                                .popover {
+                                                    font-size: 1.4rem;
+                                                    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+                                                    border: 1px solid rgba(0,0,0,0.1);
+                                                    max-width: 200px;
+                                                    z-index: 1040;
+                                                }
+
+                                                .popover-header {
+                                                    font-size: 14px;
+                                                    font-weight: bold;
+                                                    background: transparent;
+                                                    border-bottom: 0;
+                                                    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+                                                }
+
+                                                .popover small {
+                                                    display: block;
+                                                    margin-bottom: 1.5rem;
+                                                }
+
+                                                .popover-body {
+                                                    padding: 0 1.5rem 1.5rem 1.5rem;
+                                                }
+
+                                                    .popover-body p {
+                                                        margin-bottom: 0.5rem;
+                                                    }
+                                    </style>
+                                    <!-- Modal -->
+
+                                    <div class="modal fade" tabindex="-1" role="dialog" id="empty-stage" aria-hidden="true">
+                                        <div class="modal-dialog modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Choose Form</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        Please choose form first and try to configure/setup state flow.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="confirm-aero-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        Are you sure? Do you want to delete selected Arrow?
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary btnsecondary">Close</button>
+                                                    <button type="button" class="btn btn-danger">Confirm</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="confirm-reset-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Confirm Reset</h5>
+
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        Are you sure? Do you want to reset stage?
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary btnsecondary">Close</button>
+                                                    <button type="button" class="btn btn-danger">Confirm</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="confirm-state-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        Are you sure? Do you want to delete selected State?
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary btnsecondary">Close</button>
+                                                    <button type="button" class="btn btn-danger">Confirm</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Start -->
+                                    <style type="text/css">
+
+                                        [data-vlscrollbar] {
+                                            position: relative;
+                                            flex-direction: column;
+                                            flex-wrap: wrap;
+                                            justify-content: flex-start;
+                                            align-content: flex-start;
+                                            align-items: flex-start
+                                        }
+
+                                        .vlscrollbar-wrapper {
+                                            overflow: hidden;
+                                            width: inherit;
+                                            height: inherit;
+                                            max-width: inherit;
+                                            max-height: inherit
+                                        }
+
+                                        .vlscrollbar-mask {
+                                            direction: inherit;
+                                            position: absolute;
+                                            overflow: hidden;
+                                            padding: 0;
+                                            margin: 0;
+                                            left: 0;
+                                            top: 0;
+                                            bottom: 0;
+                                            right: 0;
+                                            width: auto !important;
+                                            height: auto !important;
+                                            z-index: 0
+                                        }
+
+                                        .vlscrollbar-offset {
+                                            direction: inherit !important;
+                                            box-sizing: inherit !important;
+                                            resize: none !important;
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            bottom: 0;
+                                            right: 0;
+                                            padding: 0;
+                                            margin: 0;
+                                            -webkit-overflow-scrolling: touch
+                                        }
+
+                                        .vlscrollbar-content-wrapper {
+                                            direction: inherit;
+                                            box-sizing: border-box !important;
+                                            position: relative;
+                                            display: block;
+                                            height: 100%;
+                                            width: auto;
+                                            visibility: visible;
+                                            overflow: auto;
+                                            max-width: 100%;
+                                            max-height: 100%
+                                        }
+
+                                        .vlscrollbar-content:after, .vlscrollbar-content:before {
+                                            content: ' ';
+                                            display: table
+                                        }
+
+                                        .vlscrollbar-placeholder {
+                                            max-height: 100%;
+                                            max-width: 100%;
+                                            width: 100%;
+                                            pointer-events: none
+                                        }
+
+                                        .vlscrollbar-height-auto-observer-wrapper {
+                                            box-sizing: inherit !important;
+                                            height: 100%;
+                                            width: 100%;
+                                            max-width: 1px;
+                                            position: relative;
+                                            float: left;
+                                            max-height: 1px;
+                                            overflow: hidden;
+                                            z-index: -1;
+                                            padding: 0;
+                                            margin: 0;
+                                            pointer-events: none;
+                                            flex-grow: inherit;
+                                            flex-shrink: 0;
+                                            flex-basis: 0
+                                        }
+
+                                        .vlscrollbar-height-auto-observer {
+                                            box-sizing: inherit;
+                                            display: block;
+                                            opacity: 0;
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            height: 1000%;
+                                            width: 1000%;
+                                            min-height: 1px;
+                                            min-width: 1px;
+                                            overflow: hidden;
+                                            pointer-events: none;
+                                            z-index: -1
+                                        }
+
+                                        .vlscrollbar-track {
+                                            z-index: 1;
+                                            position: absolute;
+                                            right: 0;
+                                            bottom: 0;
+                                            pointer-events: none;
+                                            overflow: hidden
+                                        }
+
+                                        [data-vlscrollbar].vlscrollbar-dragging .vlscrollbar-content {
+                                            pointer-events: none;
+                                            user-select: none;
+                                            -webkit-user-select: none
+                                        }
+
+                                        [data-vlscrollbar].vlscrollbar-dragging .vlscrollbar-track {
+                                            pointer-events: all
+                                        }
+
+                                        .vlscrollbar-scrollbar {
+                                            position: absolute;
+                                            right: 2px;
+                                            width: 7px;
+                                            min-height: 10px
+                                        }
+
+                                            .vlscrollbar-scrollbar:before {
+                                                position: absolute;
+                                                content: '';
+                                                background: #000;
+                                                border-radius: 7px;
+                                                left: 0;
+                                                right: 0;
+                                                opacity: 0;
+                                                transition: opacity .2s linear
+                                            }
+
+                                        .vlscrollbar-track .vlscrollbar-scrollbar.vlscrollbar-visible:before {
+                                            opacity: .5;
+                                            transition: opacity 0s linear
+                                        }
+
+                                        .vlscrollbar-track.vlscrollbar-vertical {
+                                            top: 0;
+                                            width: 11px
+                                        }
+
+                                            .vlscrollbar-track.vlscrollbar-vertical .vlscrollbar-scrollbar:before {
+                                                top: 2px;
+                                                bottom: 2px
+                                            }
+
+                                        .vlscrollbar-track.vlscrollbar-horizontal {
+                                            left: 0;
+                                            height: 11px
+                                        }
+
+                                            .vlscrollbar-track.vlscrollbar-horizontal .vlscrollbar-scrollbar:before {
+                                                height: 100%;
+                                                left: 2px;
+                                                right: 2px
+                                            }
+
+                                            .vlscrollbar-track.vlscrollbar-horizontal .vlscrollbar-scrollbar {
+                                                right: auto;
+                                                left: 0;
+                                                top: 2px;
+                                                height: 7px;
+                                                min-height: 0;
+                                                min-width: 10px;
+                                                width: auto
+                                            }
+
+                                        [data-vlscrollbar-direction=rtl] .vlscrollbar-track.vlscrollbar-vertical {
+                                            right: auto;
+                                            left: 0
+                                        }
+
+                                        .hs-dummy-scrollbar-size {
+                                            direction: rtl;
+                                            position: fixed;
+                                            opacity: 0;
+                                            visibility: hidden;
+                                            height: 500px;
+                                            width: 500px;
+                                            overflow-y: hidden;
+                                            overflow-x: scroll
+                                        }
+
+
+                                        .horizontal-scrolling__wrapper {
+                                            display: flex;
+                                            flex-wrap: nowrap;
+                                            padding: 20px 0;
+                                        }
+
+                                        .horizontal-scrolling__card {
+                                            flex: 0 0 auto;
+                                        }
+                                    </style>
+
+
+                                    <script src="/js/vlscrollbar.js"></script>
+
+
+                                    <div class="canvas-element-wrap">
+                                        <div id="scrollbar" class="horizontal-scrolling__wrapper">
+                                            <div class="horizontal-scrolling__card" style="min-width:1300px">
+                                                <canvas id="graph"></canvas>
+                                            </div>
+                                        </div>
+
+
+                                        <a tabindex="0" class="btn btn-sm btn-icon wfb-edit w-auto rounded-circle p-0 text-center shadow-sm" role="button" data-html="true" data-toggle="popover" data-trigger="focus" title="Workflow Builder" data-content="<div class='wf-popover'><p></p><small class='text-muted'></small><button class='btn btn-primary btn-sm' data-wfb-action='edit'>Edit</button> <button class='btn btn-outline-secondary btn-sm' data-wfb-action='remove'>Remove</button></div>"><i class="ri-pencil-line"></i></a>
+                                        <script type="text/javascript">
+        $(function () {
+                                    $("[data-toggle=popover]").popover();
+                                    //
+                                    $(document).on('click', '.wfb-edit', function () {
+                                        $(this).popover('toggle');
+
+                                    })
+                                    $(document).on('click', '[data-wfb-action]', function () {
+                                        WF.Popover.Action = $(this).data("wfb-action");
+
+                                        if (WF.Popover.Action == "remove") {
+                                            debugger
+                                            var url = '/admin/stateworkflow/remove.html';
+                                            $.ajax({
+                                                url: url,
+                                                type: "post",
+                                                data: { id: WF.Popover.Id },
+                                                success: function (result) {
+                                                    WF.Points = WF.Points.filter(function (i) {
+                                                        return (i.First.State != WF.Popover.Id && i.Last.State != WF.Popover.Id);
+                                                    });
+                                                    WF.States = WF.States.filter(function (i) {
+                                                        return i.Id != WF.Popover.Id;
+                                                    });
+                                                    setTimeout(function () {
+                                                        WF.Save();
+                                                    }, 200)
+                                                },
+                                                error: function (error) {
+
+                                                }
+                                            });
+                                        } else {
+                                            //========
+
+                                            //add state id here
+
+                                            let work_id = WF.Popover.Id.split("-");
+                                            let form_id = $("#form_id").val();
+
+
+                                            if (work_id) {
+                                                if (work_id[0] == "state") {
+                                                $.ajax({
+                                                    type: "GET",
+                                                    dataType: "html",
+                                                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadstatebyid")",
+                                                    data: { id: work_id[1], case_id: form_id },
+                                                    success: function (data) {
+                                                        if (data != "" && data != " ") {
+                                                            //document.getElementById("queue-form").reset();
+
+                                                            $('#newStateModal').find(".modal-body").html(data);
+                                                            $('#newStateModal').modal('show');
+
+                                                            //$("#form_id").trigger();
+                                                        }
+                                                    }
+                                                    });
+
+                                                }
+                                                else if (work_id[0] == "queue") {
+                                                $.ajax({
+                                                    type: "GET",
+                                                    dataType: "html",
+                                                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadqueuebyid")",
+                                                    data: { id: work_id[1], case_id: form_id },
+                                                    success: function (data) {
+                                                        if (data != "" && data != " ") {
+                                                            //document.getElementById("queue-form").reset();
+                                                            $('#newQueueModal').find(".modal-form").html(data);
+                                                            $('#newQueueModal').modal('show');
+
+                                                            //$("#form_id").trigger();
+                                                        }
+                                                    }
+                                                    });
+                                                }
+                                                    else if (work_id[0] == "action") {
+                                                $.ajax({
+                                                    type: "GET",
+                                                    dataType: "html",
+                                                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadactionbyid")",
+                                                    data: { id: work_id[1], case_id: form_id },
+                                                    success: function (data) {
+                                                        if (data != "" && data != " ") {
+                                                            //document.getElementById("queue-form").reset();
+                                                            //toastr.info(data);
+                                                            $('#newActionModal').find(".modal-form").html(data);
+                                                            $('#newActionModal').modal('show');
+
+                                                            //$("#form_id").trigger();
+                                                        }
+                                                    }
+                                                    });
+                                                }
+                                            }
+                                            //========
+                                        }
+                                        //WF.Popover.Id
+                                        WF.InActivateAll();
+                                        WF.Mouse.WasDown = false;
+                                        WF.Mouse.IsMouseDown = false;
+                                        $(".wfb-edit").hide();
+                                    })
+                                    $('[data-toggle=popover]').on('show.bs.popover', function () {
+                                        //wf-popover
+                                        WF.Popover.Edit = true;
+                                        WF.InActivateAll();
+
+
+                                    })
+                                    $('[data-toggle=popover]').on('hidden.bs.popover', function () {
+                                        //WF.Popover.Edit=true;
+                                    })
+                                });
+                                        </script>
+                                    </div>
+
+                                    <script type="text/javascript">
+                                        $("#graph").droppable({
+                                            hoverClass: 'ui-state-active',
+                                            tolerance: 'pointer',
+
+                                            accept: function (event, ui) {
+                                                return true;
+                                            },
+
+                                            drop: function (event, ui) {
+                                                if ($("#form_id").val() == "") {
+                                                    $('#empty-stage').modal('show');
+                                                    $(ui.helper).removeAttr("style").show();
+                                                } else {
+                                                    var ob = $(ui.helper).data("json");
+                                                    ob.PosX = ui.offset.left - $(this).offset().left;
+                                                    ob.PosY = ui.offset.top - $(this).offset().top;
+                                                    ob.IsLock = true;
+
+                                                    if (ob.Type != 'action') {
+                                                        WF.AddState(ob);
+                                                        $(ui.helper).removeAttr("style").hide();
+                                                    }
+
+
+
+                                                }
+                                            }
+                                        })</script>
+                                    <div class="modal fade" tabindex="-1" role="dialog" id="empty-stage" aria-hidden="true">
+                                        <div class="modal-dialog modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Choose Form</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        Please choose form first and try to configure/setup state flow.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div class="draggable-info" style="min-height:500px;">
+                                <svg id="drag" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+                                    <g id="Group_589" data-name="Group 589">
+                                        <path id="Path_311" data-name="Path 311" d="M210,160v6.25h12.5V222.5H166.25V210H160v18.75h68.75V160Z" transform="translate(-128.75 -128.75)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_390" data-name="Rectangle 390" width="6.25" height="6.25" transform="translate(62.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_391" data-name="Rectangle 391" width="6.25" height="6.25" transform="translate(12.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_392" data-name="Rectangle 392" width="6.25" height="6.25" transform="translate(25)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_393" data-name="Rectangle 393" width="6.25" height="6.25" transform="translate(12.5 62.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_394" data-name="Rectangle 394" width="6.25" height="6.25" transform="translate(37.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_395" data-name="Rectangle 395" width="6.25" height="6.25" transform="translate(50)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_396" data-name="Rectangle 396" width="6.25" height="6.25" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_397" data-name="Rectangle 397" width="6.25" height="6.25" transform="translate(0 37.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_398" data-name="Rectangle 398" width="6.25" height="6.25" transform="translate(0 50)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_399" data-name="Rectangle 399" width="6.25" height="6.25" transform="translate(0 25)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_400" data-name="Rectangle 400" width="6.25" height="6.25" transform="translate(0 12.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_401" data-name="Rectangle 401" width="6.25" height="6.25" transform="translate(62.5 12.5)" fill="#f3f5f6"/>
+                                        <rect id="Rectangle_402" data-name="Rectangle 402" width="6.25" height="6.25" transform="translate(0 62.5)" fill="#f3f5f6"/>
+                                        <path id="Path_312" data-name="Path 312" d="M126.92,150.589l8.1,8.106,28.728-28.728-8.319-8.316L151,108.383,135.758,93.136,104.936,105.83a9.375,9.375,0,0,0-5.1,12.237q.1.239.21.473l-.375.378a12.5,12.5,0,0,0,0,17.678h0l11.781,11.784Zm-24.666-22.831a6.206,6.206,0,0,1,1.831-4.419l11.05,11.05,4.419-4.422L106.3,116.708a3.125,3.125,0,0,1,1.019-5.1l26.972-11.1,11.25,11.25,4.419,13.259,4.944,4.941-19.891,19.891-5.156-5.156-15.466-2.209-10.312-10.312A6.2,6.2,0,0,1,102.255,127.758Z" transform="translate(-77.255 -74.945)" fill="#f3f5f6"/>
+                                    </g>
+                                </svg>
+                                <p class="mb-0 mt-5">Drag state anywhere here</p>
+
+                            </div>
+                                    *@
+                                    @*<div class="draggable-note">
+                                        <small class="text-muted">Follow state Configurator's cursor guide which may helps you to configure arrow path.</small>
+                                        <ul class="list-unstyled d-inline-flex pt-2">
+                                            <li class="mx-3 d-flex align-items-center icon-draw">
+                                                <i class="ri-pen-nib-line mr-2"></i> Draw
+                                            </li>
+                                            <li class="mx-3 d-flex align-items-center icon-drag">
+                                                <i class="ri-drag-move-2-line mr-2"></i> Move
+                                            </li>
+                                            <li class="mx-3 d-flex align-items-center icon-resize">
+                                                <i class="ri-share-box-line mr-2"></i> Resize
+                                            </li>
+                                        </ul>
+                                    </div>*@ 
+                                    <!-- //.draggable-note -->
+                                </div> <!-- //.draggable-area -->
+                            </div> <!-- //.draggable-content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<div class="modal fade" id="uploadIconModal" tabindex="-1" role="dialog" aria-labelledby="uploadIcon" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="fileuploader fileuploader--theme-dragdrop">
+                    <div class="fileuploader__input">
+                        <div class="fileuploader__icon-main"></div>
+                        <h3 class="fileuploader__input-caption">Drag and drop to upload</h3>
+                        <p>or <a href="#" id="browseSpan">Browse</a><input class="form-control" type="file" id="browseFile" multiple hidden /> to choose file</p>
+                        <span class="file-extension">jpg, jpeg ,png, gif (optimal resolution (85) x (85))</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+
+
+<script type="text/javascript">
+
+    var WF = {
+        Action:{Id:null,Add:false},
+        Scroll:{Axis:'x',Val:'0'},
+        getDpi:function(){
+          var devicePixelRatio = window.devicePixelRatio || 1, backingStoreRatio = WF.Cnvs.webkitBackingStorePixelRatio ||
+                            WF.Cnvs.mozBackingStorePixelRatio ||
+                            WF.Cnvs.msBackingStorePixelRatio ||
+                            WF.Cnvs.oBackingStorePixelRatio ||
+                            WF.Cnvs.backingStorePixelRatio || 1;
+            return dpi = devicePixelRatio / backingStoreRatio;
+        },
+        Loader: {
+
+            Init: function () {
+
+                WF.Loader.Vars.ProgressBar=WF.Loader.ProgressBar();
+                WF.Loader.Render();
+            },
+            ProgressBar: function () {
+                function ProgressBar() {
+
+                  this.widths = 0;
+                  this.hue = 0;
+                  this.draw = function() {
+                    var maskWidth=$(".canvas-element-wrap").width();
+                    var contentWidth=WF.Cnvs.width/WF.getDpi();
+                    var BaseX=(maskWidth/2-(WF.Loader.Vars.Width/2))+(WF.Scroll.Val);
+                    WF.Ctx.fillStyle = 'hsla(' + this.hue + ', 100%, 40%, 1)';
+                    WF.RoundRect(BaseX, (WF.Stage.height/2-WF.Loader.Vars.Height/2)-WF.Loader.Vars.VSpace, this.widths,WF.Loader.Vars.Height,WF.Loader.Vars.Radius).fill();
+                      WF.Ctx.fillStyle = "#6c757d";
+                      WF.Ctx.font = '400 12px "PT Sans", Arial, sans-serif';
+                            WF.Ctx.clearRect(0, 0, WF.Cnvs.width*6, WF.Cnvs.height*6);
+                      WF.Ctx.fillText("Loading...",(maskWidth/2-(WF.Ctx.measureText("Loading...").width/2))+(WF.Scroll.Val), (WF.Stage.height/2-WF.Loader.Vars.Height/2)+WF.Loader.Vars.VSpace/4);
+                    var grad = WF.Ctx.createLinearGradient(0, 0, 0, 130);
+                    grad.addColorStop(0, "transparent");
+                    grad.addColorStop(1, "rgba(0,0,0,0.5)");
+                    WF.Ctx.fillStyle = grad;
+                    WF.RoundRect(BaseX, (WF.Stage.height/2-WF.Loader.Vars.Height/2)-WF.Loader.Vars.VSpace,this.widths,WF.Loader.Vars.Height,WF.Loader.Vars.Radius).fill();
+
+
+                  }
+                }
+                return new ProgressBar();
+
+            },
+            Particle: function () {
+                function Particle() {
+
+                    var maskWidth=$(".canvas-element-wrap").width();
+            var contentWidth=WF.Cnvs.width/WF.getDpi();
+            var BaseX=(maskWidth/2-(WF.Loader.Vars.Width/2))+(WF.Scroll.Val);
+
+
+
+                  this.x = ((maskWidth/2-WF.Loader.Vars.Width/2)+(WF.Scroll.Val)) + WF.Loader.Vars.ProgressBar.widths;
+                  this.y = (WF.Stage.height/2-WF.Loader.Vars.Height/2)-WF.Loader.Vars.VSpace;//+2
+
+                  this.vx = 0.8 + Math.random() * 1;
+                  this.v = Math.random() * 5;
+                  this.g = 1 + Math.random() * 3;
+                  this.down = false;
+
+                  this.draw = function() {
+                    WF.Ctx.fillStyle = 'hsla(' + (WF.Loader.Vars.ProgressBar.hue + 0.3) + ', 100%, 40%, 1)';;
+                    var size = Math.random() * 1;
+                    WF.Ctx.fillRect(this.x, this.y, size, size);
+                  }
+                }
+                return new Particle()
+            },
+            Reset: function () {
+                // Reset----------
+                WF.Ctx.clearRect(0, 0, WF.Cnvs.width, WF.Cnvs.height);
+                WF.Ctx.fillStyle = "#ebebeb";
+                WF.Ctx.strokeStyle="#ebebeb"
+                var maskWidth=$(".canvas-element-wrap").width();
+            var BaseX=(maskWidth/2-(WF.Loader.Vars.Width/2))+(WF.Scroll.Val);
+                WF.RoundRect(BaseX, (WF.Stage.height/2-WF.Loader.Vars.Height/2)-WF.Loader.Vars.VSpace, WF.Loader.Vars.Width, WF.Loader.Vars.Height,WF.Loader.Vars.Radius).stroke()
+                WF.Ctx.fill();
+                // End Reset--------
+            },
+
+            Render: function () {
+
+
+                if (WF.Loader.Vars.ProgressBar==null) {
+                    WF.Loader.Vars.ProgressBar=WF.Loader.ProgressBar();
+                }
+                  WF.Loader.Reset();
+                  WF.Loader.Vars.Counter++;
+
+                  WF.Loader.Vars.ProgressBar.hue += 0.5;
+
+                  WF.Loader.Vars.ProgressBar.widths += 0.5;
+                  if (WF.Loader.Vars.ProgressBar.widths > WF.Loader.Vars.Width) {
+                    if (WF.Loader.Vars.Counter > WF.Loader.Vars.Width) {
+                      WF.Loader.Reset();
+                      WF.Loader.Vars.ProgressBar.hue = 0;
+                      WF.Loader.Vars.ProgressBar.widths = 0;
+                      WF.Loader.Vars.Counter = 0;
+                      WF.Loader.Vars.Particles = [];
+                      WF.Loader.Vars.IsLoading=false;
+                      WF.Render();
+                        return false;
+                    } else {
+                      WF.Loader.Vars.ProgressBar.hue = 126;
+                      WF.Loader.Vars.ProgressBar.widths = WF.Loader.Vars.Width+1;
+                      WF.Loader.Vars.ProgressBar.draw();
+                    }
+                  } else {
+                    WF.Loader.Vars.ProgressBar.draw();
+                    for (var i = 0; i < WF.Loader.Vars.ParrticleNo; i += 10) {
+                      WF.Loader.Vars.Particles.push(WF.Loader.Particle());
+                    }
+                  }
+                  WF.Loader.Update();
+                  requestAnimationFrame(WF.Loader.Render);
+            },
+            Update:function() {
+              for (var i = 0; i < WF.Loader.Vars.Particles.length; i++) {
+                var p = WF.Loader.Vars.Particles[i];
+                p.x -= p.vx;
+                if (p.down == true) {
+                  p.g += 0.1;
+                  p.y += p.g;
+                } else {
+                  if (p.g < 0) {
+                    p.down = true;
+                    p.g += 0.1;
+                    p.y += p.g;
+                  } else {
+                    p.y -= p.g;
+                    p.g -= 0.1;
+                  }
+                }
+                p.draw();
+              }
+            },
+            Vars:{
+                ParrticleNo:30,
+                Particles:[],
+                IsLoading:false,
+                Width:175,
+                Height:2,
+                Radius:3,
+                VSpace:20,
+                Counter:0,
+                ProgressBar:null
+
+            }
+        },
+        States:[],
+        AddState:function(e){
+            var self=this;
+            self.States.push(e);
+        },
+        Points:[],
+        Cnvs:null,
+        CML:null,
+        CMT:null,
+        Ctx:null,
+        RoundRect:function (x, y, w, h, r) {
+              if (w < 2 * r) r = w / 2;
+              if (h < 2 * r) r = h / 2;
+              WF.Ctx.beginPath();
+              WF.Ctx.moveTo(x+r, y);
+              WF.Ctx.arcTo(x+w, y,   x+w, y+h, r);
+              WF.Ctx.arcTo(x+w, y+h, x,   y+h, r);
+              WF.Ctx.arcTo(x,   y+h, x,   y,   r);
+              WF.Ctx.arcTo(x,   y,   x+w, y,   r);
+              WF.Ctx.closePath();
+          return WF.Ctx;
+        },
+        Mouse:{Right:{Click:false,PosX:0,PosY:0,Id:0,Action:''},PosX:10,PosY:10,WasDown:false,WasDblClick:false,IsMouseDown:false,WasInPath:false,WasInStatePath:false,WasInAnglePath:false,DownX:0,DownY:0,IsAroundTrash:false,AllowedDownRegion:true},
+        Popover:{Edit:true,Id:0,Action:"",PosX:0,PosY:0},
+        InActivateAll:function(){
+                WF.Points = WF.Points.filter(function (i) {
+                    i.First.IsLock = true;
+                    i.Last.IsLock = true;
+                    i.IsActive = false;
+                    return true;
+                });
+                WF.States = WF.States.filter(function (i) {
+                    i.IsLock=true;
+                    return true;
+                });
+        },
+        IsPath:false,
+        ToBoolean:function(string){
+            var st=string;
+            if(typeof(string)!="undefined"){
+                st="false"
+            }
+            try{
+                switch(st){
+                    case "true": case "yes": case "1": return true;
+                    case "false": case "no": case "0": case null: return false;
+                    default: return Boolean(st);
+                }
+            }catch(e){
+                return false;
+            }
+        },
+        ToDegree:function (radians) {
+            return radians * (180 / Math.PI);
+        },
+        ToRadians:function (degree) {
+            return degree * (Math.PI / 180);
+        },
+        Ease:{
+            linear: function (t) {
+                return t
+            },
+            easeInQuad: function (t) {
+                return t * t
+            },
+            easeOutQuad: function (t) {
+                return t * (2 - t)
+            },
+            easeInOutQuad: function (t) {
+                return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+            },
+            easeInCubic: function (t) {
+                return t * t * t
+            },
+            easeOutCubic: function (t) {
+                return (--t) * t * t + 1
+            },
+            easeInOutCubic: function (t) {
+                return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+            },
+            easeInQuart: function (t) {
+                return t * t * t * t
+            },
+            easeOutQuart: function (t) {
+                return 1 - (--t) * t * t * t
+            },
+            easeInOutQuart: function (t) {
+                return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t
+            },
+            easeInQuint: function (t) {
+                return t * t * t * t * t
+            },
+            easeOutQuint: function (t) {
+                return 1 + (--t) * t * t * t * t
+            },
+            easeInOutQuint: function (t) {
+                return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t
+            }
+        },
+        InitExisting:function(){
+            var form_id=jQuery("#form_id").val();
+            WF.Vars["Points"]=[];
+            WF.Vars["States"] = [];
+            //debugger;
+            $.each(WF.Vars["Response"],function(i,v){
+                    if(form_id==v.CaseFormId){
+                        var first_type=(v.First.Type)=="queue"?"queue":"state";
+                        var last_type=(v.Last.Type)=="queue"?"queue":"state";
+                        var first=$("[data-state-id='"+first_type+"-"+v.First.State+"']").first().data("json");
+                        $("[data-state-id='"+first_type+"-"+v.First.State+"']").first().hide();
+                        var last=$("[data-state-id='"+last_type+"-"+v.Last.State+"']").first().data("json");
+                        $("[data-state-id='"+last_type+"-"+v.Last.State+"']").first().hide();
+
+                        if(typeof(first)!="undefined" && typeof(last)!="undefined"){
+                            var firstIsArrow=true;
+                            var lastIsArrow=true;
+                            if (first_type == "state") {
+                                firstIsArrow = v.First.Aero;
+                            } else {
+                                firstIsArrow=false;
+
+                            }
+                            if (last_type == "state") {
+                                lastIsArrow = v.Last.Aero;
+                            } else {
+                                lastIsArrow=false;
+
+                            }
+                            WF.Vars["Points"].push({
+                                        "Id":first_type+"-"+v.First.State+"-"+last_type+"-"+v.Last.State,
+                                        "Style":{
+                                            "Color":"#cfcfcf",
+                                            "HoverColor":"#636060"
+                                        },
+                                        "IsActive":false,
+                                        "ActionId":v.ActionId || null,
+                                        "First":{
+                                            "IsLock":true,
+                                            "XPos":Number(v.First.LineXPos),
+                                            "YPos":Number(v.First.LineYPos),
+                                            "Aero":(first_type=='queue')?false:firstIsArrow,
+                                            "State":first_type+"-"+v.First.State,
+                                            "Type":first_type,
+                                        },
+                                        "Last":{
+                                            "IsLock":true,
+                                            "XPos":Number(v.Last.LineXPos),
+                                            "YPos":Number(v.Last.LineYPos),
+                                            "Aero":(last_type=='queue')?false:lastIsArrow,
+                                            "State":last_type+"-"+v.Last.State,
+                                            "Type":last_type,
+                                        }
+                            });
+                            var type_id="queue";
+
+                            if(type_id=='queue'){
+                                WF.Vars["States"][first_type+"-"+v.First.State]={"Id":first_type+"-"+v.First.State,"Name":first.Name,"Title":first.Title,"PosX":Number(v.First.StateXPos),"PosY":Number(v.First.StateYPos),"Color":first.Color,"IsLock":true,"Type":first_type};
+                                WF.Vars["States"][last_type+"-"+v.Last.State]={"Id":last_type+"-"+v.Last.State,"Name":last.Name,"Title":last.Title,"PosX":Number(v.Last.StateXPos),"PosY":Number(v.Last.StateYPos),"Color":last.Color,"IsLock":true,"Type":last_type};
+                            }else if(type_id=='state'){
+                                WF.Vars["States"][parseInt(v.First.StateXPos)+parseInt(v.First.StateYPos)]={"Id":first_type+"-"+v.First.State,"Name":first.Name,"Title":first.Title,"PosX":Number(v.First.StateXPos),"PosY":Number(v.First.StateYPos),"Color":first.Color,"IsLock":true,"Type":first_type};
+                                WF.Vars["States"][parseInt(v.Last.StateXPos)+parseInt(v.First.StateYPos)]={"Id":last_type+"-"+v.Last.State,"Name":last.Name,"Title":last.Title,"PosX":Number(v.Last.StateXPos),"PosY":Number(v.Last.StateYPos),"Color":last.Color,"IsLock":true,"Type":last_type};
+                            }
+
+                        }
+                    }
+            });
+            var en=[];
+            Object.keys(WF.Vars["States"]).forEach(function(key, index) {
+              en.push(this[key]);
+            },WF.Vars["States"]);
+            WF.Vars["States"]=en;
+            WF.States=[];
+            WF.Vars["States"].forEach(function(e,i){
+                if(WF.States.indexOf(e)==-1){
+                    WF.States.push(e);
+                }
+              });
+              var exits_=[];
+              WF.Points=WF.Vars["Points"].filter(function(value, index, self){
+                  var IsEx=false;
+                  if(exits_.length>0){
+                      $.each(exits_,function(ii,vv){
+                          if(IsEx==false && value.Id==vv){
+                              exits_.push(value.Id);
+                              IsEx=true;
+                          }
+                      });
+                  }
+                  exits_.push(value.Id);
+                  if(IsEx==false)return true;
+
+              });
+
+        },
+        Stage:{
+            width:0,
+            height:692,
+            IsEditVisible:false,
+            Timer:null,
+            VisibleEdit: function () {
+                WF.Stage.IsEditVisible=true;
+                if (WF.Stage.Timer != null) {
+                    clearTimeout(WF.Stage.Timer);
+                }
+                WF.Stage.Timer=setTimeout(function () {
+                    WF.Stage.IsEditVisible=false;
+                },3000)
+            }
+        },
+        getMouse: function (e) {
+            var rect = WF.Cnvs.getBoundingClientRect();
+            WF.Mouse.PosX = (e.clientX - rect.left);
+            WF.Mouse.PosY = (e.clientY - rect.top);
+
+            WF.Mouse.PageX = e.pageX;
+            WF.Mouse.PageY = e.pageY;
+
+        },
+        Resize: function () {
+            var self=this;
+            WF.Cnvs=document.getElementById('graph');
+            WF.Ctx=WF.Cnvs.getContext('2d');
+            WF.CML=WF.Cnvs.getBoundingClientRect().left;
+            WF.CMT=WF.Cnvs.getBoundingClientRect().top;
+            WF.Stage.width=$(".horizontal-scrolling__card").width();
+            WF.Cnvs.style.width=WF.Stage.width+"px";
+            WF.Cnvs.style.height=WF.Stage.height+"px";
+            WF.Cnvs.width=(WF.Stage.width*WF.getDpi());
+            WF.Cnvs.height=(WF.Stage.height*WF.getDpi());
+            WF.Ctx.scale(WF.getDpi(),WF.getDpi());
+
+        },
+        Init:function(){
+
+            var self=this;
+            WF.Cnvs=document.getElementById('graph');
+            WF.Ctx=WF.Cnvs.getContext('2d');
+            WF.CML=WF.Cnvs.getBoundingClientRect().left;
+            WF.CMT=WF.Cnvs.getBoundingClientRect().top;
+            WF.Stage.width=$(".horizontal-scrolling__card").width();
+            WF.Cnvs.style.width=WF.Stage.width+"px";
+            WF.Cnvs.style.height=WF.Stage.height+"px";
+            WF.Cnvs.width=(WF.Stage.width*WF.getDpi());
+            WF.Cnvs.height=(WF.Stage.height*WF.getDpi());
+            WF.Ctx.scale(WF.getDpi(),WF.getDpi());
+
+
+
+            WF.Vars["Response"]=JSON.parse('[@Html.Raw(AeroJson)]');
+            WF.Vars["States"]=[];
+            WF.Vars["Points"]=[];
+
+            WF.Vars["IsInitial"]=true;
+            WF.InitExisting();
+            WF.Delete.Init();
+
+            self.Points=WF.Vars["Points"].filter(n => n);
+            self.States=WF.Vars["States"].filter(n => n);
+            $(document).on("click","[data-tab-title]",function(){
+                jQuery("#form_id").trigger("change")
+
+            })
+            $(document).on("change","#form_id",function(){
+                self.Points=WF.Vars["Points"].filter(n => n);
+                self.States=WF.Vars["States"].filter(n => n);
+                WF.Vars["IsInitial"]=true;
+                WF.Loader.Vars.IsLoading=true;
+                var form_id=jQuery(this).val();
+                WF.States=[];
+                WF.Points=[];
+                if(form_id=="" || $.active>0)return;
+                $.ajax({
+                  url: "/admin/manage/pull-stateworkflow.html?time="+new Date().getTime(),
+                  cache: false,
+                  type: "POST",
+                  dataType: "json",
+                  data:{"form_id":form_id,"Type":"queue"},
+                  success: function(html){
+                      WF.Vars["Response"]=JSON.parse(html.json);
+                      WF.States=[];
+                      WF.Points=[];
+                      WF.InitExisting();
+                      WF.Loader.Vars.IsLoading=false;
+                      WF.Vars["IsInitial"]=true;
+                    }
+                });
+            })
+            WF.Cnvs.ondblclick=function(e){
+                WF.Mouse.WasDown=false;
+                WF.Mouse.WasDblClick=true;
+
+            }
+            WF.Cnvs.onclick = function () {
+                //WF.Mouse.Right.Click = false;
+                if (!WF.Mouse.AllowedDownRegion) {
+                    //WF.Mouse.WasDown=true;
+                }
+
+            }
+            WF.Cnvs.onmousedown=function(e){
+                WF.getMouse(e);
+                WF.Mouse.DownX=WF.Mouse.PosX;
+                WF.Mouse.DownY=WF.Mouse.PosY;
+                WF.IsPath=WF.Ctx.isPointInPath(WF.Mouse.PosX*WF.getDpi(), WF.Mouse.PosY*WF.getDpi());
+                var ex=WF.Points.filter(function(obj){
+                    if(obj.IsActive==true && WF.IsPath==false){
+                        obj.IsActive=false;
+                        obj.First.IsLock=true;
+                        obj.Last.IsLock=true;
+                        return obj;
+                      }
+                    //WF.Mouse.WasDown=true;
+                });
+
+                WF.Mouse.IsMouseDown=true;
+                WF.Mouse.WasDown=true;
+                if (!WF.Mouse.AllowedDownRegion) {
+                    //WF.Mouse.IsMouseDown=false;
+                    //WF.Mouse.WasDown=false;
+                    //return false;
+                }
+
+            }
+
+            /* Start Mouse : Move */
+            WF.Cnvs.onmousemove=function(e){
+                WF.getMouse(e);
+            }
+
+            /* End Mouse : Move */
+            jQuery(document).on('mousedown',"li[data-action-id]", function (e) {
+
+                WF.Points.filter(function(obj){
+
+                        obj.IsActive=false;
+
+
+                });
+                WF.Action.Add=true;
+            }).on('mouseup',"li[data-action-id]", function (e) {
+                WF.Action.Add=false;
+                setTimeout(function () {
+                    WF.Save();
+                },200)
+
+            });
+            jQuery(document).on('mousemove', function (e) {
+                var li=jQuery(e.target).closest("li");
+
+                if (li.length) {
+                    var d=li.data("json");
+                    if (d && d.Type=="action"){
+                        WF.Action.Id=d.Id;
+                        var element = document.getElementById("graph");
+                        var clientRect = element.getBoundingClientRect();
+                        var clientX = clientRect.x;
+                        var clientY = clientRect.y;
+                        var scrollTop=document.body.scrollTop || document.documentElement.scrollTop
+                        WF.Mouse.PosX = e.pageX-(clientX);
+                        WF.Mouse.PosY = e.pageY-(clientY+scrollTop);
+                        WF.Points=WF.Points.filter(function(obj){
+
+                                if(obj.IsActive && WF.Action.Add){
+                                    obj.ActionId=WF.Action.Id;
+                                }
+                            return true;
+                        })
+                    }
+                }
+            })
+            //default||point to write|grab[grabbing]|
+            WF.Cursors=['move','crosshair','grab','grabbing','pointer']
+            /* Start Mouse : Up */
+            WF.Cnvs.onmouseup=function(e){
+                WF.getMouse(e);
+
+                if(WF.Points.length>0){
+                    var newPoints=WF.Points.filter(function(obj){
+
+                      if(obj.IsActive==true){
+                          if(obj.First.IsLock==false){
+                            obj.First.IsLock=true
+                          }else if(obj.Last.IsLock==false){
+                            obj.Last.IsLock=true;
+                          }
+                          var Closest={"First":{Index:null,Distance:900,CX:0,CY:0},"Last":{Index:null,Distance:900,CX:0,CY:0}};
+                          WF.States.forEach(function(v,index){
+                                Closest.First.CX=v.PosX-obj.First.XPos;
+                                Closest.First.CY=v.PosY-obj.First.YPos;
+                                D = Math.sqrt(Closest.First.CX*Closest.First.CX + Closest.First.CY*Closest.First.CY);
+
+
+                                if(D<Closest.First.Distance){
+                                    Closest.First.Index=v.Id;
+                                    Closest.First.Distance=D;
+                                    obj.First.Type=typeof(v.Type)!='undefined'?v.Type:'state';
+                                }
+
+                                obj.First.State=Closest.First.Index;
+                                Closest.Last.CX=v.PosX-obj.Last.XPos;
+                                Closest.Last.CY=v.PosY-obj.Last.YPos;
+                                D = Math.sqrt(Closest.Last.CX*Closest.Last.CX + Closest.Last.CY*Closest.Last.CY);
+                                if(D<Closest.Last.Distance){
+                                    Closest.Last.Index=v.Id;
+                                    Closest.Last.Distance=D;
+                                    obj.Last.Type=typeof(v.Type)!='undefined'?v.Type:'';
+                                }
+                                obj.Last.State=Closest.Last.Index;
+                          });
+
+                      }
+                        var a = obj.First.XPos - obj.Last.XPos;
+                        var b = obj.First.YPos - obj.Last.YPos;
+
+                        var c = Math.sqrt( a*a + b*b );
+                        return (c>30)?true:false;
+                    })
+                    WF.Points=newPoints;
+                }
+                if(WF.States.length>0){
+                    WF.States.filter(function(obj){
+                          if(obj.IsLock==false){
+                            obj.IsLock=true;
+                            obj.XPos=WF.Mouse.PosX;
+                            obj.YPos=WF.Mouse.PosY;
+                          }
+                    })
+                }
+                WF.Mouse.WasDown = false;
+                WF.Mouse.IsMouseDown=false;
+                WF["WasUnLocked"]=null;
+                if(typeof(WF.Vars["Timer"])!= 'undefined') {
+                    clearTimeout(WF.Vars["Timer"]);
+                }
+                WF.Vars["Timer"] = setTimeout(function () {
+                    WF.Save();
+                },500)
+
+            }
+            /* End Mouse : Up */
+            WebFontConfig = {
+                  google:{ families: ['Roboto'] },
+                  active: function(){WF.Render();},
+            };
+            (function(){
+            var wf = document.createElement("script");
+            wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js';
+            wf.async = 'true';
+            document.head.appendChild(wf);
+            })();
+
+        },
+        Save: function () {
+            var NewPoints=new Array();
+                $.each(WF.Points,function(i,v){
+                    var First_State_X=0;
+                    var First_State_Y=0;
+                    var Last_State_X=0;
+                    var Last_State_Y=0;
+                    WF.States.filter(function(f){
+                        if(v.First.State==f.Id){
+                            First_State_X=Number(f.PosX);
+                            First_State_Y=Number(f.PosY);
+                        }
+                        if(v.Last.State==f.Id){
+                            Last_State_X=Number(f.PosX);
+                            Last_State_Y=Number(f.PosY);
+                        }
+                    })
+                    NewPoints.push(
+                    {
+                       "First": {
+                                State:v.First.State.replace(/\D/g,''),
+                                LineXPos: Number(v.First.XPos),
+                                LineYPos: Number(v.First.YPos),
+                                IsLock: false,
+                                Aero:(Number(v.First.Aero)==0?'false':'true'),
+                                StateXPos: First_State_X,
+                                StateYPos: First_State_Y,
+                                Type: v.First.Type
+                            },
+                        IsActive: false,
+                        ActionId: v.ActionId,
+                        "Last": {
+                            State:v.Last.State.replace(/\D/g,''),
+                            LineXPos: Number(v.Last.XPos),
+                            LineYPos: Number(v.Last.YPos),
+                            IsLock: false,
+                            Aero: (Number(v.Last.Aero)==0?'false':'true'),
+                            StateXPos: Last_State_X,
+                            StateYPos: Last_State_Y,
+                            Type: v.Last.Type
+                        }
+                    });
+
+                })
+                var form_id=jQuery("#form_id").val();
+                if(form_id=="" || $.active>0)return;
+                $.ajax({
+                  url: "/admin/manage/stateworkflow.html",
+                  cache: false,
+                  type: "POST",
+                  dataType: "json",
+                  data:{"action":"save_points","form_id":form_id,"points":NewPoints,Type:"queue"},
+                    success: function (html) {
+                        if (html != null && html != "" && html != " ") {
+                            let message = html.message;
+                            if (html.status == "error") {
+                                toastr.error("Save Unsuccessful");
+                            }
+                            toastr.success(html.message);
+                        }
+
+                    }
+                });
+        },
+        Vars:{},
+        Delete:{
+            AlsoDeleteAero:false,
+            DownX:0,
+            DownY:0,
+            IsReset:false,
+            Reset:function(){
+                WF.Delete.IsReset=true;
+                $('#confirm-reset-delete').modal('show');
+
+            },
+            Init: function () {
+
+                $(document).on('click','#confirm-reset-delete .btn-danger',function(){
+
+                    $('#confirm-reset-delete').modal('hide');
+                    WF.Delete.Apply();
+                   
+
+                })
+                $(document).on('click','#confirm-reset-delete .btnsecondary',function(){
+                    $('#confirm-reset-delete').modal('hide');
+                })
+
+                $(document).on('click','#confirm-state-delete .btn-danger',function(){
+
+                    $('#confirm-state-delete').modal('hide');
+
+                    WF.Delete.Apply();
+                    if (WF.Delete.AlsoDeleteAero) {
+                        WF.Delete.Id=null;
+                        WF.Delete.Type="aero";
+                        WF.Delete.AlsoDeleteAero=false;
+                        $('#confirm-aero-delete').modal({backdrop: 'static', keyboard: false,show:true});
+
+                    }
+
+                })
+
+                $(document).on('click','#confirm-aero-delete .btn-danger',function(){
+
+                    $('#confirm-aero-delete').modal('hide');
+
+                    WF.Delete.Apply();
+                })
+                $(document).on('click','#confirm-state-delete .btnsecondary',function(){
+
+                    $('#confirm-state-delete').modal('hide');
+                    WF.Delete.Cancle();
+                    if (WF.Delete.AlsoDeleteAero) {
+
+                        WF.Delete.Id=null;
+                        WF.Delete.Type="aero";
+                        WF.Delete.AlsoDeleteAero=false;
+                        $('#confirm-aero-delete').modal({backdrop: 'static', keyboard: false,show:true});
+
+                    }
+
+
+                })
+                $(document).on('click','#confirm-aero-delete .btnsecondary',function(){
+
+                    $('#confirm-aero-delete').modal('hide');
+
+                    WF.Delete.Cancle();
+                })
+
+            },
+            Id:null,
+            Type:null,
+            State:function(e){
+                WF.Delete.Id=e;
+                WF.Delete.Type="state";
+                WF.Delete.DownX=WF.Mouse.DownX;
+                WF.Delete.DownY=WF.Mouse.DownY;
+                $('#confirm-state-delete').modal({backdrop: 'static', keyboard: false,show:true});
+            },
+            Aero:function(e){
+                WF.Delete.Id=e;
+                WF.Delete.Type="aero";
+                WF.Delete.DownX=WF.Mouse.DownX;
+                WF.Delete.DownY=WF.Mouse.DownY;
+                $('#confirm-aero-delete').modal({backdrop: 'static', keyboard: false,show:true});
+            },
+            Apply:function () {
+                if(WF.Delete.Id!=null && WF.Delete.Type=="state"){
+                    WF.States=WF.States.filter(function(arg){
+                        return arg.Id!=WF.Delete.Id;
+                    });
+                }else if(WF.Delete.Type=="aero"){
+                    var NPoints=WF.Points.filter(function(arg){
+                        return arg.IsActive!=true;;
+                    });
+                    WF.Points=NPoints;
+                }else if(WF.Delete.IsReset) {
+                    WF.States=[];
+                    WF.Points=[];
+
+                }
+                WF.Delete.Type=null;
+                WF.Delete.Id=null;
+                const mouseoverEvent = new Event('mouseup');
+
+                WF.Cnvs.dispatchEvent(mouseoverEvent);
+            },
+            Cancle: function () {
+                if(WF.Delete.Id!=null && WF.Delete.Type=="state"){
+                    WF.States=WF.States.filter(function(arg){
+                        if (arg.Id == WF.Delete.Id) {
+                            arg.PosY=WF.Delete.DownY;
+                            arg.PosX=WF.Delete.DownX;
+                        }
+                        return true;
+                    });
+                }else if(WF.Delete.Type=="aero"){
+                    var NPoints=WF.Points.filter(function(arg){
+                            if (arg.IsActive) {
+                                if (!arg.First.IsLock) {
+                                    arg.First.PosX=WF.Delete.DownX
+                                    arg.First.PosY=WF.Delete.DownY
+                                } else if(!arg.Last.IsLock){
+                                    arg.Last.PosX=WF.Delete.DownX
+                                    arg.Last.PosY=WF.Delete.DownY
+                                }
+
+                            }
+                            return true;;
+                        });
+                        WF.Points=NPoints;
+                }
+                WF.Delete.Type=null;
+                WF.Delete.Id=null;
+                var mouseoverEvent = new Event('mouseup');
+                WF.Cnvs.dispatchEvent(mouseoverEvent);
+            }
+        },
+        Render:function(){
+            var self = this;
+           // WF.Stage.height = WF.Cnvs.height
+            if (WF.Loader.Vars.IsLoading) return WF.Loader.Render();
+
+            var RADIUS=6
+            WF.Ctx.clearRect(0, 0, WF.Cnvs.width*6, WF.Cnvs.height*6);
+            WF.Cnvs.style.cursor=WF.Cursors[1];
+            WF.Mouse.WasInPath=false;
+            WF.Mouse.WasInAnglePath=false;
+            WF.Mouse.WasInStatePath=false;
+            var Point=null;
+            var State=null;
+            var WF_X=0;
+            var WF_Y=0;
+            var WF_DISTANCE=0
+            var WF_CREATING_ANGLE=false;
+            if(typeof(WF.Vars["ToolTipTime"])=="undefined"){
+                WF.Vars["ToolTipTime"]=0;
+            }
+            if(typeof(WF.Vars["ToolTipTimer"])=="undefined"){
+                WF.Vars["ToolTipTimer"]=0;
+            }
+            if(typeof(WF.Vars['ALFA'])=='undefined'){
+             WF.Vars['ALFA']=0;
+            }
+            WF.Vars['ToolTipTimer']=parseFloat(WF.Vars['ToolTipTimer'])+0.5;
+            WF.Vars["ToolTipTime"]=parseFloat(WF.Vars["ToolTipTime"])+0.01;
+
+            //------------------
+            if(typeof(WF.Vars["ToolTipTime1"])=="undefined"){
+                WF.Vars["ToolTipTime1"]=0;
+            }
+            if(typeof(WF.Vars["ToolTipTimer1"])=="undefined"){
+                WF.Vars["ToolTipTimer1"]=0;
+            }
+            if(typeof(WF.Vars["ALFA1"])=='undefined'){
+                WF.Vars["ALFA1"]=0;
+            }
+
+            WF.Vars["ToolTipTimer1"]=parseFloat(WF.Vars["ToolTipTimer1"])+0.5;
+            WF.Vars["ToolTipTime1"]=parseFloat(WF.Vars["ToolTipTime1"])+0.01;
+
+            //------------------
+
+            //------------------
+
+
+            if(typeof(WF.Vars["AnimateArrowDirection"])=="undefined"){
+                WF.Vars["AnimateArrowDirection"]=true;
+                WF.Vars["AnimateArrowTime"]=0;
+            }
+            if (WF.Vars["AnimateArrowDirection"]) {
+                WF.Vars["AnimateArrowTime"]=WF.Vars["AnimateArrowTime"]+0.05;
+                if(WF.Vars["AnimateArrowTime"]>1)WF.Vars.AnimateArrowDirection=false;
+            } else {
+                WF.Vars["AnimateArrowTime"]=WF.Vars["AnimateArrowTime"]-0.05;
+                if(WF.Vars["AnimateArrowTime"]<0)WF.Vars.AnimateArrowDirection=true;
+            }
+
+
+            //------------------
+            var StateRad=16;
+            if(WF.Vars["IsActive"]==true)
+            {
+                WF.Ctx.globalAlpha=0;
+                if(WF.Mouse.IsMouseDown)WF.Ctx.globalAlpha=1;
+                WF.Cnvs.style.cursor=WF.Cursors[1];
+                WF.Ctx.globalAlpha=1;
+            }
+
+            WF.Ctx.lineJoin = 'round';
+            WF.Ctx.lineCap = 'round';
+
+            var maskWidth=$(".canvas-element-wrap").width();
+            var contentWidth=WF.Cnvs.width/WF.getDpi();
+            var BaseX=(maskWidth-(WF.Vars["TrashBaseAdjWidth"]))+(WF.Scroll.Val)
+
+            /* For Trash : Start */
+            if(!WF.Points.length && !WF.States.length){
+                    WF.Ctx.globalAlpha=0.5;
+                    if(typeof(WF.Vars['EmptySvg'])=='undefined' || WF.Vars['EmptySvg']==null){
+                        var trash = new Image();
+                        trash.onload = function()
+                        {
+                            WF.Vars['EmptySvg']=trash;
+                        }
+                        trash.src = window.location.origin + "/images/empty.svg";
+
+                    }else{
+                        WF.Ctx.globalAlpha=1;
+                        var BaseSvgX=(maskWidth/2-(WF.Vars['EmptySvg'].width/2))+(WF.Scroll.Val)
+                        WF.Ctx.drawImage(WF.Vars['EmptySvg'],BaseSvgX, WF.Stage.height/2-WF.Vars['EmptySvg'].height/2);
+                    }
+            }
+
+            WF.Vars["TrashBaseAdjWidth"]=200;
+            WF.Vars["TrashBaseAdjHeight"]=80;
+            WF.Vars["TrashBaseAdjXAxis"]=BaseX;
+            WF.Vars["TrashBaseAdjYAxis"]=50;
+            WF.Vars["TrashTitle"]="Move here to delete.";
+            WF.Ctx.font='600 12px "Font Awesome 5 Free"';
+            WF.Ctx.fillStyle="#6c757d";
+
+            //==
+            var ThisAxisX=WF.Ease.easeOutCubic(Number(WF.Vars["AnimateArrowTime"])) * 4;
+            WF.Vars["IconBox"]=WF.Ctx.measureText("\uF061");
+            WF.Vars["IconBoxX"]=WF.Vars["TrashBaseAdjXAxis"];
+            if (WF.Mouse.IsMouseDown) {
+                WF.Vars["IconBoxX"]=WF.Vars["TrashBaseAdjXAxis"]-ThisAxisX;
+            }
+            WF.Vars["IconBoxY"]=WF.Vars["TrashBaseAdjYAxis"];
+
+            WF.Ctx.fillText('\uF061',WF.Vars["IconBoxX"],WF.Vars["IconBoxY"]);
+            WF.Vars["IconBoxX"]=WF.Vars["TrashBaseAdjXAxis"]+WF.Vars["IconBox"].width;
+            WF.Ctx.font='400 12px Roboto, Arial, sans-serif';
+            //==
+            WF.Vars["IconTitle"]=WF.Ctx.measureText(WF.Vars["TrashTitle"]);
+            WF.Vars["IconTitleX"]=WF.Vars["IconBoxX"]+5;
+            WF.Vars["IconTitleY"]=WF.Vars["IconBoxY"];
+            WF.Ctx.fillText(WF.Vars["TrashTitle"],WF.Vars["IconTitleX"],WF.Vars["IconTitleY"]);
+            WF.Vars["IconTitleX"]=WF.Vars["IconBoxX"]+WF.Vars["IconTitle"].width;
+            //==
+            WF.Vars["CircleRadius"]=20;
+            WF.Vars["CircleX"]=WF.Vars["IconTitleX"]+WF.Vars["CircleRadius"]+15;
+            WF.Vars["CircleY"]=WF.Vars["IconTitleY"]-(10/2);
+            WF.Ctx.fillStyle="white";
+
+            /* Reset : Start */
+
+            /* Add Shadow : Start */
+            WF.Ctx.shadowOffsetX = 0;
+            WF.Ctx.shadowOffsetY = 0;
+            WF.Ctx.shadowBlur = 7;
+            WF.Ctx.shadowColor = '#dedfe0';
+            /* Add Shadow : End */
+
+            WF.Ctx.fillStyle="white";
+            WF.Ctx.beginPath();
+            WF.Ctx.arc(WF.Vars["CircleX"], WF.Vars["CircleY"]+(WF.Vars["CircleRadius"]*3), WF.Vars["CircleRadius"], 0, 2 * Math.PI);
+            WF.Ctx.fill();
+
+            WF.Ctx.closePath();
+            /* Reset Shadow : Start */
+            WF.Ctx.shadowBlur = 0;
+            WF.Ctx.shadowColor = '#FFF';
+            /* Reset Shadow : End */
+
+
+            if (WF.Ctx.isPointInPath(WF.Mouse.PosX*WF.getDpi(), WF.Mouse.PosY*WF.getDpi())) {
+                WF.Ctx.fillStyle="red";
+                WF.Ctx.fill();
+                WF.Cnvs.style.cursor=WF.Cursors[4];
+                WF.Ctx.lineWidth=0.5
+                WF.Ctx.globalAlpha=0.5;
+                var ThisAxisXN=WF.Ease.easeInOutCubic(Number(WF.Vars["AnimateArrowTime"])) * 5;
+                WF.Ctx.beginPath();
+                WF.Ctx.strokeStyle="red"
+                WF.Ctx.arc(WF.Vars["CircleX"], WF.Vars["CircleY"]+(WF.Vars["CircleRadius"]*3), 20+ThisAxisXN, 0, 2 * Math.PI);
+                WF.Ctx.stroke();
+                WF.Ctx.closePath();
+                WF.Ctx.globalAlpha=1;
+            } else {
+                WF.Ctx.fill();
+            }
+
+            WF.Ctx.lineWidth=1
+            WF.Ctx.fillStyle="#6c757d";
+            if (WF.Ctx.isPointInPath(WF.Mouse.PosX*WF.getDpi(), WF.Mouse.PosY*WF.getDpi())) {
+
+                if (WF.Mouse.IsMouseDown) {
+                    WF.Delete.Reset()
+
+                }
+                WF.Mouse.WasDown=false;
+                WF.Mouse.IsMouseDown=false;
+                WF.Ctx.fillStyle="#FFF";
+            }
+            WF.Ctx.font='900 14px "Font Awesome 5 Free"';
+            WF.Vars["IconSize"]=WF.Ctx.measureText("\uF2F1");
+            WF.Ctx.fillText('\uF2F1',WF.Vars["CircleX"]-(WF.Vars["IconSize"].width/2),WF.Vars["CircleY"]+(WF.Vars["CircleRadius"]*3)+(10/2));
+
+            /* Reset: End */
+            WF.Ctx.fillStyle="#FFF";
+            if(WF.Mouse.IsMouseDown)WF.Ctx.fillStyle="red";
+
+            /* Add Shadow : Start */
+            WF.Ctx.shadowOffsetX = 0;
+            WF.Ctx.shadowOffsetY = 0;
+            WF.Ctx.shadowBlur = 7;
+            WF.Ctx.shadowColor = '#dedfe0';
+            /* Add Shadow : End */
+
+
+            WF.Ctx.beginPath();
+            WF.Ctx.arc(WF.Vars["CircleX"], WF.Vars["CircleY"], WF.Vars["CircleRadius"], 0, 2 * Math.PI);
+            WF.Ctx.fill();
+            WF.Ctx.closePath();
+            if (WF.Ctx.isPointInPath(WF.Mouse.PosX*WF.getDpi(), WF.Mouse.PosY*WF.getDpi())){
+                WF.Mouse.IsAroundTrash=true;
+
+            } else {
+                WF.Mouse.IsAroundTrash=false;
+            }
+
+             /* Reset Shadow : Start */
+            WF.Ctx.shadowBlur = 0;
+            WF.Ctx.shadowColor = '#FFF';
+            /* Reset Shadow : End */
+
+            if (WF.Mouse.IsMouseDown) {
+                WF.Ctx.lineWidth=0.5
+                WF.Ctx.globalAlpha=0.5;
+                var ThisAxisXN=WF.Ease.easeInOutCubic(Number(WF.Vars["AnimateArrowTime"])) * 5;
+                WF.Ctx.beginPath();
+                WF.Ctx.strokeStyle="red"
+                WF.Ctx.arc(WF.Vars["CircleX"], WF.Vars["CircleY"], 20+ThisAxisXN, 0, 2 * Math.PI);
+                WF.Ctx.stroke();
+                WF.Ctx.closePath();
+                WF.Ctx.globalAlpha=1;
+                WF.Ctx.lineWidth=1;
+
+            }
+
+
+
+            /* Angle: Start ========================================================================
+            WF.Ctx.beginPath();
+            WF.Ctx.globalAlpha=0.5;
+            WF.Ctx.moveTo(WF.Cnvs.width-(WF.Vars["TrashBaseAdjWidth"]+50), WF.Vars["TrashBaseAdjHeight"]);
+            WF.Ctx.lineTo(WF.Cnvs.width-10, WF.Vars["TrashBaseAdjHeight"]);
+            WF.Ctx.lineTo(WF.Cnvs.width-10, 10);
+            WF.Ctx.lineTo(WF.Cnvs.width-(WF.Vars["TrashBaseAdjWidth"]+50), 10);
+            WF.Ctx.fillStyle="red";
+            WF.Ctx.fill();
+            WF.Ctx.globalAlpha=1
+            WF.Ctx.closePath();
+            ======================================================================== Angle: End */
+            //==
+            WF.Ctx.fillStyle="#6c757d";
+            if(WF.Mouse.IsMouseDown)WF.Ctx.fillStyle="#FFF";
+            WF.Ctx.font='400 15px "Font Awesome 5 Free"';
+            WF.Vars["IconSize"]=WF.Ctx.measureText("\uF2ED");
+            WF.Ctx.fillText('\uF2ED',WF.Vars["CircleX"]-(WF.Vars["IconSize"].width/2),WF.Vars["CircleY"]+(10/2));
+
+            /* For Trash : End */
+
+
+            $("[data-state-id]").show();
+            //return;
+            /* Draw States : Start */
+            for (var i = 0; i < WF.States.length; i++) {
+                /* Arc: Start */
+
+                State=WF.States[i];
+                $("[data-state-id='"+State.Id+"']").hide();
+
+                WF.Ctx.beginPath();
+                if(State.IsLock==false){
+                    State.PosX=WF.Mouse.PosX;
+                    State.PosY=WF.Mouse.PosY;
+                }
+
+                WF["TR"+i]=(typeof(WF["TR"+i])=="undefined")?StateRad:WF["TR"+i];
+                WF["TimeDirect"+i]=(typeof(WF["TimeDirect"+i])=="undefined")?true:WF["TimeDirect"+i];
+                WF["Time"+i]=(typeof(WF["Time"+i])=="undefined")?1:WF["Time"+i];
+                WF["TR"+i]=WF.Ease.easeOutCubic(Number(WF["Time"+i])) * StateRad;
+                if(WF["TR"+i]<15)WF["TR"+i]=15;
+                WF.Vars["ADJ_Y"]=35;
+                WF.Vars["ADJ_X"]=15;
+                if(typeof(State.Type)!='undefined' && State.Type=="queue"){
+                    WF.Ctx.rect(State.PosX-14,State.PosY-20,35,35);
+                }else{
+                    WF.Ctx.arc(State.PosX, State.PosY, WF["TR"+i], 0, Math.PI*2, false);
+                }
+                WF.Ctx.strokeStyle=State.Color;
+
+                WF.IsPath=WF.Ctx.isPointInPath(WF.Mouse.PosX*WF.getDpi(), WF.Mouse.PosY*WF.getDpi());
+                //==========================================================
+
+                if (WF.IsPath) {
+                      if(typeof(WF.Vars["Graph"])=='undefined'){
+                        WF.Vars["Graph"] = $("#graph");
+                    }
+                    var pos = WF.Vars["Graph"].offset();
+                    WF.Popover.Id=State.Id;
+                    $(".wf-popover").find("p").html(State.Name);
+                    WF.Stage.VisibleEdit(true);
+                    $(".wfb-edit").attr("data-original-title",State.Name).css({"left":State.PosX-WF.Scroll.Val+10,"top":State.PosY-20}).show();
+                }
+                if(!WF.Stage.IsEditVisible){
+
+                    $(".wfb-edit").hide();
+                }
+
+                if(WF.IsPath){
+                    if (State.IsLock==false && WF.Mouse.IsAroundTrash && WF.Mouse.IsMouseDown) {
+                        WF.Delete.State(State.Id);
+                    }
+                    WF.Mouse.WasInStatePath=true;
+                    WF.Cnvs.style.cursor=WF.Cursors[3];
+                    if(State.IsLock==true){
+                        WF.Cnvs.style.cursor=WF.Cursors[2];
+                    }
+                    if (WF["TimeDirect"+i]=="true") {
+                        WF["Time"+i]=Number(WF["Time"+i])+0.08;
+                        if(Number(WF["Time"+i])>=1){
+                            WF["TimeDirect"+i]="false";
+                            WF["Time"+i]=1
+                        }
+
+                    }else{
+                        WF["Time"+i]=Number(WF["Time"+i])-0.08;
+                        if(Number(WF["Time"+i])<=0){
+                            WF["TimeDirect"+i]="true";
+                            WF["Time"+i]=0;
+                        }
+
+                    }
+
+
+                }
+
+                WF.Ctx.globalAlpha=1;
+                //==========================================================
+                if(WF.IsPath){
+                    WF.Ctx.shadowOffsetX = 0;
+                    WF.Ctx.shadowOffsetY = 0;
+                    WF.Ctx.shadowBlur = 7;
+                    WF.Ctx.shadowColor = '#dedfe0';
+                    if(WF.Mouse.WasDown){
+                        State.IsLock=(State.IsLock==true || State.IsLock=="true")?false:true;
+                        //Enable auto order
+                        WF["WasUnLocked"]=State.Id;
+                        //Disable auto order
+                    }
+                    WF.Mouse.WasInPath=true;
+                }
+                WF.Ctx.fillStyle = "#FFF";
+                WF.Ctx.fill();
+                WF.Ctx.stroke();
+                WF.Ctx.globalAlpha=1;
+                WF.Ctx.shadowOffsetX = 0;
+                WF.Ctx.shadowOffsetY = 0;
+                WF.Ctx.shadowBlur = 0;
+                WF.Ctx.globalAlpha=1;
+                WF.Ctx.fillStyle = "#252525";
+                WF.Ctx.font = "400 13px Roboto, Arial, sans-serif";
+                WF.Ctx.fillText(State.Name, State.PosX-15,State.PosY+30);
+                WF.Ctx.fillStyle = "#707070";
+                WF.Ctx.font = "400 11px Roboto, Arial, sans-serif";
+                WF.Ctx.fillText(State.Name+"", State.PosX-15,State.PosY+45);
+                WF.Ctx.closePath();
+                /* Arc: End */
+                /*if(WF.IsPath){
+                        //=========================
+                        if(WF.Vars["ToolTipTimer1"]>50){
+                            WF.Vars['ALFA1']=WF.Ease.easeOutQuint(Number(WF.Vars["ToolTipTime1"])) * 100;
+                        }
+                        if(WF.Vars["ToolTipTimer1"]>250){
+                            WF.Vars["ToolTipTime1"]=0;
+                            WF.Vars["ToolTipTimer1"]=0;
+                        }
+                        //=================================
+                        //Calculate postion text
+                        var markerText = "Drag to reorder state.";
+
+                        // Draw a simple box so you can see the position
+
+                        var textMeasurements = WF.Ctx.measureText(markerText);
+                        WF.Ctx.beginPath();
+                        WF.Ctx.globalAlpha=WF.Vars["ALFA1"];
+                        WF.Ctx.fillStyle = "#000";
+                        WF.Ctx.moveTo(WF.Mouse.PosX-(RADIUS/2)-WF.Vars["ADJ_X"], WF.Mouse.PosY - (RADIUS)-3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)+textMeasurements.width+(RADIUS*2)-WF.Vars["ADJ_X"], WF.Mouse.PosY - (RADIUS)-3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)+textMeasurements.width+(RADIUS*2)-WF.Vars["ADJ_X"], WF.Mouse.PosY + (RADIUS)+3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)-WF.Vars["ADJ_X"], WF.Mouse.PosY + (RADIUS)+3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.shadowColor = "rgba(0,0,0,.3)";
+                        WF.Ctx.shadowBlur = 10
+                        WF.Ctx.shadowOffsetX = 0;
+                        WF.Ctx.shadowOffsetY = 0;
+                        WF.Ctx.lineWidth=1;
+
+                    WF.Ctx.globalAlpha=1;
+                    WF.Ctx.fill();
+                    WF.Ctx.closePath();
+                    WF.Ctx.fillStyle = "#FFF";
+
+                        WF.Ctx.font = '10px Roboto, Arial, sans-serif';
+                        WF.Ctx.fillText(markerText, WF.Mouse.PosX-WF.Vars["ADJ_X"], WF.Mouse.PosY +3-WF.Vars["ADJ_Y"]);
+
+                        WF.Ctx.shadowBlur = 0;
+                        WF.Ctx.globalAlpha=1;
+
+                        //==============================
+                }else{
+                        WF.Vars["ToolTipTimer1"]=0;
+                        WF.Vars["ALFA1"]=0
+                        WF.Vars["ToolTipTime1"]=0
+                    }
+                    */
+
+            }
+
+            /* Draw States : End */
+            for (var i = 0; i < WF.Points.length; i++) {
+
+              Point = WF.Points[i];
+              if(typeof(Point)!="undefined"){
+
+                if(Point.First.State==WF["WasUnLocked"]){
+                    Point.IsActive=true;
+                    Point.First.IsLock=false;
+                }else if(Point.Last.State==WF["WasUnLocked"]){
+                    Point.IsActive=true;
+                    Point.Last.IsLock=false;
+                }
+                  WF.Vars["IsActive"]=Point.IsActive;
+
+                if (Point.IsActive && WF.Mouse.IsAroundTrash && WF.Mouse.IsMouseDown) {
+                    if(WF.Delete.Id==null){
+                        WF.Delete.Aero();
+                    } else {
+
+                        WF.Delete.AlsoDeleteAero=true;
+                    }
+
+                }
+                if(typeof(Point.First.Type)!="undefined" && Point.First.Type=="queue"){
+                    Point.First.Aero=false;
+                }
+                if(typeof(Point.Last.Type)!="undefined" && Point.Last.Type=="queue"){
+                    Point.Last.Aero=false;
+                }
+                /* Configuration : Start */
+                var WF_DIF_X = Point.Last.XPos - Point.First.XPos;
+                var WF_DIF_Y = Point.Last.YPos - Point.First.YPos;
+                var ANGLE=0;
+                var ROTATE=Math.atan2(WF_DIF_Y, WF_DIF_X)
+
+                var RATE=6;
+                /* Configuration : End */
+                  var TState={"First":null,"Last":null};
+                  if(!Point.First.IsLock){
+
+                        Point.First.XPos=WF.Mouse.PosX;
+                        Point.First.YPos=WF.Mouse.PosY;
+                        TState.First=WF.States.filter(function(xnd,ind){
+                            if(xnd.Id==Point.Last.State)return xnd;
+                        })[0];
+                        if(typeof(TState.First)=="undefined"){
+                            TState.First={
+                                "Id":"temp",
+                                "Name":"temp",
+                                "Title":"tmp",
+                                "PosX":WF.Mouse.PosX,
+                                "PosY":WF.Mouse.PosY,
+                                "Color":"#2994ff",
+                                "IsLock":false
+                            };
+                        }
+
+                        var WF_DIF_X1 = TState.First.PosX - Point.First.XPos;
+                        var WF_DIF_Y1 = TState.First.PosY - Point.First.YPos;
+                        WF_DISTANCE=Math.sqrt( WF_DIF_X1*WF_DIF_X1 + WF_DIF_Y1*WF_DIF_Y1);
+                        var ROTATE1=Math.atan2(WF_DIF_Y1, WF_DIF_X1);
+                        WF_X=Point.First.XPos+((StateRad+StateRad/3)*Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI));
+                        WF_Y=Point.First.YPos+((StateRad+StateRad/3)*Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI));
+                        if(WF.Mouse.IsMouseDown && !WF.Mouse.WasInStatePath){
+                            WF_X=Point.First.XPos+Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                            WF_Y=Point.First.YPos+Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                        }
+                        Point.First.XPos=WF_X;
+                        Point.First.YPos=WF_Y;
+
+                      // Adjust//
+
+                        TState.Last=WF.States.filter(function(xnd,ind){
+                            if(xnd.Id==Point.First.State)return xnd;
+                        })[0];
+                        if(typeof(TState.Last)=="undefined"){
+                            TState.Last={
+                                "Id":"temp",
+                                "Name":"temp",
+                                "Title":"tmp",
+                                "PosX":WF.Mouse.PosX,
+                                "PosY":WF.Mouse.PosY,
+                                "Color":"#2994ff",
+                                "IsLock":false
+                            };
+                        }
+                        var WF_DIF_X1 = TState.First.PosX-TState.Last.PosX;
+                        var WF_DIF_Y1 = TState.First.PosY-TState.Last.PosY;
+                        WF_DISTANCE=Math.sqrt( WF_DIF_X1*WF_DIF_X1 + WF_DIF_Y1*WF_DIF_Y1);
+                        var ROTATE1=Math.atan2(WF_DIF_Y1, WF_DIF_X1);
+
+                        WF_X=TState.First.PosX-((StateRad+StateRad/1.5)*Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI));
+
+                        WF_Y=TState.First.PosY-((StateRad+StateRad/1.5)*Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI));
+                      if(WF_DISTANCE<30){
+                            WF_X=TState.First.PosX-Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                            WF_Y=TState.First.PosY-Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                      }
+                      Point.Last.XPos=WF_X;
+                      Point.Last.YPos=WF_Y;
+
+
+                  }
+                if(!Point.Last.IsLock){
+
+                    TState.First=WF.States.filter(function(xnd,ind){if(xnd.Id==Point.Last.State)return xnd;})[0];
+
+                    if(typeof(TState.First)=="undefined"){
+                        WF_CREATING_ANGLE=true;
+                        TState.First={
+                            "Id":"temp",
+                            "Name":"temp",
+                            "Title":"tmp",
+                            "PosX":WF.Mouse.PosX,
+                            "PosY":WF.Mouse.PosY,
+                            "Color":"#2994ff",
+                            "IsLock":false
+                        };
+                    }
+
+
+                    if(!WF.Mouse.WasInStatePath){
+                        //$(".wfb-edit").hide();
+                            Point.Last.XPos=WF.Mouse.PosX;
+                            Point.Last.YPos=WF.Mouse.PosY;
+
+                        var WF_DIF_X1 = TState.First.PosX - WF.Mouse.PosX;
+                        var WF_DIF_Y1 = TState.First.PosY - WF.Mouse.PosY;
+                        WF_DISTANCE=Math.sqrt( WF_DIF_X1*WF_DIF_X1 + WF_DIF_Y1*WF_DIF_Y1);
+                        var ROTATE1=Math.atan2(WF_DIF_Y1, WF_DIF_X1);
+                        WF_X=Point.Last.XPos-Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                        WF_Y=Point.Last.YPos-Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI);
+
+
+                    }else{
+                        var IsExists=WF.States.filter(function(xnd,ind){if(xnd.Id==Point.First.State)return xnd;})[0];
+                        if(typeof(IsExists)=="undefined"){
+                            WF_CREATING_ANGLE=true;
+                            IsExists={
+                                "Id":"temp",
+                                "Name":"temp",
+                                "Title":"tmp",
+                                "PosX":WF.Mouse.DownX,
+                                "PosY":WF.Mouse.DownY,
+                                "Color":"#2994ff",
+                                "IsLock":true
+                            };
+                        }
+                        var WF_DIF_X1 = WF.Mouse.PosX-IsExists.PosX;
+                        var WF_DIF_Y1 = WF.Mouse.PosY-IsExists.PosY;
+                        WF_DISTANCE=Math.sqrt( WF_DIF_X1*WF_DIF_X1 + WF_DIF_Y1*WF_DIF_Y1);
+                        var ROTATE1=Math.atan2(WF_DIF_Y1, WF_DIF_X1);
+                        WF_X=WF.Mouse.PosX-((StateRad+StateRad/1.30)*Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI));
+                        WF_Y=WF.Mouse.PosY-((StateRad+StateRad/1.30)*Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI));
+
+                    }
+
+                    Point.Last.XPos=WF_X;
+                    Point.Last.YPos=WF_Y;
+                    // Last ----------------
+                    WF_CREATING_ANGLE=false;
+                    TState.Last=WF.States.filter(function(xnd,ind){if(xnd.Id==Point.First.State)return xnd;})[0];
+                    if(typeof(TState.Last)=="undefined"){
+                        WF_CREATING_ANGLE=true
+                        TState.Last={
+                            "Id":"temp",
+                            "Name":"temp",
+                            "Title":"tmp",
+                            "PosX":WF.Mouse.DownX,
+                            "PosY":WF.Mouse.DownY,
+                            "Color":"#2994ff",
+                            "IsLock":true
+                        };
+                    }
+
+                    var WF_DIF_X1 = TState.First.PosX-TState.Last.PosX;
+                    var WF_DIF_Y1 = TState.First.PosY-TState.Last.PosY;
+                    var ROTATE1=Math.atan2(WF_DIF_Y1, WF_DIF_X1);
+                    //WF_DISTANCE=Math.sqrt( WF_DIF_X1*WF_DIF_X1 + WF_DIF_Y1*WF_DIF_Y1);
+                    WF_X=TState.Last.PosX+((StateRad+StateRad/3)*Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI));
+                    WF_Y=TState.Last.PosY+((StateRad+StateRad/3)*Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI));
+                    if(WF_CREATING_ANGLE){
+                        WF_X=TState.Last.PosX+Math.cos(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                        WF_Y=TState.Last.PosY+Math.sin(WF.ToDegree(ROTATE1)/180 * Math.PI);
+                    }
+                    Point.First.XPos=WF_X;
+                    Point.First.YPos=WF_Y;
+
+
+                }
+                ANGLE= WF.ToRadians(0) +ROTATE;
+                var x = Point.Last.XPos + Math.cos(ANGLE) * RADIUS;
+                var y = Point.Last.YPos + Math.sin(ANGLE) * RADIUS;
+                var WFA_RIGHT_X=x;
+                var WFA_RIGHT_Y=y;
+                ANGLE= WF.ToRadians(180) + ROTATE;
+                var RightCX = x + Math.cos(ANGLE) * RADIUS;
+                var RightCY = y + Math.sin(ANGLE) * RADIUS;
+                ANGLE= WF.ToRadians(90) + ROTATE;
+                x = RightCX + Math.cos(ANGLE) * RADIUS;
+                y = RightCY + Math.sin(ANGLE) * RADIUS;
+                var WFA_RIGHT_BOTTOM_X=x;
+                var WFA_RIGHT_BOTTOM_Y=y;
+                ANGLE= WF.ToRadians(270) +ROTATE;
+                x = RightCX + Math.cos(ANGLE) * RADIUS;
+                y = RightCY + Math.sin(ANGLE) * RADIUS;
+                var WFA_RIGHT_TOP_X=x;
+                var WFA_RIGHT_TOP_Y=y;
+                ANGLE= WF.ToRadians(180)+ROTATE;
+                x = (RightCX) + Math.cos(ANGLE);
+                y = (RightCY) + Math.sin(ANGLE);
+
+
+                ANGLE= WF.ToRadians(270) +ROTATE;
+                x = x + Math.cos(ANGLE) * RADIUS/RATE;
+                y = y + Math.sin(ANGLE) * RADIUS/RATE;
+                var WFA_RIGHT_MID_TOP_X=x;
+                var WFA_RIGHT_MID_TOP_Y=y;
+                ANGLE= WF.ToRadians(180)+ROTATE;
+                x = (RightCX) + Math.cos(ANGLE);
+                y = (RightCY) + Math.sin(ANGLE);
+                ANGLE= WF.ToRadians(90) +ROTATE;
+                x = x + Math.cos(ANGLE) * RADIUS/RATE;
+                y = y + Math.sin(ANGLE) * RADIUS/RATE;
+                var WFA_RIGHT_MID_BOTTOM_X=x;
+                var WFA_RIGHT_MID_BOTTOM_Y=y;
+
+                var WFA_LEFT_X=Point.First.XPos;
+                var WFA_LEFT_Y=Point.First.YPos;
+                ANGLE= WF.ToRadians(0) + ROTATE;
+                LCenterX = Point.First.XPos + Math.cos(ANGLE) * RADIUS;
+                LCenterY = Point.First.YPos + Math.sin(ANGLE) * RADIUS;
+
+                ANGLE= WF.ToRadians(270) + ROTATE;
+                x = LCenterX + Math.cos(ANGLE) * RADIUS;
+                y = LCenterY + Math.sin(ANGLE) * RADIUS;
+                var WFA_LEFT_TOP_X=x;
+                var WFA_LEFT_TOP_Y=y;
+                ANGLE= WF.ToRadians(90) + ROTATE;
+                x = LCenterX + Math.cos(ANGLE) * RADIUS;
+                y = LCenterY + Math.sin(ANGLE) * RADIUS;
+                var WFA_LEFT_BOTTOM_X=x;
+                var WFA_LEFT_BOTTOM_Y=y;
+
+                ANGLE= WF.ToRadians(0)+ROTATE;
+                x = (LCenterX) + Math.cos(ANGLE);
+                y = (LCenterY) + Math.sin(ANGLE);
+
+                ANGLE= WF.ToRadians(270) +ROTATE;
+                x = x + Math.cos(ANGLE) * RADIUS/RATE;
+                y = y + Math.sin(ANGLE) * RADIUS/RATE;
+                var WFA_LEFT_MID_TOP_X=x;
+                var WFA_LEFT_MID_TOP_Y=y;
+                ANGLE= WF.ToRadians(0)+ROTATE;
+                x = (LCenterX) + Math.cos(ANGLE);
+                y = (LCenterY) + Math.sin(ANGLE);
+
+                ANGLE= WF.ToRadians(90) +ROTATE;
+                x = x + Math.cos(ANGLE) * RADIUS/RATE;
+                y = y + Math.sin(ANGLE) * RADIUS/RATE;
+                var WFA_LEFT_MID_BOTTOM_X=x;
+                var WFA_LEFT_MID_BOTTOM_Y=y;
+
+                //=============================================================================
+                WF.Ctx.beginPath();
+                WF.Ctx.moveTo(WFA_LEFT_X,WFA_LEFT_Y);
+                WF.Ctx.lineTo(WFA_LEFT_TOP_X,WFA_LEFT_TOP_Y);
+                WF.Ctx.lineTo(WFA_LEFT_MID_TOP_X,WFA_LEFT_MID_TOP_Y);
+                WF.Ctx.lineTo(WFA_RIGHT_MID_TOP_X,WFA_RIGHT_MID_TOP_Y);
+                WF.Ctx.lineTo(WFA_RIGHT_TOP_X,WFA_RIGHT_TOP_Y);
+                WF.Ctx.lineTo(WFA_RIGHT_X,WFA_RIGHT_Y);
+                WF.Ctx.lineTo(WFA_RIGHT_BOTTOM_X,WFA_RIGHT_BOTTOM_Y);
+                WF.Ctx.lineTo(WFA_RIGHT_MID_BOTTOM_X,WFA_RIGHT_MID_BOTTOM_Y);
+                WF.Ctx.lineTo(WFA_LEFT_MID_BOTTOM_X,WFA_LEFT_MID_BOTTOM_Y);
+                WF.Ctx.lineTo(WFA_LEFT_BOTTOM_X,WFA_LEFT_BOTTOM_Y);
+                WF.Ctx.lineTo(WFA_LEFT_X,WFA_LEFT_Y);
+                if(!Point.First.Aero){
+                    var numberOfSides = 50,
+                    size = RADIUS/1.1,
+                    Xcenter = LCenterX,
+                    Ycenter = LCenterY;
+                    WF.Ctx.moveTo(Xcenter,Ycenter);
+                    for (var ix = 1; ix <= numberOfSides;ix += 1) {
+                        var an=(ix * 2 * Math.PI / numberOfSides)+ROTATE
+                        WF.Ctx.lineTo (Xcenter + size * Math.cos(an), Ycenter+ size * Math.sin(an));
+                    }
+                }
+                if(!Point.Last.Aero){
+                    var numberOfSides = 50,
+                    size = RADIUS/1.1,
+                    Xcenter = RightCX,
+                    Ycenter = RightCY;
+                    WF.Ctx.moveTo(RightCX,RightCY);
+                    for (var ix = 1; ix <= numberOfSides;ix += 1) {
+                        var an=(ix * 2 * Math.PI / numberOfSides)+ROTATE
+                        WF.Ctx.lineTo (Xcenter + size * Math.cos(an), Ycenter+ size * Math.sin(an));
+                    }
+                }
+                WF.IsPath=WF.Ctx.isPointInPath(WF.Mouse.PosX*WF.getDpi(), WF.Mouse.PosY*WF.getDpi());
+                  WF.Ctx.fillStyle = WF.IsPath || Point.IsActive?Point.Style.HoverColor:Point.Style.Color;
+                  if (Point.ActionId!=null && !WF.Mouse.IsMouseDown) {
+                      WF.Ctx.fillStyle = "#0078cc";
+                  }
+                  if (WF.Action.Add && WF.IsPath) {
+                      WF.Ctx.fillStyle = "green";
+                  }
+
+                if(WF.IsPath==true && WF.Mouse.WasDown==true){
+                    WF.Mouse.WasDown=false;
+
+                    Point.IsActive=true;
+                    var a = WFA_LEFT_X - WF.Mouse.PosX;
+                    var b = WFA_LEFT_Y - WF.Mouse.PosY;
+                    var left = Math.sqrt( a*a + b*b );
+                    if(left<12){
+                        Point.Last.IsLock=true;
+                        Point.First.IsLock=false;
+                    }
+                    a = WFA_RIGHT_X - WF.Mouse.PosX;
+                    b = WFA_RIGHT_Y - WF.Mouse.PosY;
+                    var right = Math.sqrt( a*a + b*b );
+                    if(right<12){
+                        Point.First.IsLock=true;
+                        Point.Last.IsLock=false;
+                    }
+                }
+                if(WF.IsPath==true && WF.Mouse.WasDblClick==true){
+                    WF.Mouse.WasDblClick=false;
+                    var a = WFA_LEFT_X - WF.Mouse.PosX;
+                    var b = WFA_LEFT_Y - WF.Mouse.PosY;
+                    var left = Math.sqrt( a*a + b*b );
+                    if(left<12){
+                        Point.First.Aero=Point.First.Aero?false:true;
+                    }
+                    a = WFA_RIGHT_X - WF.Mouse.PosX;
+                    b = WFA_RIGHT_Y - WF.Mouse.PosY;
+                    var right = Math.sqrt( a*a + b*b );
+                    if(right<12){
+                        Point.Last.Aero=Point.Last.Aero?false:true;
+                    }
+                }
+                if(WF.IsPath){
+
+                    WF.Mouse.WasInPath=true;
+                    WF.Mouse.WasInAnglePath=true;
+                    WF.Cnvs.style.cursor=WF.Cursors[0];
+                    if (WF.Action.Id!=null && !WF.Action.Add) {
+                      Point.ActionId=WF.Action.Id;
+                      WF.Action.Id=null;
+                    }
+
+                }
+                WF.Ctx.fill();
+                WF.Ctx.closePath();
+
+                /* LEFT AERO : Start */
+
+
+                    if(WF.IsPath==true && WF.Mouse.WasDown==false){
+
+                        if(WF.Vars['ToolTipTimer']>30){
+                            WF.Vars['ALFA']=WF.Ease.easeOutQuint(Number(WF.Vars["ToolTipTime"])) * 100;
+                        }
+                        if(WF.Vars['ToolTipTimer']>250){
+                            WF.Vars["ToolTipTime"]=0;
+                            WF.Vars['ToolTipTimer']=0;
+                        }
+                        WFA_LEFT_X = WFA_LEFT_X + Math.cos(ROTATE) * RADIUS/2;
+                        WFA_LEFT_Y = WFA_LEFT_Y + Math.sin(ROTATE) * RADIUS/2;
+
+                        WF.Ctx.beginPath();
+                        WF.Ctx.globalAlpha=WF.Vars['ALFA'];
+                        //..................................
+                        WFA_RIGHT_X = WFA_RIGHT_X - Math.cos(ROTATE) * RADIUS/2;
+                        WFA_RIGHT_Y = WFA_RIGHT_Y - Math.sin(ROTATE) * RADIUS/2;
+
+                        // =================================
+                        //Calculate postion text
+                        var markerText = "Drag to reorder Angle";
+
+                        // Draw a simple box so you can see the position
+                        var textMeasurements = WF.Ctx.measureText(markerText);
+                        WF.Ctx.beginPath();
+                        WF.Ctx.fillStyle = "#000";
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)-WF.Vars["ADJ_X"], WF.Mouse.PosY - (RADIUS)-3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)+textMeasurements.width+(RADIUS*2)-WF.Vars["ADJ_X"], WF.Mouse.PosY - (RADIUS)-3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)+textMeasurements.width+(RADIUS*2)-WF.Vars["ADJ_X"], WF.Mouse.PosY + (RADIUS)+3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.lineTo(WF.Mouse.PosX-(RADIUS/2)-WF.Vars["ADJ_X"], WF.Mouse.PosY + (RADIUS)+3-WF.Vars["ADJ_Y"]);
+                        WF.Ctx.shadowColor = "rgba(0,0,0,.3)";
+                        WF.Ctx.shadowBlur = 10
+                        WF.Ctx.shadowOffsetX = 0;
+                        WF.Ctx.shadowOffsetY = 0;
+                        WF.Ctx.lineWidth=1;
+                        WF.Ctx.closePath();
+                        WF.Ctx.fill();
+
+                        WF.Ctx.shadowBlur = 0;
+                        WF.Ctx.fillStyle = "#FFF";
+                        WF.Ctx.font = '10px Roboto, Arial, sans-serif';
+                        WF.Ctx.fillText(markerText, WF.Mouse.PosX-WF.Vars["ADJ_X"], WF.Mouse.PosY +3-WF.Vars["ADJ_Y"]);
+                        //
+
+                        //==============================
+
+
+                    }else{
+                        WF.Vars['ToolTipTimer']=0;
+                        WF.Vars['ALFA']=0
+                        WF.Vars["ToolTipTime"]=0
+                    }
+                    WF.Ctx.globalAlpha=1;
+                /* RIGHT AERO : End */
+              }
+            }
+            WF.Mouse.WasDblClick=false;
+
+            if(WF.Mouse.WasDown==true){
+                /*WF.Points.filter(function(obj){
+                    obj.Last.IsLock=true;
+                        obj.First.IsLock=true;
+                    if(obj.IsActive==true){
+                        obj.IsActive=false;
+                    }
+                })*/
+
+
+                if(!WF.Mouse.WasInPath && WF.States.length>0){
+
+                    WF.Points.push(
+                        {
+                            "Style":
+                                {
+                                    "Color":"#cfcfcf",
+                                    "HoverColor":"#636060"
+                                },
+                            "IsActive":true,
+                            "ActionId":null,
+                            "First":{
+                                "IsLock":true,
+                                "XPos":WF.Mouse.PosX,
+                                "YPos":WF.Mouse.PosY,
+                                "Aero":true,
+                                "State":""
+                            },
+                            "Last":{
+                                "IsLock":false,
+                                "XPos":WF.Mouse.PosX,
+                                "YPos":WF.Mouse.PosY,
+                                "Aero":true,
+                                "State":""
+                            }
+                        }
+                    );
+                }
+                WF.Mouse.WasDown=false;
+                WF.Mouse.WasInStatePath=false;
+                WF.Mouse.WasInAnglePath=false;
+                WF.Vars["IsInitial"]=false;
+                WF.Mouse.IsAroundTrash=false;
+            }
+
+            requestAnimationFrame(WF.Render);
+        }
+    }
+    var timer = null;
+    var UpdateWF = function (e) {
+        if (typeof (e) === 'object') {
+            WF.Scroll.Axis = e.axis;
+            WF.Scroll.Val = e.val;
+        }
+    }
+    const ScrollBar = new VesuvioBar(document.getElementById('scrollbar'));
+    ScrollBar.getScrollElement().addEventListener('scroll12', function (e) {
+        if (timer != null) {
+            clearTimeout(timer)
+        }
+        Update(e)
+        timer = setTimeout(function () {
+            Update(e);
+        }, 50);
+    });
+
+
+
+    $(document).ready(function () {
+
+        WF.Init();
+
+        //open state modal to set caseform id
+        $(document).on("click", "#state-modal", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "GET",
+                dataType: "html",
+                url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadstatebyid")",
+                data: { id: "@_utils.EncryptId(0)" },
+                success: function (data) {
+                    if (data != "" && data != " ") {
+                        //document.getElementById("queue-form").reset();
+                        $('#newStateModal').find(".modal-body").html(data);
+                        //$('#newStateModal').modal('show');
+
+                        //$("#form_id").trigger();
+                    }
+                }
+            });
+
+            if ($("#form_id").val() != " " && $("#form_id").val() != "") {
+                $("#caseFormId").val($("#form_id").val());
+                $("#caseFormId").siblings("label").text($("#form_id option:selected").text());
+
+                //defaults color and icon
+                $(".color").first().click();
+                $(".state-icon-item").first().find('img').click();
+                $(".state-icon-item").first().closest('div').siblings('input').val($(".state-icon-item").first().find('img').attr("src"));
+
+                //$("#EF3A53").parent().addClass("active");
+                //$("#EF3A53").append("<i class='ri-checkbox-circle-fill'></i>");
+                //$("#input-color-picker").val('' + $("#EF3A53").attr("id") + '');
+                //$("#icon-state").closest("div").siblings("input").val('' + $("#default-img").attr("src") + '');
+
+            }
+        });
+
+        //open state modal to set caseform id
+        $(document).on("click", "#queue-modal", function (e) {
+            console.log("queue modal");
+            e.preventDefault();
+            $.ajax({
+                type: "GET",
+                dataType: "html",
+                url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadqueuebyid")",
+                data: { id: "@_utils.EncryptId(0)" },
+                success: function (data) {
+
+                    if (data != "" && data != " ") {
+                        //document.getElementById("queue-form").reset();
+                        $('#newQueueModal').find(".modal-form").html(data);
+                        if ($("#form_id").val() != " " && $("#form_id").val() != "") {
+                            $(".state-icon-item").first().find('img').click();
+                            $(".state-icon-item").first().closest('div').siblings('input').val($(".state-icon-item").first().find('img').attr("src"));
+
+                            $("#caseFormId-queue").val($("#form_id").val());
+                            $("#caseFormId-queue").siblings("label").text($("#form_id option:selected").text());
+                        }
+                        //$('#newQueueModal').modal('show');
+
+                        //$("#form_id").trigger();
+                    }
+                }
+            });
+
+
+        });
+
+        //open state modal to set caseform id
+        $(document).on("click", "#action-modal", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "GET",
+                dataType: "html",
+                url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/loadactionbyid")",
+                data: { id: "@_utils.EncryptId(0)" },
+                beforeSend: function () {
+                    $('#newActionModal').find('.loading').addClass('d-flex');
+                },
+                success: function (data) {
+                    if (data != "" && data != " ") {
+
+                        $('#newActionModal').find(".modal-form").html(data);
+
+                    }
+                    $('#newActionModal').find('.loading').removeClass('d-flex');
+                },
+            });
+
+            if ($("#form_id").val() != " " && $("#form_id").val() != "") {
+                $("#caseFormId-queue").val($("#form_id").val());
+                $("#caseFormId-queue").siblings("label").text($("#form_id option:selected").text());
+            }
+        });
+        //for show/hide modals
+        //function showHidemodals() {
+        //    if ($("#form_id").val() == " " || $("#form_id").val() == "") {
+        //        $('.add-new__action').hide();
+
+        //    } else {
+        //        $('.add-new__action').show();
+        //    }
+
+        //}
+
+        //remove comment later
+     //   showHidemodals();
+
+        //on change caseform
+        $(document).on("change", "#form_id", function () {
+         //   showHidemodals();
+        });
+
+        //save state
+        $(document).on("click", "#state-save", function (e) {
+            //e.preventDefault();
+            let checker = $("#state-form").valid();
+
+            if (checker == true) {
+                let temp = $("#state-form").serialize();
+
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/savestate")",
+                    data: temp,
+                    success: function (html) {
+
+                        let message = html.message;
+                        if (html.status == "error") {
+                            toastr.error("Save Unsuccessful");
+                        }
+                        else {
+                            toastr.success(html.message);
+                        }
+                        document.getElementById("state-form").reset();
+                        $("#newStateModal").modal('toggle');
+
+                        //$("#form_id").trigger();
+
+                    }
+                });
+            }
+
+        });
+
+        //save queue
+        $(document).on("click", "#queue-save", function (e) {
+            //e.preventDefault();
+
+            let checker = $("#queue-form").valid();
+
+            if (checker == true) {
+                let temp = $("#queue-form").serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/savequeue")",
+                    data: temp,
+                    success: function (html) {
+                        let message = html.message;
+                        if (html.status == "error") {
+                            toastr.error("Save Unsuccessful");
+                        }
+                        else {
+                            toastr.success(html.message);
+                        }
+                        document.getElementById("queue-form").reset();
+                        $("#newQueueModal").modal('toggle');
+
+                        //$("#form_id").trigger();
+
+                    }
+                });
+            }
+
+
+        });
+        //Action queue
+        $(document).on("click", "#action-save", function (e) {
+            //e.preventDefault();
+
+            let checker = $("#action-form").valid();
+
+            if (checker == true) {
+                let temp = $("#action-form").serialize();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/stateworkflow/saveaction")",
+                    data: temp,
+                    success: function (html) {
+                        let message = html.message;
+                        if (html.status == "error") {
+                            toastr.error("Save Unsuccessful");
+                        }
+                        else {
+                            toastr.success(html.message);
+                        }
+                        document.getElementById("action-form").reset();
+                        $("#newActionModal").modal('toggle');
+
+                    }
+                });
+            }
+
+
+        });
+
+
+        //for color change
+        $(document).on("click", ".color", function (e) {
+            $.each($(e.target).parent().siblings(), function (i, v) {
+                $(v).removeClass("active");
+                $(v).find("i").remove();
+            });
+
+            $(e.target).parent().addClass("active");
+            $(e.target).append("<i class='ri-checkbox-circle-fill'></i>");
+            $("#input-color-picker").val('' + $(e.target).attr("id") + '');
+        });
+
+        //for icon change
+        $(document).on("click", ".state-icon-item", function (e) {
+            if ($(e.target).is('i') || $(e.target).is('button'))
+            {
+                if ($(e.target).parent().parent().hasClass('actions-holder') || $(e.target).is('button')) {
+                    var id = $(e.target).parent().attr('data-id');
+                    if ($(e.target).parent().parent().hasClass('actions-holder')) {
+                        id = $(e.target).parent().parent().find('button').attr('data-id');
+                    }
+                    var url = "@Url.Content("/admin/deleteFile.html")";
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        data: { id: id },
+                        success: function (result) {
+                            if (result) {
+                                //debugger
+                               // const modalIconsLength = $('#moreQueueIconModal .state-icon-item').length;
+                                $('button[data-id=' + id + ']').parents('.state-icon-item').remove();
+                                //if ($('.state-icon-group .actions-holder').length < 8 && modalIconsLength > 8 && $(e.target).parents('div.modal').length == 0) {
+                                //    $('#moreQueueIconModal .state-icon-item').eq(7).clone().appendTo($('.state-icon-group .state-icon-list'));
+                                //}
+
+                                //if ($('.state-icon-group .actions-holder').length <= 8) {
+                                //    $('#allIcon').remove();
+                                //}
+                                //$(e.target).parents("span.state-icon-item").remove();
+                            }
+                        },
+                        error: function (error) {
+
+                        }
+
+                    })
+                    return false;
+                }
+                $.each($('.state-icon-item'), function (i, v) {
+                    //$(v).removeClass("border-primary");
+                    $(v).removeClass("selected");
+                });
+                //$(e.target).addClass("border-primary");
+                //$(e.target).addClass("selected");
+                var img = $(e.target).find("img");
+                var imgSrc = img.attr('src');
+                //$("img[src$='" + imgSrc + "']").parents('.state-icon-item').addClass("border-primary");
+                $("img[src$='" + imgSrc + "']").parents('.state-icon-item').addClass("selected");
+                $(".state-icon-group").find("input").val('' + img.attr("src") + '');
+            }
+            else {
+                //$.each($(e.target).parent().siblings(), function (i, v) {
+                //    $(v).removeClass("border-primary");
+                //    $(v).removeClass("selected");
+                //});
+                $.each($('.state-icon-item'), function (i, v) {
+                    //$(v).removeClass("border-primary");
+                    $(v).removeClass("selected");
+                });
+                //$(e.target).parent('span').addClass("border-primary");
+                //$(e.target).parent('span').addClass("selected");
+                var imgSrc = $(e.target).attr('src');
+                //$("img[src$='" + imgSrc + "']").parents('.state-icon-item').addClass("border-primary");
+                $("img[src$='" + imgSrc + "']").parents('.state-icon-item').addClass("selected");
+                $(".state-icon-group").find("input").val('' + $(e.target).attr("src") + '');
+            }
+
+            //if ($('#moreQueueIconModal').length > 0) {
+            //    $('#moreQueueIconModal').modal('hide');
+            //}
+            console.log("icon clicked");
+
+        });
+
+        //for checkbox hide/show state permissions on click
+        $(document).on("click", "input[permission-target]", function (e) {
+            showHidestatePermission(e.target);
+        });
+
+        //for show/hide state permissions
+        function showHidestatePermission(e) {
+            let temp = $(e).attr("id");
+            if (temp != undefined) {
+                let matches = temp.match(/\_(.*?)\_/);
+                if (matches == null) {
+                    matches = temp.match(/\[(.*?)\]/);
+                }
+                if (matches) {
+
+                    if (e.checked) {
+                        $("#state-permissions-" + matches[1]).hide();
+                        //$("#state-permissions-" + matches[1]).prev().removeClass("border-bottom");
+                        let bb = $("div.state-permission");
+                        $.each(bb, function (a, b) {
+
+                            if ($(b).attr("id") == "" || $(b).attr("id") == " " || $(b).attr("id") == undefined) {
+                                $(b).remove();
+                            }
+                        });
+
+                    } else {
+                        $("#state-permissions-" + matches[1]).show();
+                        //$("#state-permissions-" + matches[1]).prev().addClass("border-bottom");
+                    }
+                }
+
+            }
+            if (e.checked) {
+                $.each($(".state-permission"), function (a, b) {
+
+                    if ($(this).data('index') == "0") {
+
+                         $(this).find(".dname").attr("name", "StateForForm[0].StatePermissions[0][DisplayName]").val("");
+             $(this).find(".role").attr("name", "StateForForm[0].StatePermissions[0][RoleId]").val("");
+             $(this).find(".edit").attr("name", "StateForForm[0].StatePermissions[0][CanEdit]").prop("checked", false);
+                        $(this).find(".view").attr("name", "StateForForm[0].StatePermissions[0][ViewMode]").prop("checked", false);
+                         $(this).hide();
+                    } else {
+
+                        $(this).remove();
+                    }
+                });
+                $('#clone-state-btn').hide();
+            }
+            else {
+                $('#clone-state-btn').show();
+            }
+        }
+
+        //clone statePermissions
+        $(document).on("click", '#clone-state-btn', function () {
+            if ($("#state-permissions-0").is(":hidden")) {
+                $("#state-permissions-0").show();
+            }
+            else {
+            let cloned = $("#state-permissions-0").clone().removeAttr('id');
+            var index = $(".state-permission").length;
+            //cloned.attr("data-index", index);
+
+            cloned.find(".dname").attr("name", "StateForForm[0].StatePermissions[" + index + "][DisplayName]").val("");
+            cloned.find(".role").attr("name", "StateForForm[0].StatePermissions[" + index + "][RoleId]").val("");
+            cloned.find(".edit").attr("name", "StateForForm[0].StatePermissions[" + index + "][CanEdit]").prop("checked", false);
+            cloned.find(".view").attr("name", "StateForForm[0].StatePermissions[" + index + "][ViewMode]").prop("checked", false);
+
+            cloned.find(".dname").attr("id", "StateForForm[0].StatePermissions[" + index + "][DisplayName]");
+            cloned.find(".role").attr("id", "StateForForm[0].StatePermissions[" + index + "][RoleId]");
+            cloned.find(".edit").attr("id", "StateForForm[0].StatePermissions[" + index + "][CanEdit]");
+            cloned.find(".view").attr("id", "StateForForm[0].StatePermissions[" + index + "][ViewMode]");
+
+            cloned.find(".edit").siblings("label").attr("for", "StateForForm[0].StatePermissions[" + index + "][CanEdit]");
+            cloned.find(".view").siblings("label").attr("for", "StateForForm[0].StatePermissions[" + index + "][ViewMode]");
+
+
+            cloned.insertAfter(".state-permission:last");
+            }
+        });
+
+        //for remove button state permission
+        $(document).on("click", "button[remove-state-permission]", function (e) {
+            e.preventDefault();
+                if ($(this).parents(".state-permission").attr("id") == "state-permissions-0") {
+
+                $(this).parents(".state-permission").find(".dname").val("");
+                $(this).parents(".state-permission").find(".role").val("");
+                $(this).parents(".state-permission").find(".edit").prop("checked", false);
+                $(this).parents(".state-permission").find(".view").prop("checked", false);
+                $(this).parents(".state-permission").hide();
+            }
+                else {
+                    //var delval = $(this).attr('delval');
+                    //debugger;
+                    //console.log($(delval + ".CanEdit"));
+                    //console.log($(delval + ".ViewMode"));
+                    //$(delval + ".CanEdit").remove();
+                    //$(delval + ".ViewMode").remove();
+                $(this).parents(".state-permission").remove();
+            }
+
+        });
+
+
+        //for show/hide queue permissions
+        function showHidequeuePermission(e) {
+            let temp = $(e).attr("id");
+            if (temp != undefined) {
+                let matches = temp.match(/\_(.*?)\_/);
+                if (matches == null) {
+                    matches = temp.match(/\[(.*?)\]/);
+                }
+                if (matches) {
+                    //console.log(matches)
+                    if (e.checked) {
+                        $("#queue-permissions-" + matches[1]).hide();
+                        //$("#queue-permissions-" + matches[1]).prev().removeClass("border-bottom");
+
+                        let cc = $("div.queue-permission");
+                        $.each(cc, function (c, d) {
+                            if ($(d).attr("id") == "" || $(d).attr("id") == " " || $(d).attr("id") == undefined) {
+                                $(d).remove();
+                            }
+                        });
+                    } else {
+                        $("#queue-permissions-" + matches[1]).show();
+                        //$("#queue-permissions-" + matches[1]).prev().addClass("border-bottom");
+                    }
+                }
+            }
+   if (e.checked) {
+                $.each($(".queue-permission"), function (a, b) {
+
+                    if ($(this).data('index') == "0") {
+
+                         $(this).find(".dname-queue").attr("name", "QueueForForm[0].QueuePermissions[0][DisplayName]").val("");
+                            $(this).find(".role-queue").attr("name", "QueueForForm[0].QueuePermissions[0][RoleId]").val("");
+
+                         $(this).hide();
+                    } else {
+
+                        $(this).remove();
+                    }
+                });
+                $('#clone-queue-btn').hide();
+            }
+            else {
+                $('#clone-queue-btn').show();
+            }
+        }
+
+        //for checkbox hide/show queue permissions on click
+        $(document).on("click", "input[permission-queue-target]", function (e) {
+            showHidequeuePermission(e.target);
+
+        });
+
+        //clone queuePermissions
+        $(document).on("click", '#clone-queue-btn', function () {
+            debugger;
+            //let count = $("#state-permissions-0").siblings(".state-permission").length;
+            if ($("#queue-permissions-0").is(":hidden")) {
+                $("#queue-permissions-0").show();
+            }
+            else {
+                let cloned = $("#queue-permissions-0").clone().removeAttr('id');
+
+                var index = $(".queue-permission").length;
+                var index1 = cloned.find(".dname-queue").attr("name").split(".")[0].replace(/[^0-9]/g, '');
+             
+                //cloned.attr("data-index", index);
+
+                cloned.find(".dname-queue").attr("name", "QueueForForm["+index1+"].QueuePermissions[" + index + "][DisplayName]").val("");
+                cloned.find(".role-queue").attr("name", "QueueForForm[" + index1 +"].QueuePermissions[" + index + "][RoleId]").val("");
+
+                cloned.find(".dname-queue").attr("id", "QueueForForm[" + index1 +"].QueuePermissions[" + index + "][DisplayName]");
+                cloned.find(".role-queue").attr("id", "QueueForForm[" + index1 +"].QueuePermissions[" + index + "][RoleId]");
+
+                //cloned.find(".card-body").append("<button class='btn btn-outline-danger btn-block' remove-queue-permission>Remove</button>");
+
+                cloned.insertAfter(".queue-permission:last");
+            }
+
+        });
+
+        //for remove button queue permission
+        $(document).on("click", "button[remove-queue-permission]", function (e) {
+            e.preventDefault();
+
+            if ($(this).parents(".queue-permission").attr("id") == "queue-permissions-0") {
+
+                $(this).parents(".queue-permission").find(".dname-queue").val("");
+                $(this).parents(".queue-permission").find(".role-queue").val("");
+
+                $(this).parents(".queue-permission").hide();
+            }
+            else {
+                $(this).parents(".queue-permission").remove();
+            }
+            setRoles1(); //roles drop down trigger
+        });
+
+
+
+        //h5 remove for accordion
+        $(document).on("click", ".state-queue-item", function (e) {
+
+            if (!$("#listOne").children().first().hasClass("collapsed")) {
+                $("#listOne").children().first().addClass("show");
+                $("#listOne").addClass("show");
+
+            } else {
+                $("#listOne").children().first().removeClass("show");
+                $("#listOne").removeClass("show");
+            }
+
+            if (!$("#listTwo").children().first().hasClass("collapsed")) {
+                $("#listTwo").children().first().addClass("show");
+                $("#listTwo").addClass("show");
+            } else {
+                $("#listTwo").children().first().removeClass("show");
+                $("#listTwo").removeClass("show");
+            }
+
+        });
+
+	});
+	$(document).ready(function () {
+
+        $(".max-min-btn").click(function (e) {
+
+            e.stopPropagation();
+            //if ($(this).find("i").hasClass("ri-fullscreen-line")) {
+                //$(".workflow-box").addClass("open");
+
+                //$(".sidebar").css("z-index", "0");
+                //$(this).find("i").removeClass("ri-fullscreen-line");
+                //$(this).find("i").addClass("ri-fullscreen-exit-line");
+                //$(this).addClass('btn-link');
+            //}
+            //else {
+                //$(".workflow-box").removeClass("open");
+                //$(this).find("i").removeClass("ri-fullscreen-exit-line");
+                //$(this).find("i").addClass("ri-fullscreen-line");
+                //$(this).removeClass('btn-link');
+            //}
+            WF.Resize();
+            ScrollBar.recalculate();
+        });
+        //function closeWorkflow(){
+        //    $(".workflow-box").removeClass("open");
+        //    $('.max-min-btn').find("i").addClass("ri-fullscreen-line");
+        //    $('.max-min-btn').removeClass("btn-link");
+
+        //}
+
+        $(document).keyup(function(e) {
+            // Close workflow with esc key
+            if (e.keyCode === 27) {
+                closeWorkflow();
+            }
+        });
+	});
+</script>
+@if (formId != "" && formId != null)
+{
+    <script>
+        $(function () {
+            var isInIframe = (window.location != window.parent.location) ? true : false;
+            if (isInIframe) {
+                $("#form_id").attr("disabled", "disabled");
+            }
+            $("#form_id").val('@formId');
+
+            setTimeout(function () { $("#form_id").trigger('change'); }, 2000);
+        });
+
+
+    </script>
+}
+
+
+<script>
+    function delQueueState(id, isQueue) {
+        $("#isQueue").val(isQueue);
+        $("#qsId").val(id);
+        $("#formId").val($("#form_id").val());
+
+        $("#delStateQueue").submit();
+    }
+</script>

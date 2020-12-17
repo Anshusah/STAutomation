@@ -1,0 +1,761 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Services;
+@model IEnumerable<MediaByParentId>
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor _IHttpContextAccessor
+@inject Permission Permission
+@inject IUserService userService
+@inject Utils utils
+@{
+    Layout = null;
+    string hide = _IHttpContextAccessor.HttpContext.Request.Query["hide"].ToString();
+    string tenant_identifier = utils.GetTenantFromSession();
+    List<MediaViewModel> groups = (List<MediaViewModel>)ViewBag.Group;
+    var model1 = (List<IGrouping<int?, MediaViewModel>>)ViewBag.Media;
+    var userRole = userService.UserHasPolicy();
+}
+<html>
+<head>
+    <script src="@Url.Content("/admin/assets/js/jquery.min.js")"></script>
+    <!-- <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")"> -->
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://cdn.remixicon.com/releases/v1.3.1/remixicon.css">
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="@Url.Content("~/Themes/Blue/css/custom.css")">
+    <style type="text/css">
+        body {
+            background: #fff;
+            padding: 1.5rem 0;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .tab-content {
+            width: 100%;
+            height: auto;
+            float: left;
+        }
+
+        .timage img {
+            width: 100%;
+        }
+
+        .imgs-list {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0 -5px;
+        }
+
+            .imgs-list li {
+                width: 33.3333%;
+                padding: 0 5px;
+                list-style: none;
+                margin-bottom: 10px;
+            }
+
+            .imgs-list .cover {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 1rem;
+                border: 1px solid #f2f2f2;
+                text-decoration: none;
+                border-radius: 0.25rem;
+                position: relative;
+                transition: all 300ms ease-in-out;
+            }
+
+                .imgs-list .cover figure {
+                    height: 100px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+            .imgs-list .img img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: cover;
+            }
+
+            .imgs-list .file img {
+                width: 80px;
+            }
+
+            .imgs-list .file.doc img {
+                width: 60px;
+            }
+
+            .imgs-list .cover.active:before {
+                position: absolute;
+                height: 24px;
+                width: 24px;
+                right: 0.5rem;
+                top: 0.5rem;
+                content: "\eb30";
+                font-family: 'remixicon' !important;
+                font-style: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                color: white;
+                font-size: 1.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+            }
+
+            .imgs-list .cover:hover, .imgs-list .cover.active {
+                background-color: var(--secondary);
+                border-color: var(--secondary);
+            }
+
+            .imgs-list .cover.edit {
+                background-color: var(--danger);
+                border-color: var(--danger);
+            }
+
+            .imgs-list .cover.active {
+                transform: scale(0.9);
+            }
+
+                .imgs-list .cover:hover .img-title, .imgs-list .cover.active .img-title, .imgs-list .cover.edit .img-title {
+                    color: #fff;
+                }
+
+        .image .img-title {
+            text-align: center;
+            color: #000;
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        #no-media {
+            display: none;
+        }
+
+        .media-upload {
+            position: sticky;
+            top: 0;
+        }
+
+        .media-collection .card-title {
+            cursor: pointer;
+        }
+
+        .accordion .card-title.collapsed .accordion-indicator i.ic-show {
+            display: block;
+        }
+
+        .accordion .card-title.collapsed .accordion-indicator i.ic-hide {
+            display: none;
+        }
+
+        .accordion .card-title .accordion-indicator .ic-show {
+            display: none;
+        }
+
+        .accordion .card-title .accordion-indicator i.ic-hide {
+            display: block;
+        }
+
+        .custom-file-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-7 col-md-7 mb-4">
+                <div class="media-collection">
+                    <small class="form-text text-muted mb-3">You can Double click on Image to edit it's Title, Description and Image.</small>
+                    <div class="accordion media-upload-accordion" id="accordionExample">
+                        @*<div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h6 class="card-title mb-0 d-flex justify-content-between collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        <span class="accordion-hdtext"> Case Media</span>
+                                        <span class="accordion-indicator">
+                                            <i class="remixicon-arrow-down-s-line ic-show"></i>
+                                            <i class="remixicon-arrow-up-s-line ic-hide"></i>
+                                        </span>
+                                    </h6>
+                                </div>
+
+                                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample" style="">
+                                    <div class="card-body">
+                                        <ul class="imgs-list">
+                                            @if (hide == "hideAll")
+                                            {
+                                                @foreach (var item in Model)
+                                                {
+
+                                                    @foreach (var media in item)
+                                                    {
+                                                        if (Convert.ToDateTime(ViewBag.timestamp) == media.CreatedAt)
+                                                        {
+                                                            <li class="image">
+                                                                <a class="cover" href="javascript:void(0);" data-json='{"id":"@media.Id","name":"@media.Url","title":"@media.Title","url":"@media.Url","desc":"@media.Description"}'>
+
+                                                                    @if (System.IO.Path.GetExtension(media.Url) == ".pdf")
+                                                                    {
+                                                                        <figure class="img">
+                                                                            <img src="@Url.Content("~/images/pdf.png")" data-name="@media.Url" />
+                                                                        </figure>
+                                                                        <div class="img-title">@media.Title</div>
+                                                                    }
+                                                                    else if (System.IO.Path.GetExtension(media.Url) == ".doc" || System.IO.Path.GetExtension(media.Url) == ".docx" || System.IO.Path.GetExtension(media.Url) == ".txt")
+                                                                    {
+                                                                        <figure class="img">
+                                                                            <img src="@Url.Content("~/images/doc.png")" data-name="@media.Url" />
+                                                                        </figure>
+                                                                        <div class="img-title">@media.Title</div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <figure class="img">
+                                                                            <img src="@Url.Content("~/uploads/" + media.Url)" data-name="@media.Url" />
+                                                                        </figure>
+                                                                        <div class="img-title">@media.Title</div>
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    }
+
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @foreach (var media in Model)
+                                                {
+                                                    <li class="image">
+                                                        <a class="cover" href="javascript:void(0);" data-json='{"id":"@media.Id","name":"@media.Url","title":"@media.Title","url":"@media.Url","desc":"@media.Description"}'>
+
+                                                            @if (System.IO.Path.GetExtension(media.Url) == ".pdf")
+                                                            {
+                                                                <figure class="file pdf">
+                                                                    <img src="@Url.Content("~/images/pdf.png")" data-name="@media.Url" />
+                                                                </figure>
+                                                                <div class="img-title">@media.Title</div>
+                                                            }
+                                                            else if (System.IO.Path.GetExtension(media.Url) == ".doc" || System.IO.Path.GetExtension(media.Url) == ".docx" || System.IO.Path.GetExtension(media.Url) == ".txt")
+                                                            {
+                                                                <figure class="file doc">
+                                                                    <img src="@Url.Content("~/images/doc.png")" data-name="@media.Url" />
+                                                                </figure>
+                                                                <div class="img-title">@media.Title</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <figure class="img">
+                                                                    <img src="@Url.Content("~/uploads/" + media.Url)" data-name="@media.Url" />
+                                                                </figure>
+                                                                <div class="img-title">@media.Title</div>
+                                                            }
+                                                        </a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        @if (hide == "hideAll")
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <div class="card">
+                                    <div class="card-header" id="heading_@item.ParentId">
+                                        <h6 class="card-title mb-0 d-flex justify-content-between collapsed" data-toggle="collapse" data-target="#collapse_@item.ParentId" aria-expanded="false" aria-controls="collapseTwo">
+                                            <span class="accordion-hdtext">@item.Parent</span>
+                                            <span class="accordion-indicator">
+                                                <i class="remixicon-arrow-down-s-line ic-show"></i>
+                                                <i class="remixicon-arrow-up-s-line ic-hide"></i>
+                                            </span>
+                                        </h6>
+                                    </div>
+                                    <div id="collapse_@item.ParentId" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample" style="">
+                                        <div class="card-body">
+
+                                            <ul class="imgs-list">
+                                                @foreach (var media in item.Media)
+                                                {
+                                                    if (Convert.ToDateTime(ViewBag.timestamp) == media.CreatedAt)
+                                                    {
+                                                        <li class="image">
+                                                            <a class="cover" href="javascript:void(0);" data-json='{"id":"@media.Id","name":"@media.Url","title":"@media.Title","url":"@media.Url","desc":"@media.Description"}'>
+
+                                                                @if (System.IO.Path.GetExtension(media.Url) == ".pdf")
+                                                                {
+                                                                    <figure class="file pdf">
+                                                                        <img src="@Url.Content("~/images/pdf.png")" data-name="@media.Url" />
+                                                                    </figure>
+                                                                    <div class="img-title">@media.Title</div>
+                                                                }
+                                                                else if (System.IO.Path.GetExtension(media.Url) == ".doc" || System.IO.Path.GetExtension(media.Url) == ".docx" || System.IO.Path.GetExtension(media.Url) == ".txt")
+                                                                {
+                                                                    <figure class="file doc">
+                                                                        <img src="@Url.Content("~/images/doc.png")" data-name="@media.Url" />
+                                                                    </figure>
+                                                                    <div class="img-title">@media.Title</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <figure class="img">
+                                                                        <img src="@Url.Content("~/uploads/" + media.Url)" data-name="@media.Url" />
+                                                                    </figure>
+                                                                    <div class="img-title">@media.Title</div>
+                                                                }
+                                                            </a>
+                                                        </li>
+                                                    }
+
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <div class="card">
+                                    <div class="card-header" id="heading_@item.ParentId">
+                                        <h6 class="card-title mb-0 d-flex justify-content-between collapsed" data-toggle="collapse" data-target="#collapse_@item.ParentId" aria-expanded="false" aria-controls="collapseTwo">
+                                            <span class="accordion-hdtext">@item.Parent</span>
+                                            <span class="accordion-indicator">
+                                                <i class="remixicon-arrow-down-s-line ic-show"></i>
+                                                <i class="remixicon-arrow-up-s-line ic-hide"></i>
+                                            </span>
+                                        </h6>
+                                    </div>
+                                    <div id="collapse_@item.ParentId" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample" style="">
+                                        <div class="card-body">
+
+                                            <ul class="imgs-list">
+                                                @foreach (var media in item.Media)
+                                                {
+                                                    <li class="image">
+                                                        <a class="cover" href="javascript:void(0);" data-json='{"id":"@media.Id","name":"@media.Url","title":"@media.Title","url":"@media.Url","desc":"@media.Description"}'>
+                                                            @if (System.IO.Path.GetExtension(media.Url) == ".pdf")
+                                                            {
+                                                                <figure class="file pdf">
+                                                                    <img src="@Url.Content("~/images/pdf.png")" data-name="@media.Url" />
+                                                                </figure>
+                                                                <div class="img-title">@media.Title</div>
+                                                            }
+                                                            else if (System.IO.Path.GetExtension(media.Url) == ".doc" || System.IO.Path.GetExtension(media.Url) == ".docx" || System.IO.Path.GetExtension(media.Url) == ".txt")
+                                                            {
+                                                                <figure class="file doc">
+                                                                    <img src="@Url.Content("~/images/doc.png")" data-name="@media.Url" />
+                                                                </figure>
+                                                                <div class="img-title">@media.Title</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <figure class="img">
+                                                                    <img src="@Url.Content("~/uploads/" + media.Url)" data-name="@media.Url" />
+                                                                </figure>
+                                                                <div class="img-title">@media.Title</div>
+                                                            }
+                                                        </a>
+                                                    </li>
+
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-5 mb-4">
+                <div class="media-upload">
+                    <form id="mediaForm" action="~/admin/media/0/edit.html?timestamp=@ViewBag.timestamp&hide=@hide" method="post" enctype="multipart/form-data">
+                        <div class="card mb-3">
+                            <div class="card-header">Add New</div>
+                            <div class="card-body">
+                                <div class="status"></div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-lg-12">
+                                        <label for="Title">Title</label>
+                                        <input id="Title" name="Title" type="text" class="form-control" />
+
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-lg-12">
+                                        <label for="ParentId">Group</label>
+                                        <select id="ParentId" name="ParentId" class="custom-select">
+                                            <option selected="">Case Media</option>
+                                            <option>...</option>
+                                            <option>...</option>
+                                            <option>...</option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-lg-12">
+                                        <label for="Description">Short Description</label>
+                                        <textarea id="Description" name="Description" type="text" class="form-control"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="custom-file">
+                                        <input type="file" name="UploadImage" id="UploadImage" class="custom-file-input">
+                                        <label class="custom-file-label" for="UploadImage">Choose file</label>
+                                    </div>
+                                </div>
+                                @if (Permission.Can(UserCan.Create_Media) || Permission.Can(UserCan.Update_Media))
+                                {
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                    @if (userRole == "sa")
+                    {
+                        <form action="~/admin/0/media/creategroup.html?timestamp=@ViewBag.timestamp&hide=@hide" method="post" enctype="multipart/form-data">
+                            <div class="card card--add-group">
+                                <div class="card-header">Add Group</div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="inputGroupName">Group Name</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="inputGroupName" id="inputGroupName" placeholder="Type group name">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary">Add</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @*<div class="row px-2">
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12" id="left">
+                    <ul class="imgs-list">
+                        @if (hide == "hideAll")
+                        {
+                            @foreach (var media in Model)
+                            {
+                                if (Convert.ToDateTime(ViewBag.timestamp) == media.CreatedAt)
+                                {
+                                    <li class="image">
+                                        <a class="cover" href="javascript:void(0);" data-json='{"id":"@media.Id","name":"@media.Url","title":"@media.Title","url":"@media.Url","desc":"@media.Description"}'>
+                                            @if (System.IO.Path.GetExtension(media.Url) == ".pdf")
+                                            {
+                                                <figure class="file pdf">
+                                                    <img src="@Url.Content("~/images/pdf.png")" data-name="@media.Url" />
+                                                </figure>
+                                                <div class="img-title">@media.Title</div>
+                                            }
+                                            else if (System.IO.Path.GetExtension(media.Url) == ".doc" || System.IO.Path.GetExtension(media.Url) == ".docx" || System.IO.Path.GetExtension(media.Url) == ".txt")
+                                            {
+                                                <figure class="file doc">
+                                                    <img src="@Url.Content("~/images/doc.png")" data-name="@media.Url" />
+                                                </figure>
+                                                <div class="img-title">@media.Title</div>
+                                            }
+                                            else
+                                            {
+                                                <figure class="img">
+                                                    <img src="@Url.Content("~/uploads/" + media.Url)" data-name="@media.Url" />
+                                                </figure>
+                                                <div class="img-title">@media.Title</div>
+                                            }
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            @foreach (var media in Model)
+                            {
+                                <li class="image">
+                                    <a class="cover" href="javascript:void(0);" data-json='{"id":"@media.Id","name":"@media.Url","title":"@media.Title","url":"@media.Url","desc":"@media.Description"}'>
+                                        @if (System.IO.Path.GetExtension(media.Url) == ".pdf")
+                                        {
+                                            <img src="@Url.Content("~/images/pdf.png")" data-name="@media.Url" />
+                                            <div class="img-title">@media.Title</div>
+                                        }
+                                        else if (System.IO.Path.GetExtension(media.Url) == ".doc" || System.IO.Path.GetExtension(media.Url) == ".docx" || System.IO.Path.GetExtension(media.Url) == ".txt")
+                                        {
+                                            <img src="@Url.Content("~/images/doc.png")" data-name="@media.Url" />
+                                            <div class="img-title">@media.Title</div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@Url.Content("~/uploads/" + media.Url)" data-name="@media.Url" />
+                                            <div class="img-title">@media.Title</div>
+                                        }
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" id="right">
+                    <form action="~/admin/media/0/edit.html?timestamp=@ViewBag.timestamp&hide=@hide" method="post" enctype="multipart/form-data">
+                        <div class="status"></div>
+                        <div class="row pt-2" style="border-left:1px solid #efefef;border-bottom:1px solid #efefef;">
+                            <div class="form-group col-lg-12">
+                                <label>Title</label>
+                                <input id="Title" name="Title" type="text" class="form-control" />
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label>Description</label>
+                                <textarea id="Description" name="Description" type="text" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label class="btn btn-dark btn-sm pb-2" for="UploadImage" style="width:90px">
+                                    <i class="fas fa icon-circle-arrow-up"></i> Browse
+                                    <input type="file" style="height:0px; width:0px; opacity:0;" name="UploadImage" id="UploadImage"/>
+                                </label>
+                            </div>
+                            <div class="form-group col-lg-12">
+                                @if (Permission.Can(UserCan.Create_Media) || Permission.Can(UserCan.Update_Media))
+                                {
+                                    <button type="submit" class="btn btn-primary">Upload File</button>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>*@
+    </div>
+</body>
+</html>
+@{
+    var time = _IHttpContextAccessor.HttpContext.Request.Query["time"].ToString();// this.Request.QueryString["location"];
+    if (string.IsNullOrEmpty(time))
+    {
+        time = "true"; //  this is from file manager
+    }
+
+}
+<script type="text/javascript">
+    var time = "@time";
+    var tenant_identifier = '@tenant_identifier';
+    var caseId = '@ViewBag.CaseId';
+    var caseMedias = JSON.parse(localStorage.getItem("caseMedias"));
+    jQuery(document).ready(function () {
+        $.each($('.card-body .imgs-list'), function (i, v) {
+            if ($(this).find("li").length == 0) {
+                $(this).parents("div.card").remove();
+            };
+
+            @*$("#mediaForm").submit(function (e) {
+                console.log("form");
+                if (caseId != null) {
+                    e.preventDefault();
+
+                    //get the action-url of the form
+                    var actionurl = "/admin/media/0/caseEdit.html?timestamp=@ViewBag.timestamp&hide=@hide" + "&caseId=" + caseId;
+
+                    $.ajax({
+                        url: actionurl,
+                        type: 'post',
+                        dataType: 'application/json',
+                        data: $("#mediaForm").serialize(),
+                        success: function (data) {
+                            console.log(data);
+                        }
+                    });
+                }
+
+        });*@
+
+        });
+
+
+        $(document).on("submit", "#mediaForm", function (event) {
+            if (caseId != "") {
+                 event.preventDefault();
+
+            var url = "/admin/media/0/caseEdit.html?timestamp=@ViewBag.timestamp&hide=@hide" + "&caseId=" + caseId;
+            $.ajax({
+                url: url,
+                type: $(this).attr("method"),
+                dataType: "JSON",
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#mediaForm')[0].reset();
+                    $('#UploadImage').val(null);
+                    $('.custom-file-label').text(null);
+                    console.log('data');
+                    if (caseMedias.filter(x => x.parentId == data.parentId).length > 0) {
+                        var caseMedia = caseMedias.filter(x => x.parentId == data.parentId);
+                        caseMedia[0].media.push(data.media[0]);
+                    }
+                    else {
+                        caseMedias.push(data);
+                    }
+                    localStorage.setItem("caseMedias", JSON.stringify(caseMedias));
+                    appendFiles(data);
+
+                },
+                error: function (xhr, desc, err) {
+
+                }
+            });
+            }
+           
+
+        });
+
+        function appendFiles(data) {
+            console.log(data);
+            for (var i = 0; i < data.media.length; i++) {
+                 var extension = data.media[i].url.substr((data.media[i].url.lastIndexOf('.') + 1));
+                    var li = '';
+                    if (extension == "pdf") {
+                          li = '<li class="image"><a class="cover" href="javascript:void(0);" data-json="{&quot;id&quot;:&quot;' + data.media[i].id + '&quot;,&quot;name&quot;:&quot;' + data.media[i].url + '&quot;,&quot;title&quot;:&quot;' + data.media[i].title + '&quot;,&quot;url&quot;:&quot;' + data.media[i].url + '&quot;,&quot;desc&quot;:&quot;' + data.media[i].description + '&quot;}"><figure class="file pdf"><img src="/images/pdf.png" data-name="' + data.media[i].url + '"></figure><div class="img-title">' + data.media[i].title + '</div></a></li>';
+                    }
+                    else if (extension == "doc" || extension == "docx" || extension == "txt") {
+                        li = '<li class="image"><a class="cover" href="javascript:void(0);" data-json="{&quot;id&quot;:&quot;' + data.media[i].id + '&quot;,&quot;name&quot;:&quot;' + data.media[i].url + '&quot;,&quot;title&quot;:&quot;' + data.media[i].title + '&quot;,&quot;url&quot;:&quot;' + data.media[i].url + '&quot;,&quot;desc&quot;:&quot;' + data.media[i].description + '&quot;}"><figure class="file doc"><img src="/images/doc.png" data-name="' + data.media[i].url + '"></figure><div class="img-title">' + data.media[i].title + '</div></a></li>';
+                    }
+                    else {
+                        li = '<li class="image"><a class="cover" href="javascript:void(0);" data-json="{&quot;id&quot;:&quot;' + data.media[i].id + '&quot;,&quot;name&quot;:&quot;' + data.media[i].url + '&quot;,&quot;title&quot;:&quot;' + data.media[i].title + '&quot;,&quot;url&quot;:&quot;' + data.media[i].url + '&quot;,&quot;desc&quot;:&quot;' + data.media[i].description + '&quot;}"><figure class="img"><img src="/uploads/' + data.media[i].url + '" data-name="' + data.media[i].url + '"></figure><div class="img-title">' + data.media[i].title + '</div></a></li>';
+                    }
+
+                    var div = '<div class="card"><div class="card-header" id="heading_' + data.parentId + '"><h6 class="card-title mb-0 d-flex justify-content-between" data-toggle="collapse" data-target="#collapse_' + data.parentId + '" aria-expanded="true" aria-controls="collapseTwo"><span class="accordion-hdtext">' + data.parent + '</span><span class="accordion-indicator"><i class="remixicon-arrow-down-s-line ic-show"></i><i class="remixicon-arrow-up-s-line ic-hide"></i></span></h6></div><div id="collapse_' + data.parentId + '" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample" style=""><div class="card-body"><ul class="imgs-list">' + li + '</ul></div></div></div>';
+
+                    if ($('#heading_' + data.parentId).length > 0) {
+                        $('#collapse_' + data.parentId + ' ul.imgs-list').append(li);
+                    }
+                    else {
+                        $('#accordionExample').append(div);
+                    }
+            }
+
+        }
+
+        jQuery(document).on("click", ".cover", function () {
+            console.log("click");
+
+            if ($("#media", parent.document).find(".btn-primary").hasClass("fromProfile")) {
+                $('.cover.active').removeClass("active");
+            }
+
+            jQuery(".cover").removeClass("edit");
+            jQuery(this).toggleClass('active');
+            try {
+               var json=new Array();
+               jQuery.each(jQuery(".cover.active"),function(){
+                    json.push(jQuery(this).data("json"))
+               })
+               eval("window.parent.selected"+"(" + JSON.stringify(json) + ")");
+            jQuery("#Title").val("");
+                jQuery("#Description").val("");
+                jQuery("#ParentId").val("");
+            jQuery("form").attr("action","/admin/media/0/edit.html?timestamp=@ViewBag.timestamp&hide=@hide")
+            } catch (e) {
+                toastr.error("Error: " + e);
+            }
+        });
+        jQuery(document).on("dblclick",".cover",function () {
+            jQuery(".cover").removeClass("active").removeClass("edit");
+            if(time=="true"){
+             jQuery(".cover").removeClass("active");
+            }
+            jQuery(this).toggleClass('edit');
+            var obj=jQuery(this).data("json");
+            jQuery("#Title").val(obj.title);
+            jQuery("#Description").val(obj.desc);
+            jQuery("#ParentId").val(obj.type);
+            jQuery("form").attr("action","/admin/media/"+obj.id+"/edit.html?timestamp=@ViewBag.timestamp&hide=@hide")
+        });
+    /*
+        jQuery(".cover").click(function () {
+            jQuery(".cover").removeClass('active');
+            jQuery(this).addClass('active');
+        });
+    */
+        getGroupList();
+
+
+        if (caseId != "") {
+               $.each(caseMedias, function (i, value) {
+                   appendFiles(value);
+               });;
+        }
+
+    })
+
+    var getGroupList = function () {
+           jQuery.ajax({
+                type: "GET",
+                url: '/admin/' + tenant_identifier + '/media/grouplist.html',
+               dataType: "json",
+               success: function (response) {
+                   $("#ParentId").html("");
+                    $("#ParentId").append("<option value ='0' selected>Select Group</option>");
+                    for (i = 0; i < response.length; i++) {
+                        $("#ParentId").append("<option value='" + response[i].id + "'>" + response[i].title + "</option>");
+                   }
+
+                   console.log('group');
+                },
+                error: function () { }
+            });
+    }
+    var addNewGroup = function () {
+        jQuery.ajax({
+            type: "POST",
+            url: '/admin/' + tenant_identifier + '/media/creategroup.html?timestamp=@ViewBag.timestamp&hide=@hide',
+            data: { groupName: $("#inputGroupName").val()},
+            dataType: "json",
+            success: function (response) {
+                if (response == true) {
+                    toastr.success("Group Created.");
+                    getGroupList();
+                    $("#inputGroupName").val("");
+                }
+            },
+            error: function () { }
+        });
+    }
+
+    $(document).ready(function(){
+        $('.custom-file-input').on('change',function(){
+            var fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+    });
+</script>

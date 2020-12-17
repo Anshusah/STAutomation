@@ -1,0 +1,296 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model Cicero.Service.Models.SimpleTransfer.User.RegisterUserViewModel
+@inject Cicero.Service.Services.SimpleTransfer.ICountryService ICountryService
+@{
+    ViewData["Title"] = "Register";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+    var receiverCountryList = ICountryService.GetCountryList().Result;
+}
+
+<style>
+    textarea {
+        resize: none;
+    }
+</style>
+
+<section class="wrapper">
+    <div class="side-banner-overlay">
+        <div class="side-banner">
+            <div class="img-wrapper img-wrapper--register">
+                @*<img class="img-responsive" src="~/Themes/SimpleTransfer/img/Simple Transfer white Logo.png" alt="">*@
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        @*<div class="row ">
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" alt="">
+                    </div>
+                </div>
+                <div class="col col-md-6">
+                </div>
+            </div>*@
+        <div class="row">
+
+            <div class="col-md-6  offset-md-6 col-lg-6  offset-lg-6">
+                <a class="close" href="/st/user/logout.html">
+                    <i class="ri-close-fill"></i>
+                </a>
+                <div class="form-login-signup">
+                    <div class="mb-4">
+                        <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" alt="">
+                    </div>
+                    <div class="form-header">
+                        <h1 class="sr-only">
+                            Signing up is quick and easy!
+                        </h1>
+                        <h1 class="form-title title">
+                            <span> Signing up is</span>
+                            <span class="text-primary"> quick and easy!</span>
+                        </h1>
+                        <p>
+                            To stay in touch with us, please register to Simple Transfer account.
+                        </p>
+                    </div>
+                    <form method="post" id="formRegister">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="form-label">Country</label><sup>*</sup>
+                            <select asp-for="CountryCode" class="custom-select">
+                                <option value="" selected>Select Country</option>
+                                @{
+                                    foreach (var rcl in receiverCountryList)
+                                    {
+                                        <option value="@rcl.Value">@rcl.Text</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="CountryCode" class="text-danger"></span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text " id="basic-addon1" data-toggle="tooltip" data-placement="top" title="Your country Code"></span>
+                                    </div>
+                                    <input type="number" autocomplete="off" class="pl-3 form-fields form-control phone" asp-for="PhoneNumber" name="PhoneNumber" id="PhoneNumber" placeholder="Phone number *" required>
+                                    <div class="input-group-append">
+                                        <button type="button" id="btnSendOtp" class="btn btn-primary rounded-right" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Send SMS Code"><i class="ri-send-plane-fill"></i></button>
+                                    </div>
+                                </div>
+                                <span id="spnCodeStatus"></span>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row" id="divSmsCode" hidden>
+                            <div class="form-group col">
+                                <label for="SMSCode" class="form-label">Enter SMS Code</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-fields form-control" placeholder="Enter SMS Code *" id="txtSmsCode" />
+                                    <div class="input-group-append">
+                                        <button type="button" id="btnVerifyOtp" class="btn btn-primary rounded-right" data-toggle="tooltip" data-placement="top" title="Verify the code"><i class="ri-send-plane-fill"></i></button>
+                                    </div>
+                                </div>
+                                <span id="spnCodeValidate"></span>
+                            </div>
+                        </div>
+                        <div id="customerDetail" hidden>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <input type="text" class="form-fields form-control" asp-for="FirstName" id="FirstName" placeholder="First Name *" required>
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <input type="text" class="form-fields form-control" asp-for="LastName" id="LastName" placeholder="Last Name *" required>
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+
+                                    <input type="text" class="form-fields form-control email" asp-for="Email" id="Email" placeholder="someone@example.com *" required>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+
+                                    <input type="text" class="form-fields form-control" asp-for="PostCode" id="PostCode" placeholder="Post Code *" required>
+                                    <span asp-validation-for="PostCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label asp-for="City" class="form-label">City</label>
+
+                                    <input type="text" class="form-fields form-control" asp-for="City" id="City" placeholder="City *" required>
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <textarea type="text" class="form-fields form-control h-100" asp-for="Address" id="Address" placeholder="Address *" rows="4" required></textarea>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <input autocomplete="new-password" type="password" asp-for="Password" class="form-fields form-control password" placeholder="Create Password *" name="Password" id="Password" required>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                    <small class="text-black-50">
+                                        Your password must be a minimum of 6 characters in length, with at least one upper case letter, one number and one special character.
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <input autocomplete="new-password" type="password" class="form-fields form-control password" asp-for="ConfirmPassword" placeholder="Confirm Password *" name="ConfirmPassword" id="ConfirmPassword" required>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <p>
+                                        <div class="custom-control custom-checkbox">
+
+                                            <input asp-for="IsAgreed" type="checkbox" id="IsAgreed" required style="height: initial" class="custom-control-input" name="IsAgreed">
+                                            <label class="custom-control-label" for="IsAgreed">  I agree to the Simple Transfer User Agreement, Privacy Policy and Cookies Policy.</label>
+                                            <span asp-validation-for="IsAgreed" class="text-danger"></span>
+
+                                        </div>
+
+
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    @*<a type="submit" class="btn btn-block btn-secondary" href="/st/user/SenderDetail.html">
+                                            Continue
+                                        </a>*@
+                                    <button type="submit" class="btn btn-block btn-secondary">
+                                        Continue
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer-option">Already have an Account? <a href="/st/user/login.html" class="link"> Login</a></div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{}
+<script>
+
+    $("#btnSendOtp").click(function () {
+        $(this).tooltip('hide');
+        if ($("#formRegister").valid()) {
+
+            var fewSeconds = 120;
+            // Ajax request
+            var btn = $(this);
+            btn.attr('disabled', true);
+            setTimeout(function () {
+                btn.attr('disabled', false);
+                $("#spnCodeStatus").html("");
+            }, fewSeconds * 1000);
+            $.ajax({
+                url: '/st/user/sendotp',
+                data: {
+                    mobileNumber: $("#PhoneNumber").val(),
+                    countryCode: $("#CountryCode").val()
+                },
+                error: function () {
+                    toastr.error('Invalid Phone Number!');
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data == true) {
+                        $("#spnCodeStatus").html("");
+                        $("#spnCodeStatus").html("<span class='text-success small font-weight-light'>Code Sent! Resend after 2 minutes.</span>");
+                        $("#divSmsCode").removeAttr('style');
+                        $("#txtSmsCode").removeAttr('style');
+                        $("#divSmsCode").removeAttr('hidden');
+                        $("#txtSmsCode").removeAttr('hidden');
+                    }
+                    else {
+                        $("#spnCodeStatus").html("");
+                        $("#spnCodeStatus").html("<span class='text-danger small font-weight-light'>Invalid Phone Number!</span>");
+                    }
+                },
+                type: 'GET'
+            });
+        }
+    });
+    $("#btnVerifyOtp").click(function () {
+        if ($("#formRegister").valid()) {
+            if ($("#txtSmsCode").val() == "" || $("#txtSmsCode").val() == undefined) {
+                $("#spnCodeValidate").html("<span class='text-danger small font-weight-light'>Please enter code.</span>");
+            } else {
+                $.ajax({
+                    url: '/st/user/verifyotp',
+                    data: {
+                        mobileNumber: $("#PhoneNumber").val(),
+                        otp: $("#txtSmsCode").val(),
+                        countryCode: $("#CountryCode").val()
+                    },
+                    error: function () {
+                        toastr.error('An error has occurred');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data == true) {
+                            $("#divSmsCode").hide();
+                            $("#txtSmsCode").hide();
+                            $("#btnSendOtp").hide();
+                            $("#spnCodeStatus").html("<span class='text-success small font-weight-light'>Verified!</span>");
+                            $("#customerDetail").removeAttr('hidden');
+                        }
+                        else {
+                            $("#spnCodeValidate").html("<span class='text-danger small font-weight-light'>Code doesn't match. Please try again.</span>");
+                        }
+                    },
+                    type: 'GET'
+                });
+            }
+        }
+    });
+    $("#CountryCode").change(function () {
+        $("#spnCodeStatus").html("");
+        $("#divSmsCode").hide();
+        $("#PhoneNumber").val("");
+        $("#btnSendOtp").attr('disabled', false);
+
+        $.ajax({
+            url: '/api/country/phonecode',
+            data: {
+                countryCode: $(this).val()
+            },
+            error: function () {
+                toastr.error('An error has occurred');
+            },
+            dataType: 'json',
+            success: function (data) {
+                $('#basic-addon1').text(data);
+            },
+            type: 'GET'
+        });
+
+    });
+
+    //$('#CountryCode').on("click", function (e) {
+    //    $('#basic-addon1').text($(this).val());
+    //})
+
+</script>
+

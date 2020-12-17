@@ -1,0 +1,24 @@
+﻿@using Cicero.Service.Models
+
+@model IEnumerable<SkillSetViewModel>
+
+<div class="form-group group-add__form">
+    <label for="inputGroupName">Add new Skill</label>
+    <div class="input-group">
+        <input type="text" class="form-control" name="inputGroupName" id="inputGroupName" onkeydown="return (event.keyCode!=13);" placeholder="Type group name">
+        <div class="input-group-append">
+            <button type="button" id="addSkillBtn" class="btn btn-outline-secondary">Add</button>
+        </div>
+    </div>
+    <span id="inputGroupNameSpan" class="invalid-feedback"></span>
+</div>
+
+<div class="form-row">
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@item.Title  </li>
+        }
+    </ul>
+   
+</div>

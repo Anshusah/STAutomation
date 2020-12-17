@@ -1,0 +1,58 @@
+.form {
+    &-label {
+        color: #000;
+
+        + sup {
+            color: var(--primary);
+            margin-left: 3px;
+            top: -0.125em;
+        }
+
+        &-control {
+            color: $gray-400;
+            border:1px solid $gray-400;
+        }
+    }
+}
+label{
+    color:$black;
+}
+
+    .file {
+        &-uploader {
+            border-radius: 0.5rem;
+            width: 100px;
+            height: 100px;
+            border-width: 1px;
+            border: dashed 1.5px;
+            position: relative;
+            left: 0;
+            background-color: #F6F6F6;
+
+            &-label {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+
+                .icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: var(--primary);
+                    border: 1px solid var(--primary);
+                    height: 30px;
+                    width: 30px;
+                    border-radius: 50%;
+                }
+            }
+
+            &-input {
+                z-index: 2;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                opacity: 0;
+            }
+        }
+    }

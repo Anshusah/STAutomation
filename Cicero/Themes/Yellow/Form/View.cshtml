@@ -1,0 +1,210 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model CaseViewModel
+@inject ICaseService caseService
+@inject Permission Permission
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["body"] = "inner-pg";
+    ViewData["Title"] = "Claim";
+    dynamic data = new object();
+    if (Model.Id != 0)
+    {
+        data = Json.Serialize((dynamic)ViewBag.formData);
+    }
+    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+
+    Cicero.Service.Models.Core.FormBuilder FB = new Cicero.Service.Models.Core.FormBuilder() { FormData = fbvm, Side = "frontend", HttpContext = HttpContextAccessor.HttpContext };
+
+}
+@await Html.PartialAsync("../Shared/_Header.cshtml")
+
+<!-- container s -->
+<main role="main" class="main">
+    <form id="caseform" action="@Url.Content("~/admin/form/"+ _utils.GetTenantForUrl(true)   + _utils.EncryptId(Model.Id) +"/edit.html")" method="post" class="position-relative" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" id="case_id" />
+
+        <!-- <h3 class="">Home and Contents Claim Form</h3> -->
+        @Html.Raw(FB.RenderView())
+
+        <div class="card-footer">
+
+            <div class="nav-tab-controls">
+                @if ((Model.Id == 0 && Permission.Can(UserCan.Create_Claim) || Model.Id != 0 && Permission.Can(UserCan.Update_Claim)))
+                {
+                    <button type="button" class="btn btn-outline-secondary btn-save" id="save-btn">Update</button>
+
+                }
+
+            </div>
+        </div>
+
+    </form>
+
+    <!-- process e -->
+
+</main>
+<!-- container e -->
+
+@await Html.PartialAsync("../Shared/_Footer.cshtml")
+
+@if (Model.Id != 0)
+{
+
+    <script>
+            $(function () {
+        var allValues = JSON.parse('@data');
+         $.each(allValues, function (k, v) {
+            if ($('[name="' + k + '"]').attr('multiple') == 'multiple') {
+                $.each(v.split(","), function (i, e) {
+                    $("[name='" + k + "'] option[value='" + e + "']").prop("selected", true);
+                });
+            }
+            else if ($('[name="' + k + '"]').attr('type') == 'radio')
+            {
+                $("[name='" + k + "']").removeAttr("checked");
+                $("[name='" + k + "'][value='" + v + "']").prop("checked",true);
+            }
+            else {
+                $('[name="' + k + '"]').val(v);
+            }
+
+        });
+
+        });
+    </script>
+}
+@section Scripts{
+
+    <script src="~/js/form_builder_render_frontendtab.js"></script>
+    <script src="~/js/form_builder_form_validation.js"></script>
+    <script type="text/javascript">
+
+        jQuery(document).ready(function () {
+
+            getcountrylist("");
+            function getcountrylist(thisdata) {
+                let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/admin"+_utils.GetTenantForUrl(false) + "/country-list")",
+                    //data: ,
+                    success: function (d) {
+                        if (d != null) {
+                            $.each(d, function (k, l) {
+                                //console.log($(thisdata).attr("id"));
+                                //  if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                $("#" + $(".country").attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                //  }
+                            })
+                        }
+                    }
+                });
+            }
+
+        });
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+    </script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.number').number(true, 2);
+            $(document).on("keypress", ".datepicker", function (e) {
+                e.preventDefault();
+            });
+
+            $(document).on("keypress", ".datetimepicker", function (e) {
+                e.preventDefault();
+            });
+            jQuery(document).ready(function () {
+
+                $('.sidelist').on('click', function (event) {
+                    $target = $(event.target);
+                    $('.sidelist').removeClass('active');
+                    $target.parent().addClass('active');
+                });
+
+                $('#select-from').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                $('#select-to').selectize({
+                    create: true,
+                    sortField: {
+                        field: 'text',
+                        direction: 'asc'
+                    },
+                    dropdownParent: 'body'
+                });
+                var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+                var theme = (theme_match && theme_match[1]) || 'default';
+
+            });
+        });
+
+        //country list populate
+        function getcountrylist(thisdata) {
+            let selected = $(thisdata).children("option:selected").val();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/country-list")",
+                        //data: ,
+                        success: function (d) {
+                            if (d != null) {
+
+                                $.each(d, function (k, l) {
+                                    console.log($(thisdata).attr("id"));
+                                    if (l.value.toLowerCase() != selected.toLowerCase()) {
+                                        $("#" + $(thisdata).attr("id")).append("<option value='" + (l == "null" ? "" : l.value.toLowerCase()) + "' data-selects >" + l.text + "</option>");
+                                    }
+                                })
+                            }
+                        }
+                });
+        };
+        //save to draft
+        $(document).on("click", "#save-btn", function (e) {
+            var url = "@Url.Content("/admin/form/" + @_utils.GetTenantForUrl(true) + @_utils.GetParams("form") + "/" + @_utils.EncryptId(Model.Id) + "/edit.html")";
+
+            window.location = url;
+        });
+        //send claim
+
+    </script>
+}

@@ -1,0 +1,222 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model SenderDetailViewModel
+@{
+    ViewData["Title"] = "Sender Details";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+
+@*@await Html.PartialAsync("../Shared/_Header.cshtml")*@
+<section class="">
+    <div class="side-banner-overlay">
+        <div class="side-banner">
+            <div class="img-wrapper">
+                <img class="img-responsive" src="~/Themes/SimpleTransfer/img/Simple Transfer white Logo.png" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row ">
+            <div class="col-md-6">
+                <div class="logo">
+                    <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6  offset-md-6 col-lg-6  offset-lg-6">
+                <div class="form-login-signup">
+                    <div class="form-header">
+                        <h1 class="form-title title">
+                            Sender Detail
+                        </h1>
+                        <p>
+                            Simple Way to Send Money.
+                        </p>
+                    </div>
+                    <form action="">
+
+                        <div class="form-row">
+                            <div class="form-group col-1 col-md-1">
+                                <select class="form-fields form-control">
+                                    <option value="Mr." selected>Mr.</option>
+                                    <option value="Mrs.">Mrs.</option>
+                                    <option value="Miss">Miss</option>
+
+                                </select>
+                            </div>
+                            <div class="form-group col-11 col-md-5">
+                                <input asp-for="FirstName" type="text" class="form-fields form-control" placeholder="First Name">
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input asp-for="MiddleName" type="text" class="form-fields form-control" placeholder="Middle Name">
+                                <span asp-validation-for="MiddleName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input asp-for="LastName" type="text" class="form-fields form-control" placeholder="Last Name">
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input asp-for="DOB" type="text" class="form-fields form-control" placeholder="Date Of Birth">
+                                <span asp-validation-for="DOB" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input asp-for="AddressLine" type="text" class="form-fields form-control" placeholder="Address Line 1">
+                                <span asp-validation-for="AddressLine" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input asp-for="PostCode" type="text" class="form-fields form-control" placeholder="Post Code">
+                                <span asp-validation-for="PostCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <select class="form-fields form-control" placeholder="City*">
+                                    <option value="City" selected>City</option>
+                                    <option value="UK">UK</option>
+                                    <option value="Bangladesh">Bangladesh</option>
+
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <select class="form-fields" placeholder="TypeId*">
+                                    <option value="TypeId*" selected>TypeId*</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input asp-for="IdNumber" type="text" class="form-fields" placeholder="ID Number*">
+                                <span asp-validation-for="IdNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input asp-for="IdExpiryDate" type="date" class="form-fields date" placeholder="Id Expiry Date*">
+                                <span asp-validation-for="IdExpiryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <p>
+                                    Please have your mobile and photo ID (Driving Licence or Passport)
+                                    handy for completing the verification process. When you are ready,
+                                    please click on 'Verify Identity'.
+                                </p>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <button type="submit" class="btn btn-block btn-secondary">
+                                    Step1. Verify Identity
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="" id="agreeTerms">
+                                    <label for="agreeTerms" class="custom-control-label">
+                                        I have read and agreed with the Payment Services Terms
+                                        and Conditions
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <button type="submit" class="btn btn-block btn-secondary disabled">
+                                    Step2. Submit Registration
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*<div class="account-access signup--mod">
+=======
+            <div class="col col-md-6">
+                <button class="close">
+                    <span class="fa fa-times"></span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</section>
+<div class="account-access signup--mod">
+>>>>>>> 59e19a07f3a16b9683bff4d98c5d582bc21cee2c
+    <div class="container">
+        <div class="account-access__wrapper">
+            <h3 class="text-center mb-5">Create New Account</h3>
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="status"></div>
+                <div class="clearfix"></div>
+                @*<div asp-validation-summary="All" class="text-danger mt-2"></div>*@
+                @*<div class="form-row">
+                    <div class="form-group col-md-12">
+                        <input asp-for="Title" type="number" class="form-control" placeholder="Title">
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                </div>
+
+               
+                <div class="form-group">
+                    <input asp-for="LastName" type="password" class="form-control" placeholder="Last Name">
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="AddressLine" type="password" class="form-control" placeholder="Address Line 1">
+                    <span asp-validation-for="AddressLine" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="City" type="password" class="form-control" placeholder="City">
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>   <div class="form-group">
+                    <input asp-for="DOB" type="password" class="form-control" placeholder="Date Of Birth">
+                    <span asp-validation-for="DOB" class="text-danger"></span>
+                </div>   
+                <div class="form-group">
+                    <input asp-for="PostCode" type="password" class="form-control" placeholder="Post Code">
+                    <span asp-validation-for="PostCode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="IdType" type="password" class="form-control" placeholder="IdType">
+                    <span asp-validation-for="IdType" class="text-danger"></span>
+                </div> 
+                <div class="form-group">
+                    <input asp-for="IdExpiryDate" type="password" class="form-control" placeholder="Id Expiry Date">
+                    <span asp-validation-for="IdExpiryDate" class="text-danger"></span>
+                </div>
+                <small class="form-text text-muted mb-4">Please have your mobile and photo ID (Driving License or Passport) handy for completing the verification process. When you are ready, please click on 'Verify Identity'</small>
+
+                <button type="submit" class="btn btn-primary btn-block">Step1. Verify Identity</button>
+                <button type="submit" class="btn btn-primary btn-block">Step2. Submit Registration</button>
+            </form>
+        </div>
+    </div>
+</div>*@
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+@section Scripts{}

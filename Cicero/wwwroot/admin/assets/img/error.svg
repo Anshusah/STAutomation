@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 565.122 383.648">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #d6dee6;
+        opacity: 0.4;
+      }
+
+      .cls-2, .cls-3, .cls-4 {
+        fill: #f48778;
+      }
+
+      .cls-2 {
+        font-size: 18px;
+        font-family: OpenSans-Regular, Open Sans;
+      }
+
+      .cls-3 {
+        font-size: 108px;
+        font-family: PTSans-Regular, PT Sans;
+      }
+    </style>
+  </defs>
+  <g id="error" transform="translate(-653 -130)">
+    <path id="Path_21" data-name="Path 21" class="cls-1" d="M292.45,274.034c146.157,0,228.908-84.1,228.908-159.8S410.8-23.6,264.641-23.6,0,37.759,0,113.452c0,49.806,26.885,88.782,103.874,112.862C143.492,238.705,242.464,274.034,292.45,274.034Z" transform="matrix(0.985, -0.174, 0.174, 0.985, 657.099, 243.777)"/>
+    <g id="Group_56" data-name="Group 56" transform="translate(0 19)">
+      <text id="something_goes_wrong" data-name="something goes wrong" class="cls-2" transform="translate(840 361)"><tspan x="0" y="0">something goes wrong</tspan></text>
+      <text id="oops..." class="cls-3" transform="translate(809 312)"><tspan x="0" y="0">oops...</tspan></text>
+    </g>
+    <circle id="Ellipse_12" data-name="Ellipse 12" class="cls-4" cx="3" cy="3" r="3" transform="translate(841 308)"/>
+    <circle id="Ellipse_13" data-name="Ellipse 13" class="cls-4" cx="3" cy="3" r="3" transform="translate(886 308)"/>
+  </g>
+</svg>

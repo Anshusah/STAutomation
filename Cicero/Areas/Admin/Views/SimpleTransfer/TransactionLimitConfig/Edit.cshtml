@@ -1,0 +1,116 @@
+﻿@using Cicero.Service.Models;
+@using Cicero.Service.Helpers;
+@model Cicero.Service.Models.SimpleTransfer.TransactionLimitConfig.TransactionLimitConfigViewModel
+@inject Utils utils
+@inject Cicero.Service.Services.SimpleTransfer.ITransactionLimitConfigService ITransactionLimitConfigService
+@{
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Transaction Limit Config";
+    var countryList = ITransactionLimitConfigService.GetAllCountryList().Result;
+}
+
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + "/transactionlimitconfig.html")">Transaction Limit Config</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Country Payout</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Transaction Limit Config</h3>
+            <div class="page-toolbar">
+                <a href="@Url.Content("~/admin" + "/transactionlimitconfig/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-fill"></i><span class="btn__label">Add new record</span></a>
+            </div>
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="@Url.Content("~/admin" + "/transactionlimitconfig/"+Model.Id+"/edit.html")" method="post" class="page-container grid-horizontal-viewport form-container">
+                <div class="page-body">
+                    <div class="form-wrapper">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="grid-column form-overview">
+                            <div class="form-group">
+                                <select asp-for="CountryCode" class="custom-select">
+                                    <option value="">Select Country</option>
+                                    @{
+                                        foreach (var ls in countryList)
+                                        {
+                                            var countryId = (Model != null) ? Model.CountryCode : string.Empty;
+
+                                            <option selected="@(countryId.ToString() == ls.Value)" value="@ls.Value">@ls.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="CountryCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Limit Amount Per Txn</label>
+                                <input type="number" value="@Model.LimitAmountPerTxn" asp-for="LimitAmountPerTxn" class="form-control font-weight-bold p-0">
+                                <span asp-validation-for="LimitAmountPerTxn" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Limit Amount Per Day</label>
+                                <input type="number" value="@Model.LimitAmountPerDay" asp-for="LimitAmountPerDay" class="form-control font-weight-bold p-0">
+                                <span asp-validation-for="LimitAmountPerDay" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Limit Amount Per Month</label>
+                                <input type="number" value="@Model.LimitAmountPerMonth" asp-for="LimitAmountPerMonth" class="form-control font-weight-bold p-0">
+                                <span asp-validation-for="LimitAmountPerMonth" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Limit No Per Day</label>
+                                <input type="number" value="@Model.LimitNoPerDay" asp-for="LimitNoPerDay" class="form-control font-weight-bold p-0">
+                                <span asp-validation-for="LimitNoPerDay" class="text-danger"></span>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Limit No Per Month</label>
+                                <input type="number" value="@Model.LimitNoPerMonth" asp-for="LimitNoPerMonth" class="form-control font-weight-bold p-0">
+                                <span asp-validation-for="LimitNoPerMonth" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Created At</label>
+                                <input type="text" value="@Model.CreatedDate" name="CreatedDate" id="CreatedDate" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                            </div>
+                            <div class="form-group">
+                                <label>Last updated</label>
+                                <input type="text" value="@Model.UpdatedDate" name="UpdatedDate" id="UpdatedDate" class="form-control-plaintext font-weight-bold p-0" readonly="readonly">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Status</label><br />
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    @Html.RadioButtonFor(model => model.Status, true, new { @id = "enable", @class = "custom-control-input" })
+                                    <label class="custom-control-label" for="enable">Active</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    @Html.RadioButtonFor(model => model.Status, false, new { @id = "disable", @class = "custom-control-input" })
+                                    <label class="custom-control-label" for="disable">Inactive</label>
+                                </div>
+                            </div>
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                                <a class="btn btn-outline-secondary btn-back" href="@Url.Content("/admin" +  "/transactionlimitconfig.html")">Go back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+

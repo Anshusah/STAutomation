@@ -1,0 +1,18 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@using Cicero.Service.Services
+@model Cicero.Service.Models.Core.Elements.Recaptcha
+@inject ICommonService commonService
+@inject IUserService UserService
+@{
+    Recaptcha tb = Model as Recaptcha;
+    ////string role = UserService.getUserRoleIdByLoggedInUser();
+    ////var Roledata = tb?.Permissions?.Where(p => p.RoleId == role).FirstOrDefault();
+}
+
+
+<div class="fb-element">
+    <div class="form-group px-2">
+        <div class="g-recaptcha" data-site="@tb.SiteKey" id="@tb.BackendId"></div>
+    </div>
+</div>
+

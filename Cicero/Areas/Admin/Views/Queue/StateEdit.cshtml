@@ -1,0 +1,553 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model StateViewModel
+@inject IUserService _userService
+@inject Permission Permission
+@inject Utils  _utils
+
+@{
+
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " State";
+
+}
+
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + ".html")">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/states.html")">States</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) State</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage States</h3>
+        @if (Permission.Can(UserCan.Create_Queue))
+        {
+            <div class="page-actionbtns">
+                <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/"+ _utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+            </div>
+        }
+    </div>
+    <!-- page head ends -->
+    <div class="box p-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="box-header mb-4">
+                    <h4>State</h4>
+                    <p>This section helps you to add/edit or delete States. Please make changes on required fields and Click on "Save Change" buttons.</p>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <form action="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/state/"+ _utils.EncryptId(Model.Id) +"/edit.html")" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="status"></div>
+                        <div asp-validation-summary="All" class="text-danger mt-2"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedBy" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        <div class="box-body p-4">
+
+                            <div class="form-group">
+                                <label asp-for="SystemName">System State Name</label>
+                                <input type="text" class="form-control" asp-for="SystemName" placeholder="">
+                                <span asp-validation-for="SystemName"></span>
+                            </div> <!--//.form-group-->
+                            <div class="form-group">
+                                <label for="stateNameFrontend">State Action Name</label>
+                                <div class="input-group color-picker">
+                                    <input type="text" class="form-control" asp-for="ActionName" placeholder="">
+                                    <div class="input-group-append dropdown">
+                                        <input asp-for="Color" id="input-color-picker" type="text" class="form-control" hidden />
+                                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button" id="button-addon1" data-placement="top" title="Choose color"><i class="ri-paint-fill"></i></button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <div class="color-tiles-group">
+                                                <div class="color-tile active">
+                                                    <span class="color berryred" id="#EF3A53"><i class="ri-checkbox-cicle-fill"></i></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color blue" id="#44A4F8"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color neon" id="#3BD593"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color dullpurple" id="#CF92DE"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color brightred" id="#FF6D4F"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color yellow" id="#FFB636"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color gold" id="#A88240"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color pink" id="#F66DAD"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color darkblue" id="#0C9CBA"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color green" id="#93D549"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color purlple" id="#9869E8"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color grey" id="#68655F"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color darkestblue" id="#3C598B"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color darkgreen" id="#5E8B3C"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color lightpink" id="#FB85F7"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color black" id="#000000"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color satpurple" id="#5D44C2"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color lightblue" id="#13BDF2"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color dullgreen" id="#9AA591"></span>
+                                                </div>
+                                                <div class="color-tile">
+                                                    <span class="color orange" id="#F97F22"></span>
+                                                </div>
+                                            </div>
+                                        </div> <!--//dropdown-menu-->
+                                    </div>
+                                </div>
+                                <span asp-validation-for="ActionName"></span>
+                                <small class="form-text text-muted color-help">Note: Color will be used in Frontend</small>
+                            </div> <!--//.form-group-->
+                            <div class="d-flex justify-content-between align-items-center py-3">
+                                <h6 class="m-0">Form ID</h6>
+                                @*<button type="button" class="btn btn-link"><i class="fas fa-plus"></i> Add more</button>*@
+                            </div>
+                            <div class="card bg-light border mb-3">
+                                @if (Model.StateForForm != null && Model.StateForForm.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.StateForForm.Count(); i++)
+                                    {
+                                        <div class="card-header d-flex justify-content-end align-items-center p-4">
+                                            <div class="flex-grow-1 mr-3">
+                                                <label asp-for="StateForForm[i].CaseFormId" class="sr-only">Form ID</label>
+                                                <select class="custom-select" asp-for="StateForForm[i].CaseFormId" asp-items="Model.CaseFormList">
+                                                    <option value="0">Please Select an option</option>
+                                                </select>
+                                            </div>
+                                            @*<button class="btn btn-icon mr-2" type="button" data-toggle="tooltip" title="Delete" data-placement="top">
+                            <i class="far fa-trash-alt"></i>
+                        </button>*@
+                                            <button class="btn btn-icon" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </button>
+                                        </div> <!--//.card-header-->
+                                        <div class="collapse show" id="collapseOne">
+                                            <div class="card-body p-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="form-group state-icon-group">
+                                                            <label>State's icon</label>
+                                                            <input type="text" asp-for="StateForForm[i].Icon" state-icon hidden />
+                                                            <div class="d-flex flex-wrap">
+                                                                <span class="state-icon-item border border-primary p-3 rounded mb-3 mr-3 selected"><img width="48" src="~/images/state/ic-draft.png" alt=""></span>
+                                                                <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-assign.png" alt=""></span>
+                                                                <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-evaluated.png" alt=""></span>
+                                                                <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-verified.png" alt=""></span>
+                                                                <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-settled.png" alt=""></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row">
+                                                            <div class="col-xl-3 col-lg-5">
+                                                                <div class="form-group">
+                                                                    <label asp-for="StateForForm[i].Order">Order position</label>
+                                                                    <input type="number" class="form-control" asp-for="StateForForm[i].Order" placeholder="">
+                                                                </div>
+                                                            </div>
+                                                        </div> <!--//.form-row-->
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center py-3 mt-4 mb-4 border-bottom">
+                                                    <div class="flex-grow-1 mr-3">
+                                                        <div class="font-weight-bold">Display name settings</div>
+                                                        <p class="text-muted mb-0">Same Permissions for all roles.</p>
+                                                    </div>
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" permission-target asp-for="StateForForm[i].AllUser">
+                                                        <label class="custom-control-label" asp-for="StateForForm[i].AllUser">No/Yes</label>
+                                                    </div>
+                                                    @*<button type="button" class="btn btn-link"><i class="fas fa-plus"></i> Add more</button>*@
+                                                </div> <!--//.d-flex-->
+
+                                                <div class="row" id="state-permissions-@i">
+                                                    @if (Model.StateForForm[i].StatePermissions != null && Model.StateForForm[i].StatePermissions.Count() > 0)
+                                                    {
+                                                        @for (int j = 0; j < Model.StateForForm[i].StatePermissions.Count(); j++)
+                                                        {
+                                                            <div class="col-xl-6 mb-4">
+                                                                <div class="card border">
+                                                                    <div class="card-body">
+                                                                        <div class="form-group">
+                                                                            <label asp-for="StateForForm[i].StatePermissions[j].DisplayName">Display Name</label>
+                                                                            <input type="text" class="form-control" asp-for="StateForForm[i].StatePermissions[j].DisplayName" placeholder="">
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label asp-for="StateForForm[i].StatePermissions[j].RoleId">Role</label>
+                                                                            <select class="custom-select" asp-for="StateForForm[i].StatePermissions[j].RoleId" asp-items="Model.RoleList">
+                                                                                <option>Choose an option</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <div class="custom-control custom-checkbox">
+                                                                                <input type="checkbox" asp-for="StateForForm[i].StatePermissions[j].CanEdit" checked class="custom-control-input" value="true">
+                                                                                <label class="custom-control-label" asp-for="StateForForm[i].StatePermissions[j].CanEdit">Can this role edit case</label>
+                                                                            </div>
+                                                                            <div class="custom-control custom-checkbox">
+                                                                                <input type="checkbox" asp-for="StateForForm[i].StatePermissions[j].ViewMode" checked class="custom-control-input" value="true">
+                                                                                <label class="custom-control-label" asp-for="StateForForm[i].StatePermissions[j].ViewMode">View mode enabled for role</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        @*<button class="btn btn-outline-danger btn-block">Remove</button>*@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-xl-6 mb-4">
+                                                            <div class="card border">
+                                                                <div class="card-body">
+                                                                    <div class="form-group">
+                                                                        <label for="StateForForm[@i].StatePermissions[0].DisplayName">Display Name</label>
+                                                                        <input type="text" class="form-control" name="StateForForm[@i].StatePermissions[0].DisplayName" id="StateForForm[@i].StatePermissions[0].DisplayName" placeholder="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="StateForForm[@i].StatePermissions[0].RoleId">Role</label>
+                                                                        <select class="custom-select" name="StateForForm[@i].StatePermissions[0].RoleId" id="StateForForm[@i].StatePermissions[0].RoleId" asp-items="Model.RoleList">
+                                                                            <option>Choose an option</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" name="StateForForm[@i].StatePermissions[0].CanEdit" id="StateForForm[@i].StatePermissions[0].CanEdit" checked class="custom-control-input" value="true">
+                                                                            <label class="custom-control-label" for="StateForForm[@i].StatePermissions[0].CanEdit">Can this role edit case</label>
+                                                                        </div>
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" name="StateForForm[@i].StatePermissions[0].ViewMode" id="StateForForm[@i].StatePermissions[0].ViewMode" checked class="custom-control-input" value="true">
+                                                                            <label class="custom-control-label" for="StateForForm[@i].StatePermissions[0].ViewMode">View mode enabled for role</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    @*<button class="btn btn-outline-danger btn-block">Remove</button>*@
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </div> <!--//.row-->
+                                            </div> <!--//.card-body-->
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="card-header d-flex justify-content-end align-items-center p-4">
+                                        <div class="flex-grow-1 mr-3">
+                                            <label for="StateForForm[0].CaseFormId" class="sr-only">Form ID</label>
+                                            <select class="custom-select" name="StateForForm[0].CaseFormId" id="StateForForm[0].CaseFormId" asp-items="Model.CaseFormList">
+                                                <option>Please Select an option</option>
+                                            </select>
+                                        </div>
+                                        @*<button class="btn btn-icon mr-2" type="button" data-toggle="tooltip" title="Delete" data-placement="top">
+                        <i class="far fa-trash-alt"></i>
+                    </button>*@
+                                        <button class="btn btn-icon" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div> <!--//.card-header-->
+                                    <div class="collapse show" id="collapseOne">
+                                        <div class="card-body p-4">
+                                            <div class="card border">
+                                                <div class="card-body">
+                                                    <div class="form-group state-icon-group">
+                                                        <label>State's icon</label>
+                                                        <input type="text" name="StateForForm[0].Icon" id="StateForForm[0].Icon" state-icon hidden />
+                                                        <div class="d-flex flex-wrap">
+                                                            <span class="state-icon-item border border-primary p-3 rounded mb-3 mr-3 selected"><img width="48" src="~/images/state/ic-draft.png" alt=""></span>
+                                                            <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-assign.png" alt=""></span>
+                                                            <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-evaluated.png" alt=""></span>
+                                                            <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-verified.png" alt=""></span>
+                                                            <span class="state-icon-item border p-3 rounded mb-3 mr-3"><img width="48" src="~/images/state/ic-settled.png" alt=""></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col-xl-3 col-lg-5">
+                                                            <div class="form-group">
+                                                                <label for="StateForForm[0].Order">Order position</label>
+                                                                <input type="number" class="form-control" name="StateForForm[0].Order" id="StateForForm[0].Order" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div> <!--//.form-row-->
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center py-3 mt-4 mb-4 border-bottom">
+                                                <div class="flex-grow-1 mr-3">
+                                                    <div class="font-weight-bold">Display name settings</div>
+                                                    <p class="text-muted mb-0">Same Permissions for all roles.</p>
+                                                </div>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" permission-target name="StateForForm[0].AllUser" id="StateForForm[0].AllUser">
+                                                    <label class="custom-control-label" for="StateForForm[0].AllUser">No/Yes</label>
+                                                </div>
+                                                @*<button type="button" class="btn btn-link"><i class="fas fa-plus"></i> Add more</button>*@
+                                            </div> <!--//.d-flex-->
+                                            <div class="row" id="state-permissions-0">
+
+                                                <div class="col-xl-6 mb-4">
+                                                    <div class="card border">
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                <label for="StateForForm[0].StatePermissions[0].DisplayName">Display Name</label>
+                                                                <input type="text" class="form-control" id="StateForForm[0].StatePermissions[0].DisplayName" name="StateForForm[0].StatePermissions[0].DisplayName" placeholder="">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="StateForForm[0].StatePermissions[0].RoleId">Role</label>
+                                                                <select class="custom-select" id="StateForForm[0].StatePermissions[0].RoleId" name="StateForForm[0].StatePermissions[0].RoleId" asp-items="Model.RoleList">
+                                                                    <option>Choose an option</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" name="StateForForm[0].StatePermissions[0].CanEdit" id="StateForForm[0].StatePermissions[0].CanEdit" checked class="custom-control-input" value="true">
+                                                                    <label class="custom-control-label" for="StateForForm[0].StatePermissions[0].CanEdit">Can this role edit case</label>
+                                                                </div>
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="StateForForm[0].StatePermissions[0].ViewMode" name="StateForForms[0].StatePermissions[0].ViewMode" checked class="custom-control-input" value="true">
+                                                                    <label class="custom-control-label" for="StateForForm[0].StatePermissions[0].ViewMode">View mode enabled for role</label>
+                                                                </div>
+                                                            </div>
+                                                            @*<button class="btn btn-outline-danger btn-block">Remove</button>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div> <!--//.row-->
+                                        </div> <!--//.card-body-->
+                                    </div>
+                                }
+
+                            </div> <!--//.card-->
+                            @*<button type="button" class="btn btn-secondary btn-block py-2"><i class="fas fa-plus"></i> Add more</button>*@
+                            @*<div class="mt-5">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-a">
+                                    <label class="custom-control-label" for="customCheck-a">Notify user when state is changed</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-b">
+                                    <label class="custom-control-label" for="customCheck-b">Required reason to change in this state</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-c">
+                                    <label class="custom-control-label" for="customCheck-c">Enable Edit option</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-d">
+                                    <label class="custom-control-label" for="customCheck-d">Enable Delete option</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck-e">
+                                    <label class="custom-control-label" for="customCheck-e">Assign to one user</label>
+                                </div>
+                            </div>*@ <!--//.mt-5-->
+
+                        </div> <!--//.box-body-->
+                    <div class="box-footer p-4">
+                        <div class=" d-flex">
+                            @if ((Model.Id == 0 && Permission.Can(UserCan.Create_Queue)) || (Model.Id != 0 && Permission.Can(UserCan.Update_Queue)))
+                            {
+                                <button type="submit" class="btn btn-primary mr-2">Update Changes</button>
+                            }
+                            <a class="btn btn-link" href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/manage/states.html")">Go back</a>
+                        </div>
+                    </div> <!--//.box-footer-->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @*<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>*@
+    <script src="~/lib/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript">
+
+
+        //clone logic needed later
+        //$(document).on("click", '#clone-btn', function () {
+        //    let count = $("#to-clone").siblings().length;
+        //    let cloned = $("#to-clone").clone().removeAttr('id');
+
+        //    var index=parseInt(cloned.data("index"))+1;
+        //    console.log(cloned);
+        //    cloned.find(".dname").attr("name", "StatePermissions[" + index + "][DisplayName]").val("");
+        //    cloned.find(".role").attr("name", "StatePermissions[" + index + "][RoleId]").val("");
+        //    cloned.find(".edit").attr("name", "StatePermissions[" + index + "][CanEdit]").prop("checked", false);
+        //    cloned.find(".view").attr("name", "StatePermissions[" + index + "][ViewMode]").prop("checked", false);
+
+        //    cloned.insertAfter("#to-clone");
+
+        //});
+
+        $(function () {
+
+            jQuery(document).ready(function () {
+                $.each($(".color"), function (i, v) {
+                    if ($(v).attr("id") == $("#input-color-picker").val()) {
+                        $(v).trigger("click");
+                    }
+                });
+
+                $.each($("[state-icon]"), function (a, b) {
+
+                    $.each($(b).siblings("div").children("span"), function (c, d) {
+                        if ($(d).find("img").attr("src") == $(b).val()) {
+
+                            $(d).find("img").trigger("click");
+                        }
+
+                    });
+
+                });
+
+                $.each($("input[permission-target]"), function (a, b) {
+
+                    showHidestatePermission(b);
+
+                });
+            });
+
+            //for show/hide state permissions
+            function showHidestatePermission(e) {
+                let temp = $(e).attr("id");
+                if (temp != undefined) {
+                    let matches = temp.match(/\_(.*?)\_/);
+                    if (matches == null) {
+                        matches = temp.match(/\[(.*?)\]/);
+                    }
+                    if (matches) {
+                        if (e.checked) {
+                            $("#state-permissions-" + matches[1]).hide();
+                            $("#state-permissions-" + matches[1]).prev().removeClass("border-bottom");
+                        } else {
+                            $("#state-permissions-" + matches[1]).show();
+                            $("#state-permissions-" + matches[1]).prev().addClass("border-bottom");
+                        }
+                    }
+                    $.each($(".state-permission"), function (a, b) {
+                        
+                       if ($(this).data('index') != 1) {
+                           $(this).remove();
+                       }
+                });
+                }
+
+            }
+
+            //for checkbox hide/show state permissions on click
+            $(document).on("click", "input[permission-target]", function (e) {
+
+                showHidestatePermission(e.target);
+
+            });
+
+            //for color change
+            $(document).on("click", ".color", function (e) {
+                $.each($(e.target).parent().siblings(), function (i, v) {
+
+                    $(v).removeClass("active");
+                    $(v).find("i").remove();
+
+                });
+
+                $(e.target).parent().addClass("active");
+                $(e.target).append("<i class='ri-checkbox-cicle-fill'></i>");
+
+                $("#input-color-picker").val('' + $(e.target).attr("id") + '');
+
+            });
+
+            //for icon change
+            $(document).on("click", ".state-icon-item", function (e) {
+
+                $.each($(e.target).parent().siblings(), function (i, v) {
+
+                    $(v).removeClass("border-primary");
+                    $(v).removeClass("selected");
+
+                });
+
+                $(e.target).parent().addClass("border-primary");
+                $(e.target).parent().addClass("selected");
+
+                $(e.target).closest("div").siblings("input").val('' + $(e.target).attr("src") + '');                
+
+            });
+
+            $('#notification').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#message').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#tenantMultipleSelect').slimScroll({
+                height: '100px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            $('#userMultipleSelect').slimScroll({
+                height: '100px',
+                size: '5px',
+                alwaysVisible: false
+            });
+
+            // custom select js
+            //$(".color").click(function () {
+            //    var selCol = $(this).attr('id');
+            //    console.log(selCol);
+
+            //    $('.selectedCol').css('background', selCol);
+
+            //    if (jQuery("#input-color-picker").val().trim() == "") {
+            //        jQuery("#input-color-picker").val(selCol);
+            //    }
+            //});
+
+
+        });
+
+    </script>
+
+}

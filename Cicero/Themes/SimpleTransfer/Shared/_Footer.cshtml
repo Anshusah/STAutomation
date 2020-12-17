@@ -1,0 +1,158 @@
+﻿@using Cicero.Service.Services;
+@using Cicero.Service.Helpers;
+@inject IArticleService Article
+@inject AppSetting Setting
+@{
+    Theme theme = ViewData["theme"] as Theme;
+}
+    <div class="companies footer-banner">
+        <div class="container">
+            <div class="row">
+                <div class="col-2 col-md-2"> </div>
+                <div class="col-3 col-md-3"> <img src="~/Themes/@theme.GetName(false)/img/visa-verified.png" class="img-responsive" alt="VISA"> </div>
+                <div class="col-3 col-md-3"> <img src="~/Themes/@theme.GetName(false)/img/master-card-secure-code.png" class="img-responsive" alt="Master Card"> </div>
+                <div class="col-3 col-md-3"> <img src="~/Themes/@theme.GetName(false)/img/digicert.png" alt="digicert" class="img-responsive"> </div>
+            </div>
+        </div>
+    </div>
+<footer >
+    <section class=" footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+
+                    <img src="@Url.Content("~/Themes/" + theme.GetName(false) + "/img/simple-transfer-logo-white.png")" class="img-responsive mb-4" alt=" Simple Transfer">
+                    
+                    <p>We offer our customers one of the best exchange rates you will ever get on the market and there are no hidden fees.</p>
+                    <div class="social">
+                        <a href="https://www.facebook.com/SimpleTransfer" target="_blank" class="facebook"><i class="ri-facebook-fill ri-2x"></i></a>
+                        <a href="https://twitter.com/Simple_Transfer" target="_blank" class="twitter px-2"><i class="ri-twitter-fill ri-2x"></i></a>
+                        <a href="https://www.youtube.com/channel/UCHKTf6fDNqUHX4I6sFTjLGw/featured" target="_blank" class="youtube"><i class="ri-youtube-fill ri-2x"></i></a>
+                        <br>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+
+                    <h4 class="list-title title"> Useful Links</h4>
+                    <ul class=" list footer-menu list-unstyled">
+                        <li class="list-item"><a class="link" href="#">About Us</a></li>
+                        <li class="list-item"><a class="link" href="#">Portfolio</a></li>
+                        <li class="list-item"><a class="link" href="#">Contact Us</a></li>
+                        <li class="list-item"><a class="link" href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+
+                    <h4 class="list-title title">Help & Support</h4>
+                    <ul class=" list footer-menu list-unstyled">
+                        <li class="list-item"><a class="link" href="#">Terms and conditions </a></li>
+                        <li class="list-item"><a class="link" href="#">Privacy policy</a></li>
+                        <li class="list-item"><a class="link" href="#">Cookies policy</a></li>
+                        <li class="list-item"><a class="link" href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="list-title title">Contact</h4>
+
+                    <ul class=" list list-unstyled">
+                        <li>City Reach, 7th Floor</li>
+                        <li>5 Greenwich View Place</li>
+                        <li>London, E14 9NN, UK</li>
+
+
+                    </ul>
+                </div>
+
+
+            </div>
+
+        </div>
+    </section>
+    <section class=" footer-bottom">
+        <h5 class="sr-only">©copyright Fast Track Money Transfer Limited</h5>
+        <div class="container">
+            <p>
+                Fast Track Money Transfer Limited trading as Simple Transfer was incorporated in 2009 with a registration number: 6872129. Simple Transfer is authorised and regulated by the Financial Conduct Authority as a Payment Institution with FRN: 647030. Simple Transfer is also licensed with the HMRC with MLR number: 12526965
+            </p>
+            <p>©copyright Fast Track Money Transfer Limited 2020</p>
+
+           
+        </div>
+
+    </section>
+
+</footer>
+@*
+    <footer class="footer">
+        <section class=" footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        
+                        <img class="footer-logo "src="@Url.Content("~/Themes/" + theme.GetName(false) + "/img/simple-transfer-logo_bw.png")" alt="">
+                        <div class="promoters">
+                            <strong class="list-title title promoters-text">From the promoters of</strong>
+                            <imgsrc="@Url.Content("~/Themes/" + theme.GetName(false) + "/img/simple-call.png")" alt="">
+                        </div>
+                        <p>We offer our customers one of the best exchange rates you will ever get on the market and there are no hidden fees.</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+
+                        <h4 class="list-title title"> Useful Links</h4>
+                        <ul class=" list footer-menu list-unstyled">
+                            <li class="list-item"><a class="link" href="#">About Us</a></li>
+                            <li class="list-item"><a class="link" href="#">Portfolio</a></li>
+                            <li class="list-item"><a class="link" href="#">Contact Us</a></li>
+                            <li class="list-item"><a class="link" href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h4 class="list-title title">Contact</h4>
+
+                        <ul class=" list list-unstyled">
+                            <li>City Reach, 7th Floor</li>
+                            <li>5 Greenwich View Place</li>
+                            <li>London, E14 9NN, UK</li>
+
+
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="social">
+                            <a href="https://www.facebook.com/SimpleTransfer" target="_blank" class="facebook"><i class="fa fa-facebook"></i></a>
+                            <a href="https://twitter.com/Simple_Transfer" target="_blank" class="twitter"><i class="fa fa-twitter"></i></a>
+                            <a href="https://www.youtube.com/channel/UCHKTf6fDNqUHX4I6sFTjLGw/featured" target="_blank" class="youtube"><i class="fa fa-youtube"></i></a>
+                            <br>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+        <section class=" footer-bottom">
+            <div class="container">
+
+
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <a href="http://ww2.simpletransfer.co.uk/terms" target="_blank">Terms and conditions</a> |
+                        <a href="http://ww2.simpletransfer.co.uk/privacy" target="_blank">Privacy policy</a> |
+                        <a href="http://ww2.simpletransfer.co.uk/cookies" target="_blank">Cookies policy</a>
+                    </div>
+                    <div class="col-md-6 copyright-section">
+                        <p>©copyright Fast Track Money Transfer Limited 2020</p>
+                        <!-- <div class="copyright-section-media">
+                            <span class="icon"><i class="ri-facebook-fill"></i></span>
+                            <span class="icon"><i class="ri-linkedin-box-fill"></i></span>
+                            <span class="icon"><i class="ri-twitter-fill"></i></span>
+                            <span class="icon"><i class="ri-youtube-fill"></i></span>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </footer>*@
+

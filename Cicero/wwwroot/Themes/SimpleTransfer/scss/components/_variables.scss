@@ -1,0 +1,63 @@
+// Color system
+
+
+/*$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: 9f9f9f !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;*/
+
+
+$gray-100:      #f4f4f4 !default;
+$gray-200:      #989898 ;
+$gray-300:      #DFDFDF !default;
+$gray-400:      #9f9f9f !default;
+$gray-600:      #444444 !default;
+$gray-900:      #1C1839 !default;
+
+
+//Simple Transfer theme - blue color
+$blue:          #00B4F1 !default;
+$red:           #FF6C5B !default;
+$green:         #7DD59D !default;
+$yellow:        #F2D025 !default;
+$cyan:          #81D6E4 !default;
+$dark-blue:     #005FAE !default;
+$light-blue:    #AFE3F5 !default;
+$primary: $blue;
+$secondary:     $dark-blue;
+
+$body-color:            #444444 !default;
+$body-bg:               #F8F8F8 !default;
+$body-color--light:     #949494 !default;
+
+$headings-font-weight: 500;
+$font-size-base: 1rem;
+/*$font-family-sans-serif: 'Roboto', sans-serif !default;*/
+
+$font-family-sans-serif: Poppins !default;
+$font-size-lg: $font-size-base * 1 !default;
+
+//border-radius
+$border-radius-lg: .5rem !default;
+
+$font-weight-base:300;
+/*check-box/radio button
+$component-active-bg: $secondary !default;
+border-color:#7070707;*/
+$component-active-bg: $secondary !default;
+$custom-radio-indicator-icon-checked: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'><circle r='4' fill='#{$secondary}'/></svg>") !default;
+
+$yiq-contrasted-threshold:  190 !default;
+$modal-backdrop-bg: #000 !default;
+$modal-content-border-width: 0;
+
+
+//select-lg
+$custom-select-padding-x-lg: 1.5rem;

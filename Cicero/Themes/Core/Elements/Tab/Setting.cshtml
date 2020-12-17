@@ -1,0 +1,274 @@
+﻿<!-- Hidden Fields : Start -->
+@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.Tab
+@using Cicero.Service.Services
+@inject ICommonService commonService
+@{
+    Tab tb = Model as Tab;
+    var xx = tb;
+}
+<div class="modal-header flex-column">
+    <h5 class="modal-title">Tab Setting</h5>
+    <p class="mb-0">This settings helps you to customize Tab.</p>
+</div>
+<div class="modal-body">
+    <div class="status"></div>
+    <ul class="fb-card">
+        <li class="active">
+            <header>Name</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="ElementName_@tb.ElementId">Element Name</label>
+                        <input type="text" class="form-control" id="ElementName_@tb.ElementId" @tb.GetName("Name") value="@tb.Name" data-name="elmName" />
+                        <small class="form-text text-muted">Input a Unique Name for this Element.</small>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="ElementName_@tb.ElementId" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Frontend Setting</header>
+            <section>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="tabFrontendId_@tb.FrontendId">Id</label>
+                        <input type="text" class="form-control" id="tabFrontendId_@tb.FrontendId" @tb.GetName("FrontendId") value="@tb.FrontendId">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="tabFrontendClass_@tb.FrontendId">Class</label>
+                        <input type="text" class="form-control" id="tabFrontendClass_@tb.FrontendId" @tb.GetName("FrontendClass") value="@tb.FrontendClass">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="tabFrontendLabel_@tb.FrontendId">Label</label>
+                        <input type="text" class="form-control" id="tabFrontendLabel_@tb.FrontendId" @tb.GetName("FrontendLabel") value="@tb.FrontendLabel">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="frontendIcon_@tb.FrontendId">Tab icon</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" @tb.GetName("FrontendIcon") id="frontendIcon_@tb.FrontendId" value="@tb.FrontendIcon">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" id="selectIconFrontend" type="button" onclick="showIcons('frontend')">Select Icon</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="tabFrontendVisible_@tb.FrontendId" class="switch">
+                        <input class="switch__input" id="tabFrontendVisible_@tb.FrontendId" @tb.GetName("FrontendVisible") type="checkbox" value="true" @tb.GetChecked(tb.FrontendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+
+                <div class="switch-control">
+                    <label for="tabFrontendLabelVisible_@tb.FrontendId" class="switch">
+                        <input class="switch__input" id="tabFrontendLabelVisible_@tb.FrontendId" @tb.GetName("FrontendLabelVisible") type="checkbox" value="true" @tb.GetChecked(tb.FrontendLabelVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Frontend Label visible</span>
+                    </label>
+                </div>
+
+                <div class="switch-control">
+                    <label for="tabFrontendIconVisible_@tb.FrontendId" class="switch">
+                        <input class="switch__input" id="tabFrontendIconVisible_@tb.FrontendId" @tb.GetName("FrontendIconVisible") type="checkbox" value="true" @tb.GetChecked(tb.FrontendIconVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Frontend Icon visible</span>
+                    </label>
+                </div>
+
+            </section>
+        </li>
+        <li>
+            <header>Backend Setting</header>
+            <section>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="tabBackendId_@tb.BackendId">Id</label>
+                        <input type="text" class="form-control" id="tabBackendId_@tb.BackendId" @tb.GetName("BackendId") value="@tb.BackendId">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="tabBackendClass_@tb.BackendId">Class</label>
+                        <input type="text" class="form-control" id="tabBackendClass_@tb.BackendId" @tb.GetName("BackendClass") value="@tb.BackendClass">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="tabBackendLabel_@tb.BackendId">Label</label>
+                        <input type="text" class="form-control" id="tabBackendLabel_@tb.BackendId" @tb.GetName("BackendLabel") value="@tb.BackendLabel">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="backendIcon_@tb.BackendId">Tab icon</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" @tb.GetName("BackendIcon") id="backendIcon_@tb.BackendId" value="@tb.BackendIcon">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" id="selectIconBackend" type="button" onclick="showIcons('backend')">Select Icon</button>
+                            </div>
+                        </div>
+                        @*<input class="form-control bordered" type="text" @tb.GetName("BackendIcon") id="backendIcon">
+                            <button type="button" class="btn btn-primary btn-sm" id="selectIcon">Select Icon</button>*@
+                    </div>
+                </div>
+                <div class="switch-control">
+                    <label for="tabBackendVisible_@tb.BackendId" class="switch">
+                        <input class="switch__input" id="tabBackendVisible_@tb.BackendId" @tb.GetName("BackendVisible") type="checkbox" value="true" @tb.GetChecked(tb.BackendVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Default visible</span>
+                    </label>
+                </div>
+
+                <div class="switch-control">
+                    <label for="tabBackendLabelVisible_@tb.BackendId" class="switch">
+                        <input class="switch__input" id="tabBackendLabelVisible_@tb.BackendId" @tb.GetName("BackendLabelVisible") type="checkbox" value="true" @tb.GetChecked(tb.BackendLabelVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Backend Label visible</span>
+                    </label>
+                </div>
+
+                <div class="switch-control">
+                    <label for="tabBackendIconVisible_@tb.BackendId" class="switch">
+                        <input class="switch__input" id="tabBackendIconVisible_@tb.BackendId" @tb.GetName("BackendIconVisible") type="checkbox" value="true" @tb.GetChecked(tb.BackendIconVisible)>
+                        <span class="switch__state"></span>
+                        <span class="switch__label">Backend Icon visible</span>
+                    </label>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Permission</header>
+            <section>
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+                                <th>Write</th>
+                                <th>Read</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int index = 0;
+                                foreach (var role in commonService.GetRoleList())
+                                {
+                                    var Roledata = tb?.Permissions?.Where(p => p.RoleId == role.Value).FirstOrDefault();
+                                    if (Roledata != null)
+                                    {
+
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input name="Permissions[@index][Write]" type="checkbox" class="custom-control-input" id="permissionWrite_@index" value="true" checked="@Roledata.Write">
+                                                    <label class="custom-control-label" for="permissionWrite_@index"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input name="Permissions[@index][Read]" type="checkbox" class="custom-control-input" id="permissionRead_@index" value="true" checked="@Roledata.Read">
+                                                    <label class="custom-control-label" for="permissionRead_@index"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>
+                                                @role.Text
+                                                <input type="hidden" name="Permissions[@index][RoleId]" value="@role.Value">
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input name="Permissions[@index][Write]" class="custom-control-input" id="permissionWrite_@index" type="checkbox" value="true" checked>
+                                                    <label class="custom-control-label" for="permissionWrite_@index"></label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input name="Permissions[@index][Read]" class="custom-control-input" id="permissionRead_@index" type="checkbox" value="true" checked>
+                                                    <label class="custom-control-label" for="permissionRead_@index"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    index++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </section>
+        </li>
+        <li>
+            <header>Type</header>
+            <section>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="TabType_@tb.FrontendId">Tab Type</label>
+                        <select id="TabType_@tb.FrontendId" @tb.GetName("TabType") class="custom-select">
+                            @{
+                                foreach (var ls in Html.GetEnumSelectList<Cicero.Service.Enums.TabType>())
+                                {
+                                    var tabType = tb.TabType;
+                                    if(ls.Text == "CaseTimeLine")
+                                    {
+                                        ls.Text = "Case Timeline";
+                                    }
+                                    <option selected="@(tabType.ToString() == ls.Value)" value="@ls.Value">@ls.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </section>
+        </li>
+    </ul>
+</div>
+
+<script>
+    var selectedIcon = "";
+    $(function () {
+
+
+        $(".icon-item").on('click', function () {
+            $(".icon-item").removeClass('active');
+            selectedIcon = $(this).find(".icon-info").find("i").attr("class")
+            $(this).addClass('active');
+        });
+    });
+
+     function showIcons(e) {
+        $("#modal-select-icon").modal("show");
+        selectedIcon = "";
+        $(".icon-item").removeClass('active');
+        $("#btn-select-icon").attr("onclick", "setIconOnTab('" + e + "')");
+    }
+
+     function setIconOnTab(e) {
+        console.log("here");
+        if (selectedIcon != "") {
+            if (e == "frontend") {
+                $("[name='FrontendIcon']").val(selectedIcon);
+            }
+            else {
+                $("[name='BackendIcon']").val(selectedIcon);
+            }
+        }
+        else {
+
+        }
+    }
+</script>

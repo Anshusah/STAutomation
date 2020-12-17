@@ -1,0 +1,27 @@
+.claim-overview {
+    .bg-primary, .bg-white {
+        height: 100%;
+    }
+    .row {
+        .row {
+            height: 100%;
+        }
+    }
+    .btn-next, .btn-prev {
+        position: absolute;
+        z-index: 1000;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .btn-next {
+        right: 0;
+    }
+    .btn-prev {
+        left: 0;
+    }
+}
+.claim-total {
+    p {
+        font-weight: bold;
+    }
+}

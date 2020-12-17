@@ -1,0 +1,59 @@
+﻿@using Cicero.Service.Models.Core;
+@{
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/"+theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@await Html.PartialAsync("/Themes/"+theme.GetName(false) + "/Shared/_Header.cshtml")
+<!-- nav e -->
+<div class="jumbotron p-0">
+    <div class="rounded-0 inner-promo py-5">
+        <div class="position-relative z-index-2 container">
+            <h2 class="main-promo-caption heading">@Model.Title</h2>
+
+        </div>
+    </div>
+</div>
+<main role="main" class="container">
+    <div class="row mt-7 mb-7">
+        <div class="col-lg-8">
+            <address>
+                <strong>HCC</strong><br>
+                GW56+5W City of London, London, UK<br>
+                London SE1 9DD, UK<br>
+                <strong title="Phone">P:</strong> (123) 456-7890<br>
+                <strong title="Email">E:</strong> <a href="#">info@Cicero.com</a>
+            </address>
+            <div class="map d-flex flex-column flex-xl-row position-relative mt-5 mb-5">
+                <div>
+                    <img src="/Themes/@theme.GetName(false)/img/contact.jpg" alt="Contact" class="img-fluid">
+                </div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1241.6444808815652!2d-0.08882199211384208!3d51.50791445830447!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4876035159bb13c5%3A0xa61e28267c3563ac!2sLondon+Bridge!5e0!3m2!1sen!2snp!4v1537341367148" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <h4>Feedback</h4>
+            <p class="mb-5">Let me know if you have any queries, we'll be in another side to help it out.</p>
+            <form>
+                <div class="form-group">
+                    <label class="sr-only">Name</label>
+                    <input type="text" class="form-control" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label class="sr-only">Email</label>
+                    <input type="email" class="form-control" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label class="sr-only">Phone</label>
+                    <input type="tel" pattern="[1-9]{1}[0-9]{9}" class="form-control" placeholder="Phone">
+                </div>
+                <div class="form-group mt-4">
+                    <label class="sr-only">Message</label>
+                    <textarea class="form-control" name="" id="" cols="30" rows="5" placeholder="Message"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-rounded btn-lg">Send</button>
+            </form>
+        </div>
+    </div>
+    </main>
+    @await Html.PartialAsync("/Themes/"+theme.GetName(false) + "/Shared/_Footer.cshtml")

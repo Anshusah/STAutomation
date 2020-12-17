@@ -1,0 +1,164 @@
+﻿@inject Cicero.Service.Services.SimpleTransfer.IIdentificationTypeSetupService IIdentificationTypeSetupService
+@using Microsoft.AspNetCore.Http;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Verify Identity";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+    var sdkToken = HttpContextAccessor.HttpContext.Session.GetString("sdkToken");
+}
+<style>
+    #loading {
+        width: 100%;
+        z-index: 9;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+</style>
+<link href="~/onfido/dist/style.css" rel="stylesheet" />
+<div id='onfido-mount'></div>
+<div id="loading" style="display:none;">
+    <div class="spinner">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+
+        </div>
+        <div class="text-center">Please Wait.</div>
+    </div>
+</div>
+<section class="">
+    <div class="side-banner-overlay">
+        <div class="side-banner">
+            <div class="img-wrapper img-wrapper--register">
+                @*<img class="img-responsive" src="~/Themes/SimpleTransfer/img/Simple Transfer white Logo.png" alt="">*@
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+       
+        <div class="row">
+
+            <div class="col-md-6  offset-md-6 col-lg-6  offset-lg-6 ">
+                <div class="form-login-signup">
+                    <div class="mb-4">
+                        <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" alt="">
+                    </div>
+                    <div class="form-header">
+                        <h1 class="form-title title mb-0">
+                            <span>Verify</span>
+                            <span class="text-primary">Identity</span>
+                        </h1>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <p class="text-dark">
+                                    @*Before you can complete your first money transfer, we need to verify your identity. This won’t take long. Please have one of the following forms of ID ready: Passport, Driving Licence or National ID Card. If you don’t have your ID right now, just log back in later and we’ll prompt you for it. Just We can use your ID to auto-populate your personal data where we can.*@
+                                    Before you can complete your first money transfer, we need to verify your identity. This won’t take long. If you don’t have your ID right now, we can still set up your account now. Just log back in later and we’ll prompt you for it so you can complete your transfer.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col verify--button">
+                                <button type="button" onClick="triggerOnfido()" class="btn btn-block btn-primary">
+                                    Verify Identity
+                                </button>
+
+                                <a href="@Url.Action("SignUpComplete", "User")" class="btn btn-block btn-outline-primary">
+                                    Go ahead and set up my account. I’ll verify my identity later.
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/onfido/dist/onfido.min.js"></script>
+<script>
+    var onfido = {}
+
+    function triggerOnfido() {
+        onfido = Onfido.init({
+            useModal: true,
+            isModalOpen: true,
+            containerId: 'onfido-mount',
+            onModalRequestClose: function () {
+                // Update options with the state of the modal
+                onfido.setOptions({ isModalOpen: false })
+            },
+            token: "@sdkToken",
+            onComplete: function (data) {
+                 $("#loading").attr("style", "display:block;");
+                var isDocumentFront = data.hasOwnProperty("document_front");
+                var isDocumentBack = data.hasOwnProperty("document_back");
+                var isLivePhoto = data.hasOwnProperty("face");
+                var onfidoDocument = {};
+                var datas = [];
+                if (isDocumentFront) {
+                    onfidoDocument = {
+                        Id: data.document_front.id,
+                        Category: "document"
+                    };
+                    datas.push(onfidoDocument);
+                }
+
+                if (isDocumentBack) {
+                    onfidoDocument = {
+                        Id: data.document_back.id,
+                        Category: "document"
+                    };
+                    datas.push(onfidoDocument);
+                }
+
+                if (isLivePhoto) {
+                    onfidoDocument = {
+                        Id: data.face.id,
+                        Category: "face"
+                    };
+                    datas.push(onfidoDocument);
+                }
+
+                toastr.success("Onfido verification is processed.");
+
+                $.ajax({
+                    url: "/st/user/onfidodetail.html",
+                    type: "post",
+                    data: { datas: datas },
+                    success: function (response) {
+                         $("#loading").attr("style", "display:none;");
+                        window.location.href = '@Url.Action("SignUpComplete", "User")';
+                    },
+                    error: function (error) {
+                         $("#loading").attr("style", "display:none;");
+                    }
+                });
+
+            },
+            onError: function (error) {
+                toastr.error("Internal Server Error.");
+            },
+            steps: [
+                {
+                    type: 'welcome',
+                    options: {
+                        title: 'Verify Your Account',
+                        descriptions: ['To send money, we will need to verify your identity.', 'It will only take a couple of minutes.'],
+                        //nextButton: 'Go Go Go'
+                    }
+                },
+                'document',
+                 'face',
+                'complete'
+            ]
+        });
+    };
+</script>

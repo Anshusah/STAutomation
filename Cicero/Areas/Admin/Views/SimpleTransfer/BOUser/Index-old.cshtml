@@ -1,0 +1,394 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models.Core
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model IEnumerable<CaseViewModel>
+@inject IUserService UserService
+@inject ICaseService _ICaseService
+@inject Permission Permission
+@inject Utils _Utils
+
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+}
+
+@await Html.PartialAsync("../Shared/_Header.cshtml")
+@* <!--Include header--> *@
+<main class="main-content" role="main">
+
+    <div class="section user-overview">
+        <div class="container">
+            <h1 class="h2">Welcome @await UserService.GetUserFullName(),</h1>
+            <p class="text-muted">
+                From here you can claim, edit profile, learn a more efficient way to claim and many more.
+            </p>
+        </div>
+    </div>
+
+
+    @*@if (Permission.Can(UserCan.View_Claim))
+
+        {*@
+    <div class="section claim-overview">
+        <div class="container">
+            <div class="row">
+                @if (_ICaseService.GetCaseByUserId(true) != null && _ICaseService.GetCaseByUserId(true).Count() > 0)
+                {
+                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0" id="totalcase">
+                        <div class="claim-total bg-primary rounded p-4 text-white text-center">
+                            <h2>@_ICaseService.GetCaseByUserId(true).Count()</h2>
+                            <p class="mb-0">Total Claim</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+    @*}*@
+
+    <div class="section claim-list">
+        <div class="container">
+            <div class="section-header d-flex justify-content-between align-items-center py-4">
+                <h3>Your claims</h3>
+                @if (_ICaseService.GetCaseByUserId(true).Count() > 4)
+                {
+                    <a href="~/user@_Utils.GetTenantForUrl(false)/dashboard.html?all=true" class="btn btn-link" data-toggle="tooltip" data-placement="top" title="View all claims">View all</a>
+                }
+            </div>
+            @if (Model.Count() > 0)
+            {
+                <div class="row">
+
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="claim-item">
+                                <a href="@Url.Content("~/admin/formview" +"/"   +_Utils.EncryptId(item.Id) + "/view.html")" class="claim-item__content d-flex justify-content-center align-items-center flex-column">
+                                    <figure class="my-4">
+                                        <img src="/Themes/@theme.GetName(false)/img/ic-settled.png" alt="">
+                                    </figure>
+                                    <h4 class="h5"><span class="text-secondary">ID#</span>@item.CaseGeneratedId</h4>
+                                    <p class="text-muted">@item.CreatedAt</p>
+                                    <span class="badge badge-success badge-pill py-2 px-3">
+                                        @item.StateName
+                                    </span>
+                                </a>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-icon btn-light text-secondary"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right border-0 shadow"
+                                         aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="@Url.Content("~/admin/form"+ _Utils.GetTenantForUrl(false) +"/" + item.CaseFormUrl + "/" + _Utils.EncryptId(item.Id) + "/edit.html")">Edit</a>
+                                        <a class="dropdown-item" href="#">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    You have not filed claim yet.
+                </div>
+            }
+        </div>
+    </div>
+    <div class="section claim-process">
+        <div class="container">
+            <div class="section-header text-center">
+                <h3>Claim for your damaged product</h3>
+                <span class="text-muted">At vero eos et accusam et justo duo dolores</span>
+            </div>
+            <div class="row mb-5">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-lg-0">
+                            <div class="bg-secondary rounded p-4 text-center text-white">
+                                <div class="rounded-circle mb-4 mt-lg-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="32.012"
+                                         viewBox="0 0 30 32.012">
+                                        <g id="writting-letter" transform="translate(-9.333)">
+                                            <path id="Path_493" data-name="Path 493"
+                                                  d="M47.3,57.537h5.963a1.087,1.087,0,1,0,0-2.174H47.3a1.087,1.087,0,0,0,0,2.174Z"
+                                                  transform="translate(-32.906 -49.396)" fill="#fff" />
+                                            <path id="Path_494" data-name="Path 494"
+                                                  d="M47.3,94.451H61.214a1.087,1.087,0,0,0,0-2.174H47.3a1.087,1.087,0,0,0,0,2.174Z"
+                                                  transform="translate(-32.906 -82.331)" fill="#fff" />
+                                            <path id="Path_495" data-name="Path 495"
+                                                  d="M53.264,147.644H47.3a1.087,1.087,0,0,0,0,2.174h5.963a1.087,1.087,0,1,0,0-2.174Z"
+                                                  transform="translate(-32.906 -131.73)" fill="#fff" />
+                                            <path id="Path_496" data-name="Path 496"
+                                                  d="M38.6,4.037a1.087,1.087,0,0,0-1.211.361L35.358,7.01V1.087A1.087,1.087,0,0,0,34.271,0H10.42A1.087,1.087,0,0,0,9.333,1.087V30.925a1.087,1.087,0,0,0,1.087,1.087H34.271a1.087,1.087,0,0,0,1.087-1.087V16.387L39.1,11.712a1.086,1.086,0,0,0,.238-.679V5.065A1.087,1.087,0,0,0,38.6,4.037Zm-5.415,25.8H11.507V2.174H33.184V9.807L23.475,22.3a1.087,1.087,0,0,0,1.716,1.334l1.219-1.569H30.3a1.087,1.087,0,0,0,.849-.408l2.04-2.551Zm3.975-19.186-7.386,9.24H28.1L37.159,8.235Z"
+                                                  fill="#fff" />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <p>Register a "New Claim"</p>
+                            </div>
+                        </div>
+                        <!--//.col-md-6-->
+                        <div class="col-md-6 mb-4 mb-lg-0">
+                            <div class="bg-secondary rounded p-4 text-center text-white">
+                                <div class="rounded-circle mb-4 mt-lg-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="45.449" height="41.29"
+                                         viewBox="0 0 45.449 41.29">
+                                        <g id="Group_803" data-name="Group 803" transform="translate(-520 -1324)">
+                                            <g id="letter" transform="translate(520 1324)">
+                                                <path id="Path_497" data-name="Path 497"
+                                                      d="M26.737,26.953,22.694,23.92V21.552a.926.926,0,0,0-.933-.919h-3.45L14.1,17.477a.919.919,0,0,0-1.1,0L8.793,20.633H5.343a.926.926,0,0,0-.933.919V23.92L.368,26.953A.919.919,0,0,0,0,27.688V40.322a.919.919,0,0,0,.919.919H26.185a.919.919,0,0,0,.919-.919V27.688A.918.918,0,0,0,26.737,26.953Zm-24.9,2.222,5.835,2.918L1.838,37.968V29.174Zm7.56,3.78,3.744,1.872a.919.919,0,0,0,.822,0l3.744-1.872,6.4,6.449H2.993Zm10.034-.862,5.835-2.918v8.793Zm5.013-4.561-1.751.876V26.218ZM13.552,19.36l1.7,1.273H11.856Zm7.276,3.11v6.869l-7.276,3.638L6.276,29.339V22.47ZM4.41,28.406l-1.751-.876L4.41,26.217Z"
+                                                      transform="translate(0 -17.293)" fill="#fff" />
+                                                <path id="Path_498" data-name="Path 498"
+                                                      d="M104.746,105.658h6.317a.919.919,0,0,0,0-1.838h-6.317a.919.919,0,0,0,0,1.838Z"
+                                                      transform="translate(-94.352 -95.924)" fill="#fff" />
+                                                <path id="Path_499" data-name="Path 499"
+                                                      d="M104.746,140.27h6.317a.919.919,0,0,0,0-1.837h-6.317a.919.919,0,0,0,0,1.837Z"
+                                                      transform="translate(-94.352 -127.378)" fill="#fff" />
+                                            </g>
+                                            <g id="user-" transform="translate(544.394 1345.684)">
+                                                <g id="Group_801" data-name="Group 801" transform="translate(0 0)">
+                                                    <g id="Group_800" data-name="Group 800"
+                                                       transform="translate(0 0)">
+                                                        <path id="Path_502" data-name="Path 502"
+                                                              d="M108.18,29.361A6.18,6.18,0,1,0,102,23.18,6.185,6.185,0,0,0,108.18,29.361Zm0-10.528a4.326,4.326,0,1,1-4.3,4.348A4.329,4.329,0,0,1,108.18,18.833Z"
+                                                              transform="translate(-97.653 -17)" fill="#fff" />
+                                                        <path id="Path_503" data-name="Path 503"
+                                                              d="M13.383,319.075a.976.976,0,0,0-.9.171l-1.961,1.662-1.961-1.662a.976.976,0,0,0-.9-.171C6.393,319.5,0,321.675,0,324.83a.91.91,0,0,0,.9.938H20.118a.946.946,0,0,0,.938-.938C21.055,321.675,14.662,319.5,13.383,319.075ZM2.344,323.892a15.734,15.734,0,0,1,5.413-2.9l2.174,1.833a.907.907,0,0,0,1.193,0l2.174-1.833a15.734,15.734,0,0,1,5.413,2.9Z"
+                                                              transform="translate(0 -306.161)" fill="#fff" />
+                                                    </g>
+                                                </g>
+                                            </g>
+                                            <g id="Group_802" data-name="Group 802"
+                                               transform="translate(541.635 1349.371) rotate(90)">
+                                                <path id="Path_505" data-name="Path 505"
+                                                      d="M.744,7.538A.78.78,0,0,0,0,8.316a.75.75,0,0,0,.744.744h7.4a.75.75,0,0,0,.744-.744V2.569L9.972,3.651a.716.716,0,0,0,1.048,0,.755.755,0,0,0,0-1.082L8.688.2A.823.823,0,0,0,7.606.2L5.273,2.569a.755.755,0,0,0,0,1.082.768.768,0,0,0,.541.2.688.688,0,0,0,.507-.2L7.4,2.569V7.538Z"
+                                                      transform="translate(0)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <p>Send to your claims manager</p>
+                            </div>
+                        </div>
+                        <!--//.col-md-6-->
+                    </div>
+                    <!--//.row-->
+                </div>
+                <!--//.col-lg-6-->
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-lg-0">
+                            <div class="bg-secondary rounded p-4 text-center text-white">
+                                <div class="rounded-circle mb-4 mt-lg-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                         viewBox="0 0 30 30">
+                                        <g id="refresh" transform="translate(0.001)">
+                                            <path id="Path_500" data-name="Path 500"
+                                                  d="M3.6,16.383A11.869,11.869,0,0,1,3.515,15,11.436,11.436,0,0,1,22.7,6.545L21.691,7.576a.9.9,0,0,0-.228.879.92.92,0,0,0,.668.6c.177.035,5.989,1.908,5.619,1.834A.889.889,0,0,0,28.787,9.85c-.036-.177-1.322-6.634-1.248-6.264a.871.871,0,0,0-1.477-.439L25.2,3.99A15.01,15.01,0,0,0,0,15v.035c0,.5.023.878.049,1.171a.879.879,0,0,0,.7.783l1.806.361A.88.88,0,0,0,3.6,16.383Zm0,0"
+                                                  fill="#fff" />
+                                            <path id="Path_501" data-name="Path 501"
+                                                  d="M48.5,215.808l-1.811-.369a.88.88,0,0,0-1.048.968,11.964,11.964,0,0,1,.091,1.392,11.423,11.423,0,0,1-19.189,8.438l1.014-1.014a.9.9,0,0,0,.228-.879.919.919,0,0,0-.668-.6c-.177-.036-5.989-1.908-5.619-1.834a.861.861,0,0,0-.791.246.875.875,0,0,0-.246.791l1.248,6.2a.88.88,0,0,0,.615.668.844.844,0,0,0,.861-.228l.844-.844A14.977,14.977,0,0,0,49.247,217.8v-.053c0-.39-.014-.772-.047-1.152a.879.879,0,0,0-.7-.786Zm0,0"
+                                                  transform="translate(-19.247 -202.799)" fill="#fff" />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <p>Add key details: Title, shipping details, contact details, images. Hit Save</p>
+                            </div>
+                        </div>
+                        <!--//.col-md-6-->
+                        <div class="col-md-6 mb-4 mb-lg-0">
+                            <div class="bg-secondary rounded p-4 text-center text-white">
+                                <div class="rounded-circle mb-4 mt-lg-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22.728" height="30"
+                                         viewBox="0 0 22.728 30">
+                                        <g id="waiting" transform="translate(-35.998)">
+                                            <path id="Path_490" data-name="Path 490"
+                                                  d="M57.716,27.981H55.93V24.794c0-3.2-1.753-6.134-4.937-8.273A1.82,1.82,0,0,1,50.34,15a1.819,1.819,0,0,1,.653-1.521C54.177,11.34,55.93,8.4,55.93,5.206V2.019h1.786a1.009,1.009,0,0,0,0-2.019H37.007a1.009,1.009,0,0,0,0,2.019h1.786V5.206c0,3.2,1.753,6.134,4.937,8.273A1.819,1.819,0,0,1,44.384,15a1.819,1.819,0,0,1-.653,1.521c-3.184,2.139-4.937,5.077-4.937,8.273v3.188H37.007a1.009,1.009,0,0,0,0,2.019H57.716a1.009,1.009,0,1,0,0-2.019Zm-16.9-3.188c0-3.376,2.534-5.583,4.044-6.6A3.786,3.786,0,0,0,46.4,15a3.786,3.786,0,0,0-1.546-3.2c-1.51-1.015-4.044-3.221-4.044-6.6V2.019h13.1V5.206c0,3.376-2.534,5.583-4.045,6.6A3.787,3.787,0,0,0,48.321,15a3.787,3.787,0,0,0,1.546,3.2c1.51,1.015,4.044,3.221,4.045,6.6v3.188h-.335c-.83-3.119-5.064-6.509-5.594-6.923a1.009,1.009,0,0,0-1.243,0c-.529.414-4.764,3.8-5.594,6.923h-.334V24.794Zm10.644,3.188H43.268a16.332,16.332,0,0,1,4.094-4.824A16.328,16.328,0,0,1,51.456,27.981Z"
+                                                  fill="#fff" />
+                                            <path id="Path_491" data-name="Path 491"
+                                                  d="M139.514,173.049a1.01,1.01,0,1,0-.714-.3A1.016,1.016,0,0,0,139.514,173.049Z"
+                                                  transform="translate(-92.153 -153.754)" fill="#fff" />
+                                            <path id="Path_492" data-name="Path 492"
+                                                  d="M139.517,104.173a1.009,1.009,0,0,0,1.009-1.009v-1.784a1.009,1.009,0,1,0-2.019,0v1.784A1.009,1.009,0,0,0,139.517,104.173Z"
+                                                  transform="translate(-92.155 -90.232)" fill="#fff" />
+                                        </g>
+                                    </svg>
+                                </div>
+                                <p>Stay informed, automatic emails when status changes.</p>
+                            </div>
+                        </div>
+                        <!--//.col-md-6-->
+                    </div>
+                    <!--//.row-->
+                </div>
+                <!--//.col-lg-6-->
+            </div>
+            <!--//.row-->
+            <div class="text-center">
+                @if (Permission.Can(UserCan.Create_Claim))
+                {
+                    <a class="btn btn-primary btn-lg" href="@Url.Content("~/admin/form/changecaseform.html")" role="button">Claim Now</a>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div class="section faqs">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="section-header">
+                        <h2 class="section-header__title">Frequently Asked Questions</h2>
+                    </div>
+                    <div class="card-wrapper" id="accordionExample">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center"
+                                 id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+                                 aria-expanded="true" aria-controls="collapseOne">
+                                <h5 class="mb-0">How long does my claim normally take?</h5>
+                                <div class="card-control ml-3">
+                                    <i class="remixicon-add-line visible"></i>
+                                    <i class="remixicon-subtract-line hidden"></i>
+                                </div>
+                            </div>
+
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+                                    tempor
+                                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos
+                                    et
+                                    accusam et justo duo dolores
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header collapsed d-flex justify-content-between align-items-center"
+                                 id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
+                                 aria-expanded="false" aria-controls="collapseTwo">
+                                <h5 class="mb-0">
+                                    Do I need to report the claim to my insurer if you are dealing with
+                                    my
+                                    claim?
+                                </h5>
+                                <div class="card-control ml-3">
+                                    <i class="remixicon-add-line visible"></i>
+                                    <i class="remixicon-subtract-line hidden"></i>
+                                </div>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+                                    tempor
+                                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos
+                                    et
+                                    accusam et justo duo dolores
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header collapsed d-flex justify-content-between align-items-center"
+                                 id="headingThree" data-toggle="collapse" data-target="#collapseThree"
+                                 aria-expanded="false" aria-controls="collapseThree">
+                                <h5 class="mb-0">
+                                    What does Cicero require from me in order to deal with my claim?
+                                </h5>
+                                <div class="card-control ml-3">
+                                    <i class="remixicon-add-line visible"></i>
+                                    <i class="remixicon-subtract-line hidden"></i>
+                                </div>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
+                                    richardson.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header collapsed d-flex justify-content-between align-items-center"
+                                 id="headingFour" data-toggle="collapse" data-target="#collapseFour"
+                                 aria-expanded="false" aria-controls="collapseFour">
+                                <h5 class="mb-0">Do I have to do anything whilst the claim is ongoing?</h5>
+                                <div class="card-control ml-3">
+                                    <i class="remixicon-add-line visible"></i>
+                                    <i class="remixicon-subtract-line hidden"></i>
+                                </div>
+                            </div>
+                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
+                                    richardson ad
+                                    squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food
+                                    truck
+                                    quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a
+                                    bird on
+                                    it.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header collapsed d-flex justify-content-between align-items-center"
+                                 id="headingFive" data-toggle="collapse" data-target="#collapseFive"
+                                 aria-expanded="false" aria-controls="collapseFive">
+                                <h5 class="mb-0">How quickly should I report a claim?</h5>
+                                <div class="card-control ml-3">
+                                    <i class="remixicon-add-line visible"></i>
+                                    <i class="remixicon-subtract-line hidden"></i>
+                                </div>
+                            </div>
+                            <div id="collapseFive" class="collapse" aria-labelledby="headingFive"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
+                                    richardson ad
+                                    squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food
+                                    truck.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header collapsed d-flex justify-content-between align-items-center"
+                                 id="headingSix" data-toggle="collapse" data-target="#collapseSix"
+                                 aria-expanded="false" aria-controls="collapseSix">
+                                <h5 class="mb-0">How much does Cicero cost?</h5>
+                                <div class="card-control ml-3">
+                                    <i class="remixicon-add-line visible"></i>
+                                    <i class="remixicon-subtract-line hidden"></i>
+                                </div>
+                            </div>
+                            <div id="collapseSix" class="collapse" aria-labelledby="headingSix"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
+                                    richardson
+                                    ad.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </section>
+        <!-- //.faqs -->
+
+    </div>
+</main>
+<!-- // Main Content -->
+@await Html.PartialAsync("../Shared/_Footer.cshtml")
+@* <!--Include footer--> *@
+@section Scripts{}

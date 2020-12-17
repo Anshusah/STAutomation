@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>SimpleTransferDB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{43d6c43a-67ed-474e-9047-19c546a27be9}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>SimpleTransferDB</RootNamespace>
+    <AssemblyName>SimpleTransferDB</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Stored Procedures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Component.sql" />
+    <Build Include="dbo\Tables\Role.sql" />
+    <Build Include="dbo\Tables\RoleClaim.sql" />
+    <Build Include="dbo\Tables\CoreCaseTable.sql" />
+    <Build Include="dbo\Tables\RolePermission.sql" />
+    <Build Include="dbo\Tables\CountryList.sql" />
+    <Build Include="dbo\Tables\SecureTradingPaymentDetail.sql" />
+    <Build Include="dbo\Tables\CountryPayoutConfig.sql" />
+    <Build Include="dbo\Tables\SecurityQuestion.sql" />
+    <Build Include="dbo\Tables\Customer.sql" />
+    <Build Include="dbo\Tables\Setting.sql" />
+    <Build Include="dbo\Tables\CustomerCardDetail.sql" />
+    <Build Include="dbo\Tables\SkillSet.sql" />
+    <Build Include="dbo\Tables\SmsCodeCustomerRegistraion.sql" />
+    <Build Include="dbo\Tables\SmsCodeCustomerRegistraionLog.sql" />
+    <Build Include="dbo\Tables\SmsLog.sql" />
+    <Build Include="dbo\Tables\SourceOfFund.sql" />
+    <Build Include="dbo\Tables\ElementComponent.sql" />
+    <Build Include="dbo\Tables\State.sql" />
+    <Build Include="dbo\Tables\ElementState.sql" />
+    <Build Include="dbo\Tables\StateForForm.sql" />
+    <Build Include="dbo\Tables\ElementWorkflow.sql" />
+    <Build Include="dbo\Tables\StatePermission.sql" />
+    <Build Include="dbo\Tables\ElementWorkflowObject.sql" />
+    <Build Include="dbo\Tables\StateToState.sql" />
+    <Build Include="dbo\Tables\ElementWorkflowPoint.sql" />
+    <Build Include="dbo\Tables\STPaymentRequest.sql" />
+    <Build Include="dbo\Tables\ElementWorkflowState.sql" />
+    <Build Include="dbo\Tables\STPaymentRequestDetails.sql" />
+    <Build Include="dbo\Tables\ELMAH_Error.sql" />
+    <Build Include="dbo\Tables\SupplierBank.sql" />
+    <Build Include="dbo\Tables\EmailGroup.sql" />
+    <Build Include="dbo\Tables\SupplierBankBranch.sql" />
+    <Build Include="dbo\Tables\Emails.sql" />
+    <Build Include="dbo\Tables\SupplierBankMap.sql" />
+    <Build Include="dbo\Tables\ExchangeRates.sql" />
+    <Build Include="dbo\Tables\SupplierCity.sql" />
+    <Build Include="dbo\Tables\ExchangeRatesHistory.sql" />
+    <Build Include="dbo\Tables\Gender.sql" />
+    <Build Include="dbo\Tables\Tenant.sql" />
+    <Build Include="dbo\Tables\IdentificationType.sql" />
+    <Build Include="dbo\Tables\TenantUser.sql" />
+    <Build Include="dbo\Tables\Transaction.sql" />
+    <Build Include="dbo\Tables\TransactionHistory.sql" />
+    <Build Include="dbo\Tables\TransactionLimitConfig.sql" />
+    <Build Include="dbo\Tables\JazzCashTransaction.sql" />
+    <Build Include="dbo\Tables\TransactionTemp.sql" />
+    <Build Include="dbo\Tables\JazzCashTransactionHistory.sql" />
+    <Build Include="dbo\Tables\TransfastRemittancePurpose.sql" />
+    <Build Include="dbo\Tables\JazzCashTransactionTemp.sql" />
+    <Build Include="dbo\Tables\TransfastSourceOfFund.sql" />
+    <Build Include="dbo\Tables\MailMergeField.sql" />
+    <Build Include="dbo\Tables\UatSetting.sql" />
+    <Build Include="dbo\Tables\MailMergeObject.sql" />
+    <Build Include="dbo\Tables\MaritalStatus.sql" />
+    <Build Include="dbo\Tables\Media.sql" />
+    <Build Include="dbo\Tables\Message.sql" />
+    <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
+    <Build Include="dbo\Tables\MessageUser.sql" />
+    <Build Include="dbo\Tables\OnfidoApplicant.sql" />
+    <Build Include="dbo\Tables\Actions.sql" />
+    <Build Include="dbo\Tables\OnfidoApplicantDocument.sql" />
+    <Build Include="dbo\Tables\ActionsReceiver.sql" />
+    <Build Include="dbo\Tables\OnfidoApplicantLivePhoto.sql" />
+    <Build Include="dbo\Tables\ActionsSender.sql" />
+    <Build Include="dbo\Tables\OnfidoCheck.sql" />
+    <Build Include="dbo\Tables\ActivityLog.sql" />
+    <Build Include="dbo\Tables\Payee.sql" />
+    <Build Include="dbo\Tables\Additional_Information.sql" />
+    <Build Include="dbo\Tables\Payer.sql" />
+    <Build Include="dbo\Tables\AdminConfig.sql" />
+    <Build Include="dbo\Tables\PaymentApiPartner.sql" />
+    <Build Include="dbo\Tables\ApiUserToken.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\PaymentDetails.sql" />
+    <Build Include="dbo\Tables\Article.sql" />
+    <Build Include="dbo\Tables\UserClaim.sql" />
+    <Build Include="dbo\Tables\PaymentPurpose.sql" />
+    <Build Include="dbo\Tables\ArticleMedia.sql" />
+    <Build Include="dbo\Tables\UserLogin.sql" />
+    <Build Include="dbo\Tables\PaymentRequest.sql" />
+    <Build Include="dbo\Tables\AspNetUsers.sql" />
+    <Build Include="dbo\Tables\UserMedia.sql" />
+    <Build Include="dbo\Tables\PayoutModeConfig.sql" />
+    <Build Include="dbo\Tables\AuditLog.sql" />
+    <Build Include="dbo\Tables\UserMediaGroup.sql" />
+    <Build Include="dbo\Tables\Permission.sql" />
+    <Build Include="dbo\Tables\AutoSchedulerSetting.sql" />
+    <Build Include="dbo\Tables\UserRole.sql" />
+    <Build Include="dbo\Tables\PermissionGroup.sql" />
+    <Build Include="dbo\Tables\UserSkillSet.sql" />
+    <Build Include="dbo\Tables\Beneficiary.sql" />
+    <Build Include="dbo\Tables\UserToken.sql" />
+    <Build Include="dbo\Tables\BeneficiaryRelationship.sql" />
+    <Build Include="dbo\Tables\Workflow.sql" />
+    <Build Include="dbo\Tables\BeneficiaryTemp.sql" />
+    <Build Include="dbo\Tables\WorkflowObject.sql" />
+    <Build Include="dbo\Tables\WorkflowPoint.sql" />
+    <Build Include="dbo\Tables\Case.sql" />
+    <Build Include="dbo\Tables\WorkFlowState.sql" />
+    <Build Include="dbo\Tables\CaseForm.sql" />
+    <Build Include="dbo\Tables\CaseMedia.sql" />
+    <Build Include="dbo\Tables\CaseStateHistory.sql" />
+    <Build Include="dbo\Tables\Queue.sql" />
+    <Build Include="dbo\Tables\QueueForForm.sql" />
+    <Build Include="dbo\Tables\QueuePermission.sql" />
+    <Build Include="dbo\Tables\QueueToState.sql" />
+    <Build Include="dbo\Tables\RateSupplier.sql" />
+    <Build Include="dbo\Tables\RateSupplierFeeConfig.sql" />
+    <Build Include="dbo\Stored Procedures\ELMAH_LogError.sql" />
+    <Build Include="dbo\Stored Procedures\ELMAH_GetErrorXml.sql" />
+    <Build Include="dbo\Stored Procedures\ELMAH_GetErrorsXml.sql" />
+    <Build Include="dbo\Tables\ElementWorkflow.sql" />
+    <Build Include="dbo\Tables\UatSetting.sql" />
+    <Build Include="dbo\Tables\ElementWorkflowObject.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\ElementWorkflowPoint.sql" />
+    <Build Include="dbo\Tables\UserClaim.sql" />
+    <Build Include="dbo\Tables\ElementWorkflowState.sql" />
+    <Build Include="dbo\Tables\UserLogin.sql" />
+    <Build Include="dbo\Tables\ELMAH_Error.sql" />
+    <Build Include="dbo\Tables\UserMedia.sql" />
+    <Build Include="dbo\Tables\EmailGroup.sql" />
+    <Build Include="dbo\Tables\UserMediaGroup.sql" />
+    <Build Include="dbo\Tables\Emails.sql" />
+    <Build Include="dbo\Tables\UserRole.sql" />
+    <Build Include="dbo\Tables\ExchangeRates.sql" />
+    <Build Include="dbo\Tables\UserSkillSet.sql" />
+    <Build Include="dbo\Tables\ExchangeRatesHistory.sql" />
+    <Build Include="dbo\Tables\UserToken.sql" />
+    <Build Include="dbo\Tables\Gender.sql" />
+    <Build Include="dbo\Tables\Workflow.sql" />
+    <Build Include="dbo\Tables\IdentificationType.sql" />
+    <Build Include="dbo\Tables\WorkflowObject.sql" />
+    <Build Include="dbo\Tables\JazzCashTransaction.sql" />
+    <Build Include="dbo\Tables\WorkflowPoint.sql" />
+    <Build Include="dbo\Tables\JazzCashTransactionHistory.sql" />
+    <Build Include="dbo\Tables\WorkFlowState.sql" />
+    <Build Include="dbo\Tables\JazzCashTransactionTemp.sql" />
+    <Build Include="dbo\Tables\MailMergeField.sql" />
+    <Build Include="dbo\Tables\MailMergeObject.sql" />
+    <Build Include="dbo\Tables\MaritalStatus.sql" />
+    <Build Include="dbo\Tables\Media.sql" />
+    <Build Include="dbo\Tables\Message.sql" />
+    <Build Include="dbo\Tables\MessageUser.sql" />
+    <Build Include="dbo\Tables\OnfidoApplicant.sql" />
+    <Build Include="dbo\Tables\OnfidoApplicantDocument.sql" />
+    <Build Include="dbo\Tables\OnfidoApplicantLivePhoto.sql" />
+    <Build Include="dbo\Tables\OnfidoCheck.sql" />
+    <Build Include="dbo\Tables\Payee.sql" />
+    <Build Include="dbo\Tables\Payer.sql" />
+    <Build Include="dbo\Tables\PaymentApiPartner.sql" />
+    <Build Include="dbo\Tables\PaymentDetails.sql" />
+    <Build Include="dbo\Tables\PaymentPurpose.sql" />
+    <Build Include="dbo\Tables\PaymentRequest.sql" />
+    <Build Include="dbo\Tables\PayoutModeConfig.sql" />
+    <Build Include="dbo\Tables\Permission.sql" />
+    <Build Include="dbo\Tables\PermissionGroup.sql" />
+    <Build Include="dbo\Tables\Queue.sql" />
+    <Build Include="dbo\Tables\QueueForForm.sql" />
+    <Build Include="dbo\Tables\QueuePermission.sql" />
+    <Build Include="dbo\Tables\QueueToState.sql" />
+    <Build Include="dbo\Tables\RateSupplier.sql" />
+    <Build Include="dbo\Tables\RateSupplierFeeConfig.sql" />
+    <Build Include="dbo\Tables\Role.sql" />
+    <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
+    <Build Include="dbo\Tables\RoleClaim.sql" />
+    <Build Include="dbo\Tables\Actions.sql" />
+    <Build Include="dbo\Tables\RolePermission.sql" />
+    <Build Include="dbo\Tables\ActionsReceiver.sql" />
+    <Build Include="dbo\Tables\SecureTradingPaymentDetail.sql" />
+    <Build Include="dbo\Tables\ActionsSender.sql" />
+    <Build Include="dbo\Tables\SecurityQuestion.sql" />
+    <Build Include="dbo\Tables\ActivityLog.sql" />
+    <Build Include="dbo\Tables\Setting.sql" />
+    <Build Include="dbo\Tables\Additional_Information.sql" />
+    <Build Include="dbo\Tables\SkillSet.sql" />
+    <Build Include="dbo\Tables\AdminConfig.sql" />
+    <Build Include="dbo\Tables\SmsCodeCustomerRegistraion.sql" />
+    <Build Include="dbo\Tables\ApiUserToken.sql" />
+    <Build Include="dbo\Tables\SmsCodeCustomerRegistraionLog.sql" />
+    <Build Include="dbo\Tables\Article.sql" />
+    <Build Include="dbo\Tables\SmsLog.sql" />
+    <Build Include="dbo\Tables\ArticleMedia.sql" />
+    <Build Include="dbo\Tables\SourceOfFund.sql" />
+    <Build Include="dbo\Tables\AspNetUsers.sql" />
+    <Build Include="dbo\Tables\State.sql" />
+    <Build Include="dbo\Tables\AuditLog.sql" />
+    <Build Include="dbo\Tables\StateForForm.sql" />
+    <Build Include="dbo\Tables\AutoSchedulerSetting.sql" />
+    <Build Include="dbo\Tables\StatePermission.sql" />
+    <Build Include="dbo\Tables\Beneficiary.sql" />
+    <Build Include="dbo\Tables\StateToState.sql" />
+    <Build Include="dbo\Tables\BeneficiaryRelationship.sql" />
+    <Build Include="dbo\Tables\STPaymentRequest.sql" />
+    <Build Include="dbo\Tables\BeneficiaryTemp.sql" />
+    <Build Include="dbo\Tables\STPaymentRequestDetails.sql" />
+    <Build Include="dbo\Tables\Case.sql" />
+    <Build Include="dbo\Tables\SupplierBank.sql" />
+    <Build Include="dbo\Tables\CaseForm.sql" />
+    <Build Include="dbo\Tables\SupplierBankBranch.sql" />
+    <Build Include="dbo\Tables\CaseMedia.sql" />
+    <Build Include="dbo\Tables\SupplierBankMap.sql" />
+    <Build Include="dbo\Tables\CaseStateHistory.sql" />
+    <Build Include="dbo\Tables\SupplierCity.sql" />
+    <Build Include="dbo\Tables\Component.sql" />
+    <Build Include="dbo\Tables\Tenant.sql" />
+    <Build Include="dbo\Tables\CoreCaseTable.sql" />
+    <Build Include="dbo\Tables\TenantUser.sql" />
+    <Build Include="dbo\Tables\CountryList.sql" />
+    <Build Include="dbo\Tables\Transaction.sql" />
+    <Build Include="dbo\Tables\CountryPayoutConfig.sql" />
+    <Build Include="dbo\Tables\TransactionHistory.sql" />
+    <Build Include="dbo\Tables\Customer.sql" />
+    <Build Include="dbo\Tables\TransactionLimitConfig.sql" />
+    <Build Include="dbo\Tables\CustomerCardDetail.sql" />
+    <Build Include="dbo\Tables\TransactionTemp.sql" />
+    <Build Include="dbo\Tables\ElementComponent.sql" />
+    <Build Include="dbo\Tables\TransfastRemittancePurpose.sql" />
+    <Build Include="dbo\Tables\ElementState.sql" />
+    <Build Include="dbo\Tables\TransfastSourceOfFund.sql" />
+    <Build Include="dbo\Stored Procedures\ELMAH_LogError.sql" />
+    <Build Include="dbo\Stored Procedures\ELMAH_GetErrorXml.sql" />
+    <Build Include="dbo\Stored Procedures\ELMAH_GetErrorsXml.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleTransferDB.publish.xml" />
+  </ItemGroup>
+</Project>

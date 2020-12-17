@@ -1,0 +1,1938 @@
+/*!
+Website Name: Cicero
+Website URL: 
+Author: Niraj Shakya
+Author URI: www.nirajshakya.com
+Description: 
+Version: 1.0.0
+Text Domain: Cicero
+Tags: Cicero, Carriers, marines 
+*/
+/* 58px */
+/* 48px */
+/* 38px */
+/* 28px */
+/* 20px */
+/* 18px */
+/* 110px */
+/* 80px */
+/* 60px */
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn {
+  padding: .3rem 1rem;
+}
+
+/* line 4, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-rounded {
+  border-radius: 3rem;
+}
+
+/* line 9, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.main-promo .btn-outline-default {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* line 12, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.main-promo .btn-outline-default:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* line 19, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-primary {
+  background-color: #00B9FF;
+  border-color: #00B9FF;
+}
+
+/* line 23, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-primary:hover {
+  background-color: #00a7e6;
+  border-color: #00a7e6;
+}
+
+/* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-outline-primary {
+  color: #00B9FF;
+  border-color: #00B9FF;
+}
+
+/* line 32, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-outline-primary:hover {
+  background-color: #00B9FF;
+  border-color: #00B9FF;
+}
+
+/* line 38, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-link {
+  color: #00B9FF;
+}
+
+/* line 41, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-link:hover {
+  color: #00B9FF;
+}
+
+/* line 46, D:/xampp/htdocs/Cicero/assets/scss/components/_button.scss */
+.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn-outline-primary:not(:disabled):not(.disabled):active,
+.show > .btn-outline-primary.dropdown-toggle {
+  background-color: #00B9FF;
+  border-color: #00B9FF;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.brand {
+  position: relative;
+  z-index: 999;
+}
+
+/* line 5, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.brand img {
+  width: 75px;
+}
+
+/* line 15, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.user .avatar img {
+  height: 28px;
+  width: 28px;
+}
+
+/* line 21, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.user:hover {
+  border-bottom: 1px solid transparent !important;
+}
+
+/* line 25, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.user + .dropdown-menu {
+  left: initial;
+  right: 0;
+  text-align: right;
+  font-size: 14px;
+}
+
+/* line 31, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.user + .dropdown-menu .name {
+  display: block;
+  width: 100%;
+  padding: .25rem 1.5rem;
+}
+
+@media (max-width: 767px) {
+  /* line 25, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+  .user + .dropdown-menu {
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+  }
+}
+
+/* line 50, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.map img {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
+/* line 56, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.map-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #fff;
+  padding: 3px 10px;
+}
+
+/* line 65, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge {
+  padding: 5px 7px;
+  color: #fff;
+  font-weight: normal;
+}
+
+/* line 70, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge-settled {
+  background: #64C764;
+}
+
+/* line 74, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge-rejected {
+  background: #FF6D4F;
+}
+
+/* line 78, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge-draft {
+  background: #CF92DE;
+}
+
+/* line 82, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge-submitted {
+  background: #FFB636;
+}
+
+/* line 86, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge-processing {
+  background: #44A4F8;
+}
+
+/* line 89, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.badge-review {
+  background: #71CEA6;
+}
+
+/* line 95, D:/xampp/htdocs/Cicero/assets/scss/base/_base.scss */
+.page-item.active .page-link {
+  background-color: #00B9FF;
+  border-color: #00B9FF;
+}
+
+/* line 4, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mt-8 {
+  margin-top: 6.875rem;
+}
+
+/* line 7, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mt-7 {
+  margin-top: 5.5rem;
+}
+
+/* line 10, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mt-6 {
+  margin-top: 3.75rem;
+}
+
+/* line 15, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mb-8 {
+  margin-bottom: 6.875rem;
+}
+
+/* line 18, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mb-7 {
+  margin-bottom: 5.5rem;
+}
+
+/* line 21, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mb-6 {
+  margin-bottom: 3.75rem;
+}
+
+/* line 28, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.pt-8 {
+  padding-top: 6.875rem;
+}
+
+/* line 31, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.pt-7 {
+  padding-top: 5.5rem;
+}
+
+/* line 34, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.pt-6 {
+  padding-top: 3.75rem;
+}
+
+/* line 39, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.pb-8 {
+  padding-bottom: 6.875rem;
+}
+
+/* line 42, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.pb-7 {
+  padding-bottom: 5.5rem;
+}
+
+/* line 45, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.pb-6 {
+  padding-bottom: 3.75rem;
+}
+
+/* line 51, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.z-index-1 {
+  z-index: 1;
+}
+
+/* line 54, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.z-index-2 {
+  z-index: 2;
+}
+
+/* line 57, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.z-index-3 {
+  z-index: 3;
+}
+
+/* line 65, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.alert-primary.custom {
+  background: #E4F7FF;
+  border-color: #00B9FF;
+}
+
+/* line 73, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.avatar-md {
+  height: 80px;
+  width: 80px;
+}
+
+/* line 80, D:/xampp/htdocs/Cicero/assets/scss/base/_utilities.scss */
+.mw-75 {
+  width: 100%;
+  max-width: 750px;
+}
+
+/* line 4, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h1,
+.h1 {
+  font-size: 3.625rem;
+}
+
+/* line 9, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h2,
+.h2 {
+  font-size: 3rem;
+}
+
+/* line 14, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h3,
+.h3 {
+  font-size: 2.375rem;
+}
+
+/* line 19, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h4,
+.h4 {
+  font-size: 1.75rem;
+}
+
+/* line 24, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h4,
+.h4 {
+  font-size: 1.75rem;
+}
+
+/* line 29, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h5,
+.h5 {
+  font-size: 1.25rem;
+}
+
+/* line 34, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h6,
+.h6 {
+  font-size: 1.125rem;
+}
+
+/* line 39, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+a {
+  color: #00B9FF;
+}
+
+/* line 42, D:/xampp/htdocs/Cicero/assets/scss/base/_typo.scss */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 300;
+}
+
+/* line 3, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.validation-mark {
+  width: 24px;
+  height: 24px;
+  background: #f2f2f2;
+  border-radius: 50%;
+  position: absolute;
+  top: 21px;
+  left: 17px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0);
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-property: opacity, transform;
+}
+
+/* line 21, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.ic-done {
+  width: 13px;
+}
+
+/* line 25, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.ic-error {
+  width: 6px;
+}
+
+/* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.ic-done,
+.ic-error {
+  opacity: 0;
+}
+
+/* line 34, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.true {
+  transition: all 0.2;
+}
+
+/* line 37, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.true .validation-mark {
+  opacity: 1;
+  transform: scale(1);
+  background: #00FFD4;
+}
+
+/* line 42, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.true .validation-mark .ic-done {
+  opacity: 1;
+}
+
+/* line 45, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.true .validation-mark .ic-error {
+  display: none;
+}
+
+/* line 50, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.true:before {
+  opacity: 0;
+}
+
+/* line 54, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.false {
+  transition: all 0.2;
+}
+
+/* line 57, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.false .validation-mark {
+  opacity: 1;
+  transform: scale(1);
+  background: #FF0046;
+}
+
+/* line 62, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.false .validation-mark .ic-error {
+  opacity: 1;
+}
+
+/* line 65, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.false .validation-mark .ic-done {
+  display: none;
+}
+
+/* line 70, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.false:before {
+  opacity: 0;
+}
+
+/* line 77, D:/xampp/htdocs/Cicero/assets/scss/components/_validation.scss */
+.nav-tabs-custom .validation-mark {
+  width: 16px;
+  height: 16px;
+  position: static;
+  margin-top: 8px;
+}
+
+/* line 2, D:/xampp/htdocs/Cicero/assets/scss/components/_dropdown.scss */
+.dropdown-right {
+  right: 0px !important;
+  left: auto !important;
+}
+
+/* line 6, D:/xampp/htdocs/Cicero/assets/scss/components/_dropdown.scss */
+.dropdown-sm {
+  min-width: 75px;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.main-promo {
+  background: url(../img/banner-image.jpg) no-repeat center top/cover;
+  height: calc(95vh - 74px);
+  max-height: 720px;
+  min-height: 580px;
+  position: relative;
+}
+
+/* line 9, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.main-promo-caption {
+  color: #fff;
+}
+
+@media (min-width: 769px) {
+  /* line 12, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+  .main-promo-caption.subheading {
+    max-width: 528px;
+  }
+}
+
+/* line 19, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.main-promo:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 769px) {
+  /* line 19, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+  .main-promo:after {
+    display: none;
+  }
+}
+
+/* line 35, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.arrow-yholder {
+  height: 50px;
+  width: 18px;
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  margin-left: -9px;
+}
+
+/* line 44, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.arrow-y {
+  position: absolute;
+  -webkit-animation-name: arrow-ymovement;
+  /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 0.9s;
+  /* Safari 4.0 - 8.0 */
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  animation-name: arrow-ymovement;
+  animation-duration: 0.9s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+/* line 57, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.arrow-y img {
+  width: 18px;
+}
+
+/* line 62, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.secondary-promo {
+  background: url(../img/success-stories.jpg) no-repeat center top/cover;
+  min-height: 440px;
+}
+
+/* line 67, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.getstarted-promo {
+  background: url(../img/getstarted.jpg) no-repeat center top/cover;
+  min-height: 255px;
+}
+
+/* line 72, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.inner-promo {
+  background: url(../img/img1.jpg) no-repeat center top/cover;
+  position: relative;
+}
+
+/* line 76, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.inner-promo .main-promo-caption {
+  color: #5c5c5c;
+}
+
+/* line 80, D:/xampp/htdocs/Cicero/assets/scss/components/_banner.scss */
+.inner-promo:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_tab.scss */
+.number-bullet {
+  height: 48px;
+  width: 48px;
+  border: 1px solid #00B9FF;
+  color: #00B9FF;
+}
+
+/* line 9, D:/xampp/htdocs/Cicero/assets/scss/components/_tab.scss */
+.nav-pills .nav-link {
+  cursor: pointer;
+}
+
+/* line 11, D:/xampp/htdocs/Cicero/assets/scss/components/_tab.scss */
+.nav-pills .nav-link:hover {
+  background: #f0f8ff;
+}
+
+/* line 14, D:/xampp/htdocs/Cicero/assets/scss/components/_tab.scss */
+.nav-pills .nav-link.active {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* line 18, D:/xampp/htdocs/Cicero/assets/scss/components/_tab.scss */
+.nav-pills .nav-link.active .number-bullet {
+  background: #00B9FF;
+  color: #fff;
+}
+
+/* line 24, D:/xampp/htdocs/Cicero/assets/scss/components/_tab.scss */
+.nav-pills h4 {
+  font-size: 1.5rem;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_carousel.scss */
+.slick-arrow {
+  display: none !important;
+  transition: all o 0.3s ease;
+}
+
+/* line 6, D:/xampp/htdocs/Cicero/assets/scss/components/_carousel.scss */
+.responsive-carousel .card {
+  margin: 0 10px 20px;
+  border: none;
+  border-radius: 0;
+}
+
+/* line 10, D:/xampp/htdocs/Cicero/assets/scss/components/_carousel.scss */
+.responsive-carousel .card a {
+  color: #000;
+}
+
+@media (min-width: 769px) {
+  /* line 13, D:/xampp/htdocs/Cicero/assets/scss/components/_carousel.scss */
+  .responsive-carousel .card-body {
+    min-height: 132px;
+    max-height: 145px;
+  }
+}
+
+/* line 21, D:/xampp/htdocs/Cicero/assets/scss/components/_carousel.scss */
+.responsive-carousel:hover .slick-arrow {
+  display: block !important;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_footer.scss */
+.footer {
+  background: #5B718F;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+/* line 10, D:/xampp/htdocs/Cicero/assets/scss/components/_footer.scss */
+.footer-nav-hd {
+  color: #fff;
+  font-size: 16px;
+}
+
+@media (min-width: 769px) {
+  /* line 10, D:/xampp/htdocs/Cicero/assets/scss/components/_footer.scss */
+  .footer-nav-hd {
+    margin-bottom: 15px;
+  }
+}
+
+/* line 17, D:/xampp/htdocs/Cicero/assets/scss/components/_footer.scss */
+.footer-nav-list {
+  list-style: none;
+  margin: 0;
+}
+
+/* line 22, D:/xampp/htdocs/Cicero/assets/scss/components/_footer.scss */
+.footer-nav-item a {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* line 28, D:/xampp/htdocs/Cicero/assets/scss/components/_footer.scss */
+.copyright {
+  font-size: 12px;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access {
+  width: 100%;
+  max-width: 330px;
+}
+
+/* line 5, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access .form-group {
+  margin-bottom: 1.7rem;
+}
+
+/* line 9, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access .form-control::placeholder {
+  opacity: 1;
+}
+
+/* line 13, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access .form-control::-webkit-input-placeholder {
+  opacity: 1;
+}
+
+/* line 17, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access .form-control::-moz-placeholder {
+  opacity: 1;
+}
+
+/* line 21, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access .form-control:-ms-input-placeholder {
+  opacity: 1;
+}
+
+/* line 25, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.user-access .form-control:-moz-placeholder {
+  opacity: 1;
+}
+
+/* line 32, D:/xampp/htdocs/Cicero/assets/scss/components/_useracces.scss */
+.check-withsmalltxt .form-check-input {
+  margin-top: 0.4rem;
+}
+
+/* Change Autocomplete styles in Chrome*/
+/* line 2, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* this style for Cicero */
+/* .form-control {
+    border: none;
+    border-bottom: 1px solid $brdcolor;
+    border-radius: 0;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+        opacity: 0.6;
+    }
+
+    &::-webkit-input-placeholder {
+        opacity: 0.6;
+    }
+
+    &::-moz-placeholder {
+        opacity: 0.6;
+    }
+
+    &:-ms-input-placeholder {
+        opacity: 0.6;
+    }
+
+    &:-moz-placeholder {
+        opacity: 0.6;
+    }
+
+    &:focus {
+        box-shadow: none;
+        border-color: $brand;
+
+        &::placeholder {
+            opacity: 0.4;
+        }
+
+        &::-webkit-input-placeholder {
+            opacity: 0.4;
+        }
+
+        &::-moz-placeholder {
+            opacity: 0.4;
+        }
+
+        &:-ms-input-placeholder {
+            opacity: 0.4;
+        }
+
+        &:-moz-placeholder {
+            opacity: 0.4;
+        }
+    }
+} */
+/* Home claim form styles starts */
+/* line 73, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.form-control {
+  height: 2.2rem;
+}
+
+/* line 76, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.form-control.length-sm {
+  width: 150px;
+}
+
+/* line 79, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.form-control.length-md {
+  width: 270px;
+}
+
+/* line 82, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.form-control.length-lg {
+  width: 550px;
+}
+
+/* line 87, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.form-group label {
+  display: inline-block;
+  margin-bottom: .3rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* line 93, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.form-group .form-check-label {
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
+/* Home claim form styles ends */
+/* line 103, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.newclaim .col-form-label {
+  font-size: 14px;
+}
+
+@media (min-width: 1025px) {
+  /* line 103, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+  .newclaim .col-form-label {
+    text-align: right;
+  }
+}
+
+/* line 112, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-field-icon {
+  background-repeat: no-repeat;
+  background-position: 15px 46px;
+  background-size: 11px;
+}
+
+/* line 117, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-field-icon .form-control {
+  background: transparent;
+  padding-left: 18px;
+}
+
+/* line 122, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-field-icon.location {
+  background-image: url(../img/location-pin.svg);
+}
+
+/* line 126, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-field-icon.date {
+  background-image: url(../img/calendar.svg);
+  background-position-y: 9px;
+  background-size: 14px;
+}
+
+/* select tag first option making as placeholer  */
+/* line 134, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+select {
+  -webkit-appearance: menulist-button;
+  color: #000;
+}
+
+/* line 139, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+select:invalid {
+  opacity: 0.6;
+}
+
+/* line 143, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+textarea.form-control {
+  border: 1px solid #ddd;
+}
+
+/* line 147, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+input[type="text"],
+input[type="password"],
+button:focus {
+  outline: none;
+}
+
+/* custom upload file */
+/* line 155, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-upload {
+  width: auto;
+  height: 24px;
+  position: relative;
+}
+
+/* line 160, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-upload input {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
+}
+
+/* line 169, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-upload-visual {
+  display: inline-block;
+  height: 24px;
+}
+
+/* line 176, D:/xampp/htdocs/Cicero/assets/scss/components/_form.scss */
+.custom-upload:hover .custom-upload-visual {
+  color: #00B9FF;
+}
+
+@media (max-width: 767px) {
+  /* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+  .navbar-collapse {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: -100%;
+    padding-top: 100px;
+    background: #fff;
+    text-align: center;
+  }
+  /* line 12, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+  .navbar-collapse.show {
+    left: 0;
+  }
+  /* line 16, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+  .navbar-collapse .nav-link {
+    color: #000 !important;
+    font-size: 20px;
+    opacity: 0.7;
+  }
+  /* line 22, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+  .navbar-collapse a.btn {
+    border-color: #00B9FF !important;
+    color: #00B9FF !important;
+    margin-right: 0 !important;
+    font-size: 20px !important;
+    margin-bottom: 10px;
+  }
+  /* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+  .navbar-collapse a.btn:hover {
+    color: #fff !important;
+  }
+}
+
+/* line 37, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler {
+  position: relative;
+  z-index: 999;
+  height: 24px;
+}
+
+/* line 42, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler span {
+  background: #fff;
+  height: 1px;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* line 50, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler span.one {
+  top: 0;
+}
+
+/* line 54, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler span.two {
+  top: 50;
+}
+
+/* line 58, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler span.three {
+  bottom: 0;
+}
+
+/* line 63, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler.collapsed {
+  color: #fff;
+}
+
+/* line 68, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler[aria-expanded="true"] span {
+  background: #000;
+}
+
+/* line 71, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler[aria-expanded="true"] span.one {
+  top: 11px;
+  transform: rotate(45deg);
+}
+
+/* line 76, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler[aria-expanded="true"] span.two {
+  opacity: 0;
+}
+
+/* line 80, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.navbar-toggler[aria-expanded="true"] span.three {
+  bottom: 10px;
+  transform: rotate(-45deg);
+}
+
+/* line 88, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.claim-image-container {
+  height: 140px;
+  width: 100%;
+}
+
+/* line 92, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.claim-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* line 99, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.header-border .masthead {
+  border-bottom: 1px solid #ebebeb !important;
+}
+
+/* line 104, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-custom {
+  border-bottom: none;
+  flex-wrap: nowrap;
+}
+
+/* line 107, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-custom .nav-item {
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* line 109, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-custom .nav-item:last-child {
+  border-right: none;
+}
+
+/* line 113, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-custom .nav-link {
+  border: none;
+  border-radius: 0;
+  padding: 0rem 1rem 0.5rem;
+  align-items: stretch;
+  color: rgba(255, 255, 255, 0.3);
+  line-height: 1.3;
+}
+
+/* line 120, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-custom .nav-link.active {
+  background: none;
+  color: #fff;
+}
+
+/* line 125, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-custom .nav-count {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+/* line 135, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.tab-content-custom {
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  margin-top: -30px;
+}
+
+/* line 139, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.tab-content-custom .tab-pane {
+  padding: 35px;
+}
+
+/* line 144, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-bg {
+  background: #5192D2;
+  padding: 60px 0;
+}
+
+/* line 148, D:/xampp/htdocs/Cicero/assets/scss/components/_nav.scss */
+.nav-tabs-controls {
+  margin-top: 24px;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+/* line 5, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item {
+  position: relative;
+  font-size: 15px;
+  display: block;
+  padding: .75rem 0.25rem;
+  color: #000;
+  border-bottom: 1px solid #ddd;
+}
+
+/* line 13, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item:after {
+  content: "";
+  background: url(../img/arrow-r.svg) no-repeat 0 0px;
+  width: 20px;
+  height: 15px;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 18px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* line 26, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item:hover {
+  text-decoration: none;
+  color: #00B9FF;
+}
+
+/* line 30, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item:hover:after {
+  opacity: 1;
+  background-position: 100% 0px;
+  transition: all 0.3s ease;
+}
+
+/* line 37, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item.active {
+  color: #00B9FF;
+  font-weight: bold;
+}
+
+/* line 41, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item.active:after {
+  opacity: 1;
+  background-position: 100% 0px;
+}
+
+/* line 47, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-item:last-child {
+  border-bottom: none;
+}
+
+/* line 54, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list.noarrow .list-item:after {
+  content: "";
+  display: none;
+}
+
+/* line 65, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-style-a li {
+  list-style: none;
+}
+
+/* line 68, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-style-a li a {
+  color: #000;
+  position: relative;
+  padding-left: 18px;
+  line-height: 1.9;
+}
+
+/* line 74, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-style-a li a:before {
+  content: "";
+  height: 5px;
+  width: 5px;
+  background: #5B718F;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  border-radius: 50%;
+}
+
+/* line 89, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-group-item {
+  font-size: 15px;
+}
+
+/* line 92, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.list-group-item.active {
+  background: #00B9FF;
+  border-color: #00B9FF;
+}
+
+/* line 100, D:/xampp/htdocs/Cicero/assets/scss/components/_list.scss */
+.category-item {
+  display: inline-block;
+  color: #000;
+  border: 1px solid #ddd;
+  padding: 2px 5px;
+  margin-bottom: 3px;
+}
+
+/* line 3, D:/xampp/htdocs/Cicero/assets/scss/components/_card.scss */
+.card-img-overlay .card-body {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
+}
+
+/* line 9, D:/xampp/htdocs/Cicero/assets/scss/components/_card.scss */
+.card-img-overlay .card-body:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: -moz-linear-gradient(top, transparent 0%, rgba(0, 0, 0, 0.65) 100%);
+  background: -webkit-linear-gradient(top, transparent 0%, rgba(0, 0, 0, 0.65) 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.65) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#a6000000', GradientType=0);
+}
+
+/* line 23, D:/xampp/htdocs/Cicero/assets/scss/components/_card.scss */
+.card-img-top {
+  height: 175px;
+  object-fit: cover;
+}
+
+@media (min-width: 481px) {
+  /* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_card.scss */
+  .card-columns {
+    column-count: 1;
+  }
+}
+
+@media (min-width: 769px) {
+  /* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_card.scss */
+  .card-columns {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_card.scss */
+  .card-columns {
+    column-count: 3;
+  }
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary {
+  border: 1px solid #ddd;
+}
+
+/* line 3, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary-item {
+  list-style: none;
+  border-right: 1px solid #ddd;
+}
+
+@media (min-width: 1025px) {
+  /* line 3, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+  .claim-summary-item {
+    width: 20%;
+  }
+}
+
+/* line 10, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary-item:last-child {
+  border-right: none;
+}
+
+/* line 14, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary-label {
+  font-size: 14px;
+}
+
+/* line 17, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .total-claim {
+  background: #F1F1F1;
+}
+
+@media (max-width: 767px) {
+  /* line 17, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+  .claim-summary .total-claim {
+    width: 100%;
+  }
+}
+
+/* line 24, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .settled .claim-summary-number {
+  color: #64C764;
+}
+
+/* line 29, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .rejected .claim-summary-number {
+  color: #FF6D4F;
+}
+
+/* line 34, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .draft .claim-summary-number {
+  color: #CF92DE;
+}
+
+/* line 39, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .submitted .claim-summary-number {
+  color: #FFB636;
+}
+
+/* line 44, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .inprogress .claim-summary-number {
+  color: #44A4F8;
+}
+
+/* line 49, D:/xampp/htdocs/Cicero/assets/scss/components/_claim-summary.scss */
+.claim-summary .review .claim-summary-number {
+  color: #71CEA6;
+}
+
+/* line 2, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card {
+  border-bottom: 1px solid theme(border, dark) !important;
+}
+
+/* line 5, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card:last-child {
+  border-bottom: none !important;
+}
+
+/* line 10, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border-bottom: none;
+}
+
+/* line 16, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item {
+  padding: 1.3rem 1.3rem 1.3rem 3rem;
+  color: #00B9FF;
+}
+
+/* line 20, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item:before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: #f2f2f2;
+  border-radius: 50%;
+  position: absolute;
+  top: 28px;
+  left: 23px;
+}
+
+/* line 32, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item .accordion-indicator i.fa-plus {
+  display: none;
+}
+
+/* line 36, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item .accordion-indicator i.fa-minus {
+  display: block;
+}
+
+/* line 44, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item.collapsed {
+  color: #000;
+}
+
+/* line 48, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item.collapsed .accordion-indicator i.fa-plus {
+  display: block;
+}
+
+/* line 52, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item.collapsed .accordion-indicator i.fa-minus {
+  display: none;
+}
+
+/* line 60, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-header-item:hover {
+  color: #00B9FF;
+}
+
+/* line 66, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+.accordion .card-body {
+  padding: 0.5rem 2rem 2rem;
+}
+
+/* line 73, D:/xampp/htdocs/Cicero/assets/scss/components/_accordion.scss */
+span.accordion-hdtext {
+  font-weight: 500;
+}
+
+/* line 2, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-box {
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+/* line 8, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list {
+  background: #F4F4F4;
+  border-right: 1px solid #ddd;
+}
+
+/* line 12, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item {
+  list-style-type: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* line 16, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item a {
+  color: #000;
+}
+
+/* line 20, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item:hover {
+  background: #fff;
+  color: #00B9FF;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* line 28, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item.active {
+  background: #fff;
+  color: #00B9FF;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* line 35, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item.active a {
+  color: #00B9FF;
+}
+
+/* line 39, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item.active:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  width: 5px;
+  height: 100%;
+  background: #00B9FF;
+}
+
+/* line 51, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item.date {
+  cursor: default;
+}
+
+/* line 54, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item.date:hover {
+  background: transparent;
+  box-shadow: none;
+  color: #000;
+}
+
+/* line 61, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-list-item.date .label {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* line 70, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-unread {
+  background: #E7E5F3;
+}
+
+/* line 73, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-unread:hover {
+  background: #E7E5F3;
+  color: #000;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* line 84, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-view-empty {
+  background: url(../img/message.svg) no-repeat center center;
+  background-size: 350px;
+  height: 100%;
+  width: 100%;
+}
+
+/* line 92, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-attachment * {
+  margin-right: 5px;
+}
+
+/* line 96, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-attachment-file {
+  background: #ECECEC;
+  font-size: 13px;
+  display: inline-block;
+  margin-bottom: 0.3rem;
+}
+
+/* line 107, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-old .msg-detail .msg-action {
+  display: none;
+}
+
+/* line 114, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-old .msg-detail:hover .msg-action {
+  display: block;
+}
+
+/* line 121, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-reply {
+  background: #F0F0F0;
+}
+
+/* line 124, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.msg-reply .form-control {
+  border: none;
+}
+
+/* line 133, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.uploaded-files .msg-attachment-file {
+  border: 1px solid #707070;
+}
+
+/* line 137, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.uploaded-files .close {
+  font-size: 1.2rem;
+}
+
+@media only screen and (min-width: 992px) {
+  /* line 143, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .msg-view {
+    padding: 24px;
+  }
+  /* line 147, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .goto-msg-list {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  /* line 153, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .msg-list {
+    transform: translateX(0);
+    height: 100%;
+    transition: all 0.3s ease;
+  }
+  /* line 159, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .msg-view {
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    height: 0;
+    padding: 0;
+  }
+  /* line 167, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .mobile .msg-list {
+    transform: translateX(-100%);
+    height: 0;
+    transition: all 0.3s ease;
+  }
+  /* line 173, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .mobile .msg-view {
+    transform: translateX(0);
+    transition: all 0.3s ease;
+    height: 100%;
+    padding: 24px;
+  }
+  /* line 180, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+  .mobile .goto-msg-list {
+    display: inline-block;
+  }
+}
+
+/* line 191, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.slimScrollBar {
+  opacity: 0.2 !important;
+}
+
+/* line 198, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.dropdown-md {
+  width: 300px;
+}
+
+/* line 204, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg a,
+.notification-msg p {
+  font-size: 13px;
+  color: #000;
+  padding: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* line 211, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg a:hover,
+.notification-msg p:hover {
+  text-decoration: none;
+  background: #f2f2f2;
+}
+
+/* line 216, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg .media {
+  border-top: 1px solid #ddd;
+}
+
+/* line 221, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg .dropdown-toggle::after {
+  display: none;
+}
+
+/* line 224, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg .dropdown-toggle i {
+  font-size: 20px;
+  margin-top: 3px;
+}
+
+/* line 228, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg .dropdown-toggle:hover {
+  border: none !important;
+  background: none;
+}
+
+/* line 234, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-msg .unread a, .notification-msg .unread p {
+  background: #E7E5F3;
+}
+
+/* line 241, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-foot {
+  padding: 8px 16px;
+  border-top: 1px solid #eee;
+}
+
+/* line 245, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-head {
+  padding: 8px 16px;
+}
+
+/* line 249, D:/xampp/htdocs/Cicero/assets/scss/components/_messages.scss */
+.notification-badge {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  min-width: 14px;
+  max-width: 50px;
+  font-size: 11px;
+  background: red;
+  color: #fff;
+  display: block;
+  text-align: center;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+/* line 6, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-list-item:hover .blog-cover-img img {
+  transform: scale(1.03);
+}
+
+/* line 14, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-cover {
+  position: relative;
+}
+
+/* line 17, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-cover-img {
+  height: 300px;
+  overflow: hidden;
+  display: block;
+}
+
+/* line 22, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-cover-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease-in-out;
+}
+
+/* line 32, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-kicker {
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+@media (min-width: 769px) {
+  /* line 32, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+  .blog-kicker {
+    position: absolute;
+    top: 0px;
+    left: -10.333333%;
+    background: #fff;
+    padding: 20px;
+    max-width: 200px;
+    margin-top: 27px;
+  }
+}
+
+/* line 47, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-date {
+  font-size: 16px;
+}
+
+/* line 52, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-title a {
+  color: #000;
+}
+
+/* line 57, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-summary {
+  color: gray;
+  position: relative;
+}
+
+@media (min-width: 769px) {
+  /* line 57, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+  .blog-summary {
+    max-width: 80%;
+  }
+}
+
+@media (min-width: 769px) {
+  /* line 66, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+  .blog-social {
+    position: absolute;
+    left: -10%;
+    top: 0;
+  }
+}
+
+/* line 73, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-social a {
+  display: inline-block;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+@media (min-width: 769px) {
+  /* line 73, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+  .blog-social a {
+    display: block;
+  }
+}
+
+/* line 80, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-social a:hover {
+  opacity: 1;
+}
+
+/* line 83, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-social a i {
+  font-size: 24px;
+}
+
+/* line 91, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-detail .blog-cover-img {
+  height: auto;
+  max-height: 450px;
+}
+
+/* line 98, D:/xampp/htdocs/Cicero/assets/scss/components/_blog.scss */
+.blog-detail:hover .blog-cover-img img {
+  transform: scale(1);
+}
+
+/* line 2, D:/xampp/htdocs/Cicero/assets/scss/components/_comment.scss */
+.comment-avatar {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+}
+
+/* line 8, D:/xampp/htdocs/Cicero/assets/scss/components/_comment.scss */
+.comment-detail {
+  font-size: 14px;
+  color: gray;
+}
+
+@media (min-width: 1025px) {
+  /* line 2, D:/xampp/htdocs/Cicero/assets/scss/layout/_layout.scss */
+  .container {
+    max-width: 1340px;
+  }
+}
+
+@keyframes arrow-ymovement {
+  from {
+    margin-top: 0;
+  }
+  to {
+    margin-top: 40px;
+  }
+}
+
+@-webkit-keyframes arrow-ymovement {
+  from {
+    margin-top: 0;
+  }
+  to {
+    margin-top: 40px;
+  }
+}
+
+/* line 2, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .masthead {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  margin: 0 auto;
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* line 11, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .masthead .navbar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* line 14, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .masthead .navbar a.btn {
+  border-color: #fff;
+  color: #fff;
+  padding: .375rem .75rem;
+}
+
+/* line 19, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .masthead .navbar a.btn:hover {
+  border-color: #00B9FF;
+}
+
+/* line 24, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .masthead .navbar .nav-link {
+  color: #fff;
+  border-bottom: 1px solid transparent;
+}
+
+/* line 28, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .masthead .navbar .nav-link:hover {
+  border-bottom: 1px solid #fff;
+}
+
+/* line 38, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .sticky {
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  margin-top: 0;
+}
+
+/* line 45, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .sticky .navbar a.btn {
+  border-color: #00B9FF;
+  color: #00B9FF;
+}
+
+/* line 49, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .sticky .navbar a.btn:hover {
+  border-color: #00B9FF;
+  color: #fff;
+}
+
+/* line 55, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .sticky .navbar .nav-link {
+  color: #000;
+}
+
+/* line 58, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .sticky .navbar .nav-link:hover {
+  border-color: #00B9FF;
+}
+
+/* line 70, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.fluid-layout .small-hd .navbar {
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+}
+
+@media (max-width: 767px) {
+  /* line 84, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+  .fluid-layout .container .jumbotron {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+}
+
+/* line 93, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.footer > div.py-5 {
+  width: 100%;
+  max-width: 1340px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: 0 auto;
+}
+
+/* line 102, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.main-promo {
+  height: 100vh;
+  max-height: initial;
+  min-height: initial;
+  padding-top: 10rem !important;
+  background-attachment: fixed;
+}
+
+@media (max-width: 767px) {
+  /* line 102, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+  .main-promo {
+    padding: 5rem 20px 6rem 20px !important;
+    height: 100%;
+  }
+  /* line 113, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+  .main-promo .heading {
+    font-size: 2.65rem;
+  }
+}
+
+/* line 120, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.inner-pg .masthead {
+  background: #fff;
+}
+
+/* line 124, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.inner-pg .masthead .navbar a.btn {
+  border-color: #00B9FF;
+  color: #00B9FF;
+  padding: .375rem .75rem;
+}
+
+/* line 129, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.inner-pg .masthead .navbar a.btn:hover {
+  color: #fff;
+}
+
+/* line 134, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.inner-pg .masthead .navbar .nav-link {
+  color: #000;
+  border-bottom: 1px solid transparent;
+}
+
+/* line 138, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.inner-pg .masthead .navbar .nav-link:hover {
+  border-bottom: 1px solid #000;
+}
+
+/* line 144, D:/xampp/htdocs/Cicero/assets/scss/layout/_fluid-layout.scss */
+.inner-pg .masthead .navbar-toggler span {
+  background: #000;
+}
+
+/* line 1, D:/xampp/htdocs/Cicero/assets/scss/pages/_newclaim.scss */
+.newclaim {
+  background: #fff;
+  margin-top: -110px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/*# sourceMappingURL=../css/main.map */

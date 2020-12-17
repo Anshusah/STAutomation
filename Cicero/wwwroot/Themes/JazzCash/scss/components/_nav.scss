@@ -1,0 +1,172 @@
+
+.nav {
+    &-link {
+        color: $black;
+        padding-right: 0rem;
+        padding-left: 0rem;
+        padding-bottom: 0.5rem;
+        /*border-bottom: 3px solid transparent;*/
+        font-weight: 300;
+        transition: all 250ms ease;
+        font-size: 1.25rem;
+
+        &:first-child {
+            padding-left: 0;
+        }
+
+        &:last-child {
+            padding-right: 0;
+        }
+
+        &.active, &:hover {
+            color: var(--primary);
+            /*border-color: var(--primary);*/
+        }
+    }
+}
+
+.navbar {
+    padding: 1.55rem 0.5rem;
+    flex: 1;
+
+    &-collapse {
+        &-content {
+            justify-content: flex-end;
+
+            .nav {
+                &-link {
+                    display: inline-block;
+                    color: $black;
+                    padding-right: 0rem;
+                    padding-left: 0rem;
+                    padding-bottom: 0.5rem;
+                    font-weight: 300;
+                    transition: all 250ms ease;
+                    font-size: 1.25rem;
+                    position: relative;
+
+                    &:first-child {
+                        padding-left: 0;
+                    }
+
+                    &:last-child {
+                        padding-right: 0;
+                    }
+
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        bottom: -7px;
+                        background: var(--primary);
+                        height: 3px;
+                        width: 100%;
+                        transition: all 450ms cubic-bezier(.23,1,.32,1) 0s;
+                        transform: scaleX(0)
+                    }
+
+                    &.active, &:hover {
+                        color: var(--primary);
+                        transition: width 0.3s linear;
+
+                        &:after {
+                            transform: scaleX(1);
+                            transition: all 450ms cubic-bezier(.23,1,.32,1) 0s;
+                        }
+                    }
+                }
+
+                &-item {
+                    &-topbar__user {
+                        height: 45px;
+                        color: $black;
+
+                        &:hover, &.show {
+                            background-color: rgba($gray-400,0.125);
+                            color: var(--primary);
+                        }
+                    }
+                }
+            }
+
+            .btn {
+                min-width: 147px;
+
+                &-toolbar {
+                    margin-left: unset;
+                    margin-top: 1rem;
+
+                    .nav-link {
+                        &::after {
+                            content: unset;
+                        }
+                    }
+
+                    @media (min-width:991.99px) {
+                        margin-left: 2.5rem;
+                        margin-top: 0;
+                    }
+
+                    @media (min-width:1200px) {
+                        margin-left: 3.5rem;
+                    }
+                }
+            }
+        }
+    }
+
+    &-nav {
+        li {
+            @media (min-width:991.99px) {
+                padding: 0 1.35rem;
+
+                &:first-child {
+                    padding-left: 0;
+                }
+
+                &:last-child {
+                    padding-right: 0;
+                }
+            }
+        }
+    }
+
+    &-toggler {
+        padding: 0;
+        outline: none;
+        border: none;
+
+        &:focus {
+            padding: 0;
+            outline: none;
+            border: none;
+        }
+
+        &.collapsed {
+            .hide {
+                display: none;
+            }
+
+            .show {
+                display: block;
+            }
+        }
+
+        &-icon {
+            color: var(--primary);
+            height: 3rem;
+            line-height: 3rem;
+
+            .hide {
+                display: block;
+            }
+
+            .show {
+                display: none;
+            }
+        }
+    }
+}
+
+
+//tabs custom

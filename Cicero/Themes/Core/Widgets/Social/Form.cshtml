@@ -1,0 +1,716 @@
+<div class="form-group">
+    <label>Title</label>
+    <input class="form-control" type="text" name="Title" value="@Model.Title">
+</div>
+@{
+    var e = Model;
+}
+<div class="row">
+    <div class="col-xl mb-2">
+        <h5 class="mb-3">Social Icons</h5>
+        <div class="card">
+            <div>
+                <table class="table table-bordered table-striped rounded w-100">
+
+                    <tbody>
+                        @{
+        int i = -1;
+                        }
+                        @if (Model.Url != null && Model.Url.Count > 0)
+    {
+                    @foreach (string item in Model.Url)
+{
+
+    { i++; }
+    string icon = (Model.Icon != null && Model.Icon.Count >= i) ? Model.Icon[i] : "";
+                    <tr>
+                        <td>
+                            <div class="input-group icon-group mb-0">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" style="width:42px" type="button">
+                                        <i class="@icon"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control border border-dark" name="Url[]" value="@item" />
+                                <input type="hidden" name="Icon[]" value="@icon" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary"><i class="fas fa-arrows-alt"></i></button>
+                                    <button class="btn btn-outline-danger" data-confirm="{OnInit:function(){this.size=&quot;&quot;;this.title=&quot;Confirm&quot;; this.content=&quot;Are you sure you want to delete?&quot;;this.button.cancel=&quot;Cancel&quot;;this.button.confirm=&quot;Confirm Delete&quot;;this.open();},OnConfirm:function(e){e.closest(&quot;tr&quot;).remove();},OnCancelled:function(e){this.close();}}" type="button"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+
+                            </div>
+
+
+                        </td>
+                    </tr>
+}
+}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+
+                                <!--<select class="form-control" name="Icon">
+                                    <option value="fab fa-facebook">Facebook</option>
+                                    <option value="fab fa-linkedin">Linkedin</option>
+                                    <option value="fab fa-twitter">Twitter</option>
+                                </select>-->
+
+                                <div class="input-group icon-group mb-0">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-share-alt"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item"><i class="fab fa-facebook"></i></a>
+                                            <a class="dropdown-item"><i class="fab fa-linkedin"></i></a>
+                                            <a class="dropdown-item"><i class="fab fa-twitter"></i></a>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control border border-dark widget-url" placeholder="Http Url" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary btn-add-social-link" type="button"><i class="fas fa-plus-circle"></i></button>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <small class="form-text text-muted mt-3"><strong>Note: </strong><em class="text-wrap">You can also display this widget anywhere in website using this <b class="text-danger">[widget id="@Model.WidgetId"]</b> shortcode.</em></small>
+        </div>
+    </div>
+    <div class="col-xl">
+
+        <h5 class="mb-3">General Setting</h5>
+        @{
+        var defChecked = "";
+        var cusChecked = "";
+        var strCust = "display:none";
+        if (Model.Style == "Default")
+        {
+            defChecked = " checked='checked' ";
+        }
+        if (Model.Style == "Custom" || string.IsNullOrEmpty(Model.Style))
+        {
+            cusChecked = " checked='checked' ";
+            strCust = "display:block";
+        }
+        }
+        <h6>Style</h6>
+        <p class="d-block mngwidget-elements-item-info help mb-1">Please choose a Style as your requirement.</p>
+
+        <div class="form-check form-check-inline">
+            <input type="radio" name="Style" @defChecked value="Default" data-slide-show=".0" data-slide-hide=".customization" id="@Model.WidgetId-defaultStyle" />
+            <label class="form-check-label" for="@Model.WidgetId-defaultStyle">Default</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="radio" name="Style" @cusChecked value="Custom" id="@Model.WidgetId-customStyle" data-slide-show=".customization" data-slide-hide=".0" />
+            <label class="form-check-label" for="@Model.WidgetId-customStyle">Custom</label>
+        </div>
+
+
+        <div class="border p-4 bg-light mt-2 customization" style="@strCust">
+
+            <h6>Layout</h6>
+            <p class="d-block mngwidget-elements-item-info help mb-3">Please choose a Layout Type as your requirement.</p>
+            @{
+            var wtChecked = "";
+            var wotChecked = "";
+            if (Model.LayoutType == "With Title" || string.IsNullOrEmpty(Model.LayoutType))
+            {
+                wtChecked = " checked='checked' ";
+            }
+            if (Model.LayoutType == "Without Title")
+            {
+                wotChecked = " checked='checked' ";
+            }
+            }
+
+            <div class="form-row">
+                <div class="form-group col-sm-6 col-md-4">
+                    <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/with-title.svg" /></i>
+                    <div class="form-check pl-0">
+                        <input type="radio" name="LayoutType" @wtChecked value="With-Title" id="@Model.WidgetId-withTitle" />
+                        <label class="form-check-label" for="@Model.WidgetId-withTitle">With Title</label>
+                    </div>
+                </div>
+                <div class="form-group col-sm-6 col-md-4">
+                    <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/without-title.svg" /></i>
+                    <div class="form-check pl-0">
+                        <input type="radio" name="LayoutType" @wotChecked value="Without Title" id="@Model.WidgetId-withoutTitle" />
+                        <label class="form-check-label" for="@Model.WidgetId-withoutTitle">Without Title</label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="clearfix"></div>
+
+            <h6 class="mb-3 mt-3">Target</h6>
+            <div class="d-block">
+                @{
+                var swChecked = "";
+                var nwChecked = "";
+                if (Model.Target == "_new" || string.IsNullOrEmpty(Model.Target))
+                {
+                    swChecked = " checked=checked";
+                }
+                if (Model.Target == "_blank")
+                {
+                    nwChecked = " checked=checked";
+                }
+                }
+
+                <div class="form-row">
+                    <div class="form-group col-sm-6 col-md-4">
+                        <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/same-window.svg" /></i>
+                        <div class="form-check pl-0">
+                            <input type="radio" name="Target" @swChecked value="_new" id="@Model.WidgetId-sameWindow" />
+                            <label class="form-check-label" for="@Model.WidgetId-sameWindow">Same Window</label>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6 col-md-4">
+                        <i class="widget-icon d-inline-block mb-2" aria-hidden="true"><img src="~/admin/assets/img/svg/new-window.svg" /></i>
+                        <div class="form-check pl-0">
+                            <input type="radio" name="Target" @nwChecked value="_blank" id="@Model.WidgetId-newWindow" />
+                            <label class="form-check-label" for="@Model.WidgetId-newWindow">New Window</label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="bg-white p-3">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="preview-icon text-center">
+                                <p>Icon Preview</p>
+                                <div role="button" class="preview-icon-content d-flex align-items-center justify-content-around cur" data-bg-color="@Model.ButtonBGColor" data-bghover-color="@Model.ButtonBGHoverColor" data-color="@Model.ButtonColor" data-hover-color="@Model.ButtonHoverColor" data-border-radius="@Model.BorderRadius">
+                                    <i class="fab fa-facebook-f"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Radius Corner</label>
+                                    <div class="input-group mb-0">
+                                        <div class="form-group">
+                                            <input type="range" class="form-control-range" min="0" max="25" step="any" id="formControlRange" name="BorderRadius" value="@Model.BorderRadius">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="d-flex align-items-center border-top mb-2 pt-3">
+                                        <div class="btn-group color-pick d-block mr-3" data-prop="data-color">
+                                            <input type="text" class="form-control iconcolor" hidden="" name="ButtonColor" value="@Model.ButtonColor">
+                                            <span class="btn w-100 btn-primary rounded dropdown-toggle selectedCol" data-toggle="dropdown" style="background:@Model.ButtonColor" aria-expanded="false"></span>
+                                            <ul class="dropdown-menu dropdown-menu-left dropdown-md" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(30px, 30px, 0px);">
+                                                <li class="dropdown-item">
+                                                    <span class="color berryred" id="#EF3A53"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color blue" id="#44A4F8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color neon" id="#3BD593"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullpurple" id="#CF92DE"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brightred" id="#FF6D4F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color yellow" id="#FFB636"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color gold" id="#A88240"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color pink" id="#F66DAD"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkblue" id="#0C9CBA"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color green" id="#93D549"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color purlple" id="#9869E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey" id="#68655F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkestblue" id="#3C598B"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkgreen" id="#5E8B3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightpink" id="#FB85F7"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brown" id="#8B5E3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color satpurple" id="#5D44C2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightblue" id="#13BDF2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullgreen" id="#9AA591"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color orange" id="#F97F22"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color black" id="#000000"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey70" id="#6D6E71"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey40" id="#A7A9AC"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey10" id="#E6E7E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color white" id="#ffffff"></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <label>Icon Color</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="d-flex align-items-center border-bottom mb-2 pb-2">
+                                        <div class="btn-group color-pick d-block mr-3" data-prop="data-hover-color">
+                                            <input type="text" class="form-control iconcolor" hidden="" name="ButtonHoverColor" value="@Model.ButtonHoverColor">
+                                            <span class="btn w-100 btn-primary rounded dropdown-toggle selectedCol" data-toggle="dropdown" style="background:@Model.ButtonHoverColor" aria-expanded="false"></span>
+                                            <ul class="dropdown-menu dropdown-menu-left dropdown-md" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(30px, 30px, 0px);">
+                                                <li class="dropdown-item">
+                                                    <span class="color berryred" id="#EF3A53"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color blue" id="#44A4F8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color neon" id="#3BD593"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullpurple" id="#CF92DE"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brightred" id="#FF6D4F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color yellow" id="#FFB636"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color gold" id="#A88240"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color pink" id="#F66DAD"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkblue" id="#0C9CBA"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color green" id="#93D549"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color purlple" id="#9869E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey" id="#68655F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkestblue" id="#3C598B"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkgreen" id="#5E8B3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightpink" id="#FB85F7"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brown" id="#8B5E3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color satpurple" id="#5D44C2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightblue" id="#13BDF2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullgreen" id="#9AA591"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color orange" id="#F97F22"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color black" id="#000000"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey70" id="#6D6E71"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey40" id="#A7A9AC"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey10" id="#E6E7E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color white" id="#ffffff"></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <label>Hover Color</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="d-flex align-items-center mb-2 pb-2">
+                                        <div class="btn-group color-pick d-block mr-3" data-prop="data-bg-color">
+                                            <input type="text" class="form-control iconcolor" hidden="" name="ButtonBGColor" value="@Model.ButtonBGColor">
+                                            <span class="btn w-100 btn-primary rounded dropdown-toggle selectedCol" data-toggle="dropdown" style="background:@Model.ButtonBGColor" aria-expanded="false"></span>
+                                            <ul class="dropdown-menu dropdown-menu-left dropdown-md" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(30px, 30px, 0px);">
+                                                <li class="dropdown-item">
+                                                    <span class="color berryred" id="#EF3A53"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color blue" id="#44A4F8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color neon" id="#3BD593"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullpurple" id="#CF92DE"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brightred" id="#FF6D4F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color yellow" id="#FFB636"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color gold" id="#A88240"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color pink" id="#F66DAD"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkblue" id="#0C9CBA"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color green" id="#93D549"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color purlple" id="#9869E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey" id="#68655F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkestblue" id="#3C598B"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkgreen" id="#5E8B3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightpink" id="#FB85F7"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brown" id="#8B5E3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color satpurple" id="#5D44C2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightblue" id="#13BDF2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullgreen" id="#9AA591"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color orange" id="#F97F22"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color black" id="#000000"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey70" id="#6D6E71"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey40" id="#A7A9AC"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey10" id="#E6E7E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color white" id="#ffffff"></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <label>Bg Color</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">         
+                                    <div class=" d-flex align-items-center mb-2 pb-2">
+                                        <div class="btn-group color-pick d-block mr-3" data-prop="data-bghover-color">
+                                            <input type="text" class="form-control iconcolor" hidden="" name="ButtonBGHoverColor" value="@Model.ButtonBGHoverColor">
+                                            <span class="btn w-100 btn-primary rounded dropdown-toggle selectedCol" data-toggle="dropdown" style="background:@Model.ButtonBGHoverColor" aria-expanded="false"></span>
+                                            <ul class="dropdown-menu dropdown-menu-left dropdown-md" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(30px, 30px, 0px);">
+                                                <li class="dropdown-item">
+                                                    <span class="color berryred" id="#EF3A53"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color blue" id="#44A4F8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color neon" id="#3BD593"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullpurple" id="#CF92DE"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brightred" id="#FF6D4F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color yellow" id="#FFB636"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color gold" id="#A88240"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color pink" id="#F66DAD"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkblue" id="#0C9CBA"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color green" id="#93D549"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color purlple" id="#9869E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey" id="#68655F"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkestblue" id="#3C598B"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color darkgreen" id="#5E8B3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightpink" id="#FB85F7"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color brown" id="#8B5E3C"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color satpurple" id="#5D44C2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color lightblue" id="#13BDF2"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color dullgreen" id="#9AA591"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color orange" id="#F97F22"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color black" id="#000000"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey70" id="#6D6E71"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey40" id="#A7A9AC"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color grey10" id="#E6E7E8"></span>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <span class="color white" id="#ffffff"></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <label>BG Hover Color</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function click(event){
+
+
+    event.stopImmediatePropagation()
+
+
+
+    var _this=$(this).closest("tr");
+    var icon_obj=_this.find(".dropdown-item.active");
+    var icon=icon_obj.find("i").attr('class');
+    var link=_this.find("input[type='text']").val();
+    //alert(link)
+
+    //console.log(icon_obj)
+    _this.find(".btn.btn-outline-secondary.dropdown-toggle").removeClass("btn-outline-danger");
+    _this.find("input[type='text']").removeClass("border-danger").addClass("border-dark");
+    if(!icon_obj.length){
+        if(!_this.find("[data-tmp]").length){
+            var tobj='<input type="button" style="display:none;" data-tmp data-confirm=\'{OnInit:function(){this.size="";this.title="Validation Error!"; this.content="Please choose a Social Icon from dropdown list.";this.button.cancel="Close";this.button.confirm="Ok";this.open();},OnConfirm:function(e){e.closest("tr").find(".btn.btn-outline-secondary.dropdown-toggle").addClass("btn-outline-danger"); jQuery("[data-tmp]").remove();},OnCancelled:function(e){jQuery("[data-tmp]").remove();this.close();}}\'/>';
+            _this.append(tobj)
+        }
+        jQuery("[data-tmp]").trigger('click');
+
+    return;
+
+
+    }else if(link=="" && typeof(link)!="undefined" && $.trim(link)==""){
+        if(!_this.find("[data-tmp]").length){
+            var tobj='<input type="button" style="display:none;" data-tmp data-confirm=\'{OnInit:function(){this.size="";this.title="Validation Error!"; this.content="Please provide Social Media URL.";this.button.cancel="Close";this.button.confirm="Ok";this.open();},OnConfirm:function(e){console.log(e);e.closest("tr").find("input[type=text]").removeClass("border-dark").addClass("border-danger"); jQuery("[data-tmp]").remove();},OnCancelled:function(e){jQuery("[data-tmp]").remove();this.close();}}\'/>';
+            _this.append(tobj)
+        }
+        jQuery("[data-tmp]").trigger('click');
+    return;
+    }else{
+
+        var html='<tr><td><div class="input-group mb-0">'+
+        '<div class="input-group-prepend">'+
+        '<button class="btn btn-outline-secondary" style="width:42px" type="button"><i class="'+icon+'"></i></button>'+
+        '</div>'+
+        '<input type="text" class="form-control border border-dark" name="Url[]" placeholder="Http Url" value="'+link+'">'+
+        '<input type="hidden" name="Icon[]" value="'+icon+'">'+
+        '<div class="input-group-append">'+
+        '<button type="button" class="btn btn-outline-secondary"><i class="fas fa-arrows-alt"></i></button>'+
+        '<button class="btn btn-outline-danger" data-confirm=\'{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete?";this.button.cancel="Cancel";this.button.confirm="Confirm Delete";this.open();},OnConfirm:function(e){e.closest("tr").remove();},OnCancelled:function(e){this.close();}}\' type="button"><i class="fas fa-trash-alt"></i></button>'+
+        '</div>'+
+        '</div></td></tr>';
+        _this.find("input").val("");
+        $(this).closest("table").find("tbody").append(html);
+
+    }
+    }
+    $(document).ready(function(){
+        $(document).on("click","[data-widget-id='@Model.WidgetId'] .btn-add-social-link",click)
+
+        $(document).on("change","[data-widget-id='@Model.WidgetId'] #formControlRange",function(e){
+            console.log($(this).val());
+    var c=$(this).val();
+            $("[data-widget-id='@Model.WidgetId'] .preview-icon-content").css({"borderRadius":(c)+"px"})
+        })
+
+
+        //save-widgets
+        $(document).on("click","[data-widget-id='@Model.WidgetId'] .dropdown-item",function(event){ //alert("got")
+        $(this).closest("ul").find("[data-widget-id='@Model.WidgetId'] .dropdown-item").removeClass("active");
+
+            $(this).addClass("active")
+            var _this=$(this).closest("tr");
+            _this.find("button[data-toggle='dropdown']").empty().append($(this).html());
+
+         })
+        Widgets.Core.Hooks.addAction('before_widget_save',function(e){
+            if(e.widget_type!='Themes.Core.Widgets.Social') return {submit:true};
+            var len=$("[data-widget-id='"+e.widget_id+"'] [name='Url[]']").length;
+
+            if(len){
+                return {submit:true};
+            }else{
+                if(!$("[data-widget-id='"+e.widget_id+"'] form").find("[data-tmp]").length){
+                    $("[data-widget-id='"+e.widget_id+"'] form").find(".widget-url").removeClass("border-dark").addClass("border-danger");
+                    $("[data-widget-id='"+e.widget_id+"'] form").find(".btn.btn-outline-secondary.dropdown-toggle").addClass("btn-outline-danger");
+                    var tobj='<input type="button" style="display:none;" data-tmp data-confirm=\'{OnInit:function(){this.size="";this.title="Validation Error!"; this.content="Please provide Social Media URLs and Icons.";this.button.cancel="Close";this.button.confirm="Sure";this.open();},OnConfirm:function(e){ jQuery("[data-tmp]").remove();},OnCancelled:function(e){jQuery("[data-tmp]").remove();this.close();}}\'/>';
+                    $("[data-widget-id='"+e.widget_id+"'] form").append(tobj)
+                }
+                $("[data-widget-id='"+e.widget_id+"'] form [data-tmp]").trigger('click');
+                return {submit:false};
+            }
+        })
+        Widgets.Core.Hooks.addAction('after_widget_save',function(e){
+                $("[data-widget-id='"+e.args.widget_id+"'] .preview-icon-content").mouseenter().mouseleave()
+                return {submit:true};
+
+        })
+        // custom color select js
+        $("[data-widget-id='@Model.WidgetId'] .color").click(function () {
+            var selCol = $(this).attr('id');
+            console.log(selCol);
+
+            $(this).closest("div").find('.selectedCol').css('background', selCol);
+            $(this).closest("div").find('.iconcolor').val(selCol);
+    console.log($(this).closest("div").find('.iconcolor'));
+            var prop=$(this).closest("div.color-pick").data("prop");
+            $("[data-widget-id='@Model.WidgetId'] .preview-icon-content").attr(prop,selCol)
+            $("[data-widget-id='@Model.WidgetId'] .preview-icon-content").mouseleave()
+
+        });
+        $(document).on("mouseenter","[data-widget-id='@Model.WidgetId'] .preview-icon-content",function(){
+            var c=$(this).attr("data-color")
+            $(this).find("i").css({"color":c})
+            var bghc=$(this).attr("data-bghover-color")
+            if(typeof(bghc)!="undefined" && $.trim(bghc)!="")$(this).css({"backgroundColor":bghc})
+            var c=$(this).attr("data-hover-color");
+            if(typeof(c)!="undefined" && $.trim(c)!="")$(this).find("i").css({"color":c});
+    var c=$("[data-widget-id='@Model.WidgetId'] #formControlRange").val();
+            $("[data-widget-id='@Model.WidgetId'] .preview-icon-content").css({"borderRadius":(c)+"px"})
+        }).on("mouseleave","[data-widget-id='@Model.WidgetId'] .preview-icon-content",function(){
+            var c=$(this).attr("data-color");
+            if(typeof(c)!="undefined" && $.trim(c)!="")$(this).find("i").css({"color":c});
+            var bgc=$(this).attr("data-bg-color");
+            if(typeof(bgc)!="undefined" && $.trim(bgc)!="")$(this).css({"backgroundColor":bgc});
+            var c=$("[data-widget-id='@Model.WidgetId'] #formControlRange").val();
+            $("[data-widget-id='@Model.WidgetId'] .preview-icon-content").css({"borderRadius":(c)+"px"})
+
+        })
+
+
+        /* Globally Used : Start */
+        $(document).on("change","[data-widget-id='@Model.WidgetId'] [data-slide-show]",function(e){
+            $(this).off("change")
+                var SelectedVal=jQuery(this).val();
+                if(event.target.type=="radio"){
+                    var elm= $('[data-widget-id="@Model.WidgetId"] input[name="'+event.target.name+'"]:checked');
+                    if(elm.val()=="custom"){
+                        var StrToHide=elm.data('slide-hide');
+                        var StrToShow=elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+
+                    }else{
+                        var StrToHide=elm.data('slide-hide');
+                        var StrToShow=elm.data('slide-show');
+                        jQuery(StrToHide).hide();
+                        jQuery(StrToShow).show();
+
+                    }
+                }
+
+
+            });
+        /* Globally Used : End */
+        $("[data-widget-id='@Model.WidgetId'] .preview-icon-content").mouseenter().mouseleave()
+    })// doc ready
+</script>
+

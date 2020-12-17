@@ -1,0 +1,62 @@
+//Custom theme variable overridden for Bootstrap
+@import "components/variables";
+
+//Configured all Bootstrap and theme scss files are located here.
+/*@import "config";*/
+
+
+//Bootstrap 4 dependencies
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+//Responsive font size
+@import "../../../node_modules/bootstrap/scss/vendor/rfs";
+
+// Custom files
+
+//Vendor
+@import "vendor/_daterangepicker";
+//Components
+@import "components/default";
+@import "components/buttons";
+@import "components/card";
+@import "components/modal";
+@import "components/nav";
+@import "components/dropdown";
+@import "components/custom-form";
+@import "components/form";
+@import "components/error";
+@import "components/utilities";
+@import "components/banner";
+@import "components/tabs";
+@import "components/list";
+@import "components/timeline";
+@import "components/datatables";
+@import "components/table";
+
+//Templates
+@import "templates/dashboard";
+@import "templates/payment-dashboard";
+@import "templates/file-claim";
+@import "templates/login";
+
+@import "templates/index";
+@import "templates/tansaction-details";
+@import "templates/register";
+
+
+//Segments
+
+
+@import "segments/notification";
+@import "segments/form-builder";
+@import "segments/payment-method";
+@import "segments/recipient-detail";
+@import "segments/bank-details";
+
+//layout
+@import "Layout/header";
+@import "Layout/footer";
+@import "Layout/main";
+
+//extras 
+@import "others/extra";
+

@@ -1,0 +1,459 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model Cicero.Service.Models.JazzCash.DashboardViewModel
+@inject ICommonService _commonService
+@inject Cicero.Service.Services.SimpleTransfer.ICountryService ICountryService
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+    string userId = _commonService.getLoggedInUserId();
+    var isLogin = ((userId != null && userId != "") ? true : false);
+    var countryCode = string.Empty;
+    if (isLogin)
+    {
+        countryCode = await ICountryService.GetCountryCodeByUserId(userId);
+    }
+}
+
+<style>
+    .disable {
+        pointer-events: none;
+    }
+
+    p span {
+        display: block;
+    }
+</style>
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        @*<input type="hidden" id="elmloggedinuser" name="elmloggedinuser" elm-name="elmloggedinuser" value="@_commonService.getLoggedInUserId()" />*@
+        <div class="container dashboard-container">
+
+            <div class="dashboard-content">
+                <div class="banner-hero">
+                    <div class="user-info user-info-l">
+                        <h5 class="mb-0">Good Evening</h5>
+                        @*<h3>@(Model.FirstName + " " + Model.LastName)xyx xyx</h3>*@
+                        <h3>@Model.FullName </h3>
+
+                        <div class="user-info-item  h5"><span class="label font-weight-light">Customer ID:</span><h5> &nbsp; @Model.CustomerId</h5></div>
+                    </div>
+
+                    <div class="user-info user-info-r">
+                        <div class="notification-content" onclick="location.href='@Url.Content("/payment/notifications")'">
+                            <span class="notification-text">Notification</span>  <div class="notification-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30.272" height="30.853" viewBox="0 0 48.272 48.853">
+                                    <g id="Group_2017" data-name="Group 2017" transform="translate(-1604.728 -267)">
+                                        <g id="Bell-line" transform="translate(1583.395 268)">
+                                            <path id="Path_4818" data-name="Path 4818" d="M162.145,424.972a7.485,7.485,0,0,1-7.477-7.477,1.5,1.5,0,1,1,2.991,0,4.486,4.486,0,1,0,8.972,0,1.5,1.5,0,1,1,2.991,0A7.485,7.485,0,0,1,162.145,424.972Zm0,0" transform="translate(-120.874 -377.12)" fill="#f4f5fa" />
+                                            <path id="Path_4819" data-name="Path 4819" d="M57.72,99.89h-32.9a3.49,3.49,0,0,1-2.269-6.141,13.363,13.363,0,0,0,4.761-10.232V77.957a13.957,13.957,0,0,1,27.914,0v5.559a13.359,13.359,0,0,0,4.741,10.218A3.488,3.488,0,0,1,57.72,99.89Zm-16.449-32.9A10.978,10.978,0,0,0,30.3,77.957v5.559a16.341,16.341,0,0,1-5.8,12.5.5.5,0,0,0-.18.383.5.5,0,0,0,.5.5h32.9a.5.5,0,0,0,.5-.5.491.491,0,0,0-.176-.379,16.346,16.346,0,0,1-5.806-12.505V77.957A10.978,10.978,0,0,0,41.271,66.991Zm0,0" transform="translate(0 -58.019)" fill="#f4f5fa" />
+                                            <path id="Path_4820" data-name="Path 4820" d="M220.163,8.972a1.5,1.5,0,0,1-1.5-1.5V1.5a1.5,1.5,0,1,1,2.991,0V7.477A1.5,1.5,0,0,1,220.163,8.972Zm0,0" transform="translate(-178.892)" fill="#f4f5fa" />
+                                        </g>
+
+                                    </g>
+                                </svg>
+                                <span class="notification-value">@Model.NotificationCount</span>
+                            </div>
+                        </div>
+                        <div class="my-1"><span class="label">Local Time:</span><span class="value time-value"></span></div>
+                        <div class="my-1"><span class="label">Last Visit:</span> @*@Model.LocalTime*@ <span class="value">05/13/2020 12:03 EST</span></div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row pt-4">
+                <div class="col-12 d-flex justify-content-between">
+                    <div class="">
+                        <h5 class="mb-0 title d-block ">Transactions</h5>
+                        <p class="d-block ">Updated every several minutes</p>
+                    </div>
+                    @*<button type="button" class="btn btn-outline-primary  btn__has-icon mb-4">
+                            <i class='fa fa-angle-double-right ml-2'></i>
+                            Make a payment
+                        </button>*@
+                </div>
+                <div class="col-md-8 order-12">
+
+
+                    <div class="widget-box  border-bottom-0">
+                        <div class="widget-content">
+                            <div class="tab-wrapper">
+                                <div class="tabs">
+                                    <ul class="nav nav-tabs nav-tabs-custom border-0">
+                                        <li class="nav-item mr-3 active"><a class="nav-link transaction-tab active show" data-toggle="tab" href="#latest">Request</a></li>
+                                        @if (countryCode == "GB")
+                                        {
+                                            <li class="nav-item"><a class="nav-link transaction-tab" data-toggle="tab" href="#upcoming">Remittance</a></li>
+                                        }
+
+                                    </ul>
+                                </div>
+                                <button class="btn btn-sm btn-link btn__has-icon mr-3" onclick="location.href='@Url.Content("/payment/transactions")'">
+                                    <i class='fa fa-angle-double-right ml-2'></i> View All
+                                </button>
+
+                            </div>
+                            <div class="tab-content">
+                                <div id="latest" class="tab-pane  fade in active show">
+                                    <ul class="list-transaction">
+                                        @if (Model.PaymentDetails.Count == 0)
+                                        {
+                                            <li class="list-transaction__item"><p class="mx-auto">No Data</p></li>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var item in Model.PaymentDetails)
+                                            {
+                                                <li class="list-transaction__item">
+                                                    <div class="">
+                                                        <span class="date"> @item.Date</span>
+                                                    </div>
+                                                    <div class="flex-grow-1 px-5 text-left">
+                                                        <span class="name">@item.Description</span>
+                                                    </div>
+                                                    <div class="">
+                                                        <div class="amount">@item.Amount <span>@item.Currency</span></div>
+                                                    </div>
+                                                    <div class="mx-2"> <span class="badge @("badge-" + item.ClassName) font-weight-light">@item.Status</span></div>
+                                                    <div class="ml-3 icon-arrow" data-id="@item.Id">
+                                                        <i class="ri-arrow-right-s-line "></i>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+
+                                        @*<li class="list-transaction__item">
+                                                <div class="">
+                                                    <span class="date"> 4 April 2020</span>
+                                                </div>
+                                                <div class="flex-grow-1 px-5 text-left">
+                                                    <span class="name">Jhon Doe</span>
+                                                </div>
+                                                <div class="">
+                                                    <div class="amount">-200.00 <span>USD</span></div>
+                                                </div>
+                                                <div class="mx-2"> <span class="badge badge-success font-weight-light">Received</span></div>
+                                                <div class="ml-3 icon-arrow">
+                                                    <i class="ri-arrow-right-s-line "></i>
+                                                </div>
+                                            </li>
+                                            <li class="list-transaction__item">
+                                                <div class="">
+                                                    <span class="date"> 4 April 2020</span>
+                                                </div>
+                                                <div class="flex-grow-1 px-5 text-left">
+                                                    <span class="name">Anil Doe</span>
+                                                </div>
+                                                <div class="">
+                                                    <div class="amount">200.00 <span>USD</span></div>
+                                                </div>
+                                                <div class="mx-2"> <span class="badge badge-success font-weight-light">Received</span></div>
+                                                <div class="ml-3 icon-arrow">
+                                                    <i class="ri-arrow-right-s-line "></i>
+                                                </div>
+                                            </li>
+                                            <li class="list-transaction__item">
+                                                <div class="">
+                                                    <span class="date"> 4 April 2020</span>
+                                                </div>
+                                                <div class="flex-grow-1 px-5 text-left">
+                                                    <span class="name">Jhon Doe</span>
+                                                </div>
+                                                <div class="">
+
+                                                    <div class="amount">00.00 <span>USD</span></div>
+                                                </div>
+                                                <div class="mx-2"> <span class="badge badge-success font-weight-light">Received</span></div>
+                                                <div class="ml-3 icon-arrow">
+                                                    <i class="ri-arrow-right-s-line"></i>
+                                                </div>
+                                            </li>*@
+                                    </ul>
+
+                                </div>
+                                @if (countryCode == "GB")
+                                {
+                                    <div id="upcoming" class="tab-pane fade">
+                                        <ul class="list-transaction">
+                                            @if (Model.RemittanceDetails.Count == 0)
+                                            {
+                                                <li class="list-transaction__item"><p class="mx-auto">No Data</p></li>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var item in Model.RemittanceDetails)
+                                                {
+                                                    <li class="list-transaction__item">
+                                                        <div class="">
+                                                            <span class="date"> @item.Date</span>
+                                                        </div>
+                                                        <div class="flex-grow-1 px-5 text-left">
+                                                            <span class="name">@item.Description</span>
+                                                        </div>
+                                                        <div class="">
+                                                            <div class="amount">@item.Amount <span>@item.Currency</span></div>
+                                                        </div>
+                                                        <div class="mx-2"> <span class="badge @("badge-" + item.ClassName) font-weight-light">@item.Status</span></div>
+                                                        <div class="ml-3 icon-arrow" data-id="@item.Id">
+                                                            <i class="ri-arrow-right-s-line "></i>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+
+                                            @*<li class="list-transaction__item">
+                                                    <div class="">
+                                                        <span class="date"> 4 April 2020</span>
+                                                    </div>
+                                                    <div class="flex-grow-1 px-5 text-left">
+                                                        <span class="name">Jhon Doe</span>
+                                                    </div>
+                                                    <div class="">
+                                                        <div class="amount">-200.00 <span>USD</span></div>
+                                                    </div>
+                                                    <div class="mx-2"> <span class="badge badge-success font-weight-light">Received</span></div>
+                                                    <div class="ml-3 icon-arrow">
+                                                        <i class="ri-arrow-right-s-line"></i>
+                                                    </div>
+                                                </li>
+                                                <li class="list-transaction__item">
+                                                    <div class="">
+                                                        <span class="date"> 4 April 2020</span>
+                                                    </div>
+                                                    <div class="flex-grow-1 px-5 text-left">
+                                                        <span class="name">Jhon Doe</span>
+                                                    </div>
+                                                    <div class="">
+                                                        <div class="amount">-200.00 <span>USD</span></div>
+                                                    </div>
+                                                    <div class="mx-2"> <span class="badge badge-success font-weight-light">Received</span></div>
+                                                    <div class="ml-3 icon-arrow">
+                                                        <i class="ri-arrow-right-s-line"></i>
+                                                    </div>
+                                                </li>
+                                                <li class="list-transaction__item">
+                                                    <div class="">
+                                                        <span class="date"> 4 April 2020</span>
+                                                    </div>
+                                                    <div class="flex-grow-1 px-5 text-left">
+                                                        <span class="name">Jhon Doe</span>
+                                                    </div>
+                                                    <div class="">
+                                                        <div class="amount">-200.00 <span>USD</span></div>
+                                                    </div>
+                                                    <div class="mx-2"> <span class="badge badge-success font-weight-light">Received</span></div>
+                                                    <div class="ml-3 icon-arrow">
+                                                        <i class="ri-arrow-right-s-line"></i>
+                                                    </div>
+                                                </li>*@
+                                        </ul>
+                                    </div>
+                                }
+
+                            </div>
+                            @*<div class="table-wapper">
+                                    <table id="paymentsrequest" class="table table-hover table-custom table-responsive"></table>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 order-1 order-md-12 mb-4 mb-md-0">
+
+
+                    <div class="widget-box border-0 pb-3">
+                        <div class="widget-content">
+                            <div class="widget-body">
+                                <div class="widget-inner pt-4">
+                                    <h4 class="title">Time To Get Paid</h4>
+                                    <p>Request payments from clients all over the world and get paid from yourservices.</p>
+                                    <button type="button" class="btn btn-outline-primary btn-block btn__has-icon mt-4" onclick="window.location.href='/payment/transactions'">
+                                        <i class='fa fa-angle-double-right ml-2'></i> Make a payment
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary btn-block btn__has-icon mt-2" onclick="window.location.href='/payment/requestpayment'">
+                                        <i class='fa fa-angle-double-right ml-2'></i> Request a payment
+                                    </button>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <!-- Modal -->
+    <div class="modal fade" id="transaction-details" tabindex="-1" role="dialog" aria-labelledby="recipientDetails" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title title" id="exampleModalLongTitle">@*Payment Request*@ Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="recipient-detail__about">
+                        <div class="profile">
+                            <div class="icon-wrapper"><i class="ri-building-line ri-3x"></i></div>
+                        </div>
+                        <div class="details d-flex flex-column">
+                            <span class="name" id="payeeName">@*Adil Ahmed ABC Company*@</span>
+                            <h5 class="amount" id="payeeAmount">@*20.00 GBP*@</h5>
+                            <h6 class="Status title mb-0" id="tranStatus">@*Payment Request Pending*@</h6>
+                            <span class="small ">Due by <span id="dueDate">@*13th March 2020*@</span></span>
+                        </div>
+                    </div>
+
+                </div>
+                <nav>
+                    <div class="nav nav-tabs nav-tabs-grid" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Timeline</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Details</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="timeline__wrapper">
+                            <div class="timeline">
+                                @*<div class="timeline__container success succeed">
+                                        <div class="timeline__content ">
+
+                                            <h6 class="timeline__data">Transaction Placed</h6>
+                                            <small>April 4, 2020</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container success ">
+                                        <div class="timeline__content ">
+                                            <h6 class="timeline__data">Transaction Placed</h6>
+                                            <small>April 4, 2020</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container ">
+                                        <div class="timeline__content ">
+                                            <h6 class="timeline__data">Transaction Placed</h6>
+                                            <small>April 4, 2020</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container ">
+                                        <div class="timeline__content ">
+                                            <h6 class="timeline__data">Transaction Placed</h6>
+                                            <small>April 4, 2020</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container">
+                                        <div class="timeline__content ">
+                                            <h6 class="timeline__data">Transaction Placed</h6>
+                                            <small>April 4, 2020</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container ">
+                                        <div class="timeline__content ">
+                                            <h6 class="timeline__data">Transaction Placed</h6>
+                                            <small>April 4, 2020</small>
+                                        </div>
+                                    </div>*@
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="p-4">
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Name</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6 id="payerName">
+                                        @*Jhon Doe*@
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Phone</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6 id="payerPhone">
+                                        @*Park Avenue, STOKE-ON-TRENT*@
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Date</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6 id="payerDate">
+                                        @*April 4, 2020*@
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        ShowTime();
+
+
+        $('.icon-arrow').on('click', function () {
+            var id = $(this).attr("data-id");
+            var type = $('.transaction-tab.active').attr("href") == "#upcoming" ? 1 : 2;
+            $.ajax({
+                url: "/payment/request/data",
+                type: "get",
+                data: { id: id, type: type },
+                success: function (response) {
+                    debugger
+                    $('#payeeName').text(response.paymentRequestViewModel.payeeName);
+                    $('#payeeAmount').text(response.paymentRequestViewModel.requestAmount);
+                    $('#dueDate').text(new Date(response.paymentRequestViewModel.stPaymentRequestDetails.dueDate).toLocaleDateString());
+                    $('#tranStatus').text(response.paymentRequestViewModel.paymentRequestStatus);
+                    $('#payerName').text(response.paymentRequestViewModel.payerName);
+                    $('#payerPhone').text(response.paymentRequestViewModel.payerMobileNumber);
+                    $('#payerDate').text(response.paymentRequestViewModel.createdDate);
+
+                    $('.timeline').html("");
+                    $.each(response.transactionEvents, function (i, v) {
+                        var timeline = '<div class="timeline__container success succeed"><div class="timeline__content"><h6 class="timeline__data">' + v.description + '</h6><small>' + v.time + '</small></div></div>';
+                        $('.timeline').append(timeline);
+                    })
+
+                    $("#transaction-details").modal("toggle");
+                },
+                error: function (error) {
+
+                }
+            })
+        });
+    })
+
+    function ShowTime() {
+        var dt = new Date();
+        $(".time-value").text(dt.toLocaleTimeString());
+        window.setTimeout("ShowTime()", 1000);
+    }
+</script>
+

@@ -1,0 +1,108 @@
+footer {
+    color: lighten($color: $primary, $amount: 30);
+    ;
+}
+.footer {
+
+    &-banner {
+        padding: 2rem 0;
+        background-color: #fff;
+    }
+
+    &-top {
+        background-color: var(--secondary);
+        padding: 2.5rem 0 1.825rem;
+        /*color: lighten($color: $secondary, $amount: 45);*/
+        .list {
+            &-title {
+                color: var(--white);
+                position: relative;
+                margin-bottom: 2.5rem;
+
+                &:after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    bottom: -11px;
+                    width: 50px;
+                    height: 4px;
+                    background-color: var(--primary);
+                }
+            }
+
+            &-item {
+                padding: 0.125rem 0;
+
+                a {
+                    /*color: lighten($color: $secondary, $amount: 45);*/
+                    transition: all 0.3s ease;
+                    color: inherit;
+
+                    &:before {
+                        content: '-';
+                        margin-right: 0.25rem;
+                        text-decoration: none;
+                    }
+
+                    &:hover, &:active {
+                        margin-left: 0.25rem;
+                        transition: all 0.3s ease;
+                        text-decoration: none;
+                        color: var(--white);
+                    }
+                }
+            }
+        }
+    }
+
+    &-bottom {
+        border-top: 1px solid rgba(255, 255, 255,0.5);
+        padding: 1rem 0 0.825rem;
+        background-color: #065BA2;
+        font-size: 0.825rem;
+        color:inherit;
+    }
+
+
+
+    &-menu {
+    }
+}
+
+.copyright {
+    &-section {
+        text-align: left;
+
+        @media (min-width:768px) {
+            text-align: right;
+        }
+
+        p {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.promoters {
+    margin: 0.625rem 0;
+
+    &-text {
+        color: $blue;
+    }
+}
+
+.social {
+    
+
+    a {
+        display: inline-block;
+        text-align: center;
+        color:inherit;
+        &:hover{
+            color:var(--white);
+            text-decoration:none;
+        }
+        
+    }
+}
+

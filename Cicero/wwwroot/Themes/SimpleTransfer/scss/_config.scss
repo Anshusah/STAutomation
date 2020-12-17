@@ -1,0 +1,70 @@
+
+/*$primary: #444444;
+$secondary: #181818;*/
+$medium: #9A9A9A;
+$light: #F4F5FA;
+/*$blue: #0054a6;*/
+$light-blue: #00b4f1;
+$light-blue-l: #eefbff;
+
+
+$font-family-base: Poppins !default;
+.font-weight-medium{
+    font-weight:500;
+}
+//Bootstrap 4 dependencies
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+//Responsive font size
+@import "../../../node_modules/bootstrap/scss/vendor/rfs";
+
+// Custom files
+
+//Vendor
+@import "vendor/_daterangepicker";
+//Components
+@import "components/default";
+@import "components/buttons";
+@import "components/card";
+@import "components/modal";
+@import "components/nav";
+@import "components/dropdown";
+@import "components/custom-form";
+@import "components/error";
+@import "components/utilities";
+@import "components/timeline";
+@import "components/list";
+@import "components/datatables";
+@import "components/table";
+@import "components/tabs";
+@import "components/banner";
+
+
+/*layout*/
+@import "layout/main";
+@import "layout/header";
+@import "layout/footer";
+
+//Templates
+@import "templates/dashboard";
+@import "templates/payment-dashboard";
+
+@import "templates/file-claim";
+@import "templates/login";
+@import "templates/login-backoffice";
+@import "templates/index";
+@import "templates/tansaction-details";
+@import "templates/payment-method";
+@import "templates/payment-request";
+@import "templates/recipient-detail";
+
+
+//Segments
+
+@import "segments/faqs";
+@import "segments/notification";
+@import "segments/form-builder";
+@import "segments/claim-overview";
+@import "segments/claim-list";
+@import "segments/claim-process";
+@import "segments/section";
+

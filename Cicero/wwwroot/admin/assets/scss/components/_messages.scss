@@ -1,0 +1,33 @@
+.message {
+    &-box {
+        border-radius: 3px;
+        border: 1px solid #CCCCCC;
+
+        .kicker {
+            font-size: 1.2rem;
+        }
+
+        &.latest {
+            background: #F2FFF4;
+        }
+    }
+
+    &-clientstat {
+        @include media('>tablet') {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        font-size: 1.2rem;
+
+        i {
+            color: #00BE39;
+        }
+    }
+}
+
+.collapsing+.message-viewmore,
+.collapse.show+.message-viewmore {
+    display: none;
+}

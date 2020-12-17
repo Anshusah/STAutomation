@@ -1,0 +1,441 @@
+﻿@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@using Microsoft.AspNetCore.Http;
+@model List<Widget>;
+@inject Permission Permission
+@inject IHttpContextAccessor _httpContextAccessor;
+@{
+    ViewBag.Title = "Manage Widgets";
+    Theme _theme = ViewData["theme"] as Theme;
+}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    var Widgets={};
+    Widgets.Core={
+        Hooks: {
+            actions: [],
+            addAction: function (type, method) {
+                Widgets.Core.Hooks.actions.push({ type: type, method });
+            },
+            doAction: function (type, arg) {
+                var strlen = [];
+                Widgets.Core.Hooks.actions = Widgets.Core.Hooks.actions.filter(function(item, index){
+                    return Widgets.Core.Hooks.actions.indexOf(item) === index;
+                });
+                jQuery.each(Widgets.Core.Hooks.actions, function (i, v) {
+                    if (v.type == type) {
+                        var str_data = v.method.call(this, arg);
+                        if (typeof(str_data) == 'undefined') {
+                            console.log("This method is returning empty : \n" + v.method);
+                            str_data = "";
+                        }
+                        strlen.push(str_data);
+                    }
+                });
+                return strlen;
+            },
+
+        },
+        GenerateWidgetId:function(){
+            function Generator() {
+                 this.length = 8;
+                 this.timestamp = +new Date;
+                 var _getRandomInt = function( min, max ) {
+                    return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+                 }
+                 this.generate = function() {
+                     var ts = this.timestamp.toString();
+                     var parts = ts.split( "" ).reverse();
+                     var id = "";
+
+                     for( var i = 0; i < this.length; ++i ) {
+                        var index = _getRandomInt( 0, parts.length - 1 );
+                        id += parts[index];
+                     }
+                     return id;
+                 }
+            };
+
+            return new Generator().generate();
+
+        },
+        Init:function(){
+            $('.space').sortable({
+
+                connectWith: '.space',
+                placeholder: "ui-state-highlight",
+                tolerance: 'pointer',
+                dropOnEmpty: true,
+                forceHelperSize: true,
+                refreshPositions: true,
+                forcePlaceholderSize: true,
+                //containment: 'window',
+                distance: 5,
+                opacity: 1,
+                /* uu */
+                // tolerance: "pointer",
+                zIndex: 999999999999,
+                over: function (event, ui) {
+                console.log("Overed");
+                },
+                change: function (event, ui) {
+
+                },
+                start: function (event, ui) {
+                    jQuery(".first-space").addClass("start");
+                },
+                stop: function (event, ui) {
+                    jQuery(".first-space").removeClass("start");
+                },
+                receive: function (event, ui) {
+                    var widget_location=jQuery(this).closest("li.base").data("location-id");
+                    var json = $(ui.sender).find("a.item").data('json');
+                    console.log(json)
+                    if (typeof (json) == 'undefined') {
+
+                    return;
+                    }
+                    var widget_id = Widgets.Core.GenerateWidgetId();// Generator().generate();
+
+                    var dom = '<li class="widget-location" data-widget-id="'+widget_id+'" data-type="'+json.type+'">' +
+                    '<div class="widget-wrap "><div class="widget-title"><span class="title"><i class="fa '+json.icon+'"></i></span><close></close></div><form class="widget-body"></form></div>' +
+                    '</li>';
+                    jQuery(this).find('a.item').closest("li").replaceWith(dom);
+                    $.ajax({
+                        url: '/admin/ajax/update-widget.html',
+                        data: {
+                            widget_id: widget_id,
+                            widget_location: widget_location,
+                            widget_type: json.type,
+                            action:"create"
+                        },
+                        error: function() {
+                          toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $("[data-widget-id='"+data.widget_id+"']").find(".widget-body").empty().append(data.content);
+                            $("[data-widget-id='"+data.widget_id+"']").find(".widget-body").slideDown()
+                        },
+                        type: 'POST'
+                    });
+
+                },
+            }).disableSelection();
+
+            $('.ul-lists li').draggable({
+                connectToSortable: '.space',
+                helper: 'clone',
+            });
+
+
+            jQuery(document).on("click", ".ul-lists>li", function (e) {
+                jQuery(this).find(">ul").slideToggle();
+                jQuery(this).toggleClass('active');
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".ul-lists>li li", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            })
+            jQuery(document).on("click", ".widget-wrap .widget-title", function () {
+                jQuery(this).closest(".widget-wrap").find(">.widget-body").slideToggle();
+                jQuery(this).closest("li").toggleClass('active on');
+            })
+
+            jQuery(document).on("click", ".btn-danger", function () {
+                jQuery(this).closest("li").remove();
+            })
+            jQuery(document).on("click", "close", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var widget_location=$(this).closest("li.base").data("location-id");
+                    var widget_id=$(this).closest("li").data("widget-id");
+                    var widget_type=$(this).closest("li").data("type");
+                    var post={
+                            widget_id: widget_id,
+                            widget_location: widget_location,
+                            widget_type:widget_type,
+                            action:"delete"
+                        }
+                    var arr = $(this).serializeArray();
+                    arr.forEach(function(item, index) {
+                        if (post[item.name] === undefined) {
+                            post[item.name] = item.value || '';
+                        } else {
+                            if (!post[item.name].push) {
+                                post[item.name] = [post[item.name]];
+                            }
+                            post[item.name].push(item.value || '');
+                        }
+                    });
+                    $("[data-widget-id='"+widget_id+"']").closest("li").fadeTo("slow" , 0.5);
+                    $.ajax({
+                        url: '/admin/ajax/delete-widget.html',
+                        data: post,
+                        error: function() {
+                           toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                          $("[data-widget-id='"+data.widget_id+"']").closest("li").remove();
+
+                        },
+                        type: 'POST'
+                    });
+
+            })
+
+            jQuery(document).on("submit", "form.widget-body", function(e) {
+                e.preventDefault();
+              
+                if ($.active > 0) {
+                    return false;
+                }
+                var widget_location = $(this).closest("li.base").data("location-id");
+                var widget_id = $(this).closest("li").data("widget-id");
+                var widget_type = $(this).closest("li").data("type");
+                var post = {
+                    widget_id: widget_id,
+                    widget_location: widget_location,
+                    widget_type: widget_type,
+                    action: "update"
+                }
+                var arr = $(this).serializeArray();
+                arr.forEach(function(item, index) {
+                    if (post[item.name] === undefined) {
+                        post[item.name] = item.value || '';
+                    } else {
+                        if (!post[item.name].push) {
+                            post[item.name] = [post[item.name]];
+                        }
+                        post[item.name].push(item.value || '');
+                    }
+                });
+
+                var t = null;
+                var _t = null;
+                var actionResult=Widgets.Core.Hooks.doAction('before_widget_save',post);
+                var go=true;
+                if(actionResult.length>0){
+                    for(var i=0; i<actionResult.length; i++){
+                        if(go==true && actionResult[i].submit==false){
+                            go=false;
+                            break;
+                        }
+                    }
+                }
+                if(go){
+                    $("[data-widget-id='" + widget_id + "']").closest("li").addClass("busy");
+                    $.ajax({
+                        url: '/admin/ajax/update-widget.html',
+                        data: post,
+                        error: function() {
+                             toastr.error('An error has occurred');
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                          
+                            $("[data-widget-id='" + data.widget_id + "']").closest("li").removeClass("busy").addClass("saved").find("form.widget-body").empty().append(data.content);
+                            $("[data-widget-id='" + data.widget_id + "']").find(".widget-foot").prepend("<span class='widget-status success d-flex float-left'>Succesfully Saved.</span>");
+                            var subtitle = $("[data-widget-id='" + data.widget_id + "']").closest("li");
+
+                            if (subtitle.find(".sub-title").length) {
+                                subtitle.find(".sub-title").empty().html(data.subtitle)
+                            } else {
+                                subtitle.find(".title").after("<span class='sub-title'>" + data.subtitle + "</span>"); //.adter(subtitle.find(".title"));
+                            }
+                            subtitle.on("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+                                function(event) {
+                                    try {
+                                        clearTimeout(t);
+                                    } catch (e) {}
+
+                                    t = setTimeout(function() {
+                                        subtitle.removeClass("saved");
+
+                                        try {
+                                            clearTimeout(_t);
+                                        } catch (e) {
+
+                                        }
+
+                                        _t = setTimeout(function() {
+                                            $(".widget-status").fadeTo("slow", 0.0, function() {
+                                                $(".widget-status").hide();
+                                            })
+                                        }, 1500)
+
+                                    }, 500)
+                                });
+                                //
+                                Widgets.Core.Hooks.doAction('after_widget_save',{args:post,result:data});
+                           
+                        },
+                        type: 'POST'
+                    });
+                }
+
+            });
+        },
+        Save:function(e){
+            $("[data-widget-id='"+e+"'] form").submit();
+        }
+    }
+
+</script>
+<div class="container-fluid">
+    <!-- page head starts -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-none p-0">
+            <li class="breadcrumb-item">
+                <a href="@Url.Content("~/admin.html")">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Widgets</li>
+        </ol>
+    </nav>
+    <div class="page-head d-flex justify-content-between">
+        <h3 class="mb-5">Manage Widgets</h3>
+    </div>
+
+    <div class="mngwidget">
+        @Html.AntiForgeryToken()
+        <div class="mngwidget-elements">
+            <div class="box clearfix h-100">
+                <div class="box-header p-4">
+                    <h5 class="box-title mb-0">Widgets Elements</h5>
+                    <p class="help-text">Drag and drop Widget elements as your requirement.</p>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body clearfix">
+
+                    <div class="mngwidget-elements-content">
+                        <ul class="ul-lists widgets-list">
+                            @foreach (var item in _theme.Widgets)
+                            {
+                                var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                var _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                var _status = item.GetType().GetProperty("Status");
+
+                                var _icon = item.GetType().GetProperty("Icon");
+                                string __icon = "";
+                                if (_icon != null) { __icon = _icon.GetValue(item, null).ToString(); }
+
+                                if (_status != null && _status.GetValue(item, null).ToString().ToLower() == "active")
+                                {
+                                    <li class="mngwidget-elements-item d-flex align-items-center">
+                                        <i class="fas @__icon"></i>
+                                        <p class="ml-2 mb-0">
+                                            <a data-json='{"type":"@_class","title":"@name","icon":"@__icon"}' class="item">@name</a>
+                                            <span class="d-block mngwidget-elements-item-info">@_desc</span>
+                                        </p>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="mngwidget-content">
+            <div class="box clearfix h-100 ">
+                <div class="box-header pt-4 pr-4 pl-4">
+                    <div class="form-group d-block align-items-center" style="margin-bottom:0px;">
+                        <h4 class="box-title mb-2">Widgets Location</h4>
+                        <p class="help">Please fill required content in following widget's locations as your website's theme requirement.</p>
+                    </div>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body p-3 clearfix">
+
+                    @{
+                        var _Widgets = Model;
+
+                    }
+
+                    <ul class='connector first-space' id='navs'>
+                        @if (_theme.WidgetLocations.Count() > 0)
+                        {
+                            foreach (var _Widget in _theme.WidgetLocations)
+                            {
+
+                                if (_Widget.Status.ToLower() == "active")
+                                {
+                                    <li class='widget-location base' data-location-id="@_Widget.Id">
+                                        <div class="widget-wrap">
+                                            <div class="widget-title">
+                                                <span class='title'>@_Widget.Title</span>
+                                            </div>
+                                            <div class="widget-body">
+                                                <ul class="space">
+                                                    @{
+                                                        List<Widgets> wget = _theme.GetWidgets(_Widget.Id);
+                                                        if (wget != null && wget.Count() > 0)
+                                                        {
+                                                            foreach (Widgets _v__Widget in wget)
+                                                            {
+
+                                                                <li class='widget-location' data-widget-id="@_v__Widget.WidgetId" data-type="@_v__Widget.WidgetType">
+                                                                    <div class="widget-wrap">
+
+                                                                        @{
+                                                                            _v__Widget.WidgetLocation = _Widget.Id;
+                                                                            _v__Widget.HttpContext = _httpContextAccessor.HttpContext;
+                                                                            _v__Widget.Theme = ViewData["theme"] as Theme;
+                                                                            _v__Widget.WidgetId = _v__Widget.WidgetId;
+                                                                            _v__Widget.Action = "render";
+                                                                            WidgetResponse wr = _v__Widget.Update<Cicero.Service.Models.Core.Widgets>(_v__Widget) as WidgetResponse;
+                                                                        }
+                                                                        <div class="widget-title">
+                                                                            <span class='title'><i title="@Html.Raw(wr.Title)" class="fa @wr.Icon"></i></span>
+                                                                            @if (!string.IsNullOrEmpty(wr.SubTitle))
+                                                                            {
+                                                                                <span class='sub-title'>@wr.SubTitle</span>
+                                                                            }
+                                                                            <close></close>
+                                                                        </div>
+                                                                        <form class="widget-body">
+
+                                                                            @Html.Raw(wr.Content)
+
+                                                                        </form>
+                                                                    </div>
+
+                                                                </li>
+                                                            }
+
+
+                                                        }
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                    </li>
+                                }
+
+                            }
+                        }
+                    </ul>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+
+
+</div>
+@section Scripts {
+<script type="text/javascript">
+$(function(){
+    Widgets.Core.Init()
+})
+</script>
+}

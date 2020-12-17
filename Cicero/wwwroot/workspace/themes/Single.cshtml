@@ -1,0 +1,40 @@
+﻿<style type="text/css">
+    body, html {
+        width: 100%;
+        height: 100%;
+        float: left;
+    }
+
+    .wrapper_404 {
+        width: 100%;
+        height: 100%;
+        float: left;
+        background-color: #e3e3e3;
+    }
+
+    .box-404 {
+        height: 300px;
+        width: 600px;
+        background-color: #ffffff;
+        border-radius: 4px;
+        overflow: hidden;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        box-shadow: 5px 5px #d2d2d29e;
+    }
+</style>
+<div class="wrapper_404">
+    <div class="box-404 p-5">
+        <h4> 404 - Page Not Found</h4>
+        <p>
+            We were unable to find that page.
+        </p>
+        <p>
+            Please go to the <b></b> home page by clicking the button below.
+        </p>
+        <a href="@Url.Content("/")" class="go-back">Go to Home</a>
+    </div>
+</div>

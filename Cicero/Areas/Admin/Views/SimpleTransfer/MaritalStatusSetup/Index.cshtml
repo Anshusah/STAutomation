@@ -1,0 +1,149 @@
+﻿@using Cicero.Service.Helpers
+@inject Permission Permission
+@inject Utils utils
+
+@{
+    ViewBag.Title = "Manage Marital Status";
+}
+<div class="page-wrapper page-roles">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page"> Marital Status</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Marital Status</h3>
+            @if (Permission.Can(UserCan.Create_MaritalStatusConfig))
+            {
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/admin" + "/maritalstatussetup/0/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-fill"></i><span class="btn__label">Create New</span></a>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-main-section">
+            <div class="page-content-area">
+                <div class="status"></div>
+                <form action="@Url.Content("~/admin/maritalstatussetup/action.html")" id="maritalstatussetup-form" method="post">
+                    <div class="datatable__filter">
+                        <div class="datatable__filter-main">
+                            <div class="datatable__filter-actions">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="action">Action</label>
+                                    </div>
+                                    <select class="custom-select" name="action" id="action">
+                                        <option value="">Select Action</option>
+                                        @if (Permission.Can(UserCan.Delete_MaritalStatusConfig))
+                                        {
+                                            <option value="delete">Delete : Selected</option>
+                                        }
+                                        @if (Permission.Can(UserCan.Update_MaritalStatusConfig))
+                                        {
+                                            <option value="active">Active : Selected</option>
+                                            <option value="inactive">Inactive : Selected</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button name="apply" type="button" class="btn btn-outline-secondary" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to "+ $("#action").children("option:selected").val()+" selected marital status?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("#maritalstatussetup-form").submit()},OnCancelled:function(){this.close();}}'>Apply</button>
+                            </div>
+                            <div class="datatable__filter-search">
+                                <div class="form-inline">
+                                    <input type="text" class="form-control" id="gridsearch" onkeydown="return (event.keyCode!=13);" value="" placeholder="Search">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <table id="maritalstatussetup" class="table table-hover table-responsive-sm table-custom"></table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")"></script>*@
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var table = jQuery("#maritalstatussetup");
+        var customCheckbox = '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input dt-checkboxes" id=""><label class="custom-control-label"></label></div>';
+        table.dataTable({
+            "processing": true,
+            "serverSide": true,
+            "dom": 'r<"clear">t<"datatable__controls"<"datatable__length"l><"datatable__info"i><"datatable__numbers"p>>',
+            'searching': true,
+            "ajax": { "url": "@Url.Content("~/admin" + "/maritalstatussetup.html")", "type": "POST" },
+            "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+
+        'stateSave': false,
+        'select': {
+            info: false,
+            style: 'multi'
+        },
+        'columnDefs': [
+            {
+                'targets': 0,
+                'render': function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = customCheckbox;
+                    }
+                    return data;
+                },
+                'checkboxes': {
+                    'selectRow': true,
+                    'selectAll': true,
+                    'selectAllRender': customCheckbox
+                }
+            }
+        ],
+        "rowCallback": function(row, data, index) {
+            jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+        },
+        "columns": [
+            { "title": "", "data": "id", "orderable": false },
+            { "title": "Marital Status Name", "data": "name", "orderable": true },
+            {
+                "title": "Status", "data": null, "orderable": false,
+                'render': function (data) {
+                    if (data.status == null) {
+                        data.status = "";
+                    }
+                    var content= data.status;
+                    if(content == "Active") {
+                        return "<span class='badge badge-success badge-pill'>Active</span>";
+                    } else {
+                        return "<span class='badge badge-secondary badge-pill'>Inactive</span>"
+                    }
+                }
+            },
+            { "title": "Created Date", "data": "created_at", "orderable": true },
+            { "title": "Updated Date", "data": "updated_at", "orderable": true },
+            { "title": "", "data": "action", "orderable": false, "class": "datatable__actions" }
+        ],
+        order: [
+            [1, "asc"]
+        ],
+        "paging": true,
+        "pageLength": 10,
+        lengthMenu: [
+            [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+        ],
+        "fnInitComplete": function(oSettings, json) {
+            jQuery("#maritalstatussetup").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+        },
+        });
+        jQuery(document).on("keyup", "#gridsearch", function() {
+                table.fnFilter(this.value);
+        });
+});
+    </script>
+}

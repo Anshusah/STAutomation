@@ -1,0 +1,43 @@
+﻿
+
+@{
+    ViewData["Title"] = "Landing Page";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+
+}
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content flex-column" role="main">
+        <section class="banner-hero__landing">
+
+            <div class="overlay absolute-fill">
+                <div class="banner-hero__text">
+                    <span>Simple Way to</span>
+                    <span>Send Money</span>
+                </div>
+            </div>
+            <div class="img-wrapper">
+                @*<img src="~/Themes/JazzCash/img/img-landing.png" class="img-responsive mx-auto" />*@
+
+            </div>
+            <h1 class="sr-only">
+                Simple Way to
+                Send Money
+            </h1>
+
+        </section>
+
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <div class="row copyright-section">
+                <div class="mx-auto">
+                    <small>&copy;Copyright  Fast Track Money Transfer Limited 2020</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>

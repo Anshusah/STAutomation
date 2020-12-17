@@ -1,0 +1,133 @@
+.panel {
+    background: $light-blue;
+
+ 
+}
+
+.color-picker {
+    .dropdown-menu {
+        padding: 1rem;
+    }
+    .dropdown-toggle {
+        &::after {
+            display: none;
+        }
+        i {
+            line-height: 1;
+        }
+    }
+}
+.color-tiles-group {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+}
+.color-tile {
+    padding: 0.5rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.25rem;
+    position: relative;
+    &:hover,&:focus {
+        background-color: var(--light);
+    }
+}
+.color {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    color: #fff;
+    &.berryred {
+        background: #EF3A53;
+    }
+    &.blue {
+        background: #44A4F8;
+    }
+    &.neon {
+        background: #3BD593;
+    }
+    &.dullpurple {
+        background: #CF92DE;
+    }
+    &.brightred {
+        background: #FF6D4F;
+    }
+    &.yellow {
+        background: #FFB636;
+    }
+    &.gold {
+        background: #A88240;
+    }
+    &.pink {
+        background: #F66DAD;
+    }
+    &.darkblue {
+        background: #0C9CBA;
+    }
+    &.green {
+        background: #93D549;
+    }
+    &.purlple {
+        background: #9869E8;
+    }
+    &.grey {
+        background: #68655F;
+    }
+    &.darkestblue {
+        background: #3C598B;
+    }
+    &.darkgreen {
+        background: #5E8B3C;
+    }
+    &.lightpink {
+        background: #FB85F7;
+    }
+    &.brown {
+        background: #8B5E3C;
+    }
+    &.satpurple {
+        background: #5D44C2;
+    }
+    &.lightblue {
+        background: #13BDF2;
+    }
+    &.dullgreen {
+        background: #9AA591;
+    }
+    &.orange {
+        background: #F97F22;
+    }
+    &.black {
+        background: #000000;
+    }
+    &.grey70 {
+        background: #6D6E71;
+    }
+    &.grey40 {
+        background: #A7A9AC;
+    }
+    &.grey10 {
+        background: #E6E7E8;
+    }
+    &.white {
+        background: #ffffff;
+    }
+}
+
+.level1 {
+    &.col-lg-12 {
+        background: #e9e9e9;
+        padding: 1.3rem;
+        margin-bottom: 1.4rem;
+        margin-left: 5px;
+        margin-right: 5px;
+        border-radius: .25rem;
+        flex-shrink: 1;
+    }
+}

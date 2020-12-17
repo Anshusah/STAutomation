@@ -1,0 +1,93 @@
+.notification {
+    .close {
+        font-weight: 300;
+        color: #000;
+        height: 30px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+
+        &:hover {
+            color: $gray-400;
+            background-color: rgba($gray-400,0.25);
+            border-radius: 50%;
+        }
+    }
+
+    .content {
+        text-align: left;
+        grid-column: 2;
+        padding: 2rem 1.5rem 3rem;
+    }
+    &-lists{
+        transition:all 0.3s ease linear;
+    }
+    &-details{
+        transition:all 0.3s ease linear;
+    }
+    &-bell {
+        align-self: flex-start;
+        line-height: 2;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid $gray-200;
+    }
+
+    &__body {
+        max-height: 250px;
+        overflow: hidden;
+        overflow-y: auto;
+        position: relative;
+
+        .content {
+        }
+    }
+
+    &__footer {
+        padding: 1rem;
+        border-top: 1px solid $gray-200;
+    }
+
+    &__item {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1rem;
+        background-color: $gray-100;
+        position: relative;
+        color: var(--gray-dark) !important;
+        text-decoration: none !important;
+        margin-bottom: 1px;
+
+        &:hover {
+            color: var(--gray-dark);
+            background-color: $gray-100 !important;
+        }
+
+        &--unread {
+            background-color: $white;
+            padding-right: 2rem;
+
+            &:after {
+                content: "";
+                width: 6px;
+                height: 6px;
+                background-color: var(--success);
+                border-radius: 10em;
+                position: absolute;
+                right: 1rem;
+            }
+        }
+    }
+
+    &__item-user {
+        margin-right: 1rem;
+    }
+}

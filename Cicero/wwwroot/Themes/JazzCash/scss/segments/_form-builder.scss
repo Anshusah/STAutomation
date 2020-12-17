@@ -1,0 +1,52 @@
+.form-layout {
+    flex-grow: 1;
+    background-color: #fbfbfb;
+
+    &__tabs {
+        background-color: $white;
+        display: flex;
+        justify-content: flex-start;
+        padding: 2rem 0;
+
+        @include media-breakpoint-up(lg) {
+            padding: 2rem 0rem;
+        }
+        /*box-shadow: 0 1px 20px rgba(0, 0, 0, 0.04);*/
+    }
+
+    &__content {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+
+        @include media-breakpoint-up(md) {
+            padding: 2rem 2.5rem;
+        }
+
+        @include media-breakpoint-up(xl) {
+            max-width: 750px;
+        }
+
+        &-wrapper {
+            width: 100%;
+        }
+
+        &.content-bordered {
+            border-bottom: 5px solid var(--primary);
+        }
+    }
+
+    &__footer {
+        display: flex;
+        /*flex-direction: column;
+        margin-top: 1rem;*/
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}

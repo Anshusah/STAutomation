@@ -1,0 +1,42 @@
+
+.section-faqs {
+    background: #fff;
+    padding: 6rem 0;
+    h3 {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .card-header {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        &[aria-expanded="true"] .visible {
+            display: none;
+        }
+        &[aria-expanded="false"] .visible {
+            display: block;
+        }
+        &[aria-expanded="true"] .hidden {
+            display: block;
+        }
+        &[aria-expanded="false"] .hidden {
+            display: none;
+        }
+    }
+    .card-body {
+        padding-top: 0;
+        padding-bottom: 2rem;
+    }
+    .card-wrapper {
+        max-width: 860px;
+        margin: auto;
+    }
+    .card {
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid $gray-200;
+        border-radius: none!important;
+    }
+}

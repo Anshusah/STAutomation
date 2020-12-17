@@ -1,0 +1,301 @@
+﻿
+
+@{
+    ViewData["Title"] = "Transactions";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+
+}
+<h1 class="sr-only">Jazz Cash</h1>
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        @*<input type="hidden" id="elmloggedinuser" name="elmloggedinuser" elm-name="elmloggedinuser" value="@_commonService.getLoggedInUserId()" />*@
+        <div class="container main-content-inner">
+                    <div class="widget-box  border-bottom-0">
+                        <div class="widget-header flex-row justify-content-center bordered">
+                            <h5 class="title">In Progress</h5>
+                           
+
+                        </div>
+                        <div class="widget-content">
+                            <div class="status-bar">
+                                <div class="status-bar-l">
+                                    <h5 class="d-inline-block">To:</h5>
+                                    <h5 class="mb-0 title d-inline-block"> Adil Ahmed</h5>
+                                    <span class="status d-block">Sending</span>
+                                </div>
+                                <div class="status-bar-r">
+                                    <h5 class="mb-0 title"> 23.00 GBP</h5>
+                                    <span class="status">500 GBP</span>
+                                </div>
+                            </div>
+                            <div class="timeline__wrapper">
+                                <span class="time">Today at 1:48am</span>
+                                <div class="timeline">
+                                    <div class="timeline__container success">
+                                        <div class="timeline__content ">
+
+                                            <span class="timeline__data">You set up transfer</span>
+                                            <small></small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container success ">
+                                        <div class="timeline__content ">
+                                            <span class="timeline__data text-primary">Your money may still be in your bank account</span>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container ">
+                                        <div class="timeline__content ">
+                                            <span class="timeline__data">We should've received your money by now. Please check with your bank - they'll know what's
+                                                holding thing up.
+                                            </span>
+                                            <button class="btn btn-outline-primary btn__has-icon">
+                                                I've now Paid
+                                                <i class='fa fa-angle-double-right'></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container ">
+                                        <div class="timeline__content ">
+                                            <span class="timeline__data">We receive you GBP</span>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container">
+                                        <div class="timeline__content ">
+                                            <span class="timeline__data">We pay out your PKR</span>
+                                        </div>
+                                    </div>
+                                    <div class="timeline__container ">
+                                        <div class="timeline__content ">
+                                            <span class="timeline__data">Adil Ahmed receives your PKR</span>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+         </div>
+
+        
+       
+    </main>
+</div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="transaction-details" tabindex="-1" role="dialog" aria-labelledby="recipientDetails" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title title" id="exampleModalLongTitle">Payment Request Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="recipient-detail__about">
+                        <div class="profile">
+                            <div class="icon-wrapper"><i class="ri-building-line ri-3x"></i></div>
+                        </div>
+                        <div class="details d-flex flex-column">
+                            <span class="name">Adil Ahmed ABC Company</span>
+                            <h5 class="amount">20.00 GBP</h5>
+                            <h6 class="Status title mb-0">Payment Request Pending</h6>
+                            <span class="small ">Due by 13th March 2020</span>
+
+                        </div>
+                    </div>
+
+                </div>
+                <nav>
+                    <div class="nav nav-tabs nav-tabs-grid" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Timeline</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Details</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="timeline__wrapper">
+                            <div class="timeline">
+                                <div class="timeline__container success succeed">
+                                    <div class="timeline__content ">
+
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container success ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+                                <div class="timeline__container ">
+                                    <div class="timeline__content ">
+                                        <h6 class="timeline__data">Transaction Placed</h6>
+                                        <small>April 4, 2020</small>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="p-4">
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Name</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>Jhon Doe</h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Address</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>
+                                        Park Avenue, STOKE-ON-TRENT
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-lg-4">
+                                    <label>Date</label>
+                                </div>
+                                <div class="form-group col-lg-8">
+                                    <h6>
+                                        April 4, 2020
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var table = jQuery("#transactionlist");
+        table.dataTable({
+            "dom": 'r<"clear">t',
+
+            data: [
+                {
+                    "date": "2011/04/25",
+                    "description": "<span class='font-weight-medium title'>John Doe </span>- Withdrawal<br/> Completed",
+                    "amount": "<span class='font-weight-medium title'>200</span>",
+                    "runningBalance": "0.00",
+                    "actions": "<i class='ri-arrow-right-s-line'></i>"
+                    
+                },
+                {
+                    "date": "2011/04/25",
+                    "description": "<span class='font-weight-medium title'>John Doe </span>- Withdrawal<br/> Completed",
+                    "amount": "<span class='font-weight-medium title'>200</span>",
+                    "runningBalance": "0.00",
+                     "actions": "<i class='ri-arrow-right-s-line'></i>"
+                }
+            ],
+
+            "columns": [
+                { "title": "Date", "data": "date", "orderable": true },
+                { "title": "Description", "data": "description", "orderable": true },
+               
+                {
+                    "title": "Amount", "data": null, "orderable": true,
+                    'render': function (data) {
+                        if (data.amount == null) {
+                            data.amount = "0";
+                        }
+
+                        if (data.currency == null) {
+                            data.currency = "GBP";
+                        }
+
+                        var amount = data.amount + " " + data.currency;
+                        return amount;
+                    }
+                },
+                { "title": "Running Balance", "data": "runningBalance", "orderable": false },
+                
+                { "title": "", "data": "actions", "orderable": false, "class": "datatable__actions" }
+            ],
+            'order': [
+                [1, "asc"]
+            ],
+            'paging': true,
+            'pageLength': 10,
+            'lengthMenu': [
+                [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+            ],
+            'fnInitComplete': function (oSettings, json) {
+                jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+            },
+        });
+
+        jQuery(document).on("keyup", "#gridsearch", function () {
+            console.log(this.value);
+            table.fnFilter(this.value);
+        });
+        $('#transactionlist tbody').on('click', 'tr', function () {
+            $("#transaction-details").modal("toggle");
+        });
+
+
+        //var CloseAnimationTimeout;
+
+        //$('.datatable__filter-main .datatable__filter-search .form-control ').click(function () {
+        //    clearTimeout(CloseAnimationTimeout);
+        //    $('.datatable__filter-main .datatable__filter-search .form-control').stop().animate({
+        //      width: '100%'
+        //    }, '100000s');
+        //  })
+        //  .mouseout(function() {
+        //    CloseAnimationTimeout = setTimeout(function() {
+        //      $('.datatable__filter-main .datatable__filter-search .form-control').stop().animate({
+        //        width: '0'
+        //      }, '10000s');
+        //    }, 10000);
+        //  });
+
+    });
+</script>

@@ -1,0 +1,154 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model SenderDetailViewModel
+@inject Cicero.Service.Services.SimpleTransfer.ICountryPayoutService IBranchMapperService
+@inject Cicero.Service.Services.SimpleTransfer.IIdentificationTypeSetupService IdentificationTypeSetupService
+@{
+    ViewData["Title"] = "Sender Details";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    var countryList = IBranchMapperService.GetAllCountryList().Result.Where(x=>x.Value == "GB").FirstOrDefault();
+    var identityTypeList = IdentificationTypeSetupService.GetIdentificationType().Result;
+}
+
+<section class="">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <form action="@Url.Content("~/st/user/senderdetail.html")" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <select asp-for="Title" class="form-fields form-control">
+                                <option value="Mr." selected>Mr.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Miss">Miss</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input asp-for="FirstName" type="text" class="form-fields form-control" placeholder="First Name">
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input asp-for="LastName" type="text" class="form-fields form-control" placeholder="Last Name">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input asp-for="DOB" type="date" class="form-fields form-control" placeholder="Date Of Birth">
+                            <span asp-validation-for="DOB" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <input asp-for="PostCode" type="text" class="form-fields form-control" placeholder="Post Code">
+                            <span asp-validation-for="PostCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <textarea asp-for="AddressLine" class="form-fields form-control" placeholder="Address Line 1"></textarea>
+                            <span asp-validation-for="AddressLine" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <select asp-for="Country" class="form-fields form-control">
+                                <option value="">Select Country</option>
+                                @{
+                                    if(countryList != null)
+                                    {
+                                        <option value="@countryList.Value">@countryList.Text</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="Country" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <select asp-for="IdType" class="form-fields form-control">
+                                <option value="">Choose Type</option>
+                                @{
+                                    foreach (var ls in identityTypeList)
+                                    {
+                                        <option value="@ls.Value">@ls.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input asp-for="IdNumber" type="text" class="form-fields form-control" placeholder="ID Number">
+                            <span asp-validation-for="IdNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input asp-for="IdExpiryDate" type="date" class="form-fields date form-control" placeholder="Id Expiry Date">
+                            <span asp-validation-for="IdExpiryDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @*<div class="form-row">
+                            <div class="form-group col">
+                                <p>
+                                    Please have your mobile and photo ID (Driving Licence or Passport)
+                                    handy for completing the verification process. When you are ready,
+                                    please click on 'Verify Identity'.
+                                </p>
+                            </div>
+                        </div>*@
+
+
+
+
+                    @*<div class="form-row">
+                            <div class="form-group col">
+                                <button type="submit" class="btn btn-block btn-secondary">
+                                    Step1. Verify Identity
+                                </button>
+                            </div>
+                        </div>*@
+                    <div class="form-row">
+                        <div class="form-group col">
+
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="Terms" type="checkbox" class="custom-control-input" id="agreeTerms">
+                                <label for="agreeTerms" class="custom-control-label">
+                                    I have read and agreed with the Payment Services Terms
+                                    and Conditions
+                                </label>
+                                <span asp-validation-for="Terms" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <button type="submit" class="btn btn-block btn-secondary">
+                                Submit Registration
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    // extend range validator method to treat checkboxes differently
+    var defaultRangeValidator = $.validator.methods.range;
+    $.validator.methods.range = function (value, element, param) {
+        if (element.type === 'checkbox') {
+            // if it's a checkbox return true if it is checked
+            return element.checked;
+        } else {
+            // otherwise run the default validation function
+            return defaultRangeValidator.call(this, value, element, param);
+        }
+    }
+</script>

@@ -1,0 +1,35 @@
+.list {
+    &-transaction {
+        padding: 0;
+        margin-bottom: 0;
+        overflow-y: auto;
+        max-height: 270px;
+
+        &__item {
+            display: flex;
+            align-items: center;
+            flex-flow: row;
+            padding: 0.75rem 2rem;
+            border-top: 1px solid #DFDFDF;
+            cursor: pointer;
+
+            &:hover, .active {
+                background-color: rgba($primary,0.04);
+            }
+
+            .icon {
+                font-size: 1.5rem;
+            }
+
+            .date {
+                font-weight: 300;
+            }
+
+            .name, .amount {
+                font-weight: 500;
+                font-size: 1.125rem;
+                color: $black;
+            }
+        }
+    }
+}

@@ -1,0 +1,102 @@
+// $custom-control-indicator-size: 1.4rem !default;
+// $custom-control-gutter: .7rem;
+// $custom-switch-width: 2rem;
+// $custom-switch-indicator-border-radius: .7rem;
+// $font-size-base: 1.4rem;
+// $line-height-base: 1.4 !default;
+// $custom-control-indicator-border-width: 1px !default;
+// $custom-switch-indicator-size: calc(#{$custom-control-indicator-size} - #{$custom-control-indicator-border-width * 4})
+// 	!default;
+// $custom-control-indicator-border-color: theme(border, dark);
+// $custom-control-indicator-bg: $white;
+// $custom-control-indicator-checked-disabled-bg: theme(border, dark);
+
+// .custom-control {
+// 	padding-left: $custom-control-gutter + $custom-control-indicator-size;
+// }
+
+// .custom-control-label {
+// 	// Background-color and (when enabled) gradient
+// 	&::before {
+// 		width: $custom-control-indicator-size;
+// 		height: $custom-control-indicator-size;
+// 		left: -($custom-control-gutter + $custom-control-indicator-size);
+// 	}
+
+// 	// Foreground (icon)
+// 	&::after {
+// 		width: $custom-control-indicator-size;
+// 		height: $custom-control-indicator-size;
+// 		left: -($custom-control-gutter + $custom-control-indicator-size);
+// 	}
+// }
+
+// .custom-switch {
+// 	padding-left: $custom-switch-width + $custom-control-gutter;
+
+// 	.custom-control-label {
+// 		&::before {
+// 			left: -($custom-switch-width + $custom-control-gutter);
+// 			width: $custom-switch-width;
+// 			// stylelint-disable-next-line property-blacklist
+// 			border-radius: $custom-switch-indicator-border-radius;
+// 		}
+
+// 		&::after {
+// 			top: calc(
+// 				#{(($font-size-base * $line-height-base - $custom-control-indicator-size) / 2)} + #{$custom-control-indicator-border-width *
+// 					2}
+// 			);
+// 			left: calc(
+// 				#{-($custom-switch-width + $custom-control-gutter)} + #{$custom-control-indicator-border-width * 2}
+// 			);
+// 			width: $custom-switch-indicator-size;
+// 			height: $custom-switch-indicator-size;
+// 			background-color: $custom-control-indicator-border-color;
+// 			// stylelint-disable-next-line property-blacklist
+// 			border-radius: $custom-switch-indicator-border-radius;
+// 		}
+// 	}
+
+// 	.custom-control-input:checked ~ .custom-control-label {
+// 		&::after {
+// 			background-color: $custom-control-indicator-bg;
+// 			transform: translateX($custom-switch-width - $custom-control-indicator-size);
+// 		}
+// 	}
+
+// 	.custom-control-input:disabled {
+// 		&:checked ~ .custom-control-label::before {
+// 			background-color: $custom-control-indicator-checked-disabled-bg;
+// 		}
+// 	}
+// }
+
+
+
+.custom-switch {
+    .custom-control-label {
+        &::before {
+            text-overflow: ellipsis;
+            left: -2.25rem;
+            width: 2.2rem;
+            border-radius: 10rem;
+            height: 1.3rem;
+            border: 0;
+            background: #ccc;
+        }
+
+        &::after {
+            top: calc(.25rem + 2px);
+            left: calc(-2.25rem + 2px);
+            width: calc(1.3rem - 4px);
+            height: calc(1.3rem - 4px);
+            border-radius: 10rem;
+            background: #fff;
+        }
+    }
+
+    .custom-control-input:checked ~ .custom-control-label::after {
+        transform: translateX(0.9rem);
+    }
+}

@@ -1,0 +1,7 @@
+.profile {
+    .border-right {
+        @include media('<desktop') {
+            border-right: none !important;
+        }
+    }
+}

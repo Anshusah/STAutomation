@@ -1,0 +1,110 @@
+//Custom theme variable overridden for Bootstrap
+@import "components/variables";
+
+//Configured all Bootstrap and theme scss files are located here.
+@import "config";
+
+.swiper-container {
+    padding-bottom: 3.5rem!important;
+}
+.swiper-pagination-bullet-active {
+    background: $primary;
+}
+
+/* Media */
+.media-list a {
+    position: relative;
+}
+
+    .media-list a i {
+        position: absolute;
+        right: 3px;
+        top: 3px;
+        color: #ff0000;
+    }
+
+/* Article */
+.media-list {
+    padding: 0px;
+}
+
+    .media-list, .media-list li {
+        list-style: none
+    }
+
+        .media-list li.thumbs {
+            width: 50px;
+            height: 50px;
+            float: left;
+            background-color: #ebebeb;
+            margin-right: 2px;
+        }
+
+            .media-list li.thumbs img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+            }
+
+        .media-list li.add button, .media-list li a {
+            margin: 15px;
+            height: 20px;
+            width: 20px;
+            display: block;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 0px;
+            position: relative;
+            float: left;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .media-list li a {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 5px;
+            border-radius: 0px;
+            background-color: #ebebeb;
+            position: relative;
+        }
+
+        .media-list li i {
+            position: absolute;
+            color: #ff0000;
+            position: absolute;
+            color: #ff0000;
+            right: 5px;
+            top: 6px;
+            opacity: 0;
+        }
+
+        .media-list li a:hover i {
+            opacity: 1;
+        }
+
+        .media-list li a:hover {
+            background-color: #666666;
+        }
+
+        .media-list li.add button:before {
+            content: "+";
+            position: absolute;
+            top: -2px;
+            width: 21px;
+            height: 21px;
+            left: 0px;
+            cursor: pointer;
+        }
+
+        .media-list li.add button:focus {
+            outline: 0;
+        }
+
+#media .modal-body iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 430px;
+}

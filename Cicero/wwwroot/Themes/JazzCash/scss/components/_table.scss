@@ -1,0 +1,26 @@
+.table {
+    display: table;
+
+    thead {
+        th {
+            color: $black;
+            font-size:1.125rem;
+            font-weight: 500;
+            border-color: rgba($gray-400,0.25);
+        }
+    }
+
+    tbody {
+        td {
+            border-color: rgba($gray-400,0.25);
+        }
+    }
+
+    td {
+        border-color: rgba($gray-400,0.25);
+    }
+
+    thead th, tbody td {
+        vertical-align: middle;
+    }
+}

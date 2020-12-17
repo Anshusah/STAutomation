@@ -1,0 +1,119 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Models.Core;
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@*@await Html.PartialAsync("../Shared/_Header.cshtml")*@
+
+<section class="wrapper">
+    <div class="side-banner-overlay">
+        <div class="overlay"></div>
+        <div class="side-banner">
+            <div class="img-wrapper img-wrapper--login">
+                @*<img class="img-responsive" src="~/Themes/SimpleTransfer/img/login-sidelayout-bg.png" alt="">*@
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        @*<div class="row">
+            <div class="col-md-6">
+                <div class="logo">
+                    <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" alt="">
+                </div>
+            </div>
+            <div class="col col-md-6">
+                
+
+            </div>
+        </div>*@
+        <div class="row">
+
+            <div class="col-md-6  offset-md-6 col-lg-6  offset-lg-6">
+                <a class="close" href="/st/user/logout.html">
+                    <i class="ri-close-fill"></i>
+                </a>
+                
+                <div class="form-login-signup">
+                    <div class="mb-4">
+                        <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png"class="img-responsive" alt="Simple Transfer">
+                    </div>
+                    <div class="form-header">
+                        <h1 class="sr-only">Hello,Welcome back to Simple Transfer!</h1>
+                        <h1 class="form-title title">
+                            <span>Hello,</span>
+                            <span class="text-primary">Welcome to</span> 
+                            <span class="text-primary">Simple Transfer!</span>
+                        </h1>
+                        <p class="mb-0">
+                            To stay in touch with us, please login to your Simple Transfer account.
+                        </p>
+                    </div>
+                    <form method="post" autocomplete="off" action="/st/user/login.html">
+                        @Html.AntiForgeryToken()
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label asp-for="Email" class="form-label">Email Address</label>
+                                @*<input type="text" class="form-fields form-control email" asp-for="Email" name="Email" id="Email" placeholder="someone@example.com" required>*@
+                                <input type="text" class="form-fields form-control email" asp-for="Email" name="Email" id="Email"  required>
+                                <span asp-validation-for="Email"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label asp-for="Password" class="form-label">Password</label>
+                                @*<input type="password" class=" form-control form-fields password" placeholder="Password" asp-for="Password" name="Password" id="Password" required>*@
+                                <input type="password" class=" form-control form-fields password"  asp-for="Password" name="Password" id="Password" required>
+
+                                <span asp-validation-for="Password"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="" id="rememberme">
+                                    <label for="rememberme" class="custom-control-label"> Remember me</label>
+                                </div>
+
+                            </div>
+                            <div class="form-group col-md-6">
+                                <a href="/st/user/forgot.html" class="link forget-link">Forget Password?</a>
+                            </div>
+                        </div>
+                        <div class="form-row mt-2">
+                            <div class="form-group col">
+                                <button type="submit" class="btn btn-block btn-primary">
+                                    Login
+                                </button>
+                            </div>
+                        </div>
+                        <div class="footer-option">Don't have an account? <a href="/st/user/register.html" class="link">Signup</a></div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*@await Html.PartialAsync("../Shared/_Footer.cshtml")*@
+@section Scripts{}
+<script>
+    $(".toggle-password").click(function () {
+        //$(this).find('i').toggleClass("remixicon-eye-off-line");
+        var input = $($(this).attr("toggle"));
+        if (input.attr("type") == "password") {
+            input.attr("type", "text");
+            $(this).addClass('text-primary');
+            $(this).find('i').removeClass("remixicon-eye-line").addClass("remixicon-eye-off-line");
+        } else {
+            input.attr("type", "password");
+            $(this).removeClass('text-primary');
+            $(this).find('i').removeClass("remixicon-eye-off-line").addClass("remixicon-eye-line");
+
+        }
+    });
+</script>

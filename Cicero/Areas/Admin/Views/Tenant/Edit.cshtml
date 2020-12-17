@@ -1,0 +1,186 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model TenantViewModel
+@inject IUserService _userService
+@inject Permission Permission
+@inject Utils _utils
+
+@{
+
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " Tenant";
+
+}
+<div class="page-wrapper">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/tenants.html")">Tenants</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">@Utils.CreateOrEdit(Model) Tenant</li>
+            </ol>
+        </nav>
+        <div class="page-header__main">
+            <h3 class="page-title">Manage Tenants</h3>
+            @if (Permission.Can(UserCan.Create_Tenant))
+            {
+                <div class="page-toolbar">
+                    <a href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/tenant/"+ _utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="btn__icon ri-add-circle-line"></i><span class="btn__label">Add new record </span></a>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="page-content">
+        <div class="page-form-container">
+            <form action="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/tenant/"+ _utils.EncryptId(Model.Id) +"/edit.html")" method="post" class="page-container grid-horizontal-viewport">
+                <div class="page-aside">
+                    <div class="aside-wrapper">
+                        <div class="aside-header">
+                            <h4>Manage Tenants</h4>
+                            <p>
+                                This section helps you to add/edit or delete Tenants. Please make changes on required fields and Click on "Update Changes" buttons.
+                            </p>
+                        </div>
+                        <div class="aside-body">
+                            <div class="form-group ">
+                                <label class="mr-2">Status</label>
+                                <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitchstatus"><label class="custom-control-label" for="customSwitchstatus"></label></div>
+
+                            </div>
+                            <div class="form-group ">
+                                <label class="mr-2">Add to blacklist</label>
+                                <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="customSwitchBlaclist"><label class="custom-control-label" for="customSwitchBlaclist"></label></div>
+
+                            </div>
+                            @*<div class="form-group">
+            <label>Status</label><br />
+            <div class="custom-control custom-radio custom-control-inline">
+                @Html.RadioButtonFor(model => model.Status, true, new { @id = "enable", @class = "custom-control-input" })
+                <label class="custom-control-label" for="enable">Active</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                @Html.RadioButtonFor(model => model.Status, false, new { @id = "disable", @class = "custom-control-input" })
+                <label class="custom-control-label" for="disable">Inactive</label>
+            </div>
+        </div>*@
+                            <div class="form-group">
+                                <label asp-for="CreatedAt">Created</label>
+                                <input asp-for="CreatedAt" class="form-control-plaintext font-weight-bold p-0" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UpdatedAt">Last updated</label>
+                                <input asp-for="UpdatedAt" class="form-control-plaintext font-weight-bold p-0" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="form-wrapper">
+                        @Html.AntiForgeryToken()
+                        <div class="status"></div>
+                        <div asp-validation-summary="All" class="text-danger mt-2"></div>
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <div class="form-body">
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="Name"></label>
+                                        <input asp-for="Name" class="form-control" />
+                                        <span asp-validation-for="Name"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="Identifier"></label>
+                                        <input asp-for="Identifier" class="form-control" />
+                                        <span asp-validation-for="Identifier"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="Email"></label>
+                                        <input asp-for="Email" class="form-control" />
+                                        <span asp-validation-for="Email"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="PhoneNumber"></label>
+                                        <input asp-for="PhoneNumber" class="form-control" />
+                                        <span asp-validation-for="PhoneNumber"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="AddressPrimary"></label>
+                                <input asp-for="AddressPrimary" class="form-control" />
+                                <span asp-validation-for="AddressPrimary"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="AddressSecondary"></label>
+                                <input asp-for="AddressSecondary" class="form-control" />
+                                <span asp-validation-for="AddressSecondary"></span>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="City"></label>
+                                        <input asp-for="City" class="form-control" />
+                                        <span asp-validation-for="City"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label asp-for="PostCode"></label>
+                                        <input asp-for="PostCode" class="form-control" />
+                                        <span asp-validation-for="PostCode"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="form-row">
+                                <div class="form-group col-lg-12">
+                                    <ul class="media-list">
+                                        @foreach (var item in _userService.GetImagesByUserId(Model.Id).Take(1))
+                                        {
+                                            @if (System.IO.Path.GetExtension(item.Url) == ".pdf")
+                                            {
+                                                <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/pdf-icon.png"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                                            }
+                                            else if (System.IO.Path.GetExtension(item.Url) == ".doc" || System.IO.Path.GetExtension(item.Url) == ".docx" || System.IO.Path.GetExtension(item.Url) == ".txt")
+                                            {
+                                                <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/doc-icon.png"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="thumbs"><a href="javascript:void(0)"><img src="/uploads/@item.Url"><i class="fas" aria-hidden="true"><img src='/frontend/img/delete.png' /></i></a><input type="hidden" name="images[]" value="@item.Id"></li>
+                                            }
+                                        }
+                                        <li class="thumbs add"><button type="button" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.User.InsertImages(e)},OnCancelled:function(){this.close();}}'></button></li>
+                                    </ul>
+                                </div>
+                            </div>*@
+                        </div>
+
+
+                        <div class="form-footer">
+                            @if ((Model.Id == 0 && Permission.Can(UserCan.Create_Tenant)) || (Model.Id != 0 && Permission.Can(UserCan.Update_Tenant)))
+                            {
+                                <button type="submit" class="btn btn-primary">Update Changes</button>
+                            }
+                            <a class="btn btn-outline-secondary btn-back" href="@Url.Content("~/admin" + _utils.GetTenantForUrl(false) + "/tenants.html")">Go back</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

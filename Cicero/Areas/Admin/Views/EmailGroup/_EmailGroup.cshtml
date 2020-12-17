@@ -1,0 +1,148 @@
+﻿@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Services
+
+@model IEnumerable<EmailGroupViewModel>
+@inject IEmailGroupService _emailGroupService
+
+    <div class="form-row">
+        <div class="form-group group-add__form col-md-12">
+            <label for="inputGroupName">Add new Email Group</label>
+            <div class="input-group">
+                <input type="text" class="form-control" name="inputEmailGroupName-0" id="inputEmailGroupName-0" onkeydown="return (event.keyCode!=13);" placeholder="Email Group Title">
+                <input type="text" class="form-control" name="inputSearch-0" id="inputSearch-0" placeholder="Search/Add">
+                <ul class="typeahead dropdown-menu" id="search-items-0" style="width: 99%; display: none;"></ul>
+                <button type="button" class="btn btn-outline-secondary" data-action="resetSearch" data-val="0" id="search-clear-btn">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+                <div class="input-group-append">
+                    <button type="button" id="searchbtn" data-action="searchEmail" data-val="0" class="btn btn-outline-secondary">Search</button>
+                    <button type="button" id="addEmailBtn" data-action="addEmail" data-val="0" class="btn btn-outline-secondary">Add</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-10" id="emails-to-add-0">
+
+        </div>
+        <div class="col-md-2">
+            <button type="button" id="saveEmailBtn" data-val="0" data-action="saveEmailGroup" class="btn btn-outline-primary">Save</button>
+        </div>
+
+        <span id="inputGroupNameSpan" class="invalid-feedback"></span>
+    </div>
+
+
+<div class="form-row">
+    <div class="col-lg-12">
+        <hr />
+        <h5>All Email Groups</h5>
+    </div>
+    <div class="col-lg-12">
+
+
+
+        <ul class="list-group">
+            @foreach (var item in Model)
+            {
+                <li class="list-group-item" aria-disabled="true">
+                    @item.Title
+                    <span class="fa-pull-right">
+                        @*<span class="field-icon exchange-field" title="Exchange/Swap" data-toggle="collapse" data-target="#collapse-swap-@item.Id" aria-expanded="false" aria-controls="collapseExample">
+                                <i class="ri-swap-box-line"></i>
+                            </span>*@
+                        <span class='field-icon edit-field' title='Edit' data-toggle="collapse" data-target="#collapse-edit-@item.Id"><i class='ri-edit-2-line'></i></span>
+                        <span class='field-icon delete-field' title='Delete' data-toggle="collapse" data-target="#collapse-delete-@item.Id"><i class='ri-delete-bin-line'></i></span>
+                    </span>
+
+                    <div class="collapse" id="collapse-delete-@item.Id" style="width:100%;">
+                        <div class="well">
+                            <hr />
+
+                            <div class="form-row">
+                                <div class="col-lg-12">
+                                    <p class="text-center">Are you sure you want to delete?</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-lg-12 text-center">
+                                    <button class="btn btn-outline-primary" data-action="deleteEmailGroup" data-val="@item.Id">Confirm</button>
+                                    <button class="btn btn-outline-danger" data-toggle="collapse" data-target="#collapse-delete-@item.Id">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse" id="collapse-edit-@item.Id" style="width:100%;">
+                        <div class="well">
+                            <hr />
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="inputGroupName">Title</label>
+                                        <input type="text" name="createdAt-@item.Id" value="@item.CreatedAt" hidden />
+                                        <input type="text" name="createdBy-@item.Id" value="@item.CreatedBy" hidden />
+                                        <input type="text" name="id-@item.Id" value="@item.Id" hidden />
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="inputEmailGroupName-@item.Id" id="inputEmailGroupName-@item.Id" onkeydown="return (event.keyCode!=13);" placeholder="Email Group Title" value="@item.Title">
+                                            <input type="text" class="form-control" name="inputSearch-@item.Id" id="inputSearch-@item.Id" placeholder="Search/Add">
+                                            <ul class="typeahead dropdown-menu" id="search-items-@item.Id" style="width: 99%; display: none;"></ul>
+                                            <button type="button" class="btn btn-outline-secondary" data-action="resetSearch" data-val="@item.Id" id="search-clear-btn">
+                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                            </button>
+                                            <div class="input-group-append">
+                                                <button type="button" data-action="searchEmail" data-val="@item.Id" class="btn btn-outline-secondary">Search</button>
+                                                <button type="button" data-action="addEmail" data-val="@item.Id" class="btn btn-outline-secondary">Add</button>
+                                                @*<button type="button" id="searchbtn" data-action="searchEmail" data-val="@item.Id" class="btn btn-outline-secondary">Search</button>
+                                                <button type="button" id="addEmailBtn" data-action="addEmail" data-val="@item.Id" class="btn btn-outline-secondary">Add</button>*@
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12" id="emails-to-add-@item.Id">
+                                    @foreach (var emailItem in item.Emails)
+                                    {
+                                        <span class="badge badge-pill badge-light" >@emailItem.Emailstring<i class="ri-delete-bin-line" onclick="$(this).parent().remove()"></i></span>
+                                    }
+                                </div>
+                                <div class="col-lg-4">
+                                    <label style="visibility:hidden">Title</label>
+                                    <button class="btn btn-outline-primary" data-action="editEmailGroup" data-val="@item.Id">Save Changes</button>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+
+    </div>
+
+
+</div>
+
+@if (ViewBag.status != "")
+{
+    <script>
+            var status = '@ViewBag.status';
+            var message = '@ViewBag.message';
+            switch (status) {
+                case "success":
+                    toastr.success(message, "Success");
+                    break;
+                case "error":
+                    toastr.error(message, "Error");
+                    break;
+                case "info":
+                    toastr.error(message, "Info");
+
+            }
+    </script>
+}
+
+

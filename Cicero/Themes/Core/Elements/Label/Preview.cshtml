@@ -1,0 +1,38 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@using Cicero.Service.Services
+@model Cicero.Service.Models.Core.Elements.Label
+@inject ICommonService commonService
+@inject IUserService UserService
+@{
+    Label tb = Model as Label;
+    ////string role = UserService.getUserRoleIdByLoggedInUser();
+    ////var Roledata = tb?.Permissions?.Where(p => p.RoleId == role).FirstOrDefault();
+}
+
+
+<div class="fb-element">
+    <div class="@tb.BackendClass">
+        @if (tb.BackendIconVisibility == true)
+        {
+            <div class="label-icon">
+                <i class="@tb.BackendIcon" style="font-size:@tb.BackendIconFontSize"></i>
+            </div>
+        }
+
+        @if (tb.BackendImageVisibility == true)
+        {
+            <div class="label-image">
+                <img src="~/images/@tb.BackendImage" height="@tb.BackendImageHeight" width="@tb.BackendImageWidth"/>
+            </div>
+        }
+
+        @if (tb.BackendLabelVisibility == true)
+        {
+            <div class="label-text" style="font-size:@tb.BackendLabelFontSize">
+                @tb.BackendLabel
+            </div>
+        }
+
+    </div>
+</div>
+

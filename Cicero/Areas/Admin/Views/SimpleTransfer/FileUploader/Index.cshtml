@@ -1,0 +1,55 @@
+﻿@using Cicero.Service.Helpers
+@inject Permission Permission
+@inject Utils utils
+@inject Cicero.Service.Services.SimpleTransfer.IListService listService
+@model Cicero.Service.Models.FileUploaderViewModel
+@{
+    ViewBag.Title = "Manage File Uploader";
+    var rateSupplierList = listService.GetSupplierList().Result;
+}
+<div class="page-wrapper page-roles">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-none p-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Content("~/admin" + utils.GetTenantForUrl(false) + ".html")">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">File Uploader</li>
+            </ol>
+        </nav>
+
+    </div>
+    <div class="page-content">
+        <div class="page-main-section">
+            <div class="page-content-area">
+                <div class="status"></div>
+                <form method="post" action="@Url.Content("~/admin/upload.html")" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <select class="form-control" asp-for="Type">
+                                <option value="">Select Type</option>
+                                <option value="bank">Bank</option>
+                                <option value="bankbranch">Bank Branch</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <select class="form-control" asp-for="SupplierId" asp-items="rateSupplierList">
+                                <option value="">Select Rate Supplier</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <input class="form-control" type="file" asp-for="UploadFile" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <input type="submit" class="btn btn-success" value="submit" />
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

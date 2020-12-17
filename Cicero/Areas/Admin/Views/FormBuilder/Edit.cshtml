@@ -1,0 +1,2455 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core;
+@model CaseFormViewModel
+@inject Utils _Utils
+@inject Permission Permission
+@inject AppSetting AppSetting
+@inject ICommonService commonService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    int id = Model.Id;
+    String Encryptedid = _Utils.EncryptId(id);
+    ViewBag.Title = Utils.CreateOrEdit(Model) + " builderform";
+    Theme theme = ViewData["theme"] as Theme;
+    string frmName = (Model.Name == "") ? "Form Name" : Model.Name;
+    string sts = (Model.Status == true) ? "checked" : "";
+
+}
+<!-- main content starts -->
+
+<link href="~/scrollable-tab plugin/jquery.scrolling-tabs.css" rel="stylesheet">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <style>
+        #loading {
+            z-index: 2000;
+        }
+
+        .modal-iframe-holder {
+            height: calc(100vh - 5rem);
+        }
+
+            .modal-iframe-holder iframe {
+                border: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+        .fullscreen-mode {
+            max-width: 100%;
+            margin-right: 15px;
+            margin-left: 15px;
+        }
+
+        .element-workflow i {
+            font-size: 1.5rem;
+            margin-right: .5rem;
+        }
+    </style>
+</head>
+
+<div class="absolute-fill">
+    <div class="form-layout-container workflow-container">
+        <div class="workflow-header">
+            <!-- page head starts -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-none p-0">
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin"+_Utils.GetTenantForUrl(false)+".html")">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="@Url.Content("~/admin"+_Utils.GetTenantForUrl(false)+"/builderforms.html")">Forms</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">@(Model.Id != 0 ? @frmName : "Add New")</li>
+                </ol>
+            </nav>
+            <form action="@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/" + _Utils.EncryptId(Model.Id) + "/edit.html")" method="post" id="form-builder-pages">
+                <div class="workflow-header__bottom">
+
+                    <input name="Id" asp-for="Id" id="ids" hidden />
+                    <input asp-for="CreatedAt" hidden />
+                    <input asp-for="ModelName" hidden />
+                    <input asp-for="ModelTitle" hidden />
+                    <input asp-for="Icon" hidden />
+                    <input asp-for="UrlIdentifier" hidden />
+                    <input asp-for="Fields" id='fbData' hidden />
+                    <div class="workflow-title-group">
+                        <h3 class="workflow-title">Form Layout</h3>
+                        <div class="workflow-form-title content-editable">
+                            <span class="content-editable__title">@frmName</span>
+                            <div class="content-input-area">
+                                <input asp-for="Name" type="text" class="form-control content-editable__input" placeholder="Enter Form Name">
+                                <span asp-validation-for="Name"></span>
+                            </div>
+                            <div class="content-editable__actions">
+                                <span class="content-editable__icon" data-toggle="tooltip" data-placement="top" id="editName" title="Edit form title">
+                                    <i class="ri-pencil-line"></i>
+                                </span>
+                                <span class="content-editable__icon" data-toggle="tooltip" data-placement="top" id="cancelEditName" title="Cancel" style="display:none;">
+                                    <i class="ri-close-circle-line"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="workflow-controls">
+                        <div class="workflow-control__item control-status">
+                            <label for="formStatus">Status</label>
+                            <div class="custom-control custom-switch">
+                                <input asp-for="Status" type="checkbox" class="custom-control-input" id="formStatus">
+                                <label class="custom-control-label" for="formStatus"></label>
+                                <span id="status-loading" style="display:none;">
+                                    <span class="spinner-border" role="status" style="height:1rem;width:1rem;border-width:0.1em">
+                                        <span class="sr-only">Loading...</span>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="wc-separator"></div>
+                        <div class="workflow-control__item">
+                            <a href="#" class="btn btn-light max-min-btn" data-toggle="tooltip" data-placement="top" title="Fullscreen Mode">
+                                <i class="ri-fullscreen-fill"></i>
+                                <span class="sr-only">Fullscreen Mode</span>
+                            </a>
+                        </div>
+                        <div class="wc-separator"></div>
+                        <div class="workflow-control__item">
+                            <button type="button" id="save-all" class="btn btn-primary" onclick="saveAllFormData()">Save</button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <!-- <div class="">
+                <h3 class="mb-5">Form Layout</h3>
+                @if (Permission.Can(UserCan.Create_Form))
+                {
+                    <div class="page-actionbtns" data-name="create-case" style="display:none;">
+                        <a href="@Url.Content("~/admin"+_Utils.GetTenantForUrl(false)+"/builderform/"+ _Utils.EncryptId(0) +"/edit.html")" class="btn btn-primary"><i class="fas fa-plus"></i> Create New</a>
+                    </div>
+                }
+            </div> -->
+
+            <div class="form-layout-control" style="display:none;">
+                <form action="@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/" + _Utils.EncryptId(Model.Id) + "/edit.html")" method="post" id="form-builder-pages">
+                    <div class="status"></div>
+                    <input name="Id" asp-for="Id" id="ids" hidden />
+                    <input asp-for="CreatedAt" hidden />
+                    <input asp-for="ModelName" hidden />
+                    <input asp-for="ModelTitle" hidden />
+                    <input asp-for="Icon" hidden />
+                    <input asp-for="UrlIdentifier" hidden />
+                    <input asp-for="Fields" id='fbData' hidden />
+                    <div class="form-row">
+                        <div class="form-group col-auto d-flex align-items-center justify-content-between mb-0" id="editableFormName">
+                            <label class="pr-4 h4">@frmName</label><span class="fas fa-pen" id="formNameEdit"></span>
+                        </div>
+                        <div class="col-lg-4 d-none flex-column  align-items-first" id="saveFormName">
+                            <div class="input-group">
+                                <input asp-for="Name" type="text" class="form-control" placeholder="Enter Form Name">
+                                <span asp-validation-for="Name"></span>
+                                <div class="input-group-append">
+                                    <button id="save-all" type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-auto border-left d-flex pt-2 mb-0">
+                            <label class="pr-4">Status</label>
+                            <div class="custom-control custom-switch">
+                                <input asp-for="Status" type="checkbox" class="custom-control-input" id="formStatus">
+                                <label class="custom-control-label" for="formStatus"></label>
+                                <span id="status-loading" style="display:none;">
+                                    <span class="spinner-border" role="status" style="height:1rem;width:1rem;border-width:0.1em">
+                                        <span class="sr-only">Loading...</span>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!---->
+
+                </form>
+
+            </div>
+        </div>
+        <!-- page head ends -->
+        <div class="workflow-viewport-container">
+            <div class="workflow-viewport-container-inner form-layout-inner">
+                @{
+                    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+                }
+                <div class="workflow-navigation-container">
+                    <div class="workflow-viewport-navigation">
+                        <div class="viewport-nav">
+                            <div class="form-layout-ui cb-wrap">
+                                <div class="form-layout-ui-header"><h5 class="form-layout-ui-header__title mb-0">UI Elements</h5></div>
+                                <div class="form-layout-ui-overflow">
+                                    <div class="form-ui-elements">
+                                        <ul class="form-ui-element__list frmb-control sort-enabled ui-sortable">
+                                            @foreach (var item in theme.Elements)
+                                            {
+                                                var name = item.GetType().GetProperty("Title").GetValue(item, null);
+                                                dynamic _class = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                var _desc = item.GetType().GetProperty("Description").GetValue(item, null);
+                                                var _status = item.GetType().GetProperty("Status").GetValue(item, null);
+                                                var _icon = item.GetType().GetProperty("Icon").GetValue(item, null);
+                                                var _visiblity = item.GetType().GetProperty("Visiblity").GetValue(item, null);
+                                                //var _type = item.GetType().GetProperty("Type").GetValue(item, null);
+                                                _class.HttpContext = HttpContextAccessor.HttpContext;
+                                                var _type_name = _class.GetType().Name;
+                                                var _type_full_name = _class.GetType().FullName;
+                                                string RemoveClosest = ".fb-element-wrap";
+                                                var emlClass = item.GetType().GetProperty("Class").GetValue(item, null);
+                                                var elmElementId = emlClass.GetType().GetProperty("ElementId").GetValue(emlClass, null);
+                                                if (_type_name == "Row")
+                                                {
+                                                    RemoveClosest = "li";
+                                                }
+                                                else if (_type_name == "Column")
+                                                {
+                                                    RemoveClosest = ".column-border";
+                                                }
+
+
+                                                <li class="form-ui-element__item @_icon input-control input-control-9 ui-sortable-handle @_visiblity" data-elm-type="@_class" data-elm-name="@_type_name">
+                                                    <span>@name</span>
+                                                    <template data-typeof="setting" class="d-none">
+                                                        <!-- Control Bar : Start -->
+                                                        <div class="control-tools justify-content-center">
+                                                            <a class="icon text-center icon-setting" data-fb-toggle-popup=".fb-popup" href="javascript:void(0)"><i class="ri-settings-3-fill" aria-hidden="true"></i></a>
+                                                            <a class="icon icon-more" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownColumnButton"><i class="ri-more-fill" aria-hidden="true"></i></a>
+                                                            <div class="dropdown-menu dropdown-menu-right" for="dropdownColumnButton">
+                                                                <a class="dropdown-item " href="javascript:void(0)" onclick="setElementId(this)" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){delElement();},OnCancelled:function(){this.close();}}'><i class="ri-delete-bin-4-line" aria-hidden="true"></i> Delete</a>
+                                                                <a href="#" class="dropdown-item"><i class="ri-file-copy-line"></i> Copy</a>
+                                                            </div>
+                                                            @*<a class="icon text-center icon-delete" data-fb-remove-closest="@RemoveClosest" href="javascript:void(0)"><i class="fa fa-trash" aria-hidden="true"></i></a>*@
+                                                            <!-- Popup : Start -->
+                                                            <div class="popupspace">
+                                                                <div class="fb-popup modal fade">
+                                                                    <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+
+                                                                        @*<a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)"> </a>*@
+
+                                                                        <div class="modal-content setting-wrap">
+                                                                            <div class="fb-popup-toolbar">
+                                                                                <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                                    <i class="ri-fullscreen-fill"></i>
+                                                                                    <span class="sr-only">Fullscreen Mode</span>
+                                                                                </a>
+                                                                                <a href="#" class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close">
+                                                                                    <i class="ri-close-line"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                            <form method="post">
+                                                                                <input type="hidden" name="ElementId" data-fb-name="ElementId" value="" />
+                                                                                <input type="hidden" name="Type" data-fb-name="Type" value="@_type_full_name" />
+                                                                                <div class="setting-body">
+                                                                                    @Html.Raw(_class.GetSettingTemplate(_class, _type_name).Content)
+                                                                                </div>
+                                                                                <div class="modal-footer setting-footer">
+                                                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        @Html.Raw(_class.GetPreviewTemplate(_class, _type_name).Content)
+                                                    </template>
+                                                    <template data-typeof="ui" class="d-none">
+                                                        @Html.Raw(_class.GetSettingTemplate(_class, _type_name).Content)
+                                                    </template>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="form-actions btn-group"></div>
+                            </div>
+                        </div>
+                        <div class="workflow-instruction-info text-muted">
+                            <p class="text-muted small mb-0 mr-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</p>
+                            <div class="instruction-info-icon">
+                                <i class="ri-information-line" data-toggle="tooltip" data-placement="top" title="Vivamus sagittis lacus vel augue laoreet <b>rutrum</b> faucibus."></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex;justify-content: center;align-items: center;flex-grow: 1;position: relative;" id="status-loading-div">
+                    <span class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </span>
+                </div>
+                <div class="workflow-viewport-area" style="display: none;">
+                    <div id="loading" style="display: none;">
+                        <div class="spinner text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <div class="text-center" style="margin-left:10px; font-weight:600">Loading please wait...</div>
+                        </div>
+                    </div>
+                    <div class="absolute-fill">
+                        <div class="workflow-viewport-form-area">
+                            <div class="form-layout-ui-wrapper form-wrap form-builder">
+                                <div class="form-layout-ui-area tabs-ui">
+                                    <div class="form-layout-ui-tabs frmb-tabs-wrapper d-flex align-items-center">
+                                        <div class="form-tabs-wrapper">
+
+                                            <ul class="nav nav-tabs" id="tabs">
+                                                @if (fbvm != null && fbvm.Tab.Count() > 0)
+                                                {
+                                                    int tabcount = 0;
+                                                    @foreach (dynamic tab in fbvm.Tab)
+                                                    {
+                                                        string tabName = tab.BackendLabel;
+                                                        if (tab.BackendLabel == null || tab.BackendLabel == "")
+                                                        {
+                                                            tabName = "Untitled" + tabcount;
+                                                        }
+
+                                                        tab.HttpContext = theme.HttpContext;
+                                                        tab.TabIndex = fbvm.Tab.IndexOf(tab).ToString();
+
+                                                        <li data-role="fb-tab-@tab.TabIndex" data-location="tab" data-element-id="@tab.ElementId" class="nav-item">
+                                                            <a href="#fb-tab-@tab.TabIndex" class="nav-link">
+                                                                @if (tab.BackendIconVisible == true && tab.BackendIcon != null && tab.BackendIcon != "")
+                                                                {
+                                                                    <i class="@tab.BackendIcon ui-tab-icon nav-link__icon"></i>
+                                                                }
+
+                                                                @tabName
+                                                                <div class="tabClose">
+                                                                    <span class="ri-settings-2-line" title="Edit tab" aria-hidden="true" data-fb-toggle-popup=".fb-popup"></span>
+                                                                    <span class="ri-close-circle-line" title="Delete tab" aria-hidden="true" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("[data-element-id=@tab.ElementId]").remove();$("#fb-tab-@tab.TabIndex").remove();$(".tabs-ui").tabs("option", "active", 0);deleteTab(@tab.TabIndex);},OnCancelled:function(){this.close();}}'></span>
+                                                                </div>
+                                                            </a>
+
+                                                            <!-- Popup : Start -->
+                                                            <div class="control-tools" id="popupspace_@tab.ElementId">
+                                                                <div class="fb-popup modal fade" id="popup_@tab.ElementId">
+                                                                    <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+                                                                        @*    <a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)"></a>*@
+                                                                        <div class="modal-content setting-wrap">
+                                                                            <div class="fb-popup-toolbar">
+                                                                                <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                                    <i class="ri-fullscreen-fill"></i>
+                                                                                    <span class="sr-only">Fullscreen Mode</span>
+                                                                                </a>
+                                                                                <a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close">
+                                                                                    <i class="ri-close-line"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                            <form method="post">
+                                                                                <input type="hidden" name="ElementId" data-fb-name="ElementId" value="@tab.ElementId" />
+                                                                                <input type="hidden" name="Type" data-fb-name="Type" value="@tab.Type" />
+
+                                                                                <div class="setting-body">
+                                                                                    @*Html.Raw(tab.RenderSetting(tab, "Tab").Content)*@
+                                                                                </div>
+                                                                                <div class="modal-footer setting-footer">
+                                                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </li>
+                                                        tabcount++;
+                                                    }
+                                                }
+
+
+
+                                            </ul>
+
+
+                                        </div>
+                                        <!-- <a class="prev position-absolute" href="JavaScript:void(0);" role="button" data-slide="prev" style="top:25%;left:10px;z-index:2;">
+                                            <i class="fas fa-chevron-circle-left text-dark shadow rounded-circle " id="sc-left"></i>
+                                        </a>
+                                        <a class="next position-absolute" href="JavaScript:void(0);" role="button" data-slide="next" style="top:25%;right:180px;z-index:2;">
+                                            <i class="fas fa-chevron-circle-right text-dark shadow rounded-circle  " id="sc-right"></i>
+                                        </a> -->
+
+
+                                        <div id="add-page-tab" class="form-tab-new-item ui-tabs-nav-add">
+                                            <a href="#new-page" title="Add new tab">
+                                                <i class="ri-add-fill"></i> <span class="sr-only">Add Tab</span>
+                                            </a>
+                                        </div>
+
+                                        <div class="workflow-controls workflow-controls--form tab-controls d-flex align-items-center" data-location="form" data-element-id="form">
+                                            <a href="#" data-fb-toggle-popup=".fb-popup" class="workflow-control__item" data-toggle="modal" data-placement="top" title="Form settings">
+                                                <i class="ri-settings-2-line"></i>
+                                                <span class="sr-only">Settings</span>
+                                            </a>
+
+                                            <div class="workflow-control__item workflow-control__item--dropdown dropdown" title="More options">
+                                                <a href="#" class="workflow-control__icon" type="button" id="dropdownTabButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="ri-more-2-fill"></i>
+                                                    <span class="sr-only">More</span>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownTabButton">
+                                                    <div class="dropdown-item">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="gridVisible" checked>
+                                                            <label class="custom-control-label" for="gridVisible">Grid visible</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @{
+                                                Console.WriteLine();
+                                            }
+                                            <div id="popupspace_form">
+                                                <div id="popup_form" class="fb-popup modal fade">
+                                                    <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+                                                        <div class="modal-content setting-wrap">
+                                                            <div class="fb-popup-toolbar">
+                                                                <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                    <i class="ri-fullscreen-fill"></i>
+                                                                    <span class="sr-only">Fullscreen Mode</span>
+                                                                </a>
+                                                                <a href="#" class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close">
+                                                                    <i class="ri-close-line"></i>
+                                                                </a>
+                                                            </div>
+                                                            <form method="post">
+                                                                <input type="hidden" name="ElementId" data-fb-name="ElementId" value="form" />
+                                                                <input type="hidden" name="Type" data-fb-name="Type" value="Form" />
+                                                                <div class="setting-body">
+                                                                    @Html.Raw(fbvm.RenderSetting(fbvm, "Form", HttpContextAccessor.HttpContext).Content)
+                                                                </div>
+                                                                <div class="modal-footer setting-footer">
+                                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="form-layout-ui-content">
+                                        @if (fbvm != null && fbvm.Tab.Count > 0)
+                                        {
+                                            @foreach (dynamic tab in fbvm.Tab)
+                                            {
+                                                tab.HttpContext = theme.HttpContext;
+                                                tab.TabIndex = fbvm.Tab.IndexOf(tab).ToString();
+                                                <!-- Page : Start -->
+                                                <div id="fb-tab-@tab.TabIndex" data-tab-index="@tab.TabIndex" class="fb-editor m-0 w-100">
+                                                    <ul class="frmb stage-wrap m-0 w-100 list-unstyled">
+                                                        @if (tab.Row.Count > 0)
+                                                        {
+                                                            @foreach (dynamic row in tab.Row)
+                                                            {
+                                                                row.HttpContext = theme.HttpContext;
+                                                                row.TabIndex = tab.TabIndex;
+                                                                row.RowIndex = tab.Row.IndexOf(row).ToString();
+                                                                <!-- Row : Start -->
+                                                                <li data-location="row" data-element-id="@row.ElementId" class="stage-item">
+
+                                                                    <!-- Control Bar : Start -->
+                                                                    <div class="control-tools justify-content-center dropdown">
+                                                                        <a class="icon text-center icon-setting" data-fb-toggle-popup=".fb-popup" href="javascript:void(0)"><i class="ri-settings-3-fill" aria-hidden="true"></i></a>
+                                                                        <a class="icon icon-more" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownRowButton"><i class="ri-more-fill" aria-hidden="true"></i></a>
+                                                                        <div class="dropdown-menu dropdown-menu-right" for="dropdownRowButton">
+                                                                            <a class="dropdown-item" href="javascript:void(0)" onclick="setElementId(this)" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("[data-element-id=@row.ElementId]").remove();Elements.Core.Hooks.doAction("after_row_remove","");delElement();},OnCancelled:function(){this.close();}}'><i class="ri-delete-bin-4-line" aria-hidden="true"></i> Delete</a>
+                                                                            <a href="#" class="dropdown-item"><i class="ri-file-copy-line"></i> Copy</a>
+                                                                            <a href="#" class="dropdown-item"><i class="ri-archive-drawer-line"></i>Archive</a>
+                                                                            <div class="dropdown-divider"></div>
+                                                                            <form action="/" method="post">
+                                                                                <a href="#" class="dropdown-item">
+                                                                                    <div class="custom-control custom-switch">
+                                                                                        <input type="checkbox" class="custom-control-input" id="rowDisable">
+                                                                                        <label class="custom-control-label" for="rowDisable">Disable</label>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </form>
+
+                                                                        </div>
+                                                                        <!-- Popup : Start -->
+                                                                        <div id="popupspace_@row.ElementId">
+                                                                            <div class="fb-popup modal fade" id="popup_@row.ElementId">
+                                                                                <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+                                                                                    @*<a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)"></a>*@
+                                                                                    <div class="modal-content setting-wrap">
+                                                                                        <div class="fb-popup-toolbar">
+                                                                                            <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                                                <i class="ri-fullscreen-fill"></i>
+                                                                                                <span class="sr-only">Fullscreen Mode</span>
+                                                                                            </a>
+                                                                                            <a href="#" class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close">
+                                                                                                <i class="ri-close-line"></i>
+                                                                                            </a>
+                                                                                        </div>
+                                                                                        <form method="post">
+                                                                                            <input type="hidden" name="ElementId" data-fb-name="ElementId" value="@row.ElementId" />
+                                                                                            <input type="hidden" name="Type" data-fb-name="Type" value="@row.Type" />
+                                                                                            <div class="setting-body">
+                                                                                                @*Html.Raw(tab.RenderSetting(row, "Row").Content)*@
+                                                                                            </div>
+                                                                                            <div class="modal-footer setting-footer">
+                                                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <!-- Columns : Start -->
+                                                                    <div class="form-row fb-columns " data-location="column">
+                                                                        @foreach (dynamic column in row.Column)
+                                                                        {
+                                                                            column.HttpContext = theme.HttpContext;
+                                                                            column.TabIndex = tab.TabIndex;
+                                                                            column.RowIndex = row.RowIndex;
+                                                                            column.ColumnIndex = row.Column.IndexOf(column).ToString();
+
+                                                                            <!-- Column : Start -->
+                                                                            <div class="@column.BackendClass column-border" data-element-id="@column.ElementId">
+                                                                                <div class=" flex-fill fb-column">
+                                                                                    <!-- Control Bar : Start -->
+                                                                                    <div class="control-tools justify-content-center dropdown">
+                                                                                        <a class="icon text-center icon-setting" data-fb-toggle-popup=".fb-popup" href="javascript:void(0)"><i class="ri-settings-3-fill" aria-hidden="true"></i></a>
+                                                                                        <a class="icon icon-more" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownColumnButton"><i class="ri-more-fill" aria-hidden="true"></i></a>
+                                                                                        <div class="dropdown-menu dropdown-menu-right" for="dropdownColumnButton">
+                                                                                            <a class="dropdown-item " href="javascript:void(0)" onclick="setElementId(this)" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("[data-element-id=@column.ElementId]").remove();Elements.Core.Hooks.doAction("after_column_remove","");delElement()},OnCancelled:function(){this.close();}}'><i class="ri-delete-bin-4-line" aria-hidden="true"></i> Delete</a>
+                                                                                            <a href="#" class="dropdown-item"><i class="ri-file-copy-line"></i> Copy</a>
+                                                                                            <a href="#" class="dropdown-item"><i class="ri-archive-drawer-line"></i>Archive</a>
+                                                                                            <div class="dropdown-divider"></div>
+                                                                                            <form action="/" method="post">
+                                                                                                <a href="#" class="dropdown-item">
+                                                                                                    <div class="custom-control custom-switch">
+                                                                                                        <input type="checkbox" class="custom-control-input" id="columnDisable">
+                                                                                                        <label class="custom-control-label pl-1" for="columnDisable">Disable</label>
+                                                                                                    </div>
+                                                                                                </a>
+                                                                                            </form>
+                                                                                        </div>
+                                                                                        <!-- Popup : Start -->
+                                                                                        <div id="popupspace_@column.ElementId">
+                                                                                            <div class="fb-popup modal fade" id="popup_@column.ElementId">
+                                                                                                <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+                                                                                                    @*<a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)"></a>*@
+                                                                                                    <div class="modal-content setting-wrap">
+                                                                                                        <div class="fb-popup-toolbar">
+                                                                                                            <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                                                                <i class="ri-fullscreen-fill"></i>
+                                                                                                                <span class="sr-only">Fullscreen Mode</span>
+                                                                                                            </a>
+                                                                                                            <a href="#" class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close">
+                                                                                                                <i class="ri-close-line"></i>
+                                                                                                            </a>
+                                                                                                        </div>
+                                                                                                        <form method="post">
+                                                                                                            <input type="hidden" name="ElementId" data-fb-name="ElementId" value="@column.ElementId" />
+                                                                                                            <input type="hidden" name="Type" data-fb-name="Type" value="@column.Type" />
+                                                                                                            <div class="setting-body">
+                                                                                                                @*Html.Raw(column.RenderSetting(column, "Column").Content)*@
+                                                                                                            </div>
+                                                                                                            <div class="modal-footer setting-footer">
+                                                                                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                                                                            </div>
+                                                                                                        </form>
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                    <!-- Elements Container : Start -->
+                                                                                    <div class="fb-elements-container" data-location="element">
+                                                                                        @if (column.Element != null && column.Element.Count > 0)
+                                                                                        {
+                                                                                            @foreach (dynamic element in column.Element)
+                                                                                            {
+                                                                                                if (element != null)
+                                                                                                {
+                                                                                                    element.HttpContext = theme.HttpContext;
+                                                                                                    element.TabIndex = tab.TabIndex;
+                                                                                                    element.RowIndex = row.RowIndex;
+                                                                                                    element.ColumnIndex = column.ColumnIndex;
+                                                                                                    element.ElementIndex = column.Element.IndexOf(element).ToString();
+                                                                                                    <!-- Element Wrap : Start -->
+                                                                                                    <div class="fb-element-wrap" data-element-id="@element.ElementId">
+                                                                                                        <!-- Control Bar : Start -->
+                                                                                                        <div class="control-tools justify-content-center dropdown">
+                                                                                                            <a class="icon text-center icon-setting" data-fb-toggle-popup=".fb-popup" href="javascript:void(0)"><i class="ri-settings-3-fill" aria-hidden="true"></i></a>
+                                                                                                            <a class="icon icon-more" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownElementButton"><i class="ri-more-fill" aria-hidden="true"></i></a>
+                                                                                                            <div class="dropdown-menu dropdown-menu-right" for="dropdownElementButton">
+                                                                                                                <a class="dropdown-item" onclick="setElementId(this)" data-confirm='{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("[data-element-id=@element.ElementId]").remove();delElement()},OnCancelled:function(){this.close();}}' href="javascript:void(0)"><i class="ri-delete-bin-4-line" aria-hidden="true"></i> Delete</a>
+                                                                                                                <a class="dropdown-item" href="#"> <i class="ri-file-copy-line"></i> Copy</a>
+                                                                                                                <a href="#" class="dropdown-item"><i class="ri-archive-drawer-line"></i>Archive</a>
+                                                                                                                <div class="dropdown-divider"></div>
+                                                                                                                <form action="/" method="post">
+                                                                                                                    <a href="#" class="dropdown-item">
+                                                                                                                        <div class="custom-control custom-switch">
+                                                                                                                            <input type="checkbox" class="custom-control-input" id="elementDisable">
+                                                                                                                            <label class="custom-control-label pl-1" for="elementDisable">Disable</label>
+                                                                                                                        </div>
+                                                                                                                    </a>
+                                                                                                                </form>
+
+                                                                                                            </div>
+
+                                                                                                            <!-- Popup : Start -->
+                                                                                                            <div id="popupspace_@element.ElementId">
+                                                                                                                <div class="fb-popup modal fade" id="popup_@element.ElementId">
+                                                                                                                    <div class="fb-popup-wrap modal-dialog modal-dialog-centered modal-lg">
+                                                                                                                        @*<a class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)"></a>*@
+                                                                                                                        <div class="modal-content setting-wrap">
+                                                                                                                            <div class="fb-popup-toolbar">
+                                                                                                                                <a href="#" class="fullscreen-mode" title="Fullscreen Mode">
+                                                                                                                                    <i class="ri-fullscreen-fill"></i>
+                                                                                                                                    <span class="sr-only">Fullscreen Mode</span>
+                                                                                                                                </a>
+                                                                                                                                <a href="#" class="fb-close" data-fb-close-popup=".fb-popup" href="javascript:void(0)" title="Close">
+                                                                                                                                    <i class="ri-close-line"></i>
+                                                                                                                                </a>
+                                                                                                                            </div>
+                                                                                                                            <form method="post">
+                                                                                                                                <input type="hidden" name="ElementId" data-fb-name="ElementId" value="@element.ElementId" />
+                                                                                                                                <input type="hidden" name="Type" data-fb-name="Type" value="@element.Type" />
+                                                                                                                                @{
+                                                                                                                                    element.ModelData = fbvm;
+                                                                                                                                }
+                                                                                                                                <div class="setting-body">
+                                                                                                                                    @*Html.Raw(element.RenderSetting(element).Content)*@
+                                                                                                                                </div>
+
+                                                                                                                                <div class="modal-footer setting-footer">
+                                                                                                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                                                                                                </div>
+
+                                                                                                                            </form>
+                                                                                                                        </div>
+
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                        </div>
+                                                                                                        <!-- Element Contents : Start -->
+                                                                                                        @Html.Raw(element.GetPreviewTemplate(element).Content)
+                                                                                                    </div>
+                                                                                                }
+                                                                                            }
+                                                                                        }
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                </li>
+                                                            }
+                                                        }
+                                                    </ul>
+                                                    <div class="tab-empty-state-content">
+                                                        <div class="tab-empty-state-image"></div>
+                                                        <p>Drag and drop UI elements here as per your requirement</p>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                @*<h4 class="modal-title" id="myModalLabel">Confirmation</h4>*@
+            </div>
+            <div class="modal-body">
+                <p class="success-message">  </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary saves-confirm">Ok</button>
+                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of the boostrap modal popup -->
+<!-- main content ends -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-select-icon" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Icon</h5>
+            </div>
+            <div class="modal-body">
+
+                <partial name="~/Areas/Admin/Views/Shared/_IconsSelect.cshtml" />
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-select-icon" class="btn btn-primary" data-dismiss="modal" data-id="" data-type="">Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="swapDiv">
+
+</div>
+<div class="modal fade custom-modal" id="windowPopUp" tabindex="-1" role="dialog" aria-labelledby="windowPopUp" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content modal-content-height">
+            <div class="modal-header pr-0 py-0">
+                <h5 class="modal-title" id="windowPopUpLabel"></h5>
+                <div class="modal-header-icon">
+                    <button type="button" class="btn btn-expand" title="Fullscreen Mode">
+                        <span aria-hidden="true" class="ri-fullscreen-line"></span>
+                    </button>
+                    <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close" title="Close">
+                        <span aria-hidden="true" class="ri-close-line"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body modal-iframe-holder p-0" id="modal-text-window">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<style type="text/css">
+
+   .loading .setting-body {
+    background-image: url(@Url.Content("~/frontend/css/vendor/slick/ajax-loader.gif"));
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+</style>
+@section Scripts{
+
+    <script src="~/scrollable-tab plugin/jquery.scrolling-tabs.js"></script>
+    <script src="~/js/form_builder_form_validation.js"></script>
+    <script type="text/javascript">
+
+        $("#loading").detach().appendTo("body");
+
+        var elementToDel = "";
+        var formTagName = "form-builder-pages";
+        $(document).ready(function () {
+            var recaptcha = $('.g-recaptcha');
+            $("button.btn-expand").click(function () {
+                //$(this).removeClass("btn-expand").addClass("btn-compress");
+                if ($(this).find("span").hasClass("ri-fullscreen-line")) {
+                    $(".modal-xl").addClass("fullscreen-mode");
+                    $(this).attr('title', 'Exit Fullscreen Mode');
+                    $(this).find("span").removeClass("ri-fullscreen-line");
+                    $(this).find("span").addClass("ri-fullscreen-exit-line");
+                } else {
+                    $(".modal-xl").removeClass("fullscreen-mode");
+                    $(this).attr('title', 'Fullscreen Mode');
+                    $(this).find("span").removeClass("ri-fullscreen-exit-line");
+                    $(this).find("span").addClass("ri-fullscreen-line");
+                }
+            });
+
+            setTimeout(function () {
+                $.each(recaptcha, function (i, v) {
+                    var sitekey = $(v).attr('data-site');
+                    if (sitekey == null || sitekey == "") {
+                        sitekey = "blank";
+                    }
+                    grecaptcha.render(v.id, {
+                        'sitekey': sitekey
+                    });
+                })
+            }, 500);
+            $.fn.swap = function (elem) {
+                elem = elem.jquery ? elem : $(elem);
+                return this.each(function () {
+                    $(document.createTextNode('')).insertBefore(this).before(elem.before(this)).remove();
+                });
+            };
+            $('.nav-tabs').scrollingTabs({
+                bootstrapVersion: 4,
+                cssClassLeftArrow: 'ri-arrow-left-s-fill',
+                cssClassRightArrow: 'ri-arrow-right-s-fill'
+            });
+
+            $( ".nav-tabs" ).sortable();
+
+              $('#confirm').on('hidden.bs.modal', function () {
+                $('.nav-tabs').scrollingTabs('refresh');
+              });
+
+            $("#status-loading-div").attr("style", "display:none");
+            $('.workflow-viewport-area').show();
+
+            $(window).on('resize', function () {
+                $('.scrtabs-tabs-fixed-container').css("width", "0px");
+                $('.nav-tabs').scrollingTabs('refresh');
+            });
+
+            $('.setting-footer .btn-primary').on('click', function () {
+                //debugger;
+                if ($(this).parents('.fb-popup').hasClass('swaping')) {
+                    $('#loading').show();
+                    $(this).parents('.fb-popup').toggleClass('show');
+                    $(this).parents('.fb-popup').swap('#swapDiv');
+                  //  disableSortable();
+                }
+            })
+
+
+        });
+    var thisvalues;
+var Elements = {};
+        Elements.Core = {
+            Timer: null,
+            ControlList: null,
+            StageWrap: null,
+            ControlDrag: null,
+            Hooks: {
+                actions: [],
+                addAction: function (type, method) {
+                    Elements.Core.Hooks.actions.push({ type: type, method });
+                },
+                doAction: function (type, arg) {
+                    var strlen = [];
+                    Elements.Core.Hooks.actions = Elements.Core.Hooks.actions.filter(function (item, index) {
+                        return Elements.Core.Hooks.actions.indexOf(item) === index;
+                    });
+                    jQuery.each(Elements.Core.Hooks.actions, function (i, v) {
+
+                        if (v.type == type) {
+                            var str_data = v.method.call(this, arg);
+
+                            if (typeof (str_data) == 'undefined') {
+                                console.log("This method is returning empty : \n" + v.method);
+                                str_data = "";
+                            }
+                            strlen.push(str_data);
+                        }
+                    });
+                    return strlen;
+                },
+
+            },
+            ReInitSortable: function () {
+                $(".fb-editor").removeClass("grid-invisible");
+
+                if (Elements.Core.Timer) { clearTimeout(Elements.Core.Timer); }
+                Elements.Core.Timer = setTimeout(function () {
+
+                    /* This is for Shortable UI Elements */
+                    //if (Elements.Core.ControlList) $('.frmb-control').sortable("destroy");
+                    Elements.Core.ControlList = $('.frmb-control').sortable({
+                        helper: 'clone',
+                        //connectWith: '.frmb-control',
+                        placeholder: "ui-state-highlight",
+                        tolerance: 'pointer',
+                        dropOnEmpty: true,
+                        forceHelperSize: true,
+                        refreshPositions: true,
+                        forcePlaceholderSize: true,
+                        distance: 5,
+                        opacity: 1,
+                        zIndex: 999999999999,
+                    }).disableSelection();
+                    /* This is for Row */
+                    $('.stage-wrap').sortable({
+                        helper: 'clone',
+                        connectWith: '.stage-wrap,.fb-elements-container',
+                        placeholder: "ui-state-highlight",
+                        tolerance: 'pointer',
+                        receive: function (event, ui) {
+                            var element_type = $(ui.sender).data('elm-type');
+                            var where_was_dropped = event.target.tagName;
+                            if (where_was_dropped == "UL") {
+                                return Elements.Core.Row($(this), event, ui);
+                            } else if (element_type == "Column") {
+                                return Elements.Core.Column($(this), event, ui);
+                            }
+                        },
+                        dropOnEmpty: true,
+                        forceHelperSize: true,
+                        refreshPositions: true,
+                        forcePlaceholderSize: true,
+                        distance: 5,
+                        opacity: 1,
+                        zIndex: 999999999999,
+                    });
+                    //--------------------
+                    Elements.Core.ElementContainer = $('.fb-elements-container').sortable({
+                        //helper: 'clone',
+                        connectWith: '.fb-elements-container',
+                        receive: function (event, ui) {
+                            var element_type = $(ui.sender).data('elm-type');
+                            if(typeof(element_type)=="undefined")return false;
+                            var location = $(event.target).data("location");
+                            if (location == "element") {
+                                return Elements.Core.Element($(this), event, ui);
+                            }
+
+
+                        },
+                        placeholder: "ui-state-highlight",
+                        tolerance: 'pointer',
+                        dropOnEmpty: true,
+                        forceHelperSize: true,
+                        refreshPositions: true,
+                        forcePlaceholderSize: true,
+                        distance: 5,
+                        opacity: 1,
+                        zIndex: 999999999999,
+                    })
+                    //----------------
+                    Elements.Core.ColumnList = $('.fb-columns').sortable({
+                        //helper: 'clone',
+                        connectWith: '.fb-columns',
+                        receive: function (event, ui) {
+                            var element_type = $(ui.sender).data('elm-type');
+                            var location = $(event.target).data("location");
+                            if (location == "column") {
+                                return Elements.Core.Column($(this), event, ui);
+                            }
+                        },
+                        placeholder: "ui-state-highlight",
+                        tolerance: 'pointer',
+                        dropOnEmpty: true,
+                        forceHelperSize: true,
+                        refreshPositions: true,
+                        forcePlaceholderSize: true,
+                        distance: 5,
+                        opacity: 1,
+                        zIndex: 999999999999,
+                    })
+                    /* This is to connect with shortable row */
+                    Elements.Core.ControlDrag = $(".frmb-control li").draggable({ helper: "clone", connectToSortable: ".stage-wrap,.fb-columns,.fb-elements-container" });
+                }, 2000);
+            },
+            GenerateElementId: function () {
+                function Generator() {
+                    this.length = 8;
+                    this.timestamp = +new Date;
+                    var _getRandomInt = function (min, max) {
+                        return Math.floor(Math.random() * (max - min + 1)) + min;
+                    }
+                    this.generate = function () {
+                        var ts = this.timestamp.toString();
+                        var parts = ts.split("").reverse();
+                        var id = "";
+
+                        for (var i = 0; i < this.length; ++i) {
+                            var index = _getRandomInt(0, parts.length - 1);
+                            id += parts[index];
+                        }
+                        return parseFloat(id);
+                    }
+                };
+
+                return new Generator().generate();
+
+            },
+            Init: function () {
+                String.prototype.format = String.prototype.format || function () {
+                    "use strict";
+                    var str = this.toString();
+                    if (arguments.length) {
+                        var t = typeof arguments[0];
+                        var key;
+                        var args = ("string" === t || "number" === t) ?
+                            Array.prototype.slice.call(arguments)
+                            : arguments[0];
+
+                        for (key in args) {
+                            str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
+                        }
+                    }
+
+                    return str;
+                };
+                //"Hello, {name}, are you feeling {adjective}?".format({name:"Kishan", adjective: "oK"});
+
+                // Or
+
+                //"a{0}bcd{1}ef".format("foo", "bar");
+
+
+            },
+            RowNaming: function (FieldName, TabIndex, RowIndex) {
+                var _n = FieldName.data("fb-name");
+                FieldName.attr("name", "Tab[" + TabIndex + "][Row][" + RowIndex + "][" + _n + "]");
+                FieldName.attr("data-fb-name", _n);
+
+            },
+            ColumnNaming: function (FieldName, TabIndex, RowIndex, ColumnIndex) {
+                var _n = FieldName.data("fb-name");
+                FieldName.attr("name", "Tab[" + TabIndex + "][Row][" + RowIndex + "][Column][" + ColumnIndex + "][" + _n + "]");
+                FieldName.attr("data-fb-name", _n);
+            },
+            ElementNaming: function (FieldName, TabIndex, RowIndex, ColumnIndex, ElementIndex) {
+                var _n = FieldName.data("fb-name");
+                FieldName.attr("name", "Tab[" + TabIndex + "][Row][" + RowIndex + "][Column][" + ColumnIndex + "][Element][" + ElementIndex + "][" + _n + "]");
+                FieldName.attr("data-fb-name", _n);
+            },
+            Row: function (_this, event, ui) {
+
+                var element_type = $(ui.sender).data('elm-type');
+                var element_name = $(ui.sender).data('elm-name');
+
+                var dropped = _this.find("li[data-elm-type]").removeClass().addClass("Row").removeAttr("data-elm-type");
+                var RowIndex = dropped.index();
+                var TabIndex = dropped.closest(".fb-editor").index();
+
+                var row_id = Elements.Core.GenerateElementId();
+                var row_wrap = '<li data-location="row" data-element-id="' + row_id + '" class="stage-item">{0}{column}</li>';
+                var row_setting = $(".frmb-control [data-elm-name='Row']").find("template[data-typeof='setting']").clone();
+                $.each(row_setting.contents().find("[data-fb-name]"), function () {
+
+                    if ($(this).data("fb-name") == "ElementId") {
+                        $(this).attr("value", row_id);
+                    }
+                    //Elements.Core.RowNaming($(this), TabIndex, RowIndex);
+                })
+                row_setting.contents().find(".popupspace").attr("id", "popupspace_" + row_id);
+                row_setting.contents().find(".fb-popup").attr("id", "popup_" + row_id);
+                var row = row_wrap.format(row_setting.html());
+
+                //column
+                var ColId=Elements.Core.GenerateElementId();
+                var column_wrap = '<div class="form-row fb-columns ui-sortable" data-location="column"><!-- Column : Start --><div class="col-lg-12 ui-sortable-handle column-border" data-element-id="'+ColId+'"><div class="fb-column flex-fill">{0}{element}</div></div></div>';
+                var column_setting = $(".frmb-control [data-elm-name='Column']").find("template[data-typeof='setting']").clone();
+                $.each(column_setting.contents().find("[data-fb-name]"), function () {
+                    if ($(this).data("fb-name") == "ElementId") {
+                        $(this).attr("value", ColId);
+                    }
+                    //Elements.Core.ColumnNaming($(this), TabIndex, RowIndex, 0);
+                })
+                column_setting.contents().find(".popupspace").attr("id", "popupspace_" + ColId);
+                column_setting.contents().find(".fb-popup").attr("id", "popup_" + ColId);
+                var column = column_wrap.format(column_setting.html());
+                var html = row.format({ "column": column });
+
+
+                //element
+                var ElmId=Elements.Core.GenerateElementId();
+                var element_wrap = '<div class="fb-elements-container" data-location="element"><div data-element-id="'+ElmId+'" class="fb-element-wrap">{0}</div><div>';
+                var element_setting = $(".frmb-control [data-elm-name='" + element_name + "']").find("template[data-typeof='setting']").clone();
+                $.each(element_setting.contents().find("[data-fb-name]"), function () {
+                    if ($(this).data("fb-name") == "ElementId") {
+                        $(this).attr("value", ElmId);
+                    }
+                    //Elements.Core.ElementNaming($(this), TabIndex, RowIndex, 0, 0);
+                })
+                element_setting.contents().find(".popupspace").attr("id", "popupspace_" + ElmId);
+                element_setting.contents().find(".fb-popup").attr("id", "popup_" + ElmId);
+                var element = element_wrap.format(element_setting.html());
+                var html = html.format({ "element": element });
+
+                dropped.replaceWith(html);
+                Elements.Core.ReInitSortable();
+                var args = { "ActionFor": "element", "TabIndex": TabIndex, "RowIndex": RowIndex, "ColumnIndex": 0, "ElementIndex": 0 };
+                Elements.Save(args);
+            },
+           Column: function (_this, event, ui) {
+			   var element_id = Elements.Core.GenerateElementId();
+
+                var element_type = $(ui.sender).data('elm-type');
+                var element_name = $(ui.sender).data('elm-name');
+                var dropped = _this.find("li[data-elm-type]").removeClass().addClass("Row").removeAttr("data-elm-type");
+                var ColumnIndex = dropped.index();
+                var RowIndex = dropped.closest('[data-location="row"]').index();
+                var TabIndex = dropped.closest(".fb-editor").index();
+                var ElementIndex = 0;
+
+                //column
+                var ColId=Elements.Core.GenerateElementId();
+                //var column_wrap = '<div class="col-lg-3 fb-column flex-fill" data-element-id="' + ColId + '">{0}{element}</div>';
+               var column_wrap = '<div class="col-lg-12 ui-sortable-handle column-border" data-element-id="' + ColId + '"><div class="fb-column flex-fill" >{0}{element}</div></div>';
+               var column_setting = $(".frmb-control [data-elm-name='Column']").find("template[data-typeof='setting']");
+                $.each(column_setting.contents().find("[data-fb-name]"), function () {
+                    if ($(this).data("fb-name") == "ElementId") {
+                        $(this).attr("value", ColId);
+                    }
+                    //Elements.Core.ColumnNaming($(this), TabIndex, RowIndex, ElementIndex);
+               })
+               column_setting.contents().find(".popupspace").attr("id", "popupspace_" + ColId);
+               column_setting.contents().find(".fb-popup").attr("id", "popup_" + ColId);
+                var html = column_wrap.format(column_setting.html());
+                //element
+                var ElmId=Elements.Core.GenerateElementId();
+                var element_wrap = '<div class="fb-elements-container" data-location="element"><div data-element-id="'+ElmId+'" class="fb-element-wrap">{0}</div><div>';
+                var element_setting = $(".frmb-control [data-elm-name='" + element_name + "']").find("template[data-typeof='setting']");
+                $.each(element_setting.contents().find("[data-fb-name]"), function () {
+                    if ($(this).data("fb-name") == "ElementId") {
+                        $(this).attr("value", ElmId);
+                    }
+                    //Elements.Core.ElementNaming($(this), TabIndex, RowIndex, ElementIndex, 0);
+               })
+               element_setting.contents().find(".popupspace").attr("id", "popupspace_" + ElmId);
+               element_setting.contents().find(".fb-popup").attr("id", "popup_" + ElmId);
+                var element = element_wrap.format(element_setting.html());
+                var html = html.format({ "element": element });
+
+                dropped.replaceWith(html);
+                Elements.Core.ReInitSortable();
+                var args = { "ActionFor": "element", "TabIndex": TabIndex, "RowIndex": RowIndex, "ColumnIndex": ColumnIndex, "ElementIndex": ElementIndex };
+                Elements.Save(args);
+            },
+            Element: function (_this, event, ui) {
+                console.log("1")
+                var element_id = Elements.Core.GenerateElementId();
+                var element_type = $(ui.sender).data('elm-type');
+                var element_name = $(ui.sender).data('elm-name');
+                var dropped = _this.find("li[data-elm-type]").removeClass().addClass("Row").removeAttr("data-elm-type");
+                var RowIndex = dropped.closest('[data-location="row"]').index();
+                var ColumnIndex = dropped.closest('.column-border').index();
+                var TabIndex = dropped.closest(".fb-editor").index();
+                var ElementIndex = dropped.index();;
+
+                var ElmId=Elements.Core.GenerateElementId();
+
+                var element_wrap = '<div data-element-id="'+ElmId+'" class="fb-element-wrap">{0}</div>';
+                var element_setting = $(".frmb-control [data-elm-name='" + element_name + "']").find("template[data-typeof='setting']");
+
+                $.each(element_setting.contents().find("[data-fb-name]"), function () {
+
+                    if ($(this).data("fb-name") == "ElementId") {
+                        $(this).attr("value", ElmId);
+                    }
+                    //Elements.Core.ElementNaming($(this), TabIndex, RowIndex, ElementIndex, 0);
+                })
+                element_setting.contents().find(".popupspace").attr("id", "popupspace_" + ElmId);
+                element_setting.contents().find(".fb-popup").attr("id", "popup_" + ElmId);
+                var html = element_wrap.format(element_setting.html());
+
+
+                dropped.replaceWith(html);
+                Elements.Core.ReInitSortable();
+                var args = { "ActionFor": "element", "TabIndex": TabIndex, "RowIndex": RowIndex, "ColumnIndex": ColumnIndex, "ElementIndex": ElementIndex };
+                Elements.Save(args);
+            }
+        }
+        Elements.GetSetting = function (e) {
+
+            var form = null;
+            switch (e.ActionFor) {
+                case "element":
+                    form = $("#fb-tab-" + e.TabIndex + " .frmb>li:nth-child(" + (e.RowIndex + 1) + ") .fb-columns>.column-border:nth-child(" + (e.ColumnIndex + 1) + ")>.fb-column>.fb-elements-container>.fb-element-wrap:nth-child(" + (e.ElementIndex + 1) + ")>.control-tools form").serializeArray();
+                    break;
+                case "column":
+                     form = $("#fb-tab-" + e.TabIndex + " .frmb>li:nth-child(" + (e.RowIndex + 1) + ") .fb-columns>.column-border:nth-child(" + (e.ColumnIndex + 1) + ")>.fb-column>.control-tools form").serializeArray();
+                    break;
+                case "row":
+                    form = $("#fb-tab-" + e.TabIndex + " .frmb>li:nth-child(" + (e.RowIndex + 1) + ")>.control-tools form").serializeArray();
+                    break;
+                case "tab":
+                    form = $("[data-role='fb-tab-" + e.TabIndex + "']>.control-tools form").serializeArray();
+                    break;
+            }
+            $.each(form, function () {
+                e[this.name] = this.value;
+            });
+            return e;
+        }
+
+        Elements.Save = function (e) {
+            console.log("2");
+
+            var tabindexs = e.TabIndex;
+             localStorage.setItem("ltabindexs", tabindexs);
+     thisvalues=e;
+            var self = this;
+            e["Tab"] = [];
+            $.each($(".ui-tabs").find("[data-role]"), function () {
+                var tab = { "ElementIndex": $(this).index(), "ElementId": $(this).find("[data-fb-name='ElementId']").val(), "Row": [] };
+                $.each($("#" + $(this).data("role") + " [data-location='row']"), function () {
+                     var row = { "ElementIndex": $(this).index(), "ElementId": $(this).find(">.control-tools [data-fb-name='ElementId']").val(), "Column": [] };
+                    $.each($(this).find(".column-border"), function () {
+                           var column = { "ElementIndex": $(this).index(), "ElementId": $(this).find(">.fb-column>.control-tools [data-fb-name='ElementId']").val(), "Element": [] };
+                        $.each($(this).find(".fb-element-wrap"), function () {
+                            var element = { "ElementIndex": $(this).index(), "ElementId": $(this).find(">.control-tools [data-fb-name='ElementId']").val() };
+                            column.Element.push(element);
+                        });
+                        row.Column.push(column);
+                    });
+                    tab.Row.push(row)
+                });
+                e.Tab.push(tab);
+            })
+            e = self.GetSetting(e);
+
+            @*e["FormId"] = "@Model.Id";*@
+            e["FormId"] = $("#ids").val();
+            if (e.ElmType != undefined) {
+                e.Type = e.ElmType;
+            }
+            if (e.ElmId != undefined) {
+                e.ElementId = e.ElmId;
+            }
+            if (e.ElementId == "form") {
+
+
+                 $.ajax({
+                url: '/admin/ajax/check-form-table.html',
+                data: e,
+                error: function () {
+
+                    console.log('An error has occurred1');
+                },
+                dataType: 'json',
+                     success: function (data) {
+
+                         if ((data!="[]") && data.length > 0) {
+
+                            var obj = JSON.parse(data);
+                            var jSon = data.Data;
+                            var div = $("<div></div>")
+                                        .attr("id", "comment" + jSon )
+                                        .addClass("binder-user-note");
+                            var a = $("<div></div>")
+                                    .attr("href", "?delete=" + jSon )
+                                    .attr("id", "close-note");
+
+                            obj.forEach(function(item){
+                            $("<h6 class='text-dark'></h6>").text("Table: " + item.Table )
+                                                            .appendTo(a);
+                            $("<p class = 'text-dark'><p>").text("Fields: " + item.Fields )
+                                                            .appendTo(a);
+                         });
+
+                     $("<p class = 'small text-muted'></p>").text("Above Fields are deleted from table. It will cause lost of some information. Do you want to continue?")
+                                                            .appendTo(a);
+
+                     a.appendTo(div)
+                             $('.success-message').html(div);
+                                $('#myModal').modal('show');
+                             return false;
+                         }
+                         else {
+                                //  if($.active>0)return false;
+                             $.ajax({
+
+                url: '/admin/ajax/update-form-builder.html',
+                data: e,
+                error: function () {
+                    console.log('An error has occurred');
+                },
+                dataType: 'json',
+                                 success: function (data) {
+                                     console.log(e);
+                    var wrap=$("[data-element-id='" + data.elementId + "']");
+                    if (data.actionFor != "element" && data.actionFor != "autosave") {
+                        var url = "";
+                        if (@Model.Id== 0){
+                            url="@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/")" + data.formId + "/edit.html";
+
+                        }
+                        else {
+                             url = "@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/" + _Utils.EncryptId(Model.Id) + "/edit.html")";
+                        }
+                        wrap.find(".fb-card").empty().append("Please wait, Page is reloading");
+
+                        window.location.href =url;
+                    }
+
+                    if (data.content != "" && wrap.attr("data-type") != undefined){
+                        wrap.find(".fb-element").replaceWith(data.content);
+                    }
+
+                    /*  New */
+                        if(data.elementId=="form"){
+                            var wrap = $("[data-element-id='" + data.elementId + "']");
+                            wrap.find(".setting-body").append(data.setting);
+                            wrap.find("form").removeClass("loading");
+                        }else{
+                            var wrap = $("[data-element-id='" + data.elementId + "']");
+                            if (wrap.attr("data-type") != undefined && wrap.attr("data-type") === "tableElement") {
+                                wrap.find(".setting-body").html(data.contentSetting);
+                                wrap.find("form").removeClass("loading");
+                            }
+                            else {
+                                if (wrap.find(">.control-tools").length <= 0) {
+
+                                    wrap.find(">.fb-column>.control-tools .setting-body").html(data.contentSetting);
+                                    wrap.find(">.fb-column>.control-tools form").removeClass("loading");
+                                }
+                                else {
+                                    wrap.find(">.control-tools .setting-body").html(data.contentSetting);
+                                    wrap.find(">.control-tools form").removeClass("loading");
+                                }
+                            }
+
+                        }
+
+                    /* End - New */
+                    wrap.find(">.control-tools .setting-body").empty().html("<span class='alert alert-success'>" + data.message + "</span>");
+                      getTable(wrap);
+                            tableChange(wrap);
+                    fieldChange(wrap);
+                    try {
+                        reinitForTableElement();
+                    }
+                    catch (e) { }
+                },
+                type: 'POST'
+            });
+                         }
+                },
+                type: 'POST'
+                 });
+
+            }
+    else
+            {
+                $("#loading").show();
+     $.ajax({
+                url: '/admin/ajax/update-form-builder.html',
+                data: e,
+                error: function () {
+                    console.log('An error has occurred');
+                },
+                dataType: 'json',
+         success: function (data) {
+             $("#loading").hide();
+                        var wrap = $("[data-element-id='" + data.elementId + "']");
+                        if (data.actionFor != "element" && data.actionFor != "column" && data.actionFor!="row" && (data.actionFor != "tab" || e.isNew != "true") && data.actionFor != "autosave") {
+                          var url = "@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/" + _Utils.EncryptId(Model.Id) + "/edit.html")";
+                          wrap.find(".fb-card").empty().append("Please wait, Page is reloading");
+                          window.location.href =url;
+                    }
+                    else if (@Model.Id== 0) {
+
+                            var url = "@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/")" + data.formId + "/edit.html";
+                            wrap.find(".fb-card").empty().append("Please wait, Page is reloading");
+                            window.location.href = url;
+                    }
+                    if(data.content!=""){
+                        wrap.find(".fb-element").replaceWith(data.content);
+                    }
+
+                    /*  New */
+                        if(data.elementId=="form"){
+                            var wrap = $("[data-element-id='" + data.elementId + "']");
+                            wrap.find(".setting-body").append(data.setting);
+                            wrap.find("form").removeClass("loading");
+                        }else{
+                            var wrap = $("[data-element-id='" + data.elementId + "']");
+                            if (wrap.attr("data-type") != undefined && wrap.attr("data-type") === "tableElement") {
+                                wrap.find(".setting-body").html(data.contentSetting);
+                                wrap = wrap.find(".fb-popup").first();
+                                wrap.detach().appendTo("body");
+
+                                wrap.find("form").removeClass("loading");
+                            }
+                            else {
+                                if (wrap.find(">.control-tools").length <= 0) {
+                                    if (data.contentSetting != "") {
+                                        wrap.find(">.fb-column>.control-tools .setting-body").html(data.contentSetting);
+                                    }
+                                    wrap.find(">.fb-column>.control-tools form").removeClass("loading");
+                                    wrap = wrap.find(".fb-popup").first();
+                                    wrap.detach().appendTo("body");
+                                }
+                                else {
+                                    if (data.contentSetting != "") {
+                                        wrap.find(">.control-tools .setting-body").html(data.contentSetting);
+                                    }
+                                    wrap.find(">.control-tools form").removeClass("loading");
+                                    wrap = wrap.find(".fb-popup").first();
+                                    wrap.detach().appendTo("body");
+                                }
+                            }
+
+                            Elements.Core.Hooks.doAction("after_column_remove", "");
+                            Elements.Core.Hooks.doAction("after_row_remove","");
+                        }
+
+
+             /* End - New */
+             if (data.status == "success" && e.successMessage != "" && e.successMessage != undefined) {
+
+                 if (e.successMessage == "false") {
+                     $("body").append("<div id='complete'></div>");
+
+                 } else {
+                     toastr.success(e.successMessage);
+                 }
+
+
+             }
+             else {
+                 toastr.success(data.message);
+             }
+
+                    getTable(wrap);
+                    tableChange(wrap);
+             fieldChange(wrap);
+             try {
+                 reinitForTableElement();
+             }
+             catch (e) { }
+               var isRecaptcha = data.content.includes("g-recaptcha");
+             if (isRecaptcha) {
+                 var recaptchaElm = $('.g-recaptcha');
+                 $.each(recaptchaElm, function (i, v) {
+                     var sitekey = $(v).attr('data-site');
+                     if (sitekey == null || sitekey == "") {
+                         sitekey = "blank";
+                     }
+
+                     if (data.content.includes(v.id)) {
+                         grecaptcha.render(v.id, {
+                             'sitekey': sitekey
+                         });
+                     }
+                 });
+
+             };
+                },
+                type: 'POST'
+            });
+    }
+
+        }
+
+        Elements.AutoSave = function () {
+            console.log("3")
+            setTimeout(function(){
+                var args = { "ActionFor": "autosave"};
+                Elements.Save(args);
+                Elements.AutoSave();
+            },1000);
+        }
+        Elements.Init=function(){
+            $.widget( "ui.tabs", $.ui.tabs, {
+                _tabKeydown: function(e) {
+                    this._super( '_tabKeydown' );
+                }
+            });
+            //Elements.AutoSave();
+            $(document).on("submit",".setting-wrap form",function(e){
+                var self=$(this);
+                e.preventDefault();
+                var wrap = $(this).closest(".fb-popup");
+                var id = wrap.attr("id").split("_")[1];
+                wrap.detach().appendTo("#popupspace_" + id);
+                var obj=$(this).closest("[data-location]").data("location");
+                if(typeof(obj)=='undefined'){
+                    obj="tab";
+                }
+                var args = { "ActionFor": "", "TabIndex": 0, "RowIndex": 0, "ColumnIndex": 0, "ElementIndex": 0 };
+                if(obj=="tab"){
+                    args.ActionFor="tab";
+                    args.TabIndex=self.closest('[data-role]').index();
+
+                }
+                if(obj=="row"){
+                    args.ActionFor="row";
+                    args.RowIndex=self.closest('[data-location="row"]').index();
+                    args.TabIndex=self.closest('[data-tab-index]').index();
+                }
+                if(obj=="column"){
+                    args.ActionFor="column";
+                    args.RowIndex=self.closest('[data-location="row"]').index();
+                    args.ColumnIndex=self.closest('.column-border').index();
+                    args.TabIndex=self.closest('[data-tab-index]').index();
+                }
+                if(obj=="element"){
+                    args.ActionFor="element";
+                    args.RowIndex=self.closest('[data-location="row"]').index();
+                    args.ElementIndex=self.closest('.fb-element-wrap').index();
+                    args.ColumnIndex=self.closest('.column-border').index();
+                    args.TabIndex=self.closest('[data-tab-index]').index();
+                    //alert(JSON.stringify(args));
+                }
+                $.each(self.serializeArray(), function () {
+                    args[this.name] = this.value;
+                });
+
+                return Elements.Save(args);
+
+            });
+        }
+        jQuery(document).ready(function () {
+
+            Elements.Core.Init();
+            Elements.Core.ReInitSortable();
+            Elements.Init();
+
+        })
+    </script>
+    <script type="text/javascript">
+        String.prototype.capitalize = function () {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        };
+
+        $(document).ready(function () {
+            var tt = 0;
+        if (localStorage.getItem("ltabindexs") != "") {
+              tt = localStorage.getItem("ltabindexs");
+
+                localStorage.setItem("ltabindexs", "");
+        }
+            $(".tabs-ui").tabs({
+                active: tt
+            });
+        });
+
+        $(document).on("click", "[data-fb-toggle-popup]", function () {
+            console.log("loader");
+            $('#loading').show();
+
+            $(this).parents(".fb-element-wrap").addClass("active");
+            $(this).parent().find($(this).data("fb-toggle-popup")).find("form").addClass("loading").find(".setting-body").empty();
+            $(this).parents("li").find($(this).data("fb-toggle-popup")).find("form").addClass("loading").find(".setting-body").empty();
+            $elparent = $(this).parent().parent();
+            //if ($elparent.is("a")) {
+            //    $el = $(this).parent().parent().parent().find($(this).data("fb-toggle-popup")).toggleClass("show");
+            //    //$(this).parent().parent().find($(this).data("fb-toggle-popup")).addClass("show");
+            //  //  $el = $(this).parent().parent().find($(this).data("fb-toggle-popup"));
+            //}
+            //else {
+            //     $el = $(this).parent().find($(this).data("fb-toggle-popup")).toggleClass("show");
+            //}
+
+            if ($.active > 0) return false;
+            var ElmId = $(this).closest("[data-element-id]").data("element-id")
+            var ElmType = $(this).closest("[data-location]").data("location").capitalize();
+            $.ajax({
+                url: '/admin/ajax/render-form-builder-elements.html',
+                data: { "ElementId": ElmId, "Type": ElmType, "FormId": "@Model.Id" },
+                error: function () {
+                    console.log('An error has occurred');
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.elementId == "form") {
+                        $("#ids").val(data.formId);
+                        var wrap = $("[data-element-id='" + data.elementId + "']");
+                        wrap.find(".setting-body").append(data.content);
+                        wrap.find("form").removeClass("loading");
+
+                        $('#loading').hide();
+                        wrap = $("#popup_" + data.elementId);
+                        wrap.detach().appendTo("body");
+                        wrap.toggleClass("show");
+                        disableSortable();
+                        if (wrap.find('.fb-popup').hasClass('swaping')) {
+                            wrap.find('.fb-popup').swap('#swapDiv');
+                        }
+
+                        //
+                    } else {
+                        var wrap = $("[data-element-id='" + data.elementId + "']");
+                        //  wrap.find(">.control-tools .setting-body").empty();
+                        //wrap.find(">.control-tools .setting-body").append(data.content);
+                        if (wrap.find(">.control-tools").length <= 0) {
+
+                            wrap.find(">.fb-column>.control-tools .setting-body").empty().append(data.content);
+                            wrap.find(">.fb-column>.control-tools form").removeClass("loading");
+                            wrap.find('>.control-tools').hide();
+                        }
+                        else {
+                            wrap.find(">.control-tools .setting-body").empty().append(data.content);
+                            wrap.find(">.control-tools form").removeClass("loading");
+                            wrap.find('>.control-tools').show();
+                        }
+                        $('#loading').hide();
+                        wrap = $("#popup_" + data.elementId);
+                        wrap.detach().appendTo("body");
+                        wrap.toggleClass("show");
+                        disableSortable();
+                        InitUniqueNameForElement();
+                        if (wrap.find('.fb-popup').hasClass('swaping')) {
+                            wrap.find('.fb-popup').swap('#swapDiv');
+                        }
+                        getTable(wrap);
+                        tableChange(wrap);
+                        fieldChange(wrap);
+                        dBTableChange(wrap);
+                        //wrap.find(">.control-tools form").removeClass("loading");
+                        permissionClickEvents();
+                    }
+                },
+                type: 'POST'
+            });
+            // }
+        });
+
+
+        var timer;
+        function InitUniqueNameForElement() {
+            $("[data-name='elmName']").on('keyup', function () {
+                clearTimeout(timer);
+                var str = $(this).val();
+                var elmId = $(this).attr("id").split("_")[1];
+                var name = $(this).attr("id");
+                if (str.length >= 1) {
+                    timer = setTimeout(function () {
+                        value = str;
+                        $.ajax({
+                            type: "GET",
+                            url: "/admin/builderform/checkname",
+                            dataType: "json",
+                            data: { elementName: str, formId:@Model.Id, elementId: elmId },
+                            success: function (response) {
+                                console.log(response);
+                                if (!response.unique) {
+                                    showValidtionErrorMessage(name, response.message);
+                                    setFocusOnInvalidElement();
+                                }
+                                else {
+                                    removeValidationErrorMessage(name);
+                                }
+
+                            }
+                        });
+                    }, 800);
+                }
+            });
+        }
+        function DisposeInitQniqueName() {
+            $("[data-name='elmName']").unbind('keyup');
+        }
+
+        function dBTableChange(wrap) {
+            wrap.find(".dbTable").on("change", function () {
+                var value = $(this).val();
+                wrap.find(".dbField").val('');
+                getDbFields(value, wrap);
+            });
+            //if (wrap.find(".dbTable").val() != '') {
+            //    wrap.find(".dbTable").trigger('change');
+            //}
+        }
+        function tableChange(wrap) {
+            wrap.find(".tableMap").on("change", function () {
+                var value = $(this).val();
+                wrap.find("input[name='TableName']").val(value);
+                wrap.find("input[name='FieldName']").val('');
+                getField(value, wrap);
+            });
+
+        }
+
+        function getDbFields(value,wrap) {
+             $.ajax({
+                type: "GET",
+                 url: "/admin/sync-source-table-column",
+                dataType: "json",
+                data: { tableName: value },
+                 success: function (response) {
+                     wrap.find(".dbField").html("<option value=''>Select Field</option>");
+                     var fieldVal = "";
+                    if (response != "") {
+
+                        for (i = 0; i < response.length; i++) {
+                            wrap.find(".dbField").append("<option value='" + response[i].value + "'>" + response[i].text + "</option>");
+                        }
+                     }
+                     wrap.find(".dbField").val(fieldVal);
+
+                }
+            });
+        }
+        function fieldChange(wrap) {
+            wrap.find(".fieldMap").on("change", function () {
+                var value = $(this).val();
+                wrap.find("input[name='FieldName']").val(value);
+            });
+        }
+
+        function getField(value,wrap) {
+             $.ajax({
+                type: "GET",
+                url: "/admin/builderform/gettablefields.html",
+                dataType: "json",
+                data: { encryptedid: '@id', tablename: value },
+                 success: function (response) {
+                     wrap.find(".fieldMap").html("<option value=''>Select Field</option>");
+                     var fieldVal = "";
+                    if (response != "") {
+
+                        for (i = 0; i < response.length; i++) {
+                            wrap.find(".fieldMap").append("<option value='" + response[i].name + "'>" + response[i].name + "</option>");
+                            fieldVal = wrap.find("input[name='FieldName']").val();
+                        }
+                     }
+                     wrap.find(".fieldMap").val(fieldVal);
+
+                }
+            });
+        }
+
+
+        function getTable(wrap) {
+            $.ajax({
+                type: "GET",
+                url: "/admin/builderform/getcreatedtable.html",
+                dataType: "json",
+                data: { encryptedid: '@id'},
+                success: function (response) {
+                    var tableVal = "";
+                    wrap.find(".tableMap").html("<option value=''>Select Table</option>");
+                    if (response !=null && response != "") {
+                        for (i = 0; i < response.length; i++) {
+                            wrap.find(".tableMap").append("<option value='" + response[i].name + "'>" + response[i].name + "</option>");
+                        }
+                        tableVal = wrap.find("input[name='TableName']").val();
+                        getField(tableVal, wrap);
+                        wrap.find(".tableMap").val(tableVal);
+
+                    }
+                }
+            });
+        }
+
+        $(document).on("click", "[data-fb-close-popup]", function () {
+            $(this).parents(".fb-element-wrap").removeClass("active");
+            $(this).closest($(this).data("fb-close-popup")).toggleClass("show");
+            //$('.fb-close-popup').removeClass('show');
+            if ($(this).closest(".fb-popup").attr("data-parent")!="table") {
+                enableSortable();
+                var wrap = $(this).closest(".fb-popup");
+                var id = wrap.attr("id").split("_")[1];
+                wrap.detach().appendTo("#popupspace_" + id);
+            } else {
+                var wrap = $(this).closest(".fb-popup");
+                var id = wrap.attr("id").split("_")[1];
+                wrap.detach().appendTo("#popupspace_" + id);
+                $("#popupspace_" + id).closest(".fb-popup").detach().appendTo("body").addClass("show");
+            }
+
+            DisposeInitQniqueName();
+            if ($(this).closest($(this).data("fb-close-popup")).hasClass('swaping')) {
+                $(this).closest($(this).data("fb-close-popup")).swap('#swapDiv');
+            }
+            $(this).closest(".setting-wrap").find(".setting-body").html("");
+        });
+        $(document).on("click", ".ui-tabs-nav [data-fb-toggle-popup]", function () {
+            $(this).parent().parent().find($(this).data("fb-toggle-popup")).toggleClass("show");
+        });
+        $(document).on("click", "[data-fb-remove-closest]", function () {
+            $(this).closest($(this).data("fb-remove-closest")).remove();
+        });
+		$(document).on("click", ".fb-card header", function () {
+			$.each($(this).closest("li").siblings("li"), function (aa, bb) {
+				$(bb).removeClass("active");
+			});
+            $(".fb-card li section:visible").slideUp(function () {
+                $(this).closest("li");
+            })
+
+            $(this).closest("li").find("section").slideDown(function () {
+
+				$(this).closest("li").addClass("active");
+
+				$(this).closest("li").siblings();
+                if ($(this).closest("li").hasClass("database-form")) {
+                    determineTableBottomToHide();
+                }
+
+            });
+        });
+
+        //clone tabs
+        $(document).on("click", "#add-page-tab", function () {
+            let tabhead = $(this).siblings().first('div').find('li').first().clone();
+            tabhead.find("[data-fb-name='ElementId']").val(Elements.Core.GenerateElementId());
+            let count = $("#tabs>li").length;
+            tabhead.find(".setting-body").remove();
+            tabhead.attr("data-role", "fb-tab-" + count);
+            tabhead.attr("aria-controls", "fb-tab-" + count);
+            tabhead.attr("aria-labelledby", "ui-id-" + (count));
+            tabhead.attr("data-element-id", "elm-" + (count));
+            tabhead.find("a").attr("href", "#fb-tab-" + count);
+            tabhead.find("a").attr("id", "#ui-id-" + (count));
+
+            //add setting and trash icons
+			tabhead.find("a.ui-tabs-anchor").html("Untitled - " + count + " Tab*")
+               .append('<div class="tabClose"><span class="ri-settings-2-line" title="Edit tab" aria-hidden="true" data-fb-toggle-popup=".fb-popup"></span><span class="ri-close-circle-line" title="Delete tab" aria-hidden="true" data-confirm='+ "'" + '{OnInit:function(){this.size="";this.title="Confirm"; this.content="Are you sure you want to delete selected element?";this.button.cancel="Cancel";this.button.confirm="Confirm Apply";this.open();},OnConfirm:function(){$("[data-element-id=elm-'+ (count) +']").remove();$("#fb-tab-'+ count +'").remove();deleteTab('+count+');},OnCancelled:function(){this.close();}}'+ "'" + '></span></div>');
+
+            //tabhead.insertBefore("#add-page-tab");
+            $('#tabs').append(tabhead);
+
+            let tabbody = '<div id="fb-tab-' + count + '" data-tab-index="' + count + '" class="fb-editor m-0 w-100 ui-tabs-panel ui-widget-content ui-corner-bottom tab-empty-state" aria-labelledby="ui-id-' + (count + 2) + '" role="tabpanel" aria-hidden="true" style="display: none;"><ul class="frmb stage-wrap m-0 w-100 list-unstyled ui-sortable"></ul><div class="tab-empty-state-content"><div class="tab-empty-state-image"></div><p>Drag and drop UI elements here as per your requirement</p></div></div>';
+            $(tabbody).insertAfter("#fb-tab-" + (count-1));
+            $(".tabs-ui").tabs("refresh");
+            $(".tabs-ui").tabs({
+                active: (count)
+            });
+            Elements.Core.ReInitSortable();
+            var args = { "ActionFor": "tab", "TabIndex": count, "isNew": "false", "successMessage": "New tab added, reloading page please wait."};
+            Elements.Save(args);
+             $('.nav-tabs').scrollingTabs('refresh');
+            var mWidth = $('.scrtabs-tabs-movable-container').width();
+            var fWidth = $('.scrtabs-tabs-fixed-container').width();
+            var rWidth = mWidth - fWidth;
+            $('.scrtabs-tabs-movable-container').css("left", -(rWidth));
+            $('.nav-tabs').scrollingTabs('changeValue', rWidth);
+            determineBottomToHide();
+
+        });
+
+        $(document).on("click", "[data-action='clone-rule']", function () {
+
+            var itm = $(this).closest('.field-validation-wrapper').clone();
+
+            $(this).closest(".validation_rule_wrapper").append(itm);
+            $.each($(".field-validation-wrapper"), function () {
+                var index = $(this).index();
+                var index1;
+                var isNested =false;
+                if ($(this).parents(".field-validation-wrapper").length > 0)
+                {
+                    isNested = true;
+                    index1 = $(this).parents(".field-validation-wrapper").index();
+                }
+                $.each($(this).find("input,select,textarea"), function () {
+                    var namevar = $(this).data("name");
+                    var nameValue = $(this).data("value");
+                    if (namevar != undefined) {
+                        if (isNested) {
+                            $(this).attr("name", namevar.format(index1, index));
+                        }
+                        else {
+                            $(this).attr("name", namevar.format(index));
+                            if (nameValue != undefined) {
+                                $(this).attr("value", nameValue.format(index));
+                            }
+
+                        }
+
+                    }
+                })
+            });
+            itm.find("select[data-action='operator']").trigger("change");
+        });
+
+    $(document).on("click", "[data-action='remove-rule']", function () {
+
+            if ($(this).parent().parent().parent().find('.field-validation-wrapper').length > 1) {
+                $(this).closest('.field-validation-wrapper').remove();
+
+                $.each($(".field-validation-wrapper"), function () {
+                    var index = $(this).index();
+                    $.each($(this).find("input,select,textarea"), function () {
+                        var namevar = $(this).data("name");
+                        if (namevar != undefined) {
+                            $(this).attr("name", namevar.format(index));
+                        }
+                    })
+                });
+            }
+            else {
+                toastr.warning('You can\'t delete last option');
+            }
+        });
+
+        $(document).on("click", "[data-action='clone-TargetingOption']", function () {
+
+            var itm = $(this).closest('.field-validation-wrapper').clone();
+            $(this).closest(".target_option_wrapper").append(itm);
+            $.each($(".field-validation-wrapper"), function () {
+                var index = $(this).index();
+                $.each($(this).find("input,select,textarea"), function () {
+                    var namevar = $(this).data("name");
+                    if (namevar != undefined) {
+                        $(this).attr("name", namevar.format(index));
+                    }
+                })
+            });
+
+        });
+
+        Elements.Core.Hooks.addAction("after_column_remove", function () {
+            let columns_empty = $(".fb-columns");
+            $.each(columns_empty, function (a, b) {
+                if ($.trim($(b).text()) == "") {
+                    $(b).addClass("draggable-empty-area");
+                }
+                else {
+                    $(b).removeClass("draggable-empty-area");
+                }
+
+            });
+            return "";
+        });
+
+        Elements.Core.Hooks.addAction("after_row_remove", function () {
+
+            let tabs_empty = $("ul.frmb");
+            $.each(tabs_empty, function (c, d) {
+                if ($.trim($(d).text()) == "") {
+                    $(d).parent().addClass("tab-empty-state");
+                }
+                else {
+                    $(d).parent().removeClass("tab-empty-state");
+                }
+
+            });
+            return "";
+        });
+
+        $(document).on("mouseenter", ".fb-element-wrap,.fb-column,li[data-location='row']", function (event) {
+
+
+            event.stopImmediatePropagation()
+            if ($(".fb-popup.show").length == 0) {
+                $(this).find(">.control-tools").show();
+            }
+            if ($(".fb-popup.show").length > 0) {
+                $(this).find(">.control-tools").show();
+            }
+        }).on("mouseleave", ".fb-element-wrap,.fb-column,li[data-location='row']", function (event) {
+            event.stopImmediatePropagation();
+            if($(this).find(">.control-tools").is(":visible")){
+                if (!$(this).find(">.control-tools .fb-popup").hasClass("show")) {
+                    $(this).find(">.control-tools").hide();
+                }
+            }
+        })
+
+        $(document).on("click", "[data-action='form-column-clone']", function () {
+            //debugger;
+            $(this).off("click");
+            var self = $(this);
+            var tbl = self.closest(".tab-wrapper").find("[data-type='table']");
+            var cnt = tbl.children().length + 1;
+            var ids = "Column" + cnt;
+            var itm = self.closest("section").find('.tab-content-clone-table').clone().removeClass('tab-content-clone-table');
+            var tabContent = self.closest("section").find(".tab-content");
+        $(itm).attr('id', "col_"+ids);
+        $(itm).removeAttr('hidden');
+
+            $(" <li class='nav-item'><a class='nav-link' data-toggle=\"tab\" href=\"#col_" + ids + "\">" + ids + "*<div class='tabClose'><span class='ri-close-circle-line' title='Delete tab' aria-hidden='true' data-confirm='{OnInit:function(){this.size=\"\";this.title=\"Confirm\"; this.content=\"Are you sure you want to delete selected element?\";this.button.cancel=\"Cancel\";this.button.confirm=\"Confirm Apply\";this.open();},OnConfirm:function(){removeTableColumn(col_"+ids+")},OnCancelled:function(){this.close();}}'></span></div></a></li>").insertAfter($("[data-type='table']").find("li:last-child"));
+            itm.appendTo(tabContent);
+
+            $.each(tabContent.find(".tab-pane"), function () {
+
+                 var index = $(this).index();
+
+                 $.each($(this).find("input,select,textarea,text,checkbox"), function () {
+                     var namevar = $(this).data("fb-name");
+                     if (namevar != undefined) {
+                         $(this).attr("name", namevar.format(index));
+                     }
+                 });
+                 $.each($(this).find(".field-data-clone"), function () {
+
+                    var index1= $(this).index();
+                 $.each($(this).find("input,select,textarea,text,checkbox"), function () {
+
+                     var namevar = $(this).data("fb-name");
+                     if (namevar == undefined) {
+                           namevar = $(this).data("name");
+                     }
+                     if (namevar != undefined)
+                     {
+                         if (namevar.includes("Forms[Tables][{0}][Fields]")&&(index != 0 && index == $(".tab-content").find(".tab-pane").length - 1)) {
+                          $(this).attr("name", namevar.format(index, index1));
+                    }
+                    else {
+                          $(this).attr("name", namevar.format( index1));
+                    }
+         var idvar = $(this).attr("id");
+                          if (idvar != undefined) {
+                              $(this).attr("id", idvar+ "_" + index + "_" + index1);
+                          }
+                           var forvar = $(this).attr("for");
+                          if (forvar != undefined) {
+                              $(this).attr("for", forvar+ "_" + index + "_" + index1);
+                          }
+                }
+        });
+                  });
+			 });
+
+            determineTableBottomToHide();
+            try {
+                reinitForTableElement();
+            }
+            catch (e) { }
+        });
+
+        $(document).on("click", "[data-action='form-table-clone']", function () {
+
+            $(this).off("click");
+            var self = $(this);
+            var cnt = $('#form-table').children().length + 1;
+            var ids = "Untitled" + cnt;
+            var itm = $('.tab-content-clone').clone().removeClass('tab-content-clone');
+            $(itm).attr('id', ids);
+            $(itm).removeAttr('hidden');
+
+            $(" <li class='nav-item'><a class='nav-link' data-toggle=\"tab\" href=\"#" + ids + "\">" + ids + "*<div class='tabClose'><span class='ri-close-circle-line' title='Delete tab' aria-hidden='true' data-confirm='{OnInit:function(){this.size=\"\";this.title=\"Confirm\"; this.content=\"Are you sure you want to delete selected element?\";this.button.cancel=\"Cancel\";this.button.confirm=\"Confirm Apply\";this.open();},OnConfirm:function(){$(\"#" + ids + "\").remove(); $(this).parents(\".nav-item\").remove();deleteTab(1)},OnCancelled:function(){this.close();}}'></span></div></a></li>").insertAfter($("#form-table").find("li:last-child"));
+            itm.appendTo(".tab-content");
+
+            $.each($(".tab-content").find(".tab-pane"), function () {
+
+                var index = $(this).index();
+
+                $.each($(this).find("input,select,textarea,text,checkbox"), function () {
+                    var namevar = $(this).data("fb-name");
+                    if (namevar != undefined) {
+                        $(this).attr("name", namevar.format(index));
+                    }
+                });
+                $.each($(this).find(".field-data-clone"), function () {
+
+                    var index1 = $(this).index();
+                    $.each($(this).find("input,select,textarea,text,checkbox"), function () {
+
+                        var namevar = $(this).data("fb-name");
+                        if (namevar == undefined) {
+                            namevar = $(this).data("name");
+                        }
+                        if (namevar != undefined) {
+                            if (namevar.includes("Forms[Tables][{0}][Fields]") && (index != 0 && index == $(".tab-content").find(".tab-pane").length - 1)) {
+                                $(this).attr("name", namevar.format(index, index1));
+                            }
+                            else {
+                                $(this).attr("name", namevar.format(index1));
+                            }
+                            var idvar = $(this).attr("id");
+                            if (idvar != undefined) {
+                                $(this).attr("id", idvar + "_" + index + "_" + index1);
+                            }
+                            var forvar = $(this).attr("for");
+                            if (forvar != undefined) {
+                                $(this).attr("for", forvar + "_" + index + "_" + index1);
+                            }
+                        }
+                    });
+                });
+            });
+
+            determineTableBottomToHide();
+        });
+
+
+    $(document).on("click", "[data-action='remove-field']", function () {
+        $(this).off("click");
+
+        if ($(this).closest('tr').parent().find('tr').length > 1) {
+            $(this).closest('tr').remove();
+
+            $.each($(".field-data-clone"), function () {
+                var index = $(this).index();
+                $.each($(this).find("input,select,textarea,text,checkbox"), function () {
+                    var namevar = $(this).data("fb-name");
+                    if (namevar != undefined) {
+                        $(this).attr("name", namevar.format(index));
+                    }
+                });
+                $.each($(this).find("input,select,textarea"), function () {
+                    var namevar = $(this).data("name");
+                    if (namevar != undefined) {
+
+
+         $(this).attr("name", namevar.format(index));}
+
+
+                })
+            });
+        }
+    });
+        $(document).on("click", "[data-action='clone-field']", function () {
+            $(this).off("click");
+             // if ($(this).parent().parent().parent().find('.field-validation-wrapper').length > 1) {
+            var itm = $(this).closest('tr').clone();
+            $(this).closest("tbody").append(itm);
+            $.each($(".tab-content").find(".tab-pane"), function () {
+                var index = $(this).index();
+                  $.each($(this).find(".field-data-clone"), function () {
+                    var index1= $(this).index();
+                      $.each($(this).find("input,select,textarea,text,checkbox,label"), function () {
+                          var namevar = $(this).data("fb-name");
+                          var namevar = $(this).data("name");
+                          if (namevar != undefined) {
+                              if (namevar.includes("Forms[Tables][{0}][Fields]")&&(index != 0 && index == $(".tab-content").find(".tab-pane").length - 1)) {
+
+                                  $(this).attr("name", namevar.format(index, index1));
+                              }
+                              else {
+                                  $(this).attr("name", namevar.format(index1));
+                              }
+                          }
+                          var idvar = $(this).attr("id");
+                          if (idvar != undefined) {
+                              $(this).attr("id", idvar+ "_" + index + "_" + index1);
+                          }
+                           var forvar = $(this).attr("for");
+                          if (forvar != undefined) {
+                              $(this).attr("for", forvar+ "_" + index + "_" + index1);
+                          }
+        });
+                  });
+             });
+
+    });
+        $(document).on("click", "[data-action='remove-TargetingOption']", function () {
+            if ($(this).parent().parent().parent().find('.field-validation-wrapper').length > 1) {
+                 $(this).closest('.field-validation-wrapper').remove();
+
+            $.each($(".field-validation-wrapper"), function () {
+                var index = $(this).index();
+                $.each($(this).find("input,select,textarea"), function () {
+                    var namevar = $(this).data("name");
+                    if (namevar != undefined) {
+                        $(this).attr("name", namevar.format(index));
+                    }
+                })
+            });
+            }
+             else {
+                toastr.warning('You can\'t delete last option');
+            }
+
+        });
+        $(document).on("change", '[data-action="operator"]', function () {
+            var value=$(this).val();
+            var op_wrap=$(this).closest(".field-validation-wrapper")
+            var op=op_wrap.find("[data-option]");
+            var op_value = op.data("option");
+            var inputCheck = "validity.valid||(value=value.replace(/\D+/g, ''))";
+            if (value == "required") {
+                var true_selected = "";
+                var false_selected = "";
+                if (op_value == "true") {
+                    true_selected = "selected";
+                }
+                if (op_value == "false") {
+                    false_selected = "selected";
+                }
+
+                var str = '<select class="form-control" name="Validations[' + op_wrap.index() + '][ValidationValues]"><option value="true" ' + true_selected + '>True</option><option ' + false_selected + ' value="false">False</option></select>';
+                op.empty().append(str);
+            } else if (value == "between") {
+                var str = '<input type="number" class="form-control" size="20" min="0" oninput="' + inputCheck + '" value="' + op_value + '" name="Validations[' + op_wrap.index() + '][ValidationValues][0]"/><input type="number" size="20" min="1" oninput="' + inputCheck + '" class="form-control" value="' + op_value + '" name="Validations[' + op_wrap.index() + '][ValidationValues][1]"/>';
+            }
+            else if (value == "email") {
+                var str = '<input type="number" class="form-control" size="20" value="' + op_value + '" name="Validations[' + op_wrap.index() + '][ValidationValues]" style="display:none;"/>';
+            }
+            else if (value == "<")
+            {
+                var str = '<input type="number" class="form-control" size="20" min="0" oninput="' + inputCheck + '" value="' + op_value + '" name="Validations[' + op_wrap.index() + '][ValidationValues]"/>';
+            }
+            else if (value == ">")
+            {
+                var str = '<input type="number" class="form-control" size="20" min="0" oninput="' + inputCheck + '" value="' + op_value + '" name="Validations[' + op_wrap.index() + '][ValidationValues]"/>';
+            }
+            else if (value == "regex")
+            {
+                var str = '<input type="text" placeholder="Input Regex Value" class="form-control" value="' + op_value + '" name="Validations[' + op_wrap.index() + '][ValidationValues]"/>';
+            }
+            else {
+                var str = '<input type="number" class="form-control" size="20" min="0" oninput="' + inputCheck + '" value="'+op_value+'" name="Validations['+op_wrap.index()+'][ValidationValues]"/>';
+            }
+            op.empty().append(str);
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            Elements.Core.Hooks.doAction("after_column_remove","");
+            Elements.Core.Hooks.doAction("after_row_remove","");
+
+            var isInIframe = (window.location != window.parent.location) ? true : false;
+
+            if (!isInIframe) {
+
+                $(".page-actionbtns").attr("style","display:block !important;");
+            }
+
+
+            $('.saves-confirm').click(function () {
+                console.log('4')
+                   $.ajax({
+                url: '/admin/ajax/update-form-builder.html',
+                data: thisvalues,
+                error: function () {
+                    console.log('An error has occurred');
+                },
+                dataType: 'json',
+                success: function (data) {
+                     var wrap=$("[data-element-id='" + data.elementId + "']");
+                    if (data.actionFor != "element" && data.actionFor != "autosave") {
+                         var url = "@Url.Content("~/admin" + _Utils.GetTenantForUrl(false) + "/builderform/" + _Utils.EncryptId(Model.Id) + "/edit.html")";
+                        wrap.slideUp();
+                          window.location.href =url;
+
+                    }
+
+                    if(data.content!=""){
+                        wrap.find(".fb-element").replaceWith(data.content);
+                    }
+
+
+                        if(data.elementId=="form"){
+                            var wrap = $("[data-element-id='" + data.elementId + "']");
+                            wrap.find(".setting-body").append(data.setting);
+                            wrap.find("form").removeClass("loading");
+                        }else{
+                            var wrap = $("[data-element-id='" + data.elementId + "']");
+                            if (wrap.find(">.control-tools").length <= 0) {
+
+                                wrap.find(">.fb-column>.control-tools .setting-body").empty().append(data.setting);
+                                wrap.find(">.fb-column>.control-tools form").removeClass("loading");
+                            }
+                            else {
+                                wrap.find(">.control-tools .setting-body").empty().append(data.setting);
+                                wrap.find(">.control-tools form").removeClass("loading");
+                            }
+                        }
+                    toastr.success(data.message);
+                    },
+                type: 'POST'
+            });
+
+            });
+
+            //function to reset bootstrap modal popups
+            $("#myModal").on("hidden.bs.modal", function () {
+                $(".modal-header").removeClass(' ').addClass('alert-danger');
+                $('.saves-confirm').css('display', 'inline-block');
+                $('.success-message').html('').html('Are you sure you wish to delete this record ?');
+            });
+
+            //end of the docuement ready function
+        });
+
+
+        function permissionClickEvents() {
+            $("input[name*='Permission']").on("click", function () {
+                var name = $(this).attr("name");
+                var number = name.split("]")[0];
+                number = parseInt(number.split("[")[1]);
+                write = $("input[name='Permissions[" + number + "][Write]'");
+                read = $("input[name='Permissions[" + number + "][Read]'");
+
+                if (name.indexOf("Write") != -1) {
+                    if (write.prop("checked") == true) {
+                        write.prop("checked", true);
+                        read.prop("checked", true);
+                    }
+                    else {
+                        write.prop("checked", false);
+                    }
+
+                }
+                else {
+                    if (read.prop("checked") == true) {
+                        read.prop("checked", true);
+                    }
+                    else {
+                        read.prop("checked", false);
+                        write.prop("checked", false);
+                    }
+
+                }
+            });
+        }
+
+        $("#gridVisible").on("click", function () {
+
+            if ($("#gridVisible").is(":checked")) {
+                $(".fb-editor").removeClass("grid-invisible");
+            } else {
+                $(".fb-editor").addClass("grid-invisible");
+
+            }
+		});
+		$('#formNameEdit').on("click", function () {
+			$(this).parent().addClass("d-none");
+			$(this).parent().removeClass("d-flex");
+			$('#saveFormName').removeClass("d-none");
+			$('#saveFormName').addClass("d-flex");
+
+
+		});
+
+    </script>
+
+    <script>
+        var save = true;
+        $(function () {
+            $("#formStatus").on("change", function () {
+                if (save == true) {
+
+                    save = false;
+                    $("#status-loading").removeAttr("style");
+                    saveFormData(function () {
+                        save = true;
+                        $("#status-loading").attr("style", "display:none");
+                    });
+                }
+                else {
+                    toastr.warning("Save in progress, please try again in a while.");
+                }
+
+            });
+
+        });
+
+        function saveFormData(callback) {
+
+            $("#form-builder-pages").submit();
+
+            setTimeout(function () {
+                return callback();
+            }, 1500);
+
+
+        }
+    </script>
+    <script>
+        // .content-editable
+        // .content-input-area
+        // .content-editable__icon
+        function moveCursorToEnd(input) {
+            var originalValue = input.val();
+            input.val('');
+            input.blur().focus().val(originalValue);
+        }
+        $('#editName').on('click', function () {
+            $('#cancelEditName').show();
+            $(this).hide();
+            $('.content-editable').addClass('edit-mode');
+            $('.content-input-area').show();
+            moveCursorToEnd($('.content-editable__input'));
+        });
+        $('#cancelEditName').on('click', function () {
+            $('#editName').show();
+            $(this).hide();
+            $('.content-editable').removeClass('edit-mode');
+            $('.content-input-area').hide();
+            moveCursorToEnd($('.content-editable__input'));
+            if ($('.content-editable__input').val() == '') {
+                console.log($('.content-editable__input').val());
+            }
+        });
+
+        function deleteTab(tabindex) {
+            console.log("deleteStart");
+            Elements.Core.ReInitSortable();
+            var args = { "ActionFor": "tab", "TabIndex": tabindex, "isNew": "true", "isDelete": "true", "successMessage": "Selected element is deleted successfully." };
+            Elements.Save(args);
+            console.log("deleteEnd");
+            // toastr.success("Selected element is deleted successfully.", "Form Builder")
+        }
+        function setElementId(a) {
+            elementToDel = $(a).parents("[data-element-id]").attr("data-element-id");
+            console.log(elementToDel);
+        }
+        function delElement() {
+            if (elementToDel != "") {
+                $("[data-element-id=" + elementToDel + "]").remove();
+                console.log("deleteStart");
+                Elements.Core.ReInitSortable();
+                var args = {
+                    "ActionFor": "tab", "TabIndex": -1, "isNew": "true", "isDelete": "true", "successMessage": "Selected element is deleted successfully."
+                };
+                Elements.Save(args);
+                console.log("deleteEnd");
+                //  toastr.success("Selected element is deleted successfully.", "Form Builder")
+            }
+        }
+
+        function saveAllFormData() {
+            $("#save-all").attr("disabled", "disabled");
+            $("#loading").attr("style", "display:block;");
+            Elements.Core.ReInitSortable();
+            var args = { "ActionFor": "autosave", "TabIndex": -1, "isNew": "true", "successMessage": "false" };
+            Elements.Save(args);
+            console.log("save End");
+            var b = setInterval(function () {
+                var a = $("#complete");
+                if (a.length > 0) {
+                    toastr.info("Refreshing page, please wait...", "Form Builder");
+                    setTimeout(function () {
+                        $("#form-builder-pages").submit();
+                    }, 400);
+                    clearInterval(b);
+                }
+            }, 1500);
+
+        }
+        function disableSortable() {
+            if ($('body').find(".ui-sortable").length > 1) {
+                disSort();
+            }
+            else {
+                setTimeout(function () {
+                    disSort();
+                }, 1000);
+            }
+        }
+        function disSort() {
+            $('.frmb-control').sortable("disable");
+            $('.fb-elements-container').sortable("disable");
+            $('.fb-columns').sortable("disable");
+            $('.stage-wrap').sortable("disable");
+        }
+        function enableSortable() {
+            $('.frmb-control').sortable("enable");
+            $('.fb-elements-container').sortable("enable");
+            $('.fb-columns').sortable("enable");
+            $('.stage-wrap').sortable("enable");
+        }
+
+        function openElementEventSetting(formId, elementId, eventType) {
+            var rand = Math.floor((Math.random() * 1000000) + 1);
+            $("#loading").show();
+            url = "/admin/manage/elementworkflow.html?display=nosidebar&formId=" + formId + "&elementId=" + elementId + "&eventType=" + eventType + "&unique=" + rand;
+            $("#modal-text-window").html("<iframe src='" + url + "'></iframe>");
+            $("#windowPopUp").modal('show').attr("style", "visibility:hidden");
+            setTimeout(function () {
+                $("#loading").hide();
+                $("#windowPopUp").attr("style", "display:block;");
+            }, 1200);
+
+        }
+    </script>
+
+}
+

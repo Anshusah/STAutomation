@@ -1,0 +1,66 @@
+.companies {
+    padding: 2rem 0;
+    background-color: #fff;
+}
+/*promotions*/
+.promotion {
+    padding: 2rem 1rem 4rem;
+    margin-bottom: 0;
+    text-align: center;
+
+    @media (min-width:767px) {
+        padding: 60px;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+}
+
+.feature {
+    &-box {
+        .feature {
+            &-box {
+                &-icon {
+                    float: left;
+                    font-size: 30px;
+                    position: relative;
+                    top: -5px;
+                    border-radius: 50%;
+                    background: $light-blue;
+                    width: 70px;
+                    height: 70px;
+                    line-height: 70px;
+                    text-align: center;
+                    color: #fff;
+                }
+
+                &-info {
+                    margin-left: 5rem;
+
+                    .title {
+                        color: $light-blue;
+                    }
+
+                    .readmore {
+                        color: $light-blue;
+
+                        &:hover {
+                            color: $blue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+/*reg*/
+.reg-com {
+    background-color: #FBFBFB;
+    padding: 2.5rem 0 1.25rem;
+    padding-bottom: 30px;
+    font-size: 14.5px;
+    color: #666;
+
+    @media (min-width: 767px) {
+        padding: 2.5rem 0 1.5rem;
+    }
+}

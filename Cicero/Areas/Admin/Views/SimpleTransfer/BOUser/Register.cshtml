@@ -1,0 +1,103 @@
+﻿@using Cicero.Service.Models.SimpleTransfer.User
+@using Cicero.Service.Models.Core;
+@model Cicero.Service.Models.SimpleTransfer.User.RegisterUserViewModel
+@{
+    ViewData["Title"] = "Register";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    Layout = "~/Themes/" + theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+
+@*@await Html.PartialAsync("../Shared/_Header.cshtml")*@
+<section class="">
+    <div class="side-banner-overlay">
+        <div class="side-banner">
+            <div class="img-wrapper">
+                <img class="img-responsive" src="~/Themes/SimpleTransfer/img/Simple Transfer white Logo.png" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row ">
+            <div class="col-md-6">
+                <div class="logo">
+                    <img src="~/Themes/SimpleTransfer/img/simple-transfer-logo.png" alt="">
+                </div>
+            </div>
+            <div class="col col-md-6">    
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6  offset-md-6 col-lg-6  offset-lg-6">
+                <a class="close" href="/st/user/logout.html">
+                    <i class="ri-close-fill"></i>
+                </a>
+                <div class="form-login-signup">
+                    <div class="form-header">
+                        <h1 class="form-title title">
+                            Hello,<br>
+                            Welcome back
+                        </h1>
+                        <p>
+                            To stay in touch with us, please register to Simpletransfer account.
+                        </p>
+                    </div>
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <input type="text" class="form-fields form-control phone" asp-for="PhoneNumber" name="PhoneNumber" id="PhoneNumber" placeholder="Phone number" required>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+
+                                <input type="text" class="form-fields form-control email" asp-for="Email" id="Email" placeholder="someone@example.com" required>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <input type="password" asp-for="Password" class="form-fields form-control password" placeholder="Create Password" name="Password" id="Password" required>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <input type="password" class="form-fields form-control password" asp-for="ConfirmPassword" placeholder="Confirm Password" name="ConfirmPassword" id="ConfirmPassword" required>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <p>
+                                    <input type="checkbox" id="IsAgreed" required style="height: initial" asp-for="IsAgreed" name="IsAgreed">
+                                    <span asp-validation-for="IsAgreed" class="text-danger"></span>
+                                    I agree to the Simple Transfer User Agreement, Privacy Policy and Cookies Policy.
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div class="form-row">
+                            <div class="form-group col">
+                                @*<a type="submit" class="btn btn-block btn-secondary" href="/st/user/SenderDetail.html">
+                                    Continue
+                                </a>*@
+                                <button type="submit" class="btn btn-block btn-secondary">
+                                    Continue
+                                </button>
+                            </div>
+                        </div>
+                        <div class="footer-option">Already have an Account? <a href="/st/user/login.html" class="link"> Login</a></div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{}
+

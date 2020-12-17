@@ -1,0 +1,108 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@using Cicero.Service.Models.Core
+
+@model CaseViewModel
+@inject ICaseService caseService
+@inject AppSetting _appSetting
+@inject Utils  _utils
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["body"] = "";
+    ViewData["Title"] = "Payment Page";
+    dynamic data = new object();
+    if (Model.Id != 0)
+    {
+        data = Json.Serialize((dynamic)ViewBag.formData);
+    }
+    FormBuilderViewModel fbvm = Model.FormBuilder as FormBuilderViewModel;
+
+    Cicero.Service.Models.Core.FormBuilder FB = new Cicero.Service.Models.Core.FormBuilder() { FormData = fbvm, Side = "backend", HttpContext = HttpContextAccessor.HttpContext };
+
+}
+<link rel="stylesheet" href="/Themes/Blue/querybuilder/node_modules/bootstrap-select/dist/css/bootstrap-select.css">
+<link href="~/scrollable-tab plugin/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+<link href="~/flag-icon/css/flag-icon.min.css" rel="stylesheet" />
+<script src=https://webservices.securetrading.net/js/v2/st.js></script>
+<style>
+    .st-field{
+        max-height:100px;
+    }
+</style>
+<div class="main-content">
+    <div class="page-wrapper">
+        <div class="page-header">
+            <div class="page-header__main">
+                <h3 class="page-title">Payment</h3>
+
+            </div>
+            <p>Please enter your Credit/Debit Card number along with expiry date and csv number. Click on 'Pay' to proceed with the payment.</p>
+        </div>
+        <div class="page-content">
+            <div class="page-main-section">
+                <div class="page-content-area">
+
+                    <div id="st-notification-frame" class="pt-3"></div>
+                    <form id="stform" action="https://www.example.com" method="POST" class="pt-3">
+                        <div class="row">
+                            <div class="col-lg-6">
+
+                                <div class="form-group mb-0 "><div id="st-card-number" class="st-field st-card-number"></div></div>
+                                <div class="form-group  mb-0"> <div id="st-expiration-date" class="st-field st-expiration-date"></div></div>
+                                <div class="form-group  mb-0"> <div id="st-security-code" class="st-field st-security-code"></div></div>
+                                <div class="form-group "> <button type="submit" id="st-form__submit" class="btn btn-primary st-form__submit">Pay securely</button></div>
+
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-row align-items-center justify-content-lg-center ml-n4 ml-lg-0">
+                                    <div class="form-group"><div id="st-animated-card" class="st-animated-card-wrapper"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                            
+
+                            
+
+
+</form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        (function () {
+                $.ajax({
+                    url: '/admin/securetrading/gettoken',
+                    data: {
+                    },
+                    error: function () {
+                        toastr.error('An error has occurred');
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var st = SecureTrading({
+                            jwt: data,
+                            formId: "stform",
+                            animatedCard: true,
+                            submitOnSuccess: false,
+                            //submitCallback: myCallback,
+                            //disableNotification: true,
+                        });
+                        st.Components();
+                    },
+                    type: 'GET'
+                });
+            })();
+        function myCallback(data) {
+            // Custom code to perform actions after payment completion
+            // Data will contain the result of the last gateway request
+            // You should verify the response JWT is genuine before trusting the data
+        };
+    </script>
+    <script src="~/scrollable-tab plugin/jquery.scrolling-tabs.min.js"></script>
+    <script src="/Themes/Blue/querybuilder/node_modules/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    @section Scripts{
+
+    }

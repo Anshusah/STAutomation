@@ -1,0 +1,25 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.CheckBoxGroup
+@{
+    CheckBoxGroup rg = Model as CheckBoxGroup;
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @rg.BackendLabel
+        </label>
+            @{
+                if (rg.CheckOptions != null)
+                {
+                    foreach (var ro in rg.CheckOptions)
+                    {
+                        <div class="form-check">
+                            <input type="checkbox" @rg.GetName("BackendLabel") selected="@(ro.Selected)" value="@ro.Value" class="form-check-input">
+                            <label class="form-check-label">@ro.Text</label>
+                        </div>
+                    }
+                }
+
+            }
+    </div>
+</div>

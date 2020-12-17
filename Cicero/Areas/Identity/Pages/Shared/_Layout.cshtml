@@ -1,0 +1,53 @@
+﻿@using Cicero.Service.Helpers
+@inject AppSetting Setting
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#2A3547">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#2A3547">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#2A3547">
+    <link rel="icon" href="favicon.ico">
+
+    <title>@Setting.Get("app_name") : Login</title>
+
+    <!-- fonts -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ"
+          crossorigin="anonymous">
+    <link href="https://cdn.remixicon.com/releases/v2.1.0/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap">
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="~/admin/assets/css/main-backend.css">
+    <!-- <link rel="stylesheet" href="~/css/Cicero.css"> -->
+    <link rel="stylesheet" href="~/admin/assets/css/style.css">
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+        @RenderBody()
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    @*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+            crossorigin="anonymous"></script>
+    <script src="~/js/toastr.js"></script>
+    @RenderSection("Scripts", required: false)
+    @await Component.InvokeAsync("NToastNotify")
+
+</body>
+
+</html>

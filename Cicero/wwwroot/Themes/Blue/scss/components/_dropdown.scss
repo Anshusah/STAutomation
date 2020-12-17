@@ -1,0 +1,16 @@
+.dropdown-menu-lg {
+    width: 320px;
+}
+@include media-breakpoint-down(sm) {
+    .nav-item--message, .nav-item--notification {
+        position: static;
+        .nav-link {
+            position: relative;
+        }
+    }
+    .dropdown-menu-lg {
+        width: auto;
+        right: 1rem;
+        left: 1rem;
+    }
+}

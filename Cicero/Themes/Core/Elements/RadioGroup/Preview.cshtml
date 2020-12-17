@@ -1,0 +1,27 @@
+﻿@using Cicero.Service.Models.Core.Elements
+@model Cicero.Service.Models.Core.Elements.RadioGroup
+@{
+    RadioGroup rg = Model as RadioGroup;
+}
+<div class="fb-element">
+    <div class="form-group">
+        <label>
+            @rg.BackendLabel
+        </label>
+        
+            @{
+                if (rg.RadioOptions != null)
+                {
+                    foreach (var ro in rg.RadioOptions)
+                    {
+                        <div class="form-check">
+                            <input type="radio" @rg.GetName("BackendLabel") selected="@(ro.Selected)" value="@ro.Value" class="form-check-input">
+                            <label class="form-check-label">@ro.Text</label>
+                        </div>
+                    }
+                }
+
+            }     
+
+    </div>
+</div>

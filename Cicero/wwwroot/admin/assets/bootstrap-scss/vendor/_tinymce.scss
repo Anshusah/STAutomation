@@ -1,0 +1,213 @@
+.mce-tinymce {
+    box-shadow: none !important;
+    border: 1px solid $input-border-color !important;
+    border-radius: .25rem;
+}
+.mce-container, .mce-container *, .mce-widget, .mce-widget *, .mce-reset {
+    font-family: $font-family-sans-serif !important;
+}
+.mce-top-part {
+    border-bottom: 1px solid $input-border-color !important;
+    border-radius: .25rem .25rem 0 0;
+    &::before {
+        box-shadow: none !important;
+    }
+}
+.mce-toolbar-grp {
+    border-radius: .25rem .25rem 0 0;
+}
+.mce-edit-area {
+    border-top: 0 !important;
+}
+.mce-statusbar {
+    border-top: 0 !important;
+    border-radius: 0 0 .25rem .25rem;
+}
+.mce-branding {
+    opacity: .5;
+    text-transform: capitalize !important;
+}
+.mce-btn {
+    border: 0 !important;
+    text-shadow: none !important;
+    border-radius: .25rem;
+
+    &:hover {
+        background: var(--light) !important;
+    }
+
+    &.mce-active {
+        background: var(--secondary) !important;
+
+        &:hover, &:focus {
+            background: var(--secondary) !important;
+        }
+    }
+}
+.mce-primary {
+    background: var(--primary) !important;
+
+    &:hover {
+        background: darken($primary, 10%) !important;
+    }
+}
+.mce-menu-item .mce-text {
+    font-family: $font-family-sans-serif !important;
+}
+[class*=" mce-ico"], [class^=mce-ico] {
+    font-family: remixicon !important;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.mce-i {
+    &-bold {
+        &::before {
+            content: "\eaae" !important;
+        }
+    }
+
+    &-italic {
+        &::before {
+            content: "\ed78" !important;
+        }
+    }
+
+    &-bullist {
+        &::before {
+            content: "\eda3" !important;
+        }
+    }
+
+    &-numlist {
+        &::before {
+            content: "\eda0" !important;
+        }
+    }
+
+    &-outdent {
+        &::before {
+            content: "\ed6c" !important;
+        }
+    }
+
+    &-indent {
+        &::before {
+            content: "\ed6d" !important;
+        }
+    }
+
+    &-undo {
+        &::before {
+            content: "\ea4b" !important;
+        }
+    }
+
+    &-redo {
+        &::before {
+            content: "\ea4d" !important;
+        }
+    }
+
+    &-link {
+        &::before {
+            content: "\ed97" !important;
+        }
+    }
+
+    &-table {
+        &::before {
+            content: "\f01d" !important;
+        }
+    }
+
+    &-image {
+        &::before {
+            content: "\ed65" !important;
+        }
+    }
+
+    &-code {
+        &::before {
+            content: "\eb64" !important;
+        }
+    }
+
+    &-underline {
+        &::before {
+            content: "\f06f" !important;
+        }
+    }
+
+    &-strikethrough {
+        &::before {
+            content: "\efff" !important;
+        }
+    }
+
+    &-superscript {
+        &::before {
+            content: "\f00d" !important;
+        }
+    }
+
+    &-subscript {
+        &::before {
+            content: "\f001" !important;
+        }
+    }
+
+    &-alignleft {
+        &::before {
+            content: "\ea20" !important;
+        }
+    }
+
+    &-aligncenter {
+        &::before {
+            content: "\ea1e" !important;
+        }
+    }
+
+    &-alignright {
+        &::before {
+            content: "\ea21" !important;
+        }
+    }
+
+    &-alignjustify {
+        &::before {
+            content: "\ea1f" !important;
+        }
+    }
+
+    &-remove {
+        &::before {
+            content: "\eb52" !important;
+        }
+    }
+
+    &-browse {
+        &::before {
+            content: "\ef50" !important;
+        }
+    }
+}
+.mce-ico {
+    &.mce-i-resize, &.mce-i-backcolor, &.mce-i-forecolor {
+        font-family: 'tinymce' !important;
+    }
+}
+.mce-window {
+    box-shadow: $box-shadow-sm !important;
+    border-radius: .25rem;
+}
+.mce-window-head {
+    border-bottom: 0 !important;
+    .mce-title {
+        font-size: 1.2rem !important;
+    }
+}
+.mce-foot {
+    border-top: 0 !important;
+}

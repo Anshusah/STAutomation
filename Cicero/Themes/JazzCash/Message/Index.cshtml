@@ -1,0 +1,403 @@
+﻿@using Cicero.Service.Services
+@using Cicero.Service.Models
+@using Cicero.Service.Helpers
+@model List<MessageViewModel>
+@inject Permission Permission
+@inject IUserService _userService
+@inject IMessageService _messageService
+@inject ICaseService _caseService
+@inject Utils _utils
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["body"] = "full-layout";
+    var managerList = _userService.GetBackendUserList().Where(x => x.RoleName == "Claims manager" || x.RoleName == "Loss Adjuster");
+}
+
+<style>
+    .case__top {
+        padding: 2rem;
+        background: #fff;
+    }
+
+        .case__top .breadcrumb {
+            padding: 0;
+            background: transparent;
+        }
+
+    .case__data {
+        text-align: right;
+    }
+
+    .case__content {
+        padding: 2rem;
+    }
+
+    .modal--compose .modal-dialog {
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin: 0;
+        padding: 1rem 1rem 0 1rem;
+    }
+    .modal--compose .modal-content {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    .modal--compose .modal-footer {
+        border-radius: 0;
+    }
+    .modal--compose .modal-form {
+        display: flex;
+        flex-direction: column;
+        max-height: 70vh;
+    }
+    .table tr:hover {
+        cursor: pointer;
+    }
+
+    .message__seen {
+        background-color: #F6F6F6;
+    }
+
+    .selectize-dropdown .optgroup-header {
+        color: darkcyan;
+    }
+</style>
+
+<div class="full-layout-region">
+    <div class="vertical-layout">
+        @await Html.PartialAsync("../Shared/_Header-dashboard.cshtml")
+        <div class="main-container">
+            @await Html.PartialAsync("../Shared/_SideMenu.cshtml")
+            <main class="main-content" role="main">
+                <div class="absolute-fill">
+                    @await Html.PartialAsync("~/Themes/Blue/Message/Messages.cshtml")
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal--compose" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="modal-form" id="message-form" action="@Url.Content("~/user"+ _utils.GetTenantForUrl(false) + "/" + _utils.EncryptId(0) +"/messages.html")" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="msg-reply" id="msg-new-create">
+                        <div class="form-group">
+                            <select id="select-state" name="recipients[]" multiple class="demo-default" placeholder="Select a Manager...">
+                                @foreach (var item in managerList.GroupBy(x => x.RoleName).ToList())
+                                {
+                                    <optgroup label="@item.Key">
+                                        @foreach (var itm in item)
+                                        {
+                                            <option value="@itm.Id">@itm.Name</option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Subject</label>
+                            <input name="subject" id="new-subject" class="form-control" aria-describedby="subjectHelp" placeholder="Subject">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Claim Id</label>
+                            <select name="claimid" class="custom-select" asp-items="_caseService.GetCaseListToSelect()">
+                                <option value="">Select Claim if needed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only">Message</label>
+                            <textarea name="content" class="form-control" rows="3" placeholder="Message"></textarea>
+                        </div>
+                        <div class="uploaded-files"></div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <div class="mr-3">
+                        <button type="submit" id="send-message" disabled class="btn btn-primary">Send</button>
+                        @*<span class="custom-upload-visual p-1" style="cursor: pointer;" data-media='{OnInit:function(){this.size="modal-lg";this.button.cancel="Cancel";this.button.insert="Insert Media";this.open();},OnInsert:function(e){Cicero.Message.InsertImages(e)},OnCancelled:function(){this.close();}}'><img src="~/frontend/img/attachment.svg" alt="" style="width:18px;"> <small>Add Files</small></span>*@
+                        <button type="button" class="custom-upload-visual btn btn-outline-secondary" data-media="{OnInit:function(){this.size=&quot;modal-lg&quot;;this.button.cancel=&quot;Cancel&quot;;this.button.insert=&quot;Insert Media&quot;;this.open();},OnInsert:function(e){Cicero.Message.InsertImages(e)},OnCancelled:function(){this.close();}}">
+                            <i class="ri-attachment-line"></i>
+                            <span>Add files</span>
+                        </button>
+                    </div>
+                    <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="@Url.Content("~/admin/assets/js/dataTables.checkboxes.min.js")" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript">
+        var tableData = null;
+        $(document).ready(function () {
+          var selected = [];
+            var customCheckbox = '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input dt-checkboxes" id=""><label class="custom-control-label"></label></div>';
+         tableData = $("#messages").DataTable({
+            "processing": true,
+            "serverSide": true,
+            //"dom": 'r<"clear">t<"row"<"col-sm-3"l><"col-sm-3"i><"col-sm-6"p>><"clear">',
+            "dom": 'r<"clear">t<"datatable__controls"<"datatable__length"l><"datatable__info"i><"datatable__numbers"p>>',
+            'searching': true,
+            "ajax": { "url": "@Url.Content("~/user" + _utils.GetTenantForUrl(false) + "/messages.html")", "type": "POST"},
+            "oLanguage": {sProcessing: "<div class='spinner'><div class='spinner-border text-primary' role='status'><span class='sr-only'>loading...</span></div></div>"},
+        'stateSave': false,
+        'select': {
+            info: false
+        },
+        'columnDefs': [
+            {
+                'targets': 0,
+                  'render': function(data, type, row, meta){
+                            if(type === 'display'){
+                                data = customCheckbox;
+                            }
+                            return data;
+                        },
+                'checkboxes': {
+                    'selectRow': true,
+                    'selectAll': true
+                }
+            },
+            {
+                'targets': 3,
+                'render': function (data) {
+                        return "<div class='message__timestamp'>" + moment(data).format('Do MMMM, YYYY') + "</div>";
+                    }
+                }
+        ],
+        'select': {
+            'style': 'multi'
+             },
+        "rowCallback": function(row, data, index) {
+                jQuery('td:first-child', row).find("input").attr({ "id": "Ids", "name": "Ids", "value": data.id });
+            },
+        "drawCallback": function( settings ) {
+            $("#messages thead").remove();
+            $('#messages_processing').removeClass("card");
+ },
+        "columns": [
+            { "title": "", "data": "id", "orderable": false },
+            {
+                "title": "", "data": null, "orderable": false,
+                'render': function (data) {
+                    console.log("for image");
+                    return "<div class='message__head'><div class='message__responder'><img class='rounded-circle' width='40' height='40' src='/uploads/" + data.senderImage + "' /></div><div class='message__subject'>" + data.subject + '</div></div>';
+                }
+            },
+              {
+                "title": "", "data": null, "orderable": false,
+                  'render': function (data) {
+                      if (data.content == null) {
+                          data.content = "";
+                      }
+                      var icons = "";
+                      if (!(data.attachment == "[]")) {
+                          icons = "<i class='ri-attachment-line'></i>";
+                      }
+                      var content = data.content.length > 100 ? data.content.substr(0, data.content.lastIndexOf(' ', 100)) : data.content;
+                    return "<div class='message__fragment'>" + content + icons + "</div>";
+                }
+            },
+         //   { "title": "Subject", "data": "subject", "orderable": true },
+          //  { "title": "Message", "data": "content", "orderable": true },
+            { "title": "Created At", "data": "createdAt", "type": "date"  ,"orderable": false },
+        ],
+        order: [
+            [1, "asc"]
+        ],
+        "paging": true,
+        "pageLength": 10,
+        lengthMenu: [
+            [5, 10, 20, 50, 100, 500], [5, 10, 20, 50, 100, 500]
+             ],
+             "createdRow": function (row, data, dataIndex) {
+                 console.log("seen");
+                 if (data.isRead) {
+                     $(row).addClass('message__seen');
+                 }
+        },
+        "fnInitComplete": function(oSettings, json) {
+            jQuery("#users").css({ "display": "table" }).animate({ "opacity": 1 }, 500);
+        },
+        });
+        //jQuery(document).on("keyup", "#gridsearch", function() {
+        //        table.fnFilter(this.value);
+        //});
+            $(document).on("click", "#messages tbody tr td:not(:first-child)", function (e) {
+                console.log("clikced");
+                var data = tableData.row(e.currentTarget.parentElement).data();
+                location.href = "/user/messageDetail.html?id=" + data.id + "&isRead=" + data.isRead;
+            });
+
+
+            $(document).on('click', '.attachment__btn', function (e) {
+                e.currentTarget.parentElement.remove()
+            })
+});
+    </script>
+
+    @*<script type="text/javascript" src="~/frontend/js/jquery.slimscroll.js"></script>*@
+    <script>
+
+        var $select = $('#select-state').selectize({
+            maxItems: 1
+        });
+
+        $('#select-manager').selectize({
+            maxItems: 1
+        });
+           var theme_match = String(window.location).match(/[?&]theme=([a-z0-9]+)/);
+            var theme = (theme_match && theme_match[1]) || 'default';
+            var themes = ['default', 'legacy', 'bootstrap2', 'bootstrap3'];
+            $('head').append('<link rel="stylesheet" href="@Url.Content("~/css/selectize.css")"' + theme + '.css">');
+
+            var $themes = $('<div>').addClass('theme-selector').insertAfter('h1');
+            for (var i = 0; i < themes.length; i++) {
+                //$themes.append('<a href="?theme=' + themes[i] + '"' + (themes[i] === theme ? ' class="active"' : '') + '>' + themes[i] + '</a>');
+            }
+    </script>
+    <script>
+        $(function () {
+            $('#message').slimScroll({
+                height: '250px',
+                size: '5px',
+                alwaysVisible: false
+            });
+            if ($(window).width() > 992) {
+                $('#msgList').slimScroll({
+                    height: '630px',
+                    size: '5px',
+                    alwaysVisible: false
+                });
+                $('#msgView').slimScroll({
+                    height: '630px',
+                    size: '5px',
+                    alwaysVisible: false
+                });
+            }
+
+            jQuery(document).on("click", "#reply-message", function () {
+                jQuery("#msg-new-create").hide();
+                jQuery("#empty-msg").hide();
+                jQuery("#msg-reply").show();
+            });
+
+            jQuery(document).on("click", "#new-message", function () {
+                jQuery("#msg-new-create").show();
+                jQuery("#empty-msg").hide();
+                jQuery("#msg-reply").hide();
+                jQuery("#msg-details").hide();
+
+                if ($(window).width() < 992 && !jQuery(".msg-box").hasClass("mobile")) {
+                    jQuery(".msg-box").addClass("mobile");
+                }
+            });
+
+            //jQuery(document).on("click", "#load-more-messages", function () {
+            //    console.log("why");
+            //    jQuery("#load-more-messages").hide();
+            //    jQuery("#msg-old-view").show();
+            //});
+
+            jQuery(document).on("click", ".goto-msg-list", function () {
+                if ($(window).width() < 992) {
+                    jQuery(".msg-box").removeClass("mobile");
+                }
+            });
+
+
+            jQuery(document).on("change", "#new-subject", function () {
+                if ($("#new-subject").val().trim() != "" && $('#select-state').val().length > 0) {
+                    $("#send-message").prop('disabled', false);
+                } else {
+                    $("#send-message").prop('disabled', true);
+                }
+            });
+
+            jQuery(document).on("change", "#select-state", function () {
+                if ($("#new-subject").val().trim() != "" && $('#select-state').val().length > 0) {
+                    $("#send-message").prop('disabled', false);
+                } else {
+                    $("#send-message").prop('disabled', true);
+                }
+            });
+
+            if ($(window).width() < 992 && jQuery(".msg-list-item").hasClass("active")) {
+                jQuery(".msg-box").addClass("mobile");
+            }
+        });
+
+        jQuery(document).on("keyup", "#gridsearch", function () {
+            tableData.search(this.value).draw();
+        });
+
+        $('#exampleModal').on('hidden.bs.modal', function () {
+            $('#message-form').trigger("reset");
+            $('#select-state').val(null).change();
+            $('#claimid').val("").change();
+            $('.uploaded-files').html('');
+
+            var control = $select[0].selectize;
+            control.clear();
+        })
+
+        $('#action').change(function (e) {
+            if (e.currentTarget.value != "") {
+                $('#apply').click();
+            }
+        })
+
+
+        var rows_selected = [];
+        $(document).on("click", '#messages tbody tr td:first-child', function (e) {
+            debugger
+            var $row = $(e.target).parents("tr");
+
+            // Get row data
+            var data = tableData.row($row).data();
+
+            // Get row ID
+            var rowId = data.id;
+
+            // Determine whether row ID is in the list of selected row IDs
+            var index = $.inArray(rowId, rows_selected.map(x=>x.id));
+
+            // If checkbox is checked and row ID is not in list of selected row IDs
+            if ($(e.target).parents("tr").find('input').is(":checked") && index === -1) {
+                rows_selected.push({ id: rowId, value: $row.hasClass("message__seen") });
+
+                // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+            } else if (!$(e.target).parents("tr").find('input').is(":checked") && index !== -1) {
+                rows_selected.splice(index, 1);
+            }
+
+
+            if (rows_selected.map(x => x.value).filter(x => x == true).length > 0) {
+                $('#action option[value = markAsRead]').attr("disabled", "disabled");
+            }
+            else {
+                $('#action option[value = markAsRead]').removeAttr("disabled");
+            }
+        })
+
+    </script>
+}
+
+
+

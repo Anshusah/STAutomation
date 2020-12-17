@@ -1,0 +1,142 @@
+﻿@using Cicero.Service.Models
+@model TemplateViewModel
+
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        .header {
+            min-height: 130px;
+        }
+
+        p.date {
+            text-align: right;
+            padding-right: 40px;
+        }
+
+        .top_add {
+            position: absolute;
+            right: 40px;
+            top: 30px;
+            line-height: 15px;
+        }
+
+        p.topic {
+            text-transform: uppercase;
+            font-size: 25px;
+            text-align: center
+        }
+
+        .body_wrapper {
+            padding: 25px;
+            font-size: 16px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        .bottom_add {
+            position: relative;
+        }
+
+        .bottom_add_left {
+            position: absolute;
+            left: 40px;
+        }
+
+        .bottom_add_right {
+            position: absolute;
+            right: 40px;
+        }
+
+        p.footer_text {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    @Html.Raw(Model.Content)
+    @*<div class="header">
+            <div class="logo"> </div>
+            <div class="top_add">
+                <table>
+                    <tr>
+                        <td> Cicero</td>
+                        <td> </td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td> Street 23, North 232</td>
+                        <td> </td>
+                        <td> Contact</td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td> London</td>
+                        <td> </td>
+                        <td> 0171 946 0123 </td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td> Cicero@info.com</td>
+                        <td> </td>
+                        <td> 020 7946 0123</td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td> www.Cicero.com</td>
+                        <td> </td>
+                        <td> </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr>
+        <p class="topic">
+            SUBROGATION RECEIPT
+        </p>
+        <p class="date"> Date (date_today)</p>
+        <div class="body_wrapper">
+            <p>
+                BL number: (bl_number)<br>
+                Container/s number:  (containers)<br>
+                Vessel / voyage:  (vessel_name)<br>
+                Port of loading:  (port_to)<br>
+                Port of discharge:  (port_from)<br>
+                Cargo delivery date:  (delivery_date)<br>
+                Nature of Loss:  (nature_of_loss)<br>
+                Client:  (client_name)<br>
+            </p>
+            <p>
+                The Client hereby assigns to (manager_name) full ownership and legal title to proceed with recovery against whomsoever in respect of the damage and / or loss suffered by the subject cargo during the above mentioned transport.
+                The Client understands, that this means, that he/she cannot accept any direct contact or payment from liable party or subrogate this claim to whomsoever. If the Subrogation Receipt is declared invalid for any reason, the Subrogation Receipt shall
+                be considered a power of attorney granted by the Client to (manager_name), pursuant to which (manager_name) is granted exclusive power, with full substitution right, to :
+                <ul>
+                    <li> Represent the client legally before third parties in relation to the Claim. </li>
+                    <li> If necessary, appoint lawyer and start legal action. </li>
+                    <li> Obtain every type of information required, initiate requests. </li>
+                    <li> Initiate, conduct and undertake every type of negotiations in regards to Client`s Claim. </li>
+                    <li>
+                        Collect and receive payments in relation to the Claim on the Client`s behalf.
+                    </li>
+                </ul>
+                Client confirms, that he/she is authorized and has legal capacity to sign subrogation letter and that photocopy signature has equal legal right to the original document. Client records that (manager_name) have authority to use their name to the extent
+                necessary effectively to exercise all or any of such rights, remedies, causes in action.
+
+            </p>
+            <div class="bottom_add">
+                <div class="bottom_add_left"> By: (client_name) <br> Name in full: (manager_name)<br> Position: Manager <br> Authorized signatory for (signature)</div>
+                <div class="bottom_add_right"> Company</div>
+            </div>
+
+        </div>*@
+</body>
+</html>

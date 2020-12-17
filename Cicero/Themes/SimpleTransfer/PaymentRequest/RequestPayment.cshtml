@@ -1,0 +1,385 @@
+﻿@inject Cicero.Service.Services.SimpleTransfer.IBankMapperService IBankService
+@inject Cicero.Service.Services.SimpleTransfer.IBranchMapperService IBranchService
+@model Cicero.Service.Models.PaymentRequest.PaymentRequestViewModel
+@inject Cicero.Service.Services.SimpleTransfer.IPaymentRequestService PaymentRequestService
+@inject Cicero.Service.Services.SimpleTransfer.ITransactionLimitConfigService TransactionLimitConfig
+@using Microsoft.AspNetCore.Identity
+@using Cicero.Data.Entities
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Request a Payment";
+    ViewData["body"] = "inner-pg";
+    Theme theme = ViewData["theme"] as Theme;
+    var bankList = IBankService.GetAllBankList(Model.PayeeCountry).Result;
+    var branchList = IBranchService.GetBranchListByBank(Model.STPaymentRequestDetails.Bank).Result;
+    var fileName = Model.STPaymentRequestDetails.Invoice;
+    var chooseFile = (fileName == null || fileName == "") ? "Choose file" : Model.STPaymentRequestDetails.OldInvoice;
+    var payerList = PaymentRequestService.GetAllPayerList();
+    var limitData = TransactionLimitConfig.GetTransactionLimitConfigByCountryCodeAsync(Model.PayeeCountry).Result;
+    decimal limitAmount = 100000;
+    if(limitData != null)
+    {
+        limitAmount = limitData.LimitAmountPerTxn;
+    }
+}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="vertical-layout">
+    @await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+    <main class="main-content" role="main">
+        <div class="container">
+            <div class="card card-lg payment-request">
+                <div class="card-header justify-content-between bg-white px-4">
+                    <h5 class="mb-0">Payment Request Details</h5>
+                </div>
+                <div class="card-body px-4 py-3 flex-column border-0">
+                    <form id="paymentRequestForm" action="@Url.Content("~/payment/request.html")" method="post" enctype="multipart/form-data">
+                        <input asp-for="PayeeCountry" type="text" class="form-control" hidden />
+
+                        <div class="request-details">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="amount">Amount</label>
+                                        <input asp-for="RequestAmount" type="number" min="20" class="form-control" />
+                                        <span class="text-light small">20.00-@limitAmount GBP</span>
+                                        <span asp-validation-for="RequestAmount" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="amount">Currency</label>
+                                        <select asp-for="CurrencyCode" class="form-control custom-select">
+                                            <option value="">Select Currency</option>
+                                            <option value="GBP" selected>GBP</option>
+                                        </select>
+
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="amount">Your Bank Name</label>
+                                        <select asp-for="STPaymentRequestDetails.Bank" class="custom-select form-control bank-list">
+                                            <option value="">Select Bank</option>
+                                            @{
+                                                foreach (var bl in bankList)
+                                                {
+                                                    <option value="@bl.Value">@bl.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                        <span asp-validation-for="STPaymentRequestDetails.Bank" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    @if (Model.PayeeCountry == "GB")
+                                    {
+                                        <div class="form-group">
+                                            <label asp-for="STPaymentRequestDetails.Branch">Sort Code</label>
+                                            <input type="text" asp-for="STPaymentRequestDetails.Branch" data-val-required="The Sort Code field is required." class="form-control" />
+                                            <span asp-validation-for="STPaymentRequestDetails.Branch" class="text-danger"></span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            <label asp-for="STPaymentRequestDetails.Branch">Your Bank Branch</label>
+                                            <select asp-for="STPaymentRequestDetails.Branch" class="custom-select form-control branch-list">
+                                                <option value="">Select Branch</option>
+                                                @{
+                                                    foreach (var bl in branchList)
+                                                    {
+                                                        <option value="@bl.Value">@bl.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <span asp-validation-for="STPaymentRequestDetails.Branch" class="text-danger"></span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="STPaymentRequestDetails.AccountNumber">Your Bank Account Number</label>
+                                        <input type="number" min="0" asp-for="STPaymentRequestDetails.AccountNumber" class="form-control" />
+                                        <span asp-validation-for="STPaymentRequestDetails.AccountNumber" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="STPaymentRequestDetails.PurposeOfRequest">Purpose of Request</label>
+                                        <select asp-for="STPaymentRequestDetails.PurposeOfRequest" class="custom-select form-control">
+                                            <option value="">Please Select</option>
+                                            <option value="1">Bill Sharing</option>
+                                            <option value="2">Lend/borrow</option>
+                                            <option value="3">Other</option>
+                                        </select>
+                                        <span asp-validation-for="STPaymentRequestDetails.PurposeOfRequest" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="STPaymentRequestDetails.InvoiceFile"></label>
+                                        <div class="custom-file custom-file--primary">
+                                            <input type="file" asp-for="STPaymentRequestDetails.InvoiceFile" class="custom-file-input">
+                                            <label class="custom-file-label" asp-for="STPaymentRequestDetails.InvoiceFile">@chooseFile</label>
+
+                                            <input asp-for="STPaymentRequestDetails.Invoice" hidden>
+                                            <input asp-for="STPaymentRequestDetails.OldInvoice" hidden>
+                                            <span asp-validation-for="STPaymentRequestDetails.Invoice" class="text-danger"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="STPaymentRequestDetails.DueDate">Due Date</label>
+                                        <input type="date" asp-for="STPaymentRequestDetails.DueDate" class="form-control" min="@DateTime.Now.Date.ToString("yyyy-MM-dd")" max="2021-12-31" />
+                                        <span asp-validation-for="STPaymentRequestDetails.DueDate" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea asp-for="STPaymentRequestDetails.Description" type="text" class="form-control"></textarea>
+                                        <span class="text-light small float-right"> 0 / 250</span>
+                                        <span asp-validation-for="STPaymentRequestDetails.Description" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="sender-details border-top mt-3 py-3 ">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="text-left mb-3">Sender Details</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-9 pr-2">
+                                    <div class="form-group">
+
+                                        <select class="form-control custom-select" id="payerList" asp-for="PaymentRequestId" name="PaymentRequestId">
+                                            <option value="">Select Payer</option>
+                                            @foreach (var item in payerList.Where(x => x.Text != null))
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-3 pl-0">
+                                    <button class="btn btn-outline-primary btn__has-icon btn-block" id="addNewPayer" type="button" title="Add New Payer">
+                                        Add New
+                                        <i class="ri-add-circle-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="PayerFirstName">First Name</label>
+                                        <input type="text" asp-for="PayerFirstName" class="form-control" />
+                                        <span asp-validation-for="PayerFirstName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="PayerLastName">Last Name</label>
+                                        <input type="text" asp-for="PayerLastName" class="form-control" />
+                                        <span asp-validation-for="PayerLastName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="PayerEmail"> Email</label>
+                                        <input type="text" asp-for="PayerEmail" class="form-control" />
+                                        <span asp-validation-for="PayerEmail" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="PayerMobileNumber">Sender Phone</label>
+                                        <input type="number" min="0" asp-for="PayerMobileNumber" class="form-control" />
+                                        <span asp-validation-for="PayerMobileNumber" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    <button type="submit" class="btn btn-primary px-5 mx-auto mt-4">Submit<i class='fa fa-angle-double-right ml-2'></i></button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary px-5 mx-auto mt-4">Register & Request Payment</button>
+                                }
+                            </div>
+                        </div>
+
+
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    @await Html.PartialAsync("../Shared/_Footer.cshtml")
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#payerList').select2({
+
+        });
+
+          $('#addNewPayer').on("click", function (e) {
+            $('#payerList').val("").trigger("change");
+        });
+
+        $('#payerList').on("change", function (e) {
+            var payerFirstName = $('#PayerFirstName');
+            var payerLastName = $('#PayerLastName');
+            var payerEmail = $('#PayerEmail');
+            var payerPhone = $('#PayerMobileNumber');
+            var value = $(this).val();
+
+            if (value == "") {
+                payerFirstName.val("");
+                payerLastName.val("");
+                payerEmail.val("");
+                payerPhone.val("");
+
+                //payerFirstName.focusout();
+                //payerLastName.focusout();
+                //payerEmail.focusout();
+                //payerPhone.focusout();
+                return;
+            }
+
+            $.ajax({
+                url: "@Url.Content("~/payment/request/payerData.html")",
+                type: "get",
+                data: { id: value },
+                success: function (response) {
+                    debugger
+                    payerFirstName.val(response.payerFirstName);
+                    payerLastName.val(response.payerLastName);
+                    payerEmail.val(response.payerEmail);
+                    payerPhone.val(response.payerMobileNumber);
+
+                    payerFirstName.focusout();
+                    payerLastName.focusout();
+                    payerEmail.focusout();
+                    payerPhone.focusout();
+                },
+                error: function (error) {
+
+                }
+            });
+        })
+
+        $('#STPaymentRequestDetails_InvoiceFile').on("change", function (e) {
+            var fileName = this.files[0].name;
+            $('.custom-file-label').text(fileName);
+            $('#STPaymentRequestDetails_Invoice').val(fileName);
+            $('#STPaymentRequestDetails_OldInvoice').val("");
+            $('#STPaymentRequestDetails_Invoice').removeAttr("hidden");
+            $('#STPaymentRequestDetails_Invoice').focusout();
+            $('#STPaymentRequestDetails_Invoice').attr("hidden", "hidden");
+        })
+
+        $('.bank-list').on("change", function () {
+            $.ajax({
+                url: "@Url.Content("~/payment/getbranchesbybank.html")",
+                type: "get",
+                data: { bankCode: $(this).val() },
+                success: function (response) {
+                    $('.branch-list').html("");
+                    $('.branch-list').append($('<option>', {
+                            value: '',
+                            text: 'Select Branch'
+                    }));
+
+                    $.each(response, function (i, item) {
+                        $('.branch-list').append($('<option>', {
+                            value: item.value,
+                            text: item.text
+                        }));
+                    });
+                },
+                error: function (error) {
+
+                }
+            })
+        })
+
+
+        $('#paymentRequestForm').submit(function (e) {
+            e.preventDefault();
+
+            $('#STPaymentRequestDetails_Invoice').removeAttr("hidden");
+            var valid = $('#paymentRequestForm').valid();
+            if (valid) {
+                var formValues = $(this).serialize();
+                var url = $(this).attr('action');
+                var formData = new FormData(this);
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response == "success") {
+                            window.location.href = '@Url.Content("~/payment/requestpaymentsummary.html")';
+                        }
+                        else if (response == "redirect") {
+                            window.location.href = '@Url.Content("~/st/user/register.html")';
+                        }
+                        else if (response == "failure") {
+                            toastr.error("Cannot request to yourself.");
+                        }
+                        else {
+                            toastr.error("Internal Server Error");
+                        }
+
+                    },
+                    error: function (error) {
+                        toastr.error("Internal Server Error");
+                    }
+                });
+            }
+            $('#STPaymentRequestDetails_Invoice').attr("hidden", "hidden");
+        });
+    });
+</script>

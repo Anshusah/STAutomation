@@ -1,0 +1,123 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200416061752__transactionLimitConfig_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200416061752__transactionLimitConfig_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200507042913__onfido_tables_created.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200507042913__onfido_tables_created.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200507060141__onfido_tables_created.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200507060141__onfido_tables_created.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200519094416__postCode_city_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200519094416__postCode_city_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200609104949_customer card detail updates.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200609104949_customer card detail updates.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200609113507_customer card detail updates.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200609113507_customer card detail updates.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200616052455__Payee_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200616052455__Payee_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200616052933__Payee_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200616052933__Payee_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200616105958__securityQuestion_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200616105958__securityQuestion_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200617060012__payee_securityQuestion_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200617060012__payee_securityQuestion_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200626081436__status.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200626081436__status.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200629041846__payer_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200629041846__payer_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200701072043__paymentRequest_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200701072043__paymentRequest_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200701080555__paymentRequest_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200701080555__paymentRequest_table_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200908074100__transaction_history_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200908074100__transaction_history_added.Designer.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200922090936__paymentApiPartner_table_added.cs" />
+    <Compile Remove="Cicero.Data.Migrations.SimpleTransferApplicationDb\20200922090936__paymentApiPartner_table_added.Designer.cs" />
+    <Compile Remove="Migrations\20181120120841_Initial11.cs" />
+    <Compile Remove="Migrations\20181121044859_Initial11.cs" />
+    <Compile Remove="Migrations\20190107080117_Initial26.cs" />
+    <Compile Remove="Migrations\20190107084133_Initial27.cs" />
+    <Compile Remove="Migrations\20190107085034_Initial27.cs" />
+    <Compile Remove="Migrations\20190107090154_Initial27.cs" />
+    <Compile Remove="Migrations\20190319113237_Initial38.cs" />
+    <Compile Remove="Migrations\20190329111528_role_createdby_added.cs" />
+    <Compile Remove="Migrations\20190329111940_caseform_createdby_added.cs" />
+    <Compile Remove="Migrations\20190329112905_Caseform_createdby_deleted.cs" />
+    <Compile Remove="Migrations\20190405090144_Initial39.cs" />
+    <Compile Remove="Migrations\20190405090739_Initial39.cs" />
+    <Compile Remove="Migrations\20190412091811_Initial40.cs" />
+    <Compile Remove="Migrations\20190503111437_Initial45.cs" />
+    <Compile Remove="Migrations\20190503111437_Initial45.Designer.cs" />
+    <Compile Remove="Migrations\20190517091342__Initial48.cs" />
+    <Compile Remove="Migrations\20190523071844_Initial49.cs" />
+    <Compile Remove="Migrations\20190528044952_Initial51.cs" />
+    <Compile Remove="Migrations\20190528044952_Initial51.Designer.cs" />
+    <Compile Remove="Migrations\20190618113729_Initial58-restructure-case.cs" />
+    <Compile Remove="Migrations\20190618113729_Initial58-restructure-case.Designer.cs" />
+    <Compile Remove="Migrations\20190618115736_Initial58-restructure-case.cs" />
+    <Compile Remove="Migrations\20190618115736_Initial58-restructure-case.Designer.cs" />
+    <Compile Remove="Migrations\20190619040834_test.cs" />
+    <Compile Remove="Migrations\20190619040834_test.Designer.cs" />
+    <Compile Remove="Migrations\20190627074618_Initial59.cs" />
+    <Compile Remove="Migrations\20190627074618_Initial59.Designer.cs" />
+    <Compile Remove="Migrations\20190627075801_Initial61.cs" />
+    <Compile Remove="Migrations\20190627075801_Initial61.Designer.cs" />
+    <Compile Remove="Migrations\20190704103607_Initial64.cs" />
+    <Compile Remove="Migrations\20190704103607_Initial64.Designer.cs" />
+    <Compile Remove="Migrations\20190711040457_Initial66.cs" />
+    <Compile Remove="Migrations\20190711040457_Initial66.Designer.cs" />
+    <Compile Remove="Migrations\20190726084151_Initial69.cs" />
+    <Compile Remove="Migrations\20190726084151_Initial69.Designer.cs" />
+    <Compile Remove="Migrations\20190726091825_Initial71.cs" />
+    <Compile Remove="Migrations\20190726091825_Initial71.Designer.cs" />
+    <Compile Remove="Migrations\20190809105603_Initial73.cs" />
+    <Compile Remove="Migrations\20190809105603_Initial73.Designer.cs" />
+    <Compile Remove="Migrations\20190924115621_75.cs" />
+    <Compile Remove="Migrations\20190924115621_75.Designer.cs" />
+    <Compile Remove="Migrations\20191001100950_Initial84.cs" />
+    <Compile Remove="Migrations\20191001100950_Initial84.Designer.cs" />
+    <Compile Remove="Migrations\20191001101515_Initial85.cs" />
+    <Compile Remove="Migrations\20191001101515_Initial85.Designer.cs" />
+    <Compile Remove="Migrations\20191001102657_Initial86.cs" />
+    <Compile Remove="Migrations\20191001102657_Initial86.Designer.cs" />
+    <Compile Remove="Migrations\20191001104627_Initial87.cs" />
+    <Compile Remove="Migrations\20191001104627_Initial87.Designer.cs" />
+    <Compile Remove="Migrations\20191001105258_Initial88.cs" />
+    <Compile Remove="Migrations\20191001105258_Initial88.Designer.cs" />
+    <Compile Remove="Migrations\20191001110121_Initial89.cs" />
+    <Compile Remove="Migrations\20191001110121_Initial89.Designer.cs" />
+    <Compile Remove="Migrations\20191001111844_Initial90.cs" />
+    <Compile Remove="Migrations\20191001111844_Initial90.Designer.cs" />
+    <Compile Remove="Migrations\20191001112721_Initial86.cs" />
+    <Compile Remove="Migrations\20191001112721_Initial86.Designer.cs" />
+    <Compile Remove="Migrations\20191203054451_Initial89-seeddata.cs" />
+    <Compile Remove="Migrations\20191205112657_Initial90.cs" />
+    <Compile Remove="Migrations\20191220104259__Initial91.cs" />
+    <Compile Remove="Migrations\20191220104259__Initial91.Designer.cs" />
+    <Compile Remove="Migrations\20191226102043_Initial92.cs" />
+    <Compile Remove="Migrations\20191230085157_Initial93.cs" />
+    <Compile Remove="Migrations\20191231053349_Initial94.cs" />
+    <Compile Remove="Migrations\20200107052451__Initial96.cs" />
+    <Compile Remove="Migrations\20200107052451__Initial96.Designer.cs" />
+    <Compile Remove="Migrations\20200114042706__Initial97.cs" />
+    <Compile Remove="Migrations\20200114042706__Initial97.Designer.cs" />
+    <Compile Remove="Migrations\20200115082934_type change.cs" />
+    <Compile Remove="Migrations\20200115083130_type update Article.cs" />
+    <Compile Remove="Migrations\20200228081621_workflow state table update.cs" />
+    <Compile Remove="Migrations\20200228081621_workflow state table update.Designer.cs" />
+    <Compile Remove="Migrations\20200228082053_workflowstate table update.cs" />
+    <Compile Remove="Migrations\20200228082053_workflowstate table update.Designer.cs" />
+    <Compile Remove="Migrations\20200617134800__cicero_entity_added.cs" />
+    <Compile Remove="Migrations\20200617134800__cicero_entity_added.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.6" />
+    <PackageReference Include="toastr" Version="2.1.1" />
+  </ItemGroup>
+
+</Project>

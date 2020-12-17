@@ -1,0 +1,309 @@
+﻿@using Cicero.Service.Models.Core;
+@using Cicero.Service.Services
+@inject IArticleService Article
+@{
+Theme theme = ViewData["theme"] as Theme;
+Layout = "~/Themes/"+theme.GetName(false) + "/Shared/_Layout.cshtml";
+}
+@await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Header.cshtml")
+
+@await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Banner.cshtml")
+<!-- //.main-promo -->
+<main role="main" class="main">
+    
+
+    <div class="section section-process">
+        <div class="container">
+            <div class="section-process__content">
+                <h2>As an <span class="highlight">insurance company</span>, we always put our customer first</h2>
+                <p>We are top home insurance company in the UK based on the quality of products and service and
+                    independent reviews that took into account customer satisfaction and claims handling.
+                    @Html.Raw(theme.DoShortCode("[widget id=\"12021024\"]"));</p>
+            </div>
+        </div>
+    </div>
+    <!-- //.section-process -->
+    <div class="secondary-promo">
+        <div class="container">
+            <div class="secondary-promo__wrapper">
+                <div class="row">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <figure class="mb-0 text-align-center">
+                            <img src="/Themes/@theme.GetName(false)/img/promo-2.jpg" alt="" class="img-fluid">
+                        </figure>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="secondary-promo__content">
+                            <h3>It takes only 10 minutes to claim on your Home Insurance</h3>
+                            <p>We'll just want to know what happened and when, plus what you're claiming for. You can
+                                upload photos of damage or receipts for lost items, but we can process your claim
+                                without these.</p>
+                            <div class="link">
+                                <span>
+                                    Call <a href="tel:+44 7700 900077" data-toggle="tooltip" data-replacement="top"
+                                            title="Call +44 7700 900077" class="">+44-DELTAHOME (+44 7700 900077)</a>
+                                    anytime
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //.secondary-promo -->
+    <div class="section section-support">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="claim-online">
+                        <figure class="promo-img">
+                            <img src="/Themes/@theme.GetName(false)/img/laptop.svg" alt="">
+                        </figure>
+                        <h3 class="promo-headline">Make a claim online</h3>
+                        <p>
+                            Make a claim online is easy. Just log in or register to DeltaHome and follow the
+                            instructions. We'll take care of the rest.
+                        </p>
+                        <div class="promo-link">
+                            <a href="#" class="btn btn-primary">Login or Register</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="claim-contact">
+                        <figure class="promo-img">
+                            <img src="/Themes/@theme.GetName(false)/img/call.svg" alt="">
+                        </figure>
+                        <h3 class="promo-headline">Not sure whether to claim?</h3>
+                        <p>
+                            If you don't know whether it's worthwhile making a claim, or you're unsure what
+                            you've covered for, you can get in touch via web chat or phone to find out.
+                        </p>
+                        <div class="promo-link">
+                            <span>
+                                Call <a href="tel:+44 7700 900077" class="promo-link" data-toggle="tooltip"
+                                        data-replacement="top" title="Call +44 7700 900077">
+                                    +44-DELTAHOME
+                                    (+44 7700 900077)
+                                </a>anytime
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //.section-support -->
+    <div class="testimonies">
+        <div class="container">
+            <div class="testimonies__wrapper">
+                <h3>Beloved by our clients and community.</h3>
+                <!-- Swiper -->
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="testimonies__content">
+                                <!-- <p>At all stages of process I have received nothing but the best of attention.</p> -->
+                                <div class="testimonies__text">
+                                    <p>Hi Dusan Milko. The StackOverflow question you linked to doesn’t answer my question.
+                                        I want a fallback if the image format of the first image is not supported. The
+                                        StackOverflow question talks about a fallback if the first image doesn’t exist.</p>
+                                </div>
+                                <div class="testimonies__user">
+                                    <div class="testimonies__user-pic">
+                                        <img src="https://cdn.dribbble.com/users/30951/avatars/small/2c9b1e586726f41499c2d90fdef9b33a.png?1513185803"
+                                            class="rounded-circle" alt="..." width="48" height="48">
+                                    </div>
+                                    <div class="testimonies__user-text">
+                                        <h6 class="mb-0">Mrs. Michele</h6>
+                                        <small class="text-muted">Scotland</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //.testimonies -->
+    <div class="section section-faqs">
+        <div class="container">
+            <h3>FAQs</h3>
+            <div class="card-wrapper" id="accordionExample">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between text-align-center" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+                        aria-expanded="false" aria-controls="collapseOne">
+                        <h5 class="mb-0">What information do I need to provide when reporting a claim?</h5>
+                        <div class="card-control ml-3">
+                            <i class="remixicon-arrow-down-s-line visible"></i>
+                            <i class="remixicon-arrow-up-s-line hidden"></i>
+                        </div>
+                    </div>
+
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                            terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food
+                            truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it
+                            squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft
+                            beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice
+                            lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you
+                            probably haven't heard of them accusamus labore sustainable VHS.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between text-align-center" id="headingOne" data-toggle="collapse" data-target="#collapsetwo"
+                        aria-expanded="false" aria-controls="collapsetwo">
+                        <h5 class="mb-0">
+                            How is the amount of my claim determined?
+                        </h5>
+                        <div class="card-control ml-3">
+                            <i class="remixicon-arrow-down-s-line visible"></i>
+                            <i class="remixicon-arrow-up-s-line hidden"></i>
+                        </div>
+                    </div>
+
+                    <div id="collapsetwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                            terry richardson ad squid
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between text-align-center" id="headingOne" data-toggle="collapse" data-target="#collapsethree"
+                        aria-expanded="false" aria-controls="collapsethree">
+                        <h5 class="mb-0">How long will it take to settle my claim?</h5>
+                        <div class="card-control ml-3">
+                            <i class="remixicon-arrow-down-s-line visible"></i>
+                            <i class="remixicon-arrow-up-s-line hidden"></i>
+                        </div>
+                    </div>
+
+                    <div id="collapsethree" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                            terry richardson ad squid. 3 wolf moon officia aute,
+                            non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
+                            laborum
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between text-align-center" id="headingFive" data-toggle="collapse" data-target="#collapseFive"
+                        aria-expanded="false" aria-controls="collapseFive">
+                        <h5 class="mb-0">How will my claim affect my premium?</h5>
+                        <div class="card-control ml-3">
+                            <i class="remixicon-arrow-down-s-line visible"></i>
+                            <i class="remixicon-arrow-up-s-line hidden"></i>
+                        </div>
+                    </div>
+                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+                            terry richardson ad squid. 3 wolf moon officia aute,
+                            non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
+                            laborum
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //.section-faqs -->
+</main>
+<!-- //.main -->
+@section Scripts{
+<script type="text/javascript">
+    //Swiper JS
+    var mySwiper = new Swiper('.swiper-container', {
+        autoHeight: true,
+        pagination: {
+            el: '.swiper-pagination',
+            dynamicBullets: true,
+            clickable: true,
+        },
+
+        // Navigation arrows
+        //   navigation: {
+        //     nextEl: '.swiper-button-next',
+        //     prevEl: '.swiper-button-prev',
+        //   }
+    });
+    $(document).on('ready', function () {
+        $('.responsive-carousel').slick({
+            dots: false,
+            infinite: false,
+            speed: 300,
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            responsive: [{
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
+                    infinite: false,
+                    arrows: false,
+                    dots: true
+                }
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    arrows: false,
+                    dots: true,
+                    slidesToShow: 2,
+                    slidesToScroll: 2
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    arrows: false,
+                    dots: true,
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+            }
+                // You can unslick at a given breakpoint now by adding:
+                // settings: "unslick"
+                // instead of a settings object
+            ]
+        });
+    });
+
+
+    // scroll to specific portion
+    // Add smooth scrolling to all links
+    $(".arrow-yholder").on('click', function (event) {
+
+        // Make sure this.hash has a value before overriding default behavior
+        if (this.hash !== "") {
+            // Prevent default anchor click behavior
+            event.preventDefault();
+
+            // Store hash
+            var hash = this.hash;
+            // Using jQuery's animate() method to add smooth page scroll
+            // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+            $('html, body').animate({
+                scrollTop: ($(hash).offset().top) - 80
+            }, 800, function () {
+
+                // Add hash (#) to URL when done scrolling (default click behavior)
+                window.location.hash = hash;
+
+            });
+        } // End if
+    });
+</script>
+}
+
+
+
+@await Html.PartialAsync("/Themes/" + theme.GetName(false) + "/Shared/_Footer.cshtml")

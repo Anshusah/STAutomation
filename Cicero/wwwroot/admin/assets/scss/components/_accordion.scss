@@ -1,0 +1,57 @@
+/*.accordion {
+    .card {
+        border-bottom: 1px solid theme(border, dark) !important;
+
+        &:last-child {
+            border-bottom: none !important;
+        }
+    }
+
+    .card-header {
+        padding: 0;
+
+        &-item {
+            padding: 2rem;
+            color: theme(text, link-color);
+
+            .accordion-indicator {
+                i.fa-plus {
+                    display: none;
+                }
+
+                i.fa-minus {
+                    display: block;
+                }
+
+            }
+
+        }
+
+        &-item.collapsed {
+            color: theme(text, dark);
+
+            .accordion-indicator {
+                i.fa-plus {
+                    display: block;
+                }
+
+                i.fa-minus {
+                    display: none;
+                }
+
+            }
+        }
+
+        &-item {
+            &:hover {
+                color: theme(text, link-color);
+            }
+        }
+    }
+
+    .card-body {
+        padding: 0.5rem 2rem 2rem;
+    }
+
+
+}*/

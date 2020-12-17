@@ -1,0 +1,7 @@
+.card {
+    border: 0;
+    box-shadow: $box-shadow-sm;
+    &.height-fluid {
+        height: calc(100% - 20px);
+    }
+}
